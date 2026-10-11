@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+	<sys:String x:Key="Str.Common.Theme">Tema</sys:String>
+	<sys:String x:Key="Str.Common.ThemeSystem">Automático (como o Windows)</sys:String>
+	<sys:String x:Key="Str.Common.ThemeLight">Claro</sys:String>
+	<sys:String x:Key="Str.Common.ThemeDark">Escuro</sys:String>
+	<sys:String x:Key="Str.Common.LanguageTip">Idioma</sys:String>
+	<sys:String x:Key="Str.Common.Ok">OK</sys:String>
+	<sys:String x:Key="Str.Common.Cancel">Cancelar</sys:String>
+	<sys:String x:Key="Str.Common.Yes">Sim</sys:String>
+	<sys:String x:Key="Str.Common.No">Não</sys:String>
+	<sys:String x:Key="Str.Common.Close">Fechar</sys:String>
+	<sys:String x:Key="Str.Common.Save">Guardar</sys:String>
+	<sys:String x:Key="Str.Common.Browse">Procurar...</sys:String>
+	<sys:String x:Key="Str.Common.Add">Adicionar</sys:String>
+	<sys:String x:Key="Str.Common.Remove">Remover</sys:String>
+	<sys:String x:Key="Str.Common.Delete">Excluir</sys:String>
+	<sys:String x:Key="Str.Common.Clear">Limpar</sys:String>
+	<sys:String x:Key="Str.Common.Rename">Renomear</sys:String>
+	<sys:String x:Key="Str.Common.Copy">Copiar</sys:String>
+	<sys:String x:Key="Str.Common.Cut">Recortar</sys:String>
+	<sys:String x:Key="Str.Common.Paste">Colar</sys:String>
+	<sys:String x:Key="Str.Common.Undo">Desfazer</sys:String>
+	<sys:String x:Key="Str.Common.Redo">Refazer</sys:String>
+	<sys:String x:Key="Str.Common.SelectAll">Selecionar tudo</sys:String>
+	<sys:String x:Key="Str.Common.Search">Pesquisar</sys:String>
+	<sys:String x:Key="Str.Common.Replace">Substituir</sys:String>
+	<sys:String x:Key="Str.Common.Error">Erro</sys:String>
+	<sys:String x:Key="Str.Common.Warning">Aviso</sys:String>
+	<sys:String x:Key="Str.Common.Name">Nome</sys:String>
+	<sys:String x:Key="Str.Common.Description">Descrição</sys:String>
+	<sys:String x:Key="Str.Common.File">Arquivo</sys:String>
+	<sys:String x:Key="Str.Common.Line">Linha</sys:String>
+	<sys:String x:Key="Str.Common.Message">Mensagem</sys:String>
+	<sys:String x:Key="Str.Common.Type">Tipo</sys:String>
+	<sys:String x:Key="Str.Common.Settings">Configurações</sys:String>
+	<sys:String x:Key="Str.Common.Help">Ajuda</sys:String>
+	<sys:String x:Key="Str.Common.About">Sobre</sys:String>
+	<sys:String x:Key="Str.Common.Loading">Carregando...</sys:String>
+</ResourceDictionary>

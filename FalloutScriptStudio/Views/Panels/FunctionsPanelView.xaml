@@ -1,0 +1,103 @@
+<UserControl x:Class="FalloutScriptStudio.Views.Panels.FunctionsPanelView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+			 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+	<UserControl.Resources>
+		<HierarchicalDataTemplate DataType="{x:Type vm:FunctionNodeViewModel}" ItemsSource="{Binding Children}">
+			<Grid>
+				<StackPanel x:Name="Item" Orientation="Horizontal">
+					<ui:SymbolIcon x:Name="Icon"
+								   Symbol="Folder24"
+								   FontSize="12"
+								   Margin="0,0,6,0"
+								   VerticalAlignment="Center"
+								   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+					<TextBlock x:Name="Text" Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" />
+				</StackPanel>
+				<Rectangle x:Name="Line"
+						   Height="1"
+						   Margin="0,6"
+						   Visibility="Collapsed"
+						   Fill="{DynamicResource DividerStrokeColorDefaultBrush}" />
+			</Grid>
+			<HierarchicalDataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsFunction}" Value="True">
+					<Setter TargetName="Icon" Property="Symbol" Value="Code24" />
+					<Setter TargetName="Icon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+					<Setter TargetName="Text" Property="FontWeight" Value="Normal" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IsUser}" Value="True">
+					<Setter TargetName="Text" Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding IsSeparator}" Value="True">
+					<Setter TargetName="Item" Property="Visibility" Value="Collapsed" />
+					<Setter TargetName="Line" Property="Visibility" Value="Visible" />
+				</DataTrigger>
+			</HierarchicalDataTemplate.Triggers>
+		</HierarchicalDataTemplate>
+
+		<Style x:Key="FunctionItemStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource ShellTreeViewItemStyle}">
+			<Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
+			<Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+			<Setter Property="ToolTip" Value="{Binding Description}" />
+			<Setter Property="ToolTipService.IsEnabled" Value="{Binding IsFunction}" />
+			<Setter Property="ContextMenu">
+				<Setter.Value>
+					<ContextMenu>
+						<MenuItem Header="{DynamicResource Str.Panels.MenuInsertIntoScript}"
+								  Command="{Binding PlacementTarget.Tag.InsertCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.DataContext.IsFunction, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+						<Separator />
+						<MenuItem Header="{DynamicResource Str.Panels.MenuAddUserFunction}"
+								  Command="{Binding PlacementTarget.Tag.AddFunctionCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.Tag.CanAddFunction, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+							<MenuItem.Icon>
+								<ui:SymbolIcon Symbol="Add24" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="{DynamicResource Str.Panels.MenuEditFunction}"
+								  Command="{Binding PlacementTarget.Tag.EditFunctionCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.Tag.CanEditFunction, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+							<MenuItem.Icon>
+								<ui:SymbolIcon Symbol="Edit24" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="{DynamicResource Str.Panels.MenuAddTreeNode}"
+								  Command="{Binding PlacementTarget.Tag.AddGroupCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.Tag.CanAddGroup, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+						<MenuItem Header="{DynamicResource Str.Panels.MenuRenameTreeNode}"
+								  Command="{Binding PlacementTarget.Tag.RenameGroupCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.Tag.CanRenameGroup, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+						<MenuItem Header="{DynamicResource Str.Panels.MenuDeleteNode}"
+								  Command="{Binding PlacementTarget.Tag.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.Tag.CanDeleteNode, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+							<MenuItem.Icon>
+								<ui:SymbolIcon Symbol="Delete24" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</Setter.Value>
+			</Setter>
+			<EventSetter Event="MouseDoubleClick" Handler="OnItemMouseDoubleClick" />
+			<EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnItemPreviewMouseLeftButtonUp" />
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<ui:TextBox Grid.Row="0" Margin="6,4" PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}" ClearButtonEnabled="True" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+		<TreeView Grid.Row="1" ItemsSource="{Binding Roots}"
+				  ItemContainerStyle="{StaticResource FunctionItemStyle}"
+				  BorderThickness="0"
+				  Background="Transparent"
+				  SelectedItemChanged="OnSelectedItemChanged"
+				  PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown" />
+	</Grid>
+</UserControl>

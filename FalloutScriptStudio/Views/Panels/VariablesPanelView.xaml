@@ -1,0 +1,83 @@
+<UserControl x:Class="FalloutScriptStudio.Views.Panels.VariablesPanelView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+			 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+	<UserControl.Resources>
+		<HierarchicalDataTemplate DataType="{x:Type vm:TreeGroupNodeViewModel}" ItemsSource="{Binding Children}">
+			<TextBlock x:Name="Text"
+					   Text="{Binding Title}"
+					   FontWeight="SemiBold"
+					   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+			<HierarchicalDataTemplate.Triggers>
+				<DataTrigger Binding="{Binding IsEmpty}" Value="True">
+					<Setter TargetName="Text" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+				</DataTrigger>
+			</HierarchicalDataTemplate.Triggers>
+		</HierarchicalDataTemplate>
+
+		<HierarchicalDataTemplate DataType="{x:Type vm:VariableNodeViewModel}" ItemsSource="{Binding Children}">
+			<StackPanel Orientation="Horizontal">
+				<ui:SymbolIcon Symbol="BracesVariable24"
+							   FontSize="12"
+							   Margin="0,0,6,0"
+							   VerticalAlignment="Center"
+							   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				<TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
+			</StackPanel>
+		</HierarchicalDataTemplate>
+
+		<Style x:Key="VariableItemStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource ShellTreeViewItemStyle}">
+			<Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
+			<Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+			<Setter Property="ToolTip" Value="{Binding ToolTip}" />
+			<Setter Property="ContextMenu">
+				<Setter.Value>
+					<ContextMenu>
+						<MenuItem Header="{DynamicResource Str.Panels.MenuGoToDeclaration}"
+								  Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.DataContext.IsSymbol, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+						<MenuItem Header="{DynamicResource Str.Panels.MenuFindReferences}"
+								  Command="{Binding PlacementTarget.Tag.FindReferencesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.DataContext.IsSymbol, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+						<MenuItem Header="{DynamicResource Str.Panels.MenuRenameVariable}"
+								  Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+								  IsEnabled="{Binding PlacementTarget.DataContext.IsSymbol, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+							<MenuItem.Icon>
+								<ui:SymbolIcon Symbol="Rename24" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</Setter.Value>
+			</Setter>
+			<EventSetter Event="MouseDoubleClick" Handler="OnItemMouseDoubleClick" />
+			<EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnItemPreviewMouseLeftButtonUp" />
+		</Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<ui:TextBox Grid.Row="0" Margin="6,4" PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}" ClearButtonEnabled="True" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+		<TreeView Grid.Row="1" ItemsSource="{Binding Groups}"
+				  ItemContainerStyle="{StaticResource VariableItemStyle}"
+				  BorderThickness="0"
+				  Background="Transparent"
+				  PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown" />
+		<TextBlock Grid.Row="1" Style="{StaticResource ShellCaptionTextStyle}"
+				   Text="{DynamicResource Str.Panels.EmptyVariables}"
+				   TextWrapping="Wrap"
+				   TextAlignment="Center"
+				   Margin="16"
+				   VerticalAlignment="Top"
+				   IsHitTestVisible="False"
+				   Visibility="{Binding HasData, Converter={StaticResource InvertedBoolToVisibility}}" />
+	</Grid>
+</UserControl>

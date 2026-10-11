@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<PlatformTarget>x86</PlatformTarget>
+		<RootNamespace>FalloutScriptStudio</RootNamespace>
+		<AssemblyName>FalloutScriptStudio</AssemblyName>
+		<ApplicationIcon>Assets\Icons\app.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<NoWarn>$(NoWarn);WPF0001</NoWarn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="WPF-UI" />
+		<PackageReference Include="AvalonEdit" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FalloutScriptStudio.Core\FalloutScriptStudio.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Assets\Icons\*.ico" />
+		<Resource Include="Assets\Icons\*.png" />
+		<Resource Include="Assets\Syntax\*.xshd" />
+		<Resource Include="Assets\Sounds\*.wav" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- External data and tool wrappers that stay on disk next to the executable (same layout as the legacy editor). -->
+		<Content Include="Content\**\*" CopyToOutputDirectory="PreserveNewest" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<!-- FalloutScriptStudio.ParserHost.exe hosts the 32-bit parser.dll in its own process; it is copied next to the executable. -->
+	<Import Project="..\ParserHost.targets" />
+
+</Project>

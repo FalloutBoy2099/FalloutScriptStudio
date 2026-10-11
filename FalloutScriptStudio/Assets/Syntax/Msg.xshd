@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="Message" extensions=".msg" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Number" />
+	<Color name="LineComment" />
+	<Color name="TrailingComment" />
+	<Color name="Emotion" />
+	<Color name="Braces" />
+
+	<RuleSet ignoreCase="true">
+		<Span color="TrailingComment" multiline="false">
+			<Begin>\}[ ]?\#</Begin>
+		</Span>
+		<Span color="LineComment" multiline="false">
+			<Begin>\#</Begin>
+		</Span>
+		<Span color="Emotion" multiline="false">
+			<Begin>::</Begin>
+			<End>::</End>
+		</Span>
+		<Span color="Emotion" multiline="false">
+			<Begin>\[</Begin>
+			<End>\]</End>
+		</Span>
+		<Rule color="Braces">[{}]</Rule>
+		<Rule color="Number">\b\d+\b</Rule>
+	</RuleSet>
+</SyntaxDefinition>

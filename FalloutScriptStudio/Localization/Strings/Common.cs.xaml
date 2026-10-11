@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+	<sys:String x:Key="Str.Common.Theme">Motiv</sys:String>
+	<sys:String x:Key="Str.Common.ThemeSystem">Automatický (podle Windows)</sys:String>
+	<sys:String x:Key="Str.Common.ThemeLight">Světlý</sys:String>
+	<sys:String x:Key="Str.Common.ThemeDark">Tmavý</sys:String>
+	<sys:String x:Key="Str.Common.LanguageTip">Jazyk</sys:String>
+	<sys:String x:Key="Str.Common.Ok">OK</sys:String>
+	<sys:String x:Key="Str.Common.Cancel">Zrušit</sys:String>
+	<sys:String x:Key="Str.Common.Yes">Ano</sys:String>
+	<sys:String x:Key="Str.Common.No">Ne</sys:String>
+	<sys:String x:Key="Str.Common.Close">Zavřít</sys:String>
+	<sys:String x:Key="Str.Common.Save">Uložit</sys:String>
+	<sys:String x:Key="Str.Common.Browse">Procházet...</sys:String>
+	<sys:String x:Key="Str.Common.Add">Přidat</sys:String>
+	<sys:String x:Key="Str.Common.Remove">Odebrat</sys:String>
+	<sys:String x:Key="Str.Common.Delete">Smazat</sys:String>
+	<sys:String x:Key="Str.Common.Clear">Vymazat</sys:String>
+	<sys:String x:Key="Str.Common.Rename">Přejmenovat</sys:String>
+	<sys:String x:Key="Str.Common.Copy">Kopírovat</sys:String>
+	<sys:String x:Key="Str.Common.Cut">Vyjmout</sys:String>
+	<sys:String x:Key="Str.Common.Paste">Vložit</sys:String>
+	<sys:String x:Key="Str.Common.Undo">Zpět</sys:String>
+	<sys:String x:Key="Str.Common.Redo">Znovu</sys:String>
+	<sys:String x:Key="Str.Common.SelectAll">Vybrat vše</sys:String>
+	<sys:String x:Key="Str.Common.Search">Hledat</sys:String>
+	<sys:String x:Key="Str.Common.Replace">Nahradit</sys:String>
+	<sys:String x:Key="Str.Common.Error">Chyba</sys:String>
+	<sys:String x:Key="Str.Common.Warning">Upozornění</sys:String>
+	<sys:String x:Key="Str.Common.Name">Název</sys:String>
+	<sys:String x:Key="Str.Common.Description">Popis</sys:String>
+	<sys:String x:Key="Str.Common.File">Soubor</sys:String>
+	<sys:String x:Key="Str.Common.Line">Řádek</sys:String>
+	<sys:String x:Key="Str.Common.Message">Zpráva</sys:String>
+	<sys:String x:Key="Str.Common.Type">Typ</sys:String>
+	<sys:String x:Key="Str.Common.Settings">Nastavení</sys:String>
+	<sys:String x:Key="Str.Common.Help">Nápověda</sys:String>
+	<sys:String x:Key="Str.Common.About">O programu</sys:String>
+	<sys:String x:Key="Str.Common.Loading">Načítání...</sys:String>
+</ResourceDictionary>

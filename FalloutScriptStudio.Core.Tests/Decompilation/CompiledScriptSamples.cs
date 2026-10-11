@@ -1,0 +1,190 @@
+namespace FalloutScriptStudio.Core.Tests.Decompilation
+{
+	using System;
+
+	/// <summary>
+	/// Small compiled scripts (<c>.int</c>) with the source the <c>int2ssl</c> decompiler (sfall 5 edition, three spaces of indentation)
+	/// gives back for them. They were produced from scripts written for these tests with the sfall 5 <c>compile.exe</c>.
+	/// </summary>
+	internal static class CompiledScriptSamples
+	{
+		/// <summary>A Fallout 2 script (208 bytes): <c>if (script_action == 6) then load_map(33, 0);</c>.</summary>
+		public static Byte[] LoadMap => Convert.FromHexString(
+			"8002c00100000012800dc0010000008480048010801a8020801a8021801a8022801a8023802480258026000000020000000600000000000000000000000000000096000000000000001800000000000000000000000000000096000000000000001a00102e2e2e2e2e2e2e2e2e2e2e2e2e2e00000006737461727400ffffffffffffffff" +
+			"802cc001000000008003c001000000968004802bc001000000b880c7c001000000068033802fc00100000021c0010000000080e4c00100000000800d8019802a8029800c801c802a8029801c");
+
+		/// <summary>Procedures, global and exported variables, for and while loops, if/else, calls (also timed), the ++ and += forms.</summary>
+		public static Byte[] Sample => Convert.FromHexString(
+			"8002c00100000012800dc0010000011480048010801a8020801a8021801a8022801a8023802480258026000000040000" +
+			"000600000000000000000000000000000148000000000000001800000000000000000000000000000148000000000000" +
+			"002000000000000000000000000000000308000000020000002a00000000000000000000000000000348000000000000" +
+			"005800102e2e2e2e2e2e2e2e2e2e2e2e2e2e00000006737461727400000868656c7065720000000c74696d65645f6576" +
+			"656e74000008636f756e74657200000a6d73675f746578740000000e7368617265645f76616c75650000ffffffff0000" +
+			"001e000868656c6c6f0a0000000a706f7369746976652000000674696d657200ffffffff802cc0010000000090010000" +
+			"000690010000004e8016c0010000000590010000004e8015c001000000008003c001000001488004802bc00100000000" +
+			"c00100000000c00100000000c001000000018031c00100000000c001000000008031c001000001fac001000000008032" +
+			"c0010000000a80378030c001000001aac001000000008032c001000000058033802fc001000001e08004c00100000001" +
+			"8032c001000001d6800dc001000000008032c00100000002c00100000002c0010000000280058039c001000000018031" +
+			"c0010000000080328285c001000000008031c001000001788004c00100000270c001000000018032c001000000038038" +
+			"c001000000008012c001000000648037803e8030c0010000000080128285c001000000008013c001000000018032c001" +
+			"00000001803ac001000000018031c00100000268c001000000008012c001000000328033802f8004c001000002008004" +
+			"c001000002a2c001000000018032c001000000008038802f900100000010c001000000018032803980b8c001000002ac" +
+			"8004c00100000001801280b8c00100000005c001000000038006c00100000001c00100000000c0010000000a80b4c001" +
+			"000000018032c00100000002803b803980c6c0010000000790010000004e8015c00100000000800d8019802a8029800c" +
+			"801c802a8029801c802bc001000000008032c001000000018032803bc00100000001803a800d8019802a8029800c801c" +
+			"c00100000000800d8019802a8029800c801c802a8029801c802b90010000001c80b8c00100000000800d8019802a8029" +
+			"800c801c802a8029801c");
+
+		/// <summary>The source of <see cref="Sample"/> as int2ssl writes it.</summary>
+		public static String[] SampleSource { get; } =
+		[
+			"procedure start;",
+			"procedure helper(variable arg0, variable arg1);",
+			"procedure timed_event;",
+			"",
+			"variable counter;",
+			"variable msg_text := \"hello\\n\";",
+			"",
+			"export variable shared_value := 5;",
+			"",
+			"",
+			"procedure start",
+			"begin",
+			"   variable LVar0 := 0;",
+			"   variable LVar1 := 0;",
+			"   LVar1 := 0;",
+			"   for (LVar0 := 0; LVar0 < 10; LVar0++) begin",
+			"      if (LVar0 == 5) then begin",
+			"         continue;",
+			"      end",
+			"      LVar1 := LVar1 + helper(LVar0, 2);",
+			"   end",
+			"   while ((LVar1 > 3) and (counter < 100)) do begin",
+			"      counter := counter + 1;",
+			"      LVar1 := LVar1 - 1;",
+			"      if (counter == 50) then begin",
+			"         break;",
+			"      end",
+			"   end",
+			"   if (LVar1 > 0) then begin",
+			"      display_msg(\"positive \" + LVar1);",
+			"   end",
+			"   else begin",
+			"      display_msg(msg_text);",
+			"   end",
+			"   call timed_event in (5);",
+			"   set_global_var(1, random(0, 10) + (LVar1 * 2));",
+			"   shared_value := 7;",
+			"end",
+			"",
+			"procedure helper(variable arg0, variable arg1)",
+			"begin",
+			"   return (arg0 * arg1) - 1;",
+			"end",
+			"",
+			"procedure timed_event",
+			"begin",
+			"   display_msg(\"timer\");",
+			"end",
+		];
+
+		/// <summary>List and map literals, also nested.</summary>
+		public static Byte[] Arrays => Convert.FromHexString(
+			"8002c00100000012800dc0010000009080048010801a8020801a8021801a8022801a8023802480258026000000020000" +
+			"0006000000000000000000000000000000a20000000000000018000000000000000000000000000000a2000000000000" +
+			"001a00102e2e2e2e2e2e2e2e2e2e2e2e2e2e00000006737461727400ffffffff000000080002610000020000ffffffff" +
+			"802cc001000000008003c001000000a28004802bc00100000000c00100000000c00100000000c001ffffffffc0010000" +
+			"00008233c00100000001c001000000028257801ac00100000003c001000000048257801ac001000000008031c0010000" +
+			"0000c001000000008233c00100000000c001000000058257801ac00100000001c001000000068257801ac00100000001" +
+			"8031c00100000000c001000000008233c00100000000c00100000000c001000000008233c00100000000c00100000001" +
+			"8257801ac00100000001c001000000028257801a82578039c00100000001c001ffffffffc00100000000823390010000" +
+			"0006c0010000000080328257801a82578039c00100000002803190010000000ac00100000000c001000000008233c001" +
+			"00000000c001000000078257801a8231803980b8c00100000000800d8019802a8029800c801c802a8029801c");
+
+		/// <summary>The source of <see cref="Arrays"/> as int2ssl writes it.</summary>
+		public static String[] ArraysSource { get; } =
+		[
+			"procedure start;",
+			"",
+			"",
+			"procedure start",
+			"begin",
+			"   variable LVar0 := 0;",
+			"   variable LVar1 := 0;",
+			"   variable LVar2 := 0;",
+			"   LVar0 := temp_array(-1, 0) + arrayexpr(1, 2) + arrayexpr(3, 4);",
+			"   LVar1 := temp_array(0, 0) + arrayexpr(0, 5) + arrayexpr(1, 6);",
+			"   LVar2 := temp_array(0, 0) + arrayexpr(0, temp_array(0, 0) + arrayexpr(0, 1) + arrayexpr(1, 2)) + arrayexpr(1, temp_array(-1, 0) + arrayexpr(\"a\", LVar0));",
+			"   display_msg(\"\" + len_array(temp_array(0, 0) + arrayexpr(0, 7)));",
+			"end",
+		];
+
+		/// <summary>Conditional expressions (<c>a if cond else b</c>) as a value, an operand and an argument.</summary>
+		public static Byte[] ConditionalExpression => Convert.FromHexString(
+			"8002c00100000012800dc0010000009080048010801a8020801a8021801a8022801a8023802480258026000000020000" +
+			"0006000000000000000000000000000000a80000000000000018000000000000000000000000000000a8000000000000" +
+			"001e00102e2e2e2e2e2e2e2e2e2e2e2e2e2e0000000673746172740000026700ffffffff0000000400020000ffffffff" +
+			"802cc00100000000c001000000008003c001000000a88004802bc00100000000c00100000000c00100000000c0010000" +
+			"00ecc001000000008032c001000000018032c001000000038036803e802fc00100000001c001000000f28004c0010000" +
+			"0000c001000000028031c0010000013cc0010000011ec001000000008032802fc00100000001c001000001248004c001" +
+			"00000000c001000000008033802fc00100000001c001000000008013900100000006c00100000168c001000000028032" +
+			"c001000000018038802fc00100000005c0010000016e8004c00100000006803980b8c00100000000800d8019802a8029" +
+			"800c801c802a8029801c");
+
+		/// <summary>The source of <see cref="ConditionalExpression"/> as int2ssl writes it.</summary>
+		public static String[] ConditionalExpressionSource { get; } =
+		[
+			"procedure start;",
+			"",
+			"variable g;",
+			"",
+			"",
+			"procedure start",
+			"begin",
+			"   variable LVar0 := 0;",
+			"   variable LVar1 := 0;",
+			"   variable LVar2 := 0;",
+			"   LVar2 := 1 if (LVar0 and (LVar1 >= 3)) else 0;",
+			"   if ((1 if LVar0 else 0) == 0) then begin",
+			"      g := 1;",
+			"   end",
+			"   display_msg(\"\" + (5 if (LVar2 > 1) else 6));",
+			"end",
+		];
+
+		/// <summary>Opcodes that the sfall 5 compiler adds.</summary>
+		public static Byte[] Sfall5Opcodes => Convert.FromHexString(
+			"8002c00100000012800dc001000000b280048010801a8020801a8021801a8022801a8023802480258026000000020000" +
+			"0006000000000000000000000000000000c40000000000000018000000000000000000000000000000c4000000000000" +
+			"001a00102e2e2e2e2e2e2e2e2e2e2e2e2e2e00000006737461727400ffffffff0000002a00064d697363000000044b65" +
+			"790000026400001655736546696c6553797374656d4f7665727269646500ffffffff802cc001000000008003c0010000" +
+			"00c48004802bc00100000000c0010000000090010000000690010000000e9001000000148282c0010000000080319001" +
+			"00000006900100000018c001000000018283801ac00100000001c001000000028284828ac001000000008031a0013fc0" +
+			"0000c001000000028269c001000000008031a001402000008268c001000000008031c001000000008032c00100000003" +
+			"8258c001000000008031c0010000000180328285c001000000018031c0010000000180328286c001000000018031c001" +
+			"00000000800d8019802a8029800c801c802a8029801c");
+
+		/// <summary>The source of <see cref="Sfall5Opcodes"/> as int2ssl writes it.</summary>
+		public static String[] Sfall5OpcodesSource { get; } =
+		[
+			"procedure start;",
+			"",
+			"",
+			"procedure start",
+			"begin",
+			"   variable LVar0 := 0;",
+			"   variable LVar1 := 0;",
+			"   LVar0 := get_config_setting(\"Misc\", \"Key\", \"d\");",
+			"   set_config_setting(\"Misc\", \"UseFileSystemOverride\", 1);",
+			"   set_shader_type(1, 2);",
+			"   LVar0 := get_perk_freq;",
+			"   LVar0 := roundf(1.50000, 2);",
+			"   LVar0 := ceilf(2.50000);",
+			"   LVar0 := array_key_exists(LVar0, 3);",
+			"   LVar1++;",
+			"   LVar1--;",
+			"end",
+		];
+
+	}
+}

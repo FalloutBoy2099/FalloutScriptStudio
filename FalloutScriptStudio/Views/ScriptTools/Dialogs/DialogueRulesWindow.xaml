@@ -1,0 +1,234 @@
+<ui:FluentWindow FontSize="12" x:Class="FalloutScriptStudio.Views.ScriptTools.Dialogs.DialogueRulesWindow"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+				 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.ScriptTools.Dialogs"
+				 Title="{DynamicResource Str.ScriptTools.RulesTitle}"
+				 Width="780" Height="680"
+				 MinWidth="640" MinHeight="520"
+				 ResizeMode="CanResize"
+				 ShowInTaskbar="False"
+				 WindowStartupLocation="CenterOwner"
+				 ExtendsContentIntoTitleBar="True"
+				 WindowBackdropType="Mica"
+				 Background="{DynamicResource ApplicationBackgroundBrush}"
+				 Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+	<Window.Resources>
+		<Style x:Key="HelpTerm" TargetType="TextBlock">
+			<Setter Property="FontWeight" Value="SemiBold" />
+			<Setter Property="Margin" Value="0,0,12,4" />
+			<Setter Property="VerticalAlignment" Value="Top" />
+		</Style>
+		<Style x:Key="HelpText" TargetType="TextBlock">
+			<Setter Property="TextWrapping" Value="Wrap" />
+			<Setter Property="Margin" Value="0,0,0,4" />
+			<Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+		</Style>
+		<Style x:Key="RuleRowStyle" TargetType="DataGridRow" BasedOn="{StaticResource DefaultDataGridRowStyle}">
+			<Setter Property="ToolTip" Value="{x:Null}" />
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding HasError}" Value="True">
+					<Setter Property="ToolTip" Value="{Binding Error}" />
+					<Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBackgroundBrush}" />
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="NumberCellStyle" TargetType="TextBlock">
+			<Setter Property="HorizontalAlignment" Value="Center" />
+		</Style>
+		<Style x:Key="TextEditStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+			<Setter Property="MinHeight" Value="0" />
+			<Setter Property="Padding" Value="6,3" />
+		</Style>
+		<Style x:Key="NumberEditStyle" TargetType="TextBox" BasedOn="{StaticResource TextEditStyle}">
+			<Setter Property="TextAlignment" Value="Center" />
+			<Setter Property="InputMethod.IsInputMethodEnabled" Value="False" />
+		</Style>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ui:TitleBar Grid.Row="0" Title="{DynamicResource Str.ScriptTools.RulesTitle}" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
+
+		<StackPanel Grid.Row="1" Margin="20,4,20,10">
+			<TextBlock TextWrapping="Wrap"
+					   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+					   Text="{DynamicResource Str.ScriptTools.RulesIntro}" />
+			<TextBlock Margin="0,6,0,0"
+					   TextWrapping="Wrap"
+					   FontSize="12"
+					   Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+					   Text="{Binding BuiltInSummary}" />
+		</StackPanel>
+
+		<Grid Grid.Row="2" Margin="20,0,20,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+				<ui:Button Content="{DynamicResource Str.ScriptTools.RulesAdd}"
+						   Icon="{ui:SymbolIcon Add24}"
+						   Command="{Binding AddRuleCommand}"
+						   ToolTip="{DynamicResource Str.ScriptTools.RulesAddTip}" />
+				<ui:Button Content="{DynamicResource Str.Common.Remove}"
+						   Icon="{ui:SymbolIcon Delete24}"
+						   Margin="8,0,0,0"
+						   Command="{Binding RemoveRuleCommand}"
+						   ToolTip="{DynamicResource Str.ScriptTools.RulesRemoveTip}" />
+			</StackPanel>
+			<DataGrid x:Name="RulesGrid"
+					  Grid.Row="1"
+					  ItemsSource="{Binding Rules}"
+					  SelectedItem="{Binding SelectedRule, Mode=TwoWay}"
+					  AutoGenerateColumns="False"
+					  CanUserAddRows="False"
+					  CanUserDeleteRows="False"
+					  CanUserResizeRows="False"
+					  CanUserReorderColumns="False"
+					  CanUserSortColumns="False"
+					  SelectionMode="Single"
+					  SelectionUnit="FullRow"
+					  HeadersVisibility="Column"
+					  GridLinesVisibility="Horizontal"
+					  RowStyle="{StaticResource RuleRowStyle}"
+					  AutomationProperties.Name="{DynamicResource Str.ScriptTools.RulesGridName}">
+				<DataGrid.InputBindings>
+					<KeyBinding Key="Delete" Command="{Binding RemoveRuleCommand}" />
+				</DataGrid.InputBindings>
+				<DataGrid.Columns>
+					<DataGridComboBoxColumn Header="{DynamicResource Str.Common.Type}"
+											Width="110"
+											ItemsSource="{x:Static vm:DialogueRuleItemViewModel.KindNames}"
+											SelectedItemBinding="{Binding Kind, UpdateSourceTrigger=PropertyChanged}" />
+					<DataGridTextColumn x:Name="NameColumn"
+										Header="{DynamicResource Str.ScriptTools.RulesColFunction}"
+										Width="*"
+										MinWidth="140"
+										Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+										EditingElementStyle="{StaticResource TextEditStyle}" />
+					<DataGridTextColumn Width="Auto" MinWidth="64"
+										Binding="{Binding TotalArgs, UpdateSourceTrigger=PropertyChanged}"
+										ElementStyle="{StaticResource NumberCellStyle}"
+										EditingElementStyle="{StaticResource NumberEditStyle}">
+						<DataGridTextColumn.Header>
+							<TextBlock Text="{DynamicResource Str.ScriptTools.RulesColArgs}" ToolTip="{DynamicResource Str.ScriptTools.RulesColArgsTip}" />
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Width="Auto" MinWidth="84"
+										Binding="{Binding MessageArg, UpdateSourceTrigger=PropertyChanged}"
+										ElementStyle="{StaticResource NumberCellStyle}"
+										EditingElementStyle="{StaticResource NumberEditStyle}">
+						<DataGridTextColumn.Header>
+							<TextBlock Text="{DynamicResource Str.ScriptTools.RulesColMessage}" ToolTip="{DynamicResource Str.ScriptTools.RulesColMessageTip}" />
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Width="Auto" MinWidth="64"
+										Binding="{Binding NodeArg, UpdateSourceTrigger=PropertyChanged}"
+										ElementStyle="{StaticResource NumberCellStyle}"
+										EditingElementStyle="{StaticResource NumberEditStyle}">
+						<DataGridTextColumn.Header>
+							<TextBlock Text="{DynamicResource Str.ScriptTools.RulesColNode}" ToolTip="{DynamicResource Str.ScriptTools.RulesColNodeTip}" />
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Width="Auto" MinWidth="64"
+										Binding="{Binding IqArg, UpdateSourceTrigger=PropertyChanged}"
+										ElementStyle="{StaticResource NumberCellStyle}"
+										EditingElementStyle="{StaticResource NumberEditStyle}">
+						<DataGridTextColumn.Header>
+							<TextBlock Text="{DynamicResource Str.ScriptTools.RulesColIq}" ToolTip="{DynamicResource Str.ScriptTools.RulesColIqTip}" />
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+					<DataGridTextColumn Width="Auto" MinWidth="64"
+										Binding="{Binding FileArg, UpdateSourceTrigger=PropertyChanged}"
+										ElementStyle="{StaticResource NumberCellStyle}"
+										EditingElementStyle="{StaticResource NumberEditStyle}">
+						<DataGridTextColumn.Header>
+							<TextBlock Text="{DynamicResource Str.ScriptTools.RulesColFile}" ToolTip="{DynamicResource Str.ScriptTools.RulesColFileTip}" />
+						</DataGridTextColumn.Header>
+					</DataGridTextColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
+
+		<Expander Grid.Row="3"
+				  Margin="20,12,20,0"
+				  Header="{DynamicResource Str.ScriptTools.RulesHelpHeader}"
+				  IsExpanded="False"
+				  HorizontalAlignment="Stretch"
+				  HorizontalContentAlignment="Stretch">
+			<Border Padding="14,10,14,6"
+					BorderThickness="1"
+					CornerRadius="6"
+					BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+					Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.Common.Type}" />
+					<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpType}" />
+					<TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesColArgs}" />
+					<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpArgs}" />
+					<TextBlock Grid.Row="2" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesColMessage}" />
+					<TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpMessage}" />
+					<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesColNode}" />
+					<TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpNode}" />
+					<TextBlock Grid.Row="4" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesColIq}" />
+					<TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpIq}" />
+					<TextBlock Grid.Row="5" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesColFile}" />
+					<TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpFile}" />
+					<TextBlock Grid.Row="6" Grid.Column="0" Style="{StaticResource HelpTerm}" Text="{DynamicResource Str.ScriptTools.RulesHelpExample}" />
+					<TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource HelpText}"
+							   Text="{DynamicResource Str.ScriptTools.RulesHelpExampleText}" />
+				</Grid>
+			</Border>
+		</Expander>
+
+		<ui:InfoBar Grid.Row="4"
+					Margin="20,12,20,0"
+					Severity="Error"
+					Title="{DynamicResource Str.ScriptTools.RulesInvalidRule}"
+					Message="{Binding ErrorMessage}"
+					IsOpen="{Binding HasError, Mode=OneWay}"
+					IsClosable="False" />
+
+		<StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,16,20,20">
+			<ui:Button Content="{DynamicResource Str.Common.Save}"
+					   Appearance="Primary"
+					   MinWidth="96"
+					   IsDefault="True"
+					   Click="OnSaveClick"
+					   Command="{Binding SaveCommand}" />
+			<ui:Button Content="{DynamicResource Str.Common.Cancel}"
+					   MinWidth="96"
+					   Margin="8,0,0,0"
+					   IsCancel="True"
+					   Command="{Binding CancelCommand}" />
+		</StackPanel>
+	</Grid>
+</ui:FluentWindow>

@@ -1,0 +1,393 @@
+<ui:FluentWindow FontSize="12" x:Class="FalloutScriptStudio.Views.ToolWindows.SettingsWindow"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+				 xmlns:local="clr-namespace:FalloutScriptStudio.Views.ToolWindows"
+				 Title="{DynamicResource Str.Common.Settings}"
+				 Width="920" Height="680" MinWidth="760" MinHeight="480"
+				 ShowInTaskbar="False"
+				 WindowStartupLocation="CenterOwner"
+				 ExtendsContentIntoTitleBar="True"
+				 WindowBackdropType="Mica"
+				 Background="{DynamicResource ApplicationBackgroundBrush}"
+				 Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+		<Style TargetType="local:SettingCard">
+			<Setter Property="Margin" Value="0,0,0,6" />
+			<Setter Property="Padding" Value="16,12" />
+			<Setter Property="IsTabStop" Value="False" />
+			<Setter Property="HorizontalContentAlignment" Value="Right" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="local:SettingCard">
+						<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+								BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+								BorderThickness="1" CornerRadius="4" Padding="{TemplateBinding Padding}">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+								<StackPanel VerticalAlignment="Center">
+									<TextBlock Text="{TemplateBinding Title}" TextWrapping="Wrap" />
+									<TextBlock x:Name="DescriptionText" Text="{TemplateBinding Description}" TextWrapping="Wrap"
+											   FontSize="12" Margin="0,2,0,0"
+											   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+								</StackPanel>
+								<ContentPresenter Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center"
+												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+							</Grid>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="Description" Value="">
+								<Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+							</Trigger>
+							<Trigger Property="IsEnabled" Value="False">
+								<Setter Property="Opacity" Value="0.6" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="PageTitle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="24" />
+			<Setter Property="FontWeight" Value="SemiBold" />
+			<Setter Property="Margin" Value="0,0,0,16" />
+		</Style>
+
+		<Style x:Key="SectionTitle" TargetType="TextBlock">
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="FontWeight" Value="SemiBold" />
+			<Setter Property="Margin" Value="0,12,0,8" />
+		</Style>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ui:TitleBar Grid.Row="0" Title="{DynamicResource Str.Common.Settings}" ShowMinimize="False" ShowMaximize="False">
+			<ui:TitleBar.Icon>
+				<ui:ImageIcon Source="pack://application:,,,/FalloutScriptStudio;component/Assets/Icons/app.ico" />
+			</ui:TitleBar.Icon>
+		</ui:TitleBar>
+
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" MinWidth="200" MaxWidth="300" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<ListBox Grid.Column="0" Margin="12,4,8,8"
+					 ItemsSource="{Binding Pages}"
+					 SelectedItem="{Binding SelectedPageItem, Mode=TwoWay}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<StackPanel Orientation="Horizontal" Margin="4,6">
+							<ui:SymbolIcon Symbol="{Binding Icon}" FontSize="18" />
+							<TextBlock Text="{Binding Title}" Margin="12,0,0,0" VerticalAlignment="Center" />
+						</StackPanel>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+
+			<Grid Grid.Column="1">
+				<!-- Appearance -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsAppearancePage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Appearance}" />
+						<local:SettingCard Title="{DynamicResource Str.Common.Theme}" Description="{DynamicResource Str.ToolWindows.Opt.Theme.Desc}">
+							<ComboBox MinWidth="240" ItemsSource="{Binding ThemeChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding SelectedTheme, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.EditorFont.Title}" Description="{DynamicResource Str.ToolWindows.Opt.EditorFont.Desc}">
+							<ComboBox MinWidth="240" ItemsSource="{Binding FontChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Draft.Editor.FontIndex, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.FontSize.Title}" Description="{DynamicResource Str.ToolWindows.Opt.FontSize.Desc}">
+							<ui:NumberBox Width="140" Value="{Binding FontSizeAdjustment, UpdateSourceTrigger=LostFocus}"
+										  Minimum="{Binding MinFontSizeAdjustment}" Maximum="{Binding MaxFontSizeAdjustment}"
+										  SmallChange="1" MaxDecimalPlaces="0" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowWhitespace.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowWhitespace.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShowTabCharacters}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.VerticalRuler.Title}" Description="{DynamicResource Str.ToolWindows.Opt.VerticalRuler.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShowVerticalRuler}" />
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Code editor -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsEditorPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Editor}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.TabsToSpaces.Title}" Description="{DynamicResource Str.ToolWindows.Opt.TabsToSpaces.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.TabsToSpaces}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.TabSize.Title}" Description="{DynamicResource Str.ToolWindows.Opt.TabSize.Desc}">
+							<ui:NumberBox Width="140" Value="{Binding TabSize, UpdateSourceTrigger=LostFocus}"
+										  Minimum="{Binding MinTabSize}" Maximum="{Binding MaxTabSize}"
+										  SmallChange="1" MaxDecimalPlaces="0" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Autocomplete.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Autocomplete.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.Autocomplete}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ColoredCompletion.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ColoredCompletion.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.AutocompleteColor}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.PairedChars.Title}" Description="{DynamicResource Str.ToolWindows.Opt.PairedChars.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.AutoInputPairedCharacters}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.TrimSpaces.Title}" Description="{DynamicResource Str.ToolWindows.Opt.TrimSpaces.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.AutoRemoveTrailingSpaces}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowTips.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowTips.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShowTips}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShortDescriptions.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShortDescriptions.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShortDescriptions}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SaveCaret.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SaveCaret.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.StoreLastPosition}" />
+						</local:SettingCard>
+
+						<TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Files}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Encoding.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Encoding.Desc}">
+							<ComboBox MinWidth="240" ItemsSource="{Binding EncodingChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Draft.Editor.FileEncoding, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SaveUtf8.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SaveUtf8.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.SaveScriptsAsUtf8}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Settings.FileAssociation}" Description="{Binding AssociationStatus}">
+							<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.Associate}" Command="{Binding AssociateFileTypesCommand}"
+									   ToolTip="{DynamicResource Str.ToolWindows.Tip.Associate}" />
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Parser -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsParserPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Parser}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ParserEnabled.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ParserEnabled.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding EnableParser}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ParserWarnings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ParserWarnings.Desc}" IsEnabled="{Binding IsParserWarningsEnabled}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ParserWarnings}" />
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Compiler -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsCompilerPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Compiler}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Desc}" IsEnabled="{Binding IsPreprocessorEnabled}">
+							<ComboBox MinWidth="260" ItemsSource="{Binding PreprocessorChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Draft.Compiler.Preprocessor, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.UseBatch.Title}" Description="{DynamicResource Str.ToolWindows.Opt.UseBatch.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding UseUserCommand}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}">
+							<ComboBox MinWidth="180" ItemsSource="{Binding OptimizationChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Draft.Compiler.Optimization, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.ShowWarnings}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.DebugInfo}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.ShortCircuit}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.BackwardCompatibility}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.SearchIncludePath}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding CompileToSourceDirectory}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowErrorLog.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowErrorLog.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.WarnOnFailedCompile}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.MultiThread.Title}" Description="{DynamicResource Str.ToolWindows.Opt.MultiThread.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.MultiThreadedBatch}" />
+						</local:SettingCard>
+
+						<TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.PreprocessorDefines}" />
+						<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+								BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+								BorderThickness="1" CornerRadius="4" Padding="16,12">
+							<StackPanel>
+								<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+										   Text="{DynamicResource Str.ToolWindows.PreprocessorDefines.Help}" />
+								<Grid Margin="0,10,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<ListBox Height="110" ItemsSource="{Binding PreprocessorDefineItems}" SelectedItem="{Binding SelectedPreprocessorDefine, Mode=TwoWay}" />
+									<StackPanel Grid.Column="1" Margin="10,0,0,0" Width="150">
+										<ui:TextBox PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NewDefine}" Text="{Binding NewPreprocessorDefine, UpdateSourceTrigger=PropertyChanged}">
+											<ui:TextBox.InputBindings>
+												<KeyBinding Key="Return" Command="{Binding AddPreprocessorDefineCommand}" />
+											</ui:TextBox.InputBindings>
+										</ui:TextBox>
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.AddDefine}" HorizontalAlignment="Stretch" Margin="0,6,0,0" Command="{Binding AddPreprocessorDefineCommand}" />
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.DeleteDefine}" HorizontalAlignment="Stretch" Margin="0,6,0,0" Command="{Binding RemovePreprocessorDefineCommand}" />
+									</StackPanel>
+								</Grid>
+							</StackPanel>
+						</Border>
+
+						<TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Decompiler}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Decompiler.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Decompiler.Desc}">
+							<ComboBox MinWidth="260" ItemsSource="{Binding DecompilerChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Decompiler, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ExternalDecompiler.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ExternalDecompiler.Desc}" IsEnabled="{Binding IsExternalDecompilerEnabled}">
+							<StackPanel Orientation="Horizontal">
+								<ui:TextBox Width="260" PlaceholderText="resources\int2ssl.exe" Text="{Binding ExternalDecompilerPath, UpdateSourceTrigger=PropertyChanged}" />
+								<ui:Button Margin="6,0,0,0" Icon="{ui:SymbolIcon Folder24}" ToolTip="{DynamicResource Str.ToolWindows.Settings.SelectInt2ssl}" Command="{Binding BrowseExternalDecompilerCommand}" />
+								<ui:Button Margin="4,0,0,0" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="{DynamicResource Str.Common.Clear}" Command="{Binding ClearExternalDecompilerPathCommand}" />
+							</StackPanel>
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.DecompileF1.Title}" Description="{DynamicResource Str.ToolWindows.Opt.DecompileF1.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.DecompileForFallout1}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OldDecompiler.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OldDecompiler.Desc}" IsEnabled="{Binding IsExternalDecompilerEnabled}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.UseLegacyDecompiler}" />
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Paths -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsPathsPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Paths}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OutputDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OutputDir.Desc}" IsEnabled="{Binding IsOutputDirectoryEnabled}">
+							<StackPanel Orientation="Horizontal">
+								<ui:TextBox Width="260" PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NotSet}" Text="{Binding OutputDirectory, UpdateSourceTrigger=PropertyChanged}" />
+								<ui:Button Margin="6,0,0,0" Icon="{ui:SymbolIcon Folder24}" ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" Command="{Binding BrowseOutputDirectoryCommand}" />
+								<ui:Button Margin="4,0,0,0" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="{DynamicResource Str.Common.Clear}" Command="{Binding ClearOutputDirectoryCommand}" />
+							</StackPanel>
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}">
+							<StackPanel Orientation="Horizontal">
+								<ui:TextBox Width="260" PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NotSet}" Text="{Binding HeadersDirectory, UpdateSourceTrigger=PropertyChanged}" />
+								<ui:Button Margin="6,0,0,0" Icon="{ui:SymbolIcon Folder24}" ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" Command="{Binding BrowseHeadersDirectoryCommand}" />
+								<ui:Button Margin="4,0,0,0" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="{DynamicResource Str.Common.Clear}" Command="{Binding ClearHeadersDirectoryCommand}" />
+							</StackPanel>
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}">
+							<StackPanel Orientation="Horizontal">
+								<ui:TextBox Width="260" PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NotSet}" Text="{Binding ScriptsHeaderFile, UpdateSourceTrigger=PropertyChanged}" />
+								<ui:Button Margin="6,0,0,0" Icon="{ui:SymbolIcon Document24}" ToolTip="{DynamicResource Str.ToolWindows.Tip.SelectFile}" Command="{Binding BrowseScriptsHeaderFileCommand}" />
+								<ui:Button Margin="4,0,0,0" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="{DynamicResource Str.Common.Clear}" Command="{Binding ClearScriptsHeaderFileCommand}" />
+							</StackPanel>
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ExternalEditor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ExternalEditor.Desc}">
+							<StackPanel Orientation="Horizontal">
+								<ui:TextBox Width="260" PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NotSet}" Text="{Binding ExternalEditorPath, UpdateSourceTrigger=PropertyChanged}" />
+								<ui:Button Margin="6,0,0,0" Icon="{ui:SymbolIcon Document24}" ToolTip="{DynamicResource Str.ToolWindows.Tip.SelectFile}" Command="{Binding BrowseExternalEditorCommand}" />
+								<ui:Button Margin="4,0,0,0" Icon="{ui:SymbolIcon Dismiss24}" ToolTip="{DynamicResource Str.Common.Clear}" Command="{Binding ClearExternalEditorPathCommand}" />
+							</StackPanel>
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Messages -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsMessagesPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Messages}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.MsgLanguage.Title}" Description="{DynamicResource Str.ToolWindows.Opt.MsgLanguage.Desc}">
+							<ui:TextBox Width="180" Text="{Binding Language, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="english" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OpenMsg.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OpenMsg.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Messages.AutoOpenMessageFiles}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OpenEditor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OpenEditor.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Messages.OpenEditorAutomatically}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.AssocById.Title}" Description="{DynamicResource Str.ToolWindows.Opt.AssocById.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Messages.AssociateByScriptId}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding HighlightComments}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CommentColor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CommentColor.Desc}" IsEnabled="{Binding IsCommentColorEnabled}">
+							<ComboBox MinWidth="180" ItemsSource="{Binding CommentColorChoices}" DisplayMemberPath="Text" SelectedValuePath="Value"
+									  SelectedValue="{Binding Draft.Messages.CommentColor, Mode=TwoWay}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowSound.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowSound.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Messages.ShowLipColumn}" />
+						</local:SettingCard>
+
+						<TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.MessagePaths}" />
+						<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+								BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+								BorderThickness="1" CornerRadius="4" Padding="16,12">
+							<StackPanel>
+								<TextBlock TextWrapping="Wrap" FontSize="12" Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+										   Text="{DynamicResource Str.ToolWindows.MessagePaths.Help}" />
+								<Grid Margin="0,10,0,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*" />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<ListBox Height="150" ItemsSource="{Binding MessagePaths}" SelectedItem="{Binding SelectedMessagePath, Mode=TwoWay}" />
+									<StackPanel Grid.Column="1" Margin="10,0,0,0">
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.AddPath}" HorizontalAlignment="Stretch" Command="{Binding AddMessagePathCommand}" />
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.DeletePath}" HorizontalAlignment="Stretch" Margin="0,6,0,0" Command="{Binding RemoveMessagePathCommand}" />
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.MoveUp}" HorizontalAlignment="Stretch" Margin="0,6,0,0" Command="{Binding MoveMessagePathUpCommand}" />
+										<ui:Button Content="{DynamicResource Str.ToolWindows.Btn.MoveDown}" HorizontalAlignment="Stretch" Margin="0,6,0,0" Command="{Binding MoveMessagePathDownCommand}" />
+									</StackPanel>
+								</Grid>
+							</StackPanel>
+						</Border>
+					</StackPanel>
+				</ScrollViewer>
+
+				<!-- Flowchart -->
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding IsFlowchartPage, Converter={StaticResource BoolToVisibility}}">
+					<StackPanel Margin="12,0,24,16">
+						<TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Page.Flowchart}" />
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.AutoUpdate.Title}" Description="{DynamicResource Str.ToolWindows.Opt.AutoUpdate.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Flowchart.AutoUpdate}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.AutoSave.Title}" Description="{DynamicResource Str.ToolWindows.Opt.AutoSave.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Flowchart.AutoSaveChart}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.AutoArrange.Title}" Description="{DynamicResource Str.ToolWindows.Opt.AutoArrange.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Flowchart.AutoArrange}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HideExit.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HideExit.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Flowchart.WithoutExitNode}" />
+						</local:SettingCard>
+						<local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HideNodes.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HideNodes.Desc}">
+							<ui:ToggleSwitch IsChecked="{Binding Draft.Flowchart.AutoHideNodes}" />
+						</local:SettingCard>
+					</StackPanel>
+				</ScrollViewer>
+			</Grid>
+		</Grid>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,8,24,16">
+			<ui:Button Content="{DynamicResource Str.Common.Ok}" Appearance="Primary" IsDefault="True" MinWidth="96" Command="{Binding OkCommand}" />
+			<ui:Button Content="{DynamicResource Str.Common.Cancel}" IsCancel="True" MinWidth="96" Margin="8,0,0,0" Command="{Binding CancelCommand}" />
+		</StackPanel>
+	</Grid>
+</ui:FluentWindow>

@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+
+	<sys:String x:Key="Str.Common.Theme">Motyw</sys:String>
+	<sys:String x:Key="Str.Common.ThemeSystem">Automatyczny (jak Windows)</sys:String>
+	<sys:String x:Key="Str.Common.ThemeLight">Jasny</sys:String>
+	<sys:String x:Key="Str.Common.ThemeDark">Ciemny</sys:String>
+	<sys:String x:Key="Str.Common.LanguageTip">Język</sys:String>
+	<sys:String x:Key="Str.Common.Ok">OK</sys:String>
+	<sys:String x:Key="Str.Common.Cancel">Anuluj</sys:String>
+	<sys:String x:Key="Str.Common.Yes">Tak</sys:String>
+	<sys:String x:Key="Str.Common.No">Nie</sys:String>
+	<sys:String x:Key="Str.Common.Close">Zamknij</sys:String>
+	<sys:String x:Key="Str.Common.Save">Zapisz</sys:String>
+	<sys:String x:Key="Str.Common.Browse">Przeglądaj...</sys:String>
+	<sys:String x:Key="Str.Common.Add">Dodaj</sys:String>
+	<sys:String x:Key="Str.Common.Remove">Usuń</sys:String>
+	<sys:String x:Key="Str.Common.Delete">Usuń</sys:String>
+	<sys:String x:Key="Str.Common.Clear">Wyczyść</sys:String>
+	<sys:String x:Key="Str.Common.Rename">Zmień nazwę</sys:String>
+	<sys:String x:Key="Str.Common.Copy">Kopiuj</sys:String>
+	<sys:String x:Key="Str.Common.Cut">Wytnij</sys:String>
+	<sys:String x:Key="Str.Common.Paste">Wklej</sys:String>
+	<sys:String x:Key="Str.Common.Undo">Cofnij</sys:String>
+	<sys:String x:Key="Str.Common.Redo">Ponów</sys:String>
+	<sys:String x:Key="Str.Common.SelectAll">Zaznacz wszystko</sys:String>
+	<sys:String x:Key="Str.Common.Search">Szukaj</sys:String>
+	<sys:String x:Key="Str.Common.Replace">Zamień</sys:String>
+	<sys:String x:Key="Str.Common.Error">Błąd</sys:String>
+	<sys:String x:Key="Str.Common.Warning">Ostrzeżenie</sys:String>
+	<sys:String x:Key="Str.Common.Name">Nazwa</sys:String>
+	<sys:String x:Key="Str.Common.Description">Opis</sys:String>
+	<sys:String x:Key="Str.Common.File">Plik</sys:String>
+	<sys:String x:Key="Str.Common.Line">Wiersz</sys:String>
+	<sys:String x:Key="Str.Common.Message">Komunikat</sys:String>
+	<sys:String x:Key="Str.Common.Type">Typ</sys:String>
+	<sys:String x:Key="Str.Common.Settings">Ustawienia</sys:String>
+	<sys:String x:Key="Str.Common.Help">Pomoc</sys:String>
+	<sys:String x:Key="Str.Common.About">O programie</sys:String>
+	<sys:String x:Key="Str.Common.Loading">Ładowanie...</sys:String>
+</ResourceDictionary>

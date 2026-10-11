@@ -1,0 +1,33 @@
+<Project>
+
+	<!--
+		Builds FalloutScriptStudio.ParserHost (the 32-bit process that hosts parser.dll) together with the project that imports this file
+		and copies its files into the output folder of that project, under $(ParserHostDestination) (empty = next to the executable).
+		The host is not referenced as an assembly: it is started as a separate process.
+	-->
+
+	<PropertyGroup>
+		<ParserHostProject>$(MSBuildThisFileDirectory)FalloutScriptStudio.ParserHost\FalloutScriptStudio.ParserHost.csproj</ParserHostProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="$(ParserHostProject)" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+	<Target Name="CopyParserHost" AfterTargets="Build" DependsOnTargets="ResolveProjectReferences">
+		<MSBuild Projects="$(ParserHostProject)" Targets="GetTargetPath" SkipNonexistentTargets="false">
+			<Output TaskParameter="TargetOutputs" PropertyName="ParserHostAssemblyPath" />
+		</MSBuild>
+		<PropertyGroup>
+			<ParserHostOutputDirectory>$([System.IO.Path]::GetDirectoryName('$(ParserHostAssemblyPath)'))\</ParserHostOutputDirectory>
+		</PropertyGroup>
+		<ItemGroup>
+			<ParserHostFile Include="$(ParserHostOutputDirectory)**\*" Condition="'$(ParserHostAssemblyPath)' != ''" />
+		</ItemGroup>
+		<Error Condition="'$(ParserHostAssemblyPath)' == ''" Text="The output of $(ParserHostProject) could not be located." />
+		<Copy SourceFiles="@(ParserHostFile)"
+			DestinationFiles="@(ParserHostFile->'$(OutDir)$(ParserHostDestination)%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true" />
+	</Target>
+
+</Project>

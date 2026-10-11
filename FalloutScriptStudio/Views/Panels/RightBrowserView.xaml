@@ -1,0 +1,27 @@
+<UserControl x:Class="FalloutScriptStudio.Views.Panels.RightBrowserView"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+			 xmlns:panels="clr-namespace:FalloutScriptStudio.Views.Panels">
+	<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+			BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+			BorderThickness="1,0,0,0">
+		<TabControl FontSize="12" SelectedIndex="{Binding RightTabIndex, Mode=TwoWay}"
+					Background="Transparent"
+					BorderThickness="0"
+					Padding="0">
+			<TabItem Header="{DynamicResource Str.Panels.TabProcedures}" ToolTip="{DynamicResource Str.Panels.TabTipProcedures}">
+				<panels:ProceduresPanelView DataContext="{Binding Procedures}" />
+			</TabItem>
+			<TabItem Header="{DynamicResource Str.Panels.TabVariables}" ToolTip="{DynamicResource Str.Panels.TabTipVariables}">
+				<panels:VariablesPanelView DataContext="{Binding Variables}" />
+			</TabItem>
+			<TabItem Header="{DynamicResource Str.Panels.TabFunctions}" ToolTip="{DynamicResource Str.Panels.TabTipFunctions}">
+				<panels:FunctionsPanelView DataContext="{Binding Functions}" />
+			</TabItem>
+			<TabItem Header="{DynamicResource Str.Panels.TabSolution}" ToolTip="{DynamicResource Str.Panels.TabTipSolution}">
+				<panels:ProjectExplorerView DataContext="{Binding Project}" />
+			</TabItem>
+		</TabControl>
+	</Border>
+</UserControl>

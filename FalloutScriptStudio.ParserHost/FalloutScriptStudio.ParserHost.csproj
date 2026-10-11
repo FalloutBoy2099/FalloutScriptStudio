@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<!-- parser.dll (the sfall compiler front end) is a 32-bit library, so this process has to be 32-bit. -->
+		<PlatformTarget>x86</PlatformTarget>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
+		<SelfContained>false</SelfContained>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<AppendPlatformToOutputPath>false</AppendPlatformToOutputPath>
+		<RootNamespace>FalloutScriptStudio.ParserHost</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AssemblyName>FalloutScriptStudio.ParserHost</AssemblyName>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<InvariantGlobalization>false</InvariantGlobalization>
+		<AssemblyVersion>2026.10.11.2</AssemblyVersion>
+		<FileVersion>2026.10.11.2</FileVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FalloutScriptStudio.Core\FalloutScriptStudio.Core.csproj" />
+	</ItemGroup>
+
+</Project>

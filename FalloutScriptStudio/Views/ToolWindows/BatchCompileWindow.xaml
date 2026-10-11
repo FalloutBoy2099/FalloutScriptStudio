@@ -1,0 +1,99 @@
+<ui:FluentWindow FontSize="12" x:Class="FalloutScriptStudio.Views.ToolWindows.BatchCompileWindow"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+				 Title="{Binding Title}"
+				 Width="780" Height="620" MinWidth="560" MinHeight="460"
+				 ShowInTaskbar="False"
+				 WindowStartupLocation="CenterOwner"
+				 ExtendsContentIntoTitleBar="True"
+				 WindowBackdropType="Mica"
+				 Background="{DynamicResource ApplicationBackgroundBrush}"
+				 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+				 Closing="OnClosing">
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ui:TitleBar Grid.Row="0" Title="{Binding Title}" ShowMinimize="False" ShowMaximize="False" />
+
+		<Grid Grid.Row="1" Margin="20,8,20,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0">
+				<TextBlock Text="{Binding StatusText}" FontSize="16" FontWeight="SemiBold" />
+				<TextBlock Margin="0,4,0,0" TextTrimming="CharacterEllipsis"
+						   Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+					<Run Text="{DynamicResource Str.ToolWindows.Batch.LastFinished}" />
+					<Run Text="{Binding CurrentFile, Mode=OneWay}" />
+				</TextBlock>
+			</StackPanel>
+
+			<ProgressBar Grid.Row="1" Margin="0,12,0,0" Height="6"
+						 Minimum="0" Maximum="{Binding Total}" Value="{Binding Completed, Mode=OneWay}" />
+
+			<StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,8,0,12">
+				<TextBlock Text="{Binding ProgressText}" />
+				<TextBlock Text="{Binding CompiledText}" Margin="24,0,0,0" />
+				<TextBlock Text="{Binding FailedText}" Margin="24,0,0,0" />
+			</StackPanel>
+
+			<Grid Grid.Row="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="240" MinWidth="140" />
+					<ColumnDefinition Width="12" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Str.ToolWindows.Batch.FailedScripts}" FontWeight="SemiBold" Margin="0,0,0,6" />
+				<TextBlock Grid.Row="0" Grid.Column="2" Text="{DynamicResource Str.ToolWindows.Batch.CompilerOutput}" FontWeight="SemiBold" Margin="0,0,0,6" />
+
+				<ListBox Grid.Row="1" Grid.Column="0"
+						 ItemsSource="{Binding Failures}"
+						 SelectedItem="{Binding SelectedFailure, Mode=TwoWay}">
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<TextBlock Text="{Binding FileName}" ToolTip="{Binding ScriptPath}" Margin="2,2" />
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+
+				<TextBox Grid.Row="1" Grid.Column="2"
+						 Text="{Binding SelectedFailure.Output, Mode=OneWay}"
+						 IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
+						 FontFamily="Consolas" FontSize="12"
+						 HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
+			</Grid>
+
+			<TextBox x:Name="LogBox" Grid.Row="4" Margin="0,12,0,0" Height="110"
+					 TextChanged="OnLogChanged"
+					 Text="{Binding LogText, Mode=OneWay}"
+					 IsReadOnly="True" AcceptsReturn="True" TextWrapping="NoWrap"
+					 FontFamily="Consolas" FontSize="12"
+					 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" />
+		</Grid>
+
+		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,12,20,16">
+			<ui:Button Content="{DynamicResource Str.Common.Cancel}" MinWidth="96" Command="{Binding CancelCommand}"
+					   Visibility="{Binding IsRunning, Converter={StaticResource BoolToVisibility}}" />
+			<ui:Button Content="{DynamicResource Str.Common.Close}" MinWidth="96" Appearance="Primary" IsDefault="True" Command="{Binding CloseCommand}"
+					   Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}" />
+		</StackPanel>
+	</Grid>
+</ui:FluentWindow>

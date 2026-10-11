@@ -1,0 +1,174 @@
+<ui:FluentWindow FontSize="12" x:Class="FalloutScriptStudio.Views.ScriptTools.Dialogs.MacroRenamePreviewWindow"
+				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+				 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+				 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.ScriptTools.Dialogs"
+				 Title="{Binding Title}"
+				 Width="760" Height="640"
+				 MinWidth="560" MinHeight="420"
+				 ResizeMode="CanResize"
+				 ShowInTaskbar="False"
+				 WindowStartupLocation="CenterOwner"
+				 ExtendsContentIntoTitleBar="True"
+				 WindowBackdropType="Mica"
+				 Background="{DynamicResource ApplicationBackgroundBrush}"
+				 Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+	<Window.Resources>
+		<DataTemplate x:Key="SectionTemplate" DataType="{x:Type vm:MacroRenameNodeViewModel}">
+			<StackPanel Orientation="Horizontal">
+				<CheckBox IsChecked="{Binding IsChecked}" IsThreeState="False" MinWidth="0" MinHeight="0" Height="20" Padding="0" Focusable="False" VerticalAlignment="Center" Margin="0,0,6,0" />
+				<TextBlock Text="{Binding Header}" FontWeight="SemiBold" VerticalAlignment="Center" />
+				<TextBlock Text="{Binding CountText}" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+			</StackPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="FileTemplate" DataType="{x:Type vm:MacroRenameNodeViewModel}">
+			<StackPanel Orientation="Horizontal" ToolTip="{Binding FilePath}">
+				<CheckBox IsChecked="{Binding IsChecked}" IsThreeState="False" MinWidth="0" MinHeight="0" Height="20" Padding="0" Focusable="False" VerticalAlignment="Center" Margin="0,0,6,0" />
+				<TextBlock Text="{Binding Header}" FontWeight="SemiBold" VerticalAlignment="Center" />
+				<TextBlock Text="{Binding CountText}" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+				<TextBlock Text="{Binding Detail}" Margin="10,0,0,0" VerticalAlignment="Center" MaxWidth="360" TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+			</StackPanel>
+		</DataTemplate>
+		<DataTemplate x:Key="MatchTemplate" DataType="{x:Type vm:MacroRenameNodeViewModel}">
+			<StackPanel Orientation="Horizontal">
+				<CheckBox IsChecked="{Binding IsChecked}" IsThreeState="False" MinWidth="0" MinHeight="0" Height="20" Padding="0" Focusable="False" VerticalAlignment="Center" Margin="0,0,6,0" />
+				<TextBlock Text="{Binding Header}" Width="64" VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				<TextBlock FontFamily="Consolas" FontSize="13" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="560" ToolTip="{Binding Match.PreviewText}">
+					<Run Text="{Binding MatchText, Mode=OneWay}" FontWeight="Bold" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" /><Run Text="{Binding RestText, Mode=OneWay}" />
+				</TextBlock>
+			</StackPanel>
+		</DataTemplate>
+		<Style x:Key="NodeContentStyle" TargetType="ContentControl">
+			<Setter Property="ContentTemplate" Value="{StaticResource MatchTemplate}" />
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Kind}" Value="Section">
+					<Setter Property="ContentTemplate" Value="{StaticResource SectionTemplate}" />
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Kind}" Value="File">
+					<Setter Property="ContentTemplate" Value="{StaticResource FileTemplate}" />
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="DefinitionText" TargetType="TextBlock">
+			<Setter Property="FontFamily" Value="Consolas" />
+			<Setter Property="FontSize" Value="13" />
+			<Setter Property="TextTrimming" Value="CharacterEllipsis" />
+		</Style>
+	</Window.Resources>
+
+	<Window.InputBindings>
+		<KeyBinding Gesture="Ctrl+Return" Command="{Binding ApplyCommand}" />
+	</Window.InputBindings>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ui:TitleBar Grid.Row="0" Title="{Binding Title}" ShowMinimize="False" ShowMaximize="False" CanMaximize="False" />
+
+		<Border Grid.Row="1"
+				Margin="20,4,20,0"
+				Padding="14,10,14,10"
+				BorderThickness="1"
+				CornerRadius="6"
+				BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+				Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource Str.ScriptTools.MacroBefore}" Margin="0,0,14,4" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource DefinitionText}" Text="{Binding OldDefinition}" ToolTip="{Binding OldDefinition}" Margin="0,0,0,4" />
+				<TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource Str.ScriptTools.MacroAfter}" Margin="0,0,14,0" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+				<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource DefinitionText}" Text="{Binding NewDefinition}" ToolTip="{Binding NewDefinition}" FontWeight="SemiBold" Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+				<TextBlock Grid.Row="2" Grid.Column="1" Margin="0,6,0,0" FontSize="12" TextTrimming="CharacterEllipsis"
+						   Text="{Binding DeclaredAtCaption}"
+						   ToolTip="{Binding DeclaredAt}"
+						   Foreground="{DynamicResource TextFillColorTertiaryBrush}">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding DeclaredAt}" Value="">
+									<Setter Property="Visibility" Value="Collapsed" />
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+			</Grid>
+		</Border>
+
+		<Grid Grid.Row="2" Margin="20,14,20,8">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<StackPanel Grid.Column="0" Orientation="Horizontal">
+				<ui:Button Content="{DynamicResource Str.Common.SelectAll}" Command="{Binding SelectAllCommand}" />
+				<ui:Button Content="{DynamicResource Str.ScriptTools.MacroDeselectAll}" Margin="8,0,0,0" Command="{Binding DeselectAllCommand}" />
+			</StackPanel>
+			<TextBlock Grid.Column="1"
+					   Margin="16,0,0,0"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Center"
+					   Text="{Binding Summary}"
+					   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+		</Grid>
+
+		<Border Grid.Row="3"
+				Margin="20,0,20,0"
+				BorderThickness="1"
+				CornerRadius="6"
+				BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+				Background="{DynamicResource CardBackgroundFillColorDefaultBrush}">
+			<TreeView x:Name="MatchTree"
+					  ItemsSource="{Binding Sections}"
+					  BorderThickness="0"
+					  Background="Transparent"
+					  Padding="4"
+					  VirtualizingPanel.IsVirtualizing="True"
+					  VirtualizingPanel.VirtualizationMode="Recycling"
+					  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					  KeyDown="OnTreeKeyDown"
+					  AutomationProperties.Name="{DynamicResource Str.ScriptTools.MacroTreeName}">
+				<TreeView.ItemContainerStyle>
+					<Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+						<Setter Property="MinHeight" Value="0" />
+						<Setter Property="Padding" Value="0,2" />
+					</Style>
+				</TreeView.ItemContainerStyle>
+				<TreeView.ItemTemplate>
+					<HierarchicalDataTemplate DataType="{x:Type vm:MacroRenameNodeViewModel}" ItemsSource="{Binding Children}">
+						<ContentControl Content="{Binding}" Style="{StaticResource NodeContentStyle}" Focusable="False" />
+					</HierarchicalDataTemplate>
+				</TreeView.ItemTemplate>
+			</TreeView>
+		</Border>
+
+		<StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20,16,20,20">
+			<ui:Button Content="{DynamicResource Str.Common.Rename}"
+					   Appearance="Primary"
+					   MinWidth="96"
+					   IsDefault="True"
+					   Command="{Binding ApplyCommand}"
+					   ToolTip="{DynamicResource Str.ScriptTools.MacroRenameTip}" />
+			<ui:Button Content="{DynamicResource Str.Common.Cancel}"
+					   MinWidth="96"
+					   Margin="8,0,0,0"
+					   IsCancel="True"
+					   Command="{Binding CancelCommand}" />
+		</StackPanel>
+	</Grid>
+</ui:FluentWindow>

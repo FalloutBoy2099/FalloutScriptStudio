@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>FalloutScriptStudio.Core.Tests</RootNamespace>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit" />
+		<PackageReference Include="xunit.runner.visualstudio" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FalloutScriptStudio.Core\FalloutScriptStudio.Core.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup>
+		<!-- The tests start the real host from a sub-folder of the test output. -->
+		<ParserHostDestination>ParserHost\</ParserHostDestination>
+		<AssemblyVersion>2026.10.11.2</AssemblyVersion>
+		<FileVersion>2026.10.11.2</FileVersion>
+	</PropertyGroup>
+
+	<Import Project="..\ParserHost.targets" />
+
+</Project>
+

@@ -1,0 +1,19 @@
+<Project>
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Authors>Kain</Authors>
+		<Company>Kain</Company>
+		<Product>Fallout Script Studio</Product>
+		<Copyright>Kain</Copyright>
+		<Version>1.0.0</Version>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+		<AnalysisLevel>latest</AnalysisLevel>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<WarningsAsErrors>$(WarningsAsErrors);IDE0049;IDE0065</WarningsAsErrors>
+	</PropertyGroup>
+
+</Project>
+
