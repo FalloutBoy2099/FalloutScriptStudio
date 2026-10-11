@@ -18,6 +18,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private HashSet<String> _procedures = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
 		private SyntaxTheme? _theme;
 		private HighlightingKind? _kind;
+		private Boolean _attached;
 
 		public HighlightingController(EditorContext context)
 		{
@@ -26,6 +27,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Attach()
 		{
+			this._attached = true;
 			this.Update(true);
 			if (this._context.Services.UserMacros is not null)
 			{
@@ -35,6 +37,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Dispose()
 		{
+			this._attached = false;
 			this._context.Services.UserMacrosChanged -= this.OnUserMacrosChanged;
 		}
 
@@ -124,7 +127,13 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private void OnUserMacrosChanged(Object? sender, EventArgs e)
 		{
-			this._context.Editor.Dispatcher.BeginInvoke(new Action(() => this.Update()));
+			this._context.Editor.Dispatcher.BeginInvoke(new Action(() =>
+			{
+				if (this._attached)
+				{
+					this.Update();
+				}
+			}));
 		}
 	}
 }

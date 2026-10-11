@@ -7,6 +7,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 	using FalloutScriptStudio.Editor.Highlighting;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.MessageEditor;
+	using FalloutScriptStudio.TestSupport;
 	using FalloutScriptStudio.ViewModels.MessageEditor;
 	using Microsoft.Extensions.DependencyInjection;
 	using Xunit;
@@ -27,7 +28,8 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 		{
 			StaTestRunner.Run(() =>
 			{
-				using ServiceProvider provider = BuildProvider(new FakeSettingsService(), new FakeDialogService());
+				using TestFolder folder = new TestFolder("msgeditor-app");
+				using ServiceProvider provider = BuildProvider(new FakeSettingsService(folder.Path), new FakeDialogService());
 
 				IMessageEditorService service = provider.GetRequiredService<IMessageEditorService>();
 				MessageEditorViewModel first = provider.GetRequiredService<MessageEditorViewModel>();
@@ -49,7 +51,8 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 			StaTestRunner.Run(() =>
 			{
 				FakeDialogService dialogs = new FakeDialogService();
-				using ServiceProvider provider = BuildProvider(new FakeSettingsService(), dialogs);
+				using TestFolder folder = new TestFolder("msgeditor-app");
+				using ServiceProvider provider = BuildProvider(new FakeSettingsService(folder.Path), dialogs);
 
 				Assert.Same(dialogs, provider.GetRequiredService<IDialogService>());
 			});

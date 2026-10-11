@@ -30,8 +30,22 @@ namespace FalloutScriptStudio.Workspace
 		/// <summary>Saves every modified document. Returns false when one could not be saved.</summary>
 		Task<Boolean> SaveAllAsync();
 
-		/// <summary>Closes all tabs except one (asking to save). Returns false when the user cancelled.</summary>
-		Task<Boolean> CloseAllAsync(DocumentViewModel? except = null);
+		/// <summary>
+		/// Closes all tabs except one. Every "save the changes?" question is asked first; only when none was cancelled are the chosen
+		/// documents saved and the tabs closed, so a cancellation leaves everything as it was.
+		/// </summary>
+		/// <param name="except">The tab that stays open, or <see langword="null"/>.</param>
+		/// <param name="beforeClosing">A step that runs once the user answered all questions and before anything is saved or closed (for example closing the Message Editor windows); returning <see langword="false"/> cancels the whole operation.</param>
+		/// <returns><see langword="false"/> when the user cancelled or a document could not be saved.</returns>
+		Task<Boolean> CloseAllAsync(DocumentViewModel? except = null, Func<Task<Boolean>>? beforeClosing = null);
+
+		/// <summary>
+		/// Runs an operation that nobody waits for (or whose failure must not escape): an exception is written to the log and to the
+		/// status bar instead of being lost. The returned task never fails.
+		/// </summary>
+		/// <param name="operation">The operation.</param>
+		/// <returns>A task that completes when the operation ended.</returns>
+		Task GuardAsync(Func<Task> operation);
 
 		/// <summary>Reloads a document from disk, keeping the caret line.</summary>
 		Task<Boolean> ReloadAsync(DocumentViewModel document);

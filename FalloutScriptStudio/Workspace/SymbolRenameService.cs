@@ -28,6 +28,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IScriptToolService _scriptTools;
 		private readonly IDialogueDialogsService _dialogsService;
 		private readonly ISettingsService _settings;
+		private readonly IDocumentFileWriter _writer;
 
 		/// <summary>Initializes the service.</summary>
 		public SymbolRenameService(
@@ -35,7 +36,8 @@ namespace FalloutScriptStudio.Workspace
 			IDialogService dialogs,
 			IScriptToolService scriptTools,
 			IDialogueDialogsService dialogsService,
-			ISettingsService settings)
+			ISettingsService settings,
+			IDocumentFileWriter? writer = null)
 		{
 			ArgumentNullException.ThrowIfNull(refactoring);
 			ArgumentNullException.ThrowIfNull(dialogs);
@@ -47,6 +49,7 @@ namespace FalloutScriptStudio.Workspace
 			this._scriptTools = scriptTools;
 			this._dialogsService = dialogsService;
 			this._settings = settings;
+			this._writer = writer ?? new AtomicDocumentFileWriter();
 		}
 
 		public async Task<Boolean> RenameAsync(IWorkspaceManager workspace, DocumentViewModel document, IScriptSymbol symbol)
@@ -61,7 +64,8 @@ namespace FalloutScriptStudio.Workspace
 				return false;
 			}
 
-			if (document.ProgramInfo is null || document.NeedsParse)
+			ProgramInfo? previousInfo = document.ProgramInfo;
+			if (previousInfo is null || document.NeedsParse)
 			{
 				await workspace.RequestParseAsync(document, true);
 			}
@@ -70,6 +74,22 @@ namespace FalloutScriptStudio.Workspace
 			if (info is null)
 			{
 				return false;
+			}
+
+			if (!ReferenceEquals(info, previousInfo))
+			{
+				// The symbol (for example the one of the procedures tree) belongs to the parse before the text changed: its lines and
+				// references are out of date, so the symbol of the new parse takes its place.
+				IScriptSymbol? current = FindSymbol(info, symbol);
+				if (current is not null)
+				{
+					symbol = current;
+				}
+				else if (previousInfo is not null)
+				{
+					await this._dialogs.ShowWarningAsync(Loc.Get("Str.Common.Rename"), Loc.Get("Str.Shell.Dlg.CannotRename"));
+					return false;
+				}
 			}
 
 			Boolean isMacro = symbol is ScriptMacro;
@@ -137,7 +157,7 @@ namespace FalloutScriptStudio.Workspace
 				return false;
 			}
 
-			Int32 changed = await this.ApplyAsync(workspace, document, result);
+			Int32 changed = await this.ApplyAsync(workspace, document, result, documents);
 			String status = Loc.Format("Str.Shell.Output.Renamed", symbol.Name, newName, result.EditCount, result.Files.Count);
 			if (result.UnresolvedReferences.Count > 0)
 			{
@@ -175,6 +195,31 @@ namespace FalloutScriptStudio.Workspace
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
 				// The file stays out of the rename; the Core service reports that the defining file was not supplied.
+			}
+		}
+
+		/// <summary>Finds the symbol of a new parse that stands for a symbol of an older parse of the same script.</summary>
+		private static IScriptSymbol? FindSymbol(ProgramInfo info, IScriptSymbol symbol)
+		{
+			switch (symbol)
+			{
+				case ScriptProcedure procedure:
+					return info.Procedures.FirstOrDefault(p => String.Equals(p.Name, procedure.Name, StringComparison.OrdinalIgnoreCase));
+				case ScriptMacro macro:
+					if (info.ScriptMacros.TryGetValue(macro.Token, out ScriptMacro? local))
+					{
+						return local;
+					}
+
+					return info.GlobalMacros.TryGetValue(macro.Token, out ScriptMacro? shared) ? shared : null;
+				case ScriptVariable variable:
+					return info.Variables.Concat(info.Procedures.SelectMany(p => p.Variables))
+						.Where(v => v.Scope == variable.Scope && String.Equals(v.Name, variable.Name, StringComparison.OrdinalIgnoreCase))
+						.OrderBy(v => String.Equals(v.DeclaredFile, variable.DeclaredFile, StringComparison.OrdinalIgnoreCase) ? 0 : 1)
+						.ThenBy(v => Math.Abs(v.DeclaredLine - variable.DeclaredLine))
+						.FirstOrDefault();
+				default:
+					return null;
 			}
 		}
 
@@ -259,30 +304,76 @@ namespace FalloutScriptStudio.Workspace
 			}
 		}
 
-		private async Task<Int32> ApplyAsync(IWorkspaceManager workspace, DocumentViewModel current, RenameResult result)
+		private async Task<Int32> ApplyAsync(IWorkspaceManager workspace, DocumentViewModel current, RenameResult result, IReadOnlyList<RefactorDocument> documents)
 		{
-			Int32 changed = 0;
-			List<DocumentViewModel> touched = new List<DocumentViewModel>();
+			// The edits are offsets into the texts the rename was computed on (before the dialogs); any file that is not exactly
+			// that text any more would be corrupted, so everything is checked before the first file is touched.
+			Dictionary<String, String> computedOn = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+			foreach (RefactorDocument source in documents)
+			{
+				computedOn.TryAdd(source.Path, source.Text);
+			}
+
+			Encoding fallback = this._settings.Settings.Editor.FileEncoding.ToEncoding();
+			List<(FileEdits File, DocumentViewModel? Open, DecodedText? Disk)> plan = new List<(FileEdits, DocumentViewModel?, DecodedText?)>();
+			List<String> problems = new List<String>();
 			foreach (FileEdits file in result.Files)
 			{
+				computedOn.TryGetValue(file.Path, out String? expected);
 				DocumentViewModel? open = String.Equals(file.Path, UnsavedPath, StringComparison.Ordinal) ? current : workspace.FindDocument(file.Path);
 				if (open is not null)
 				{
-					open.TextDocument.ApplyEdits(file.Edits);
-					touched.Add(open);
-					changed++;
+					if (expected is not null && !String.Equals(open.TextDocument.Text, expected, StringComparison.Ordinal))
+					{
+						problems.Add(Loc.Format("Str.Shell.Dlg.RenameFileChanged", file.Path));
+					}
+
+					plan.Add((file, open, null));
 					continue;
 				}
 
 				try
 				{
-					DecodedText decoded = DocumentTextCodec.Decode(await File.ReadAllBytesAsync(file.Path), this._settings.Settings.Editor.FileEncoding.ToEncoding());
-					await File.WriteAllTextAsync(file.Path, file.ApplyTo(decoded.Text), decoded.Encoding);
-					changed++;
+					DecodedText decoded = DocumentTextCodec.Decode(await File.ReadAllBytesAsync(file.Path), fallback);
+					if (expected is not null && !String.Equals(decoded.Text, expected, StringComparison.Ordinal))
+					{
+						problems.Add(Loc.Format("Str.Shell.Dlg.RenameFileChanged", file.Path));
+					}
+
+					plan.Add((file, null, decoded));
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{
-					await this._dialogs.ShowErrorAsync(Loc.Get("Str.Common.Rename"), Loc.Format("Str.Shell.Dlg.RenameFileFailed", file.Path, ex.Message));
+					problems.Add(Loc.Format("Str.Shell.Dlg.RenameFileFailed", file.Path, ex.Message));
+				}
+			}
+
+			if (problems.Count > 0)
+			{
+				await this._dialogs.ShowWarningAsync(Loc.Get("Str.Common.Rename"), Loc.Get("Str.Shell.Dlg.RenameAborted") + "\n\n" + String.Join("\n\n", problems));
+				return 0;
+			}
+
+			List<String> modified = new List<String>();
+			List<DocumentViewModel> touched = new List<DocumentViewModel>();
+			foreach ((FileEdits file, DocumentViewModel? open, DecodedText? disk) in plan)
+			{
+				if (open is not null)
+				{
+					open.TextDocument.ApplyEdits(file.Edits);
+					touched.Add(open);
+					modified.Add(file.Path);
+					continue;
+				}
+
+				try
+				{
+					await this._writer.WriteAsync(file.Path, DocumentTextCodec.Encode(disk!.Encoding, file.ApplyTo(disk.Text)));
+					modified.Add(file.Path);
+				}
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+				{
+					problems.Add(Loc.Format("Str.Shell.Dlg.RenameFileFailed", file.Path, ex.Message));
 				}
 			}
 
@@ -291,7 +382,14 @@ namespace FalloutScriptStudio.Workspace
 				await workspace.RequestParseAsync(document, true);
 			}
 
-			return changed;
+			if (problems.Count > 0)
+			{
+				// Some files are renamed and some are not: say exactly which, so the user can finish or undo the rename by hand.
+				String report = modified.Count > 0 ? Loc.Format("Str.Shell.Dlg.RenamePartial", String.Join("\n", modified)) + "\n\n" : String.Empty;
+				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Common.Rename"), report + String.Join("\n\n", problems));
+			}
+
+			return modified.Count;
 		}
 
 		private async Task<String?> AskNewNameAsync(IScriptSymbol symbol, ProgramInfo info, DocumentViewModel document, IReadOnlyList<RefactorDocument> documents)

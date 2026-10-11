@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.Core.Tests.TextTools
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Text.RegularExpressions;
 	using FalloutScriptStudio.Core.TextTools;
 	using Xunit;
 
@@ -176,6 +177,58 @@ namespace FalloutScriptStudio.Core.Tests.TextTools
 
 			Assert.Equal("procedure Bar; call Bar; x := Foo;", result.NewText);
 			Assert.Equal("Bar; Bar; x := Foo;", TextReplacer.Replace(regex, text, "Bar", false).NewText);
+		}
+
+		[Fact]
+		public void FindPrevious_WholeWord_CaretInsideAWord_DoesNotFindThePrefixOfThatWord()
+		{
+			var query = new SearchQuery("foo") { WholeWord = true };
+
+			Assert.Equal(new TextSpan(0, 3), this._searcher.FindPrevious("foo foobar", query, 7, false));
+			Assert.Null(this._searcher.FindPrevious("foobar", query, 3, false));
+			Assert.Null(this._searcher.FindPrevious("foobar", query, 3, true));
+		}
+
+		[Fact]
+		public void FindPrevious_Regex_LookaheadSeesTheTextAfterTheOffset()
+		{
+			var query = new SearchQuery("foo(?!bar)") { UseRegex = true };
+
+			Assert.Null(this._searcher.FindPrevious("foobar", query, 3, false));
+			Assert.Equal(new TextSpan(7, 3), this._searcher.FindPrevious("foobar foo", query, 10, false));
+		}
+
+		[Fact]
+		public void FindPrevious_WholeWord_MatchEndingExactlyAtTheOffsetIsFound()
+		{
+			var query = new SearchQuery("foo") { WholeWord = true };
+
+			Assert.Equal(new TextSpan(0, 3), this._searcher.FindPrevious("foo bar", query, 3, false));
+		}
+
+		[Fact]
+		public void MatchTimeout_HasASafeDefault()
+		{
+			TimeSpan timeout = new SearchQuery("x") { UseRegex = true }.MatchTimeout;
+
+			Assert.True(timeout > TimeSpan.Zero && timeout <= TimeSpan.FromSeconds(5));
+			Assert.Equal(timeout, new SearchQuery("x") { UseRegex = true }.CreateRegex()!.MatchTimeout);
+			Assert.Equal(timeout, new SearchQuery("x") { WholeWord = true }.CreateRegex()!.MatchTimeout);
+		}
+
+		[Fact]
+		public void CatastrophicRegex_ThrowsATimeoutExceptionInsteadOfHanging()
+		{
+			String text = new String('a', 45) + "c";
+			var query = new SearchQuery("(a+)+b") { UseRegex = true, MatchTimeout = TimeSpan.FromMilliseconds(50) };
+
+			Assert.True(query.TryValidate(out String? _));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.FindNext(text, query, 0, true));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.FindPrevious(text, query, text.Length, true));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.FindAll(text, query));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.IsMatch(text, query));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.FindAllLines(text, "f.ssl", query));
+			Assert.Throws<RegexMatchTimeoutException>(() => this._searcher.ReplaceAll(text, query, "x"));
 		}
 	}
 }

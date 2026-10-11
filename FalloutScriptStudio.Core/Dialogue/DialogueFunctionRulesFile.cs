@@ -2,13 +2,14 @@ namespace FalloutScriptStudio.Core.Dialogue
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
 	using System.Linq;
 
 	/// <summary>
 	/// The text format of the user's dialogue rules (<c>DialogFunc.cfg</c>): one rule per line,
 	/// <c>Type, Name, CountArgs, MsgLine, MsgFile, Node, IQ</c> with one-based argument positions (0 = not used).
-	/// Lines that are empty or start with <c>;</c> are comments.
+	/// Lines that are empty or start with <c>;</c> are comments. Saving keeps the comments and the lines that are not valid rules.
 	/// </summary>
 	public static class DialogueFunctionRulesFile
 	{
@@ -25,37 +26,10 @@ namespace FalloutScriptStudio.Core.Dialogue
 			var rules = new List<DialogueFunctionRule>();
 			foreach (String raw in lines)
 			{
-				String line = raw.TrimStart();
-				if (line.Length == 0 || line[0] == ';')
+				if (TryParseRule(raw, out DialogueFunctionRule? rule))
 				{
-					continue;
+					rules.Add(rule);
 				}
-
-				String[] fields = line.Split(',');
-				if (fields.Length < 7)
-				{
-					continue;
-				}
-
-				DialogueOpcode opcode = DialogueOpcodeExtensions.ParseRuleKind(fields[0]);
-				if (opcode == DialogueOpcode.None || fields[1].Trim().Length == 0)
-				{
-					continue;
-				}
-
-				Int32[] numbers = new Int32[5];
-				Boolean valid = true;
-				for (Int32 i = 0; i < numbers.Length; i++)
-				{
-					valid &= Int32.TryParse(fields[i + 2].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out numbers[i]);
-				}
-
-				if (!valid || numbers[0] < 1 || numbers.Any(n => n < 0))
-				{
-					continue;
-				}
-
-				rules.Add(DialogueFunctionRule.FromOneBased(opcode, fields[1], messageArg: numbers[1], messageFileArg: numbers[2], nodeArg: numbers[3], iqArg: numbers[4], totalArgs: numbers[0]));
 			}
 
 			return rules;
@@ -63,27 +37,102 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 		/// <summary>Formats the user rules as the lines of a rules file.</summary>
 		/// <param name="rules">The rules; built-in rules are skipped.</param>
+		/// <param name="existingLines">
+		/// The lines of the file as they are now. Comments, empty lines and lines that are not valid rules are kept in their place; the line
+		/// of a rule that is still there is rewritten in place, the line of a rule that was removed is dropped, and new rules follow at the end.
+		/// </param>
 		/// <returns>The lines, starting with the format comment.</returns>
-		public static IReadOnlyList<String> Format(IEnumerable<DialogueFunctionRule> rules)
+		public static IReadOnlyList<String> Format(IEnumerable<DialogueFunctionRule> rules, IEnumerable<String>? existingLines = null)
 		{
 			ArgumentNullException.ThrowIfNull(rules);
 
-			var lines = new List<String> { HeaderLine };
+			Dictionary<String, DialogueFunctionRule> pending = new Dictionary<String, DialogueFunctionRule>(StringComparer.OrdinalIgnoreCase);
+			List<DialogueFunctionRule> ordered = new List<DialogueFunctionRule>();
 			foreach (DialogueFunctionRule rule in rules.Where(r => !r.IsDefault))
 			{
-				lines.Add(String.Format(
-					CultureInfo.InvariantCulture,
-					"{0}, {1}, {2}, {3}, {4}, {5}, {6}",
-					rule.Opcode.ToRuleKind(),
-					rule.Name,
-					rule.TotalArgs,
-					rule.MessageArg + 1,
-					rule.MessageFileArg + 1,
-					rule.NodeArg + 1,
-					rule.IqArg + 1));
+				if (pending.TryAdd(rule.Name, rule))
+				{
+					ordered.Add(rule);
+				}
+			}
+
+			var lines = new List<String> { HeaderLine };
+			HashSet<String> written = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			foreach (String raw in existingLines ?? Enumerable.Empty<String>())
+			{
+				if (String.Equals(raw, HeaderLine, StringComparison.Ordinal))
+				{
+					continue;
+				}
+
+				if (!TryParseRule(raw, out DialogueFunctionRule? existing))
+				{
+					lines.Add(raw);
+				}
+				else if (pending.TryGetValue(existing.Name, out DialogueFunctionRule? replacement) && written.Add(existing.Name))
+				{
+					lines.Add(FormatRule(replacement));
+				}
+			}
+
+			foreach (DialogueFunctionRule rule in ordered.Where(r => !written.Contains(r.Name)))
+			{
+				lines.Add(FormatRule(rule));
 			}
 
 			return lines;
+		}
+
+		private static String FormatRule(DialogueFunctionRule rule)
+		{
+			return String.Format(
+				CultureInfo.InvariantCulture,
+				"{0}, {1}, {2}, {3}, {4}, {5}, {6}",
+				rule.Opcode.ToRuleKind(),
+				rule.Name,
+				rule.TotalArgs,
+				rule.MessageArg + 1,
+				rule.MessageFileArg + 1,
+				rule.NodeArg + 1,
+				rule.IqArg + 1);
+		}
+
+		/// <summary>Parses one line; comments, empty lines and malformed lines are not rules.</summary>
+		private static Boolean TryParseRule(String raw, [NotNullWhen(true)] out DialogueFunctionRule? rule)
+		{
+			rule = null;
+			String line = raw.TrimStart();
+			if (line.Length == 0 || line[0] == ';')
+			{
+				return false;
+			}
+
+			String[] fields = line.Split(',');
+			if (fields.Length < 7)
+			{
+				return false;
+			}
+
+			DialogueOpcode opcode = DialogueOpcodeExtensions.ParseRuleKind(fields[0]);
+			if (opcode == DialogueOpcode.None || fields[1].Trim().Length == 0)
+			{
+				return false;
+			}
+
+			Int32[] numbers = new Int32[5];
+			Boolean valid = true;
+			for (Int32 i = 0; i < numbers.Length; i++)
+			{
+				valid &= Int32.TryParse(fields[i + 2].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out numbers[i]);
+			}
+
+			if (!valid || numbers[0] < 1 || numbers.Any(n => n < 0))
+			{
+				return false;
+			}
+
+			rule = DialogueFunctionRule.FromOneBased(opcode, fields[1], messageArg: numbers[1], messageFileArg: numbers[2], nodeArg: numbers[3], iqArg: numbers[4], totalArgs: numbers[0]);
+			return true;
 		}
 	}
 }

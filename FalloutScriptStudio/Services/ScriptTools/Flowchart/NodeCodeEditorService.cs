@@ -66,7 +66,10 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 				return true;
 			}
 
-			NodeCodeEditorWindow window = this._services.GetRequiredService<NodeCodeEditorWindow>();
+			// One scope per window: the container tracks the disposable transient window and view model until the scope ends, so a
+			// root-resolved editor would stay in memory (with its text document and script) for the whole session.
+			IServiceScope scope = this._services.CreateScope();
+			NodeCodeEditorWindow window = scope.ServiceProvider.GetRequiredService<NodeCodeEditorWindow>();
 			Window? owner = ScriptToolWindowHelper.FindOwner(window);
 			Entry entry = new Entry(script, window, fromFlowchart, nodeName);
 			window.ViewModel.CloseOnDone = fromFlowchart;
@@ -83,6 +86,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 			{
 				this._editors.Remove(entry);
 				this.EditorsChanged?.Invoke(this, new NodeEditorEventArgs(script, window.ViewModel.NodeName));
+				scope.Dispose();
 			};
 
 			window.Show();

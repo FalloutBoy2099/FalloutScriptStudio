@@ -2,6 +2,9 @@ namespace FalloutScriptStudio.Core.Compilation
 {
 	using System;
 	using System.IO;
+	using System.Security.Cryptography;
+	using System.Text;
+	using System.Text.RegularExpressions;
 
 	/// <summary>
 	/// Resolves the intermediate and output file locations used by the compiler services.
@@ -9,6 +12,11 @@ namespace FalloutScriptStudio.Core.Compilation
 	public sealed class CompilerPaths
 	{
 		private const String PreprocessSuffix = "_[pre]";
+		private const String HashSeparator = "~";
+
+		private static readonly Regex _intermediateName = new Regex(
+			@"^(?<name>.*)_\[pre\](?:~[0-9A-F]{8})?$",
+			RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 		private readonly CompilerOptions _options;
 
@@ -39,11 +47,13 @@ namespace FalloutScriptStudio.Core.Compilation
 		public String GetOutputPath(String scriptFile, String sourceDirectory = "", Boolean temporaryOutput = false)
 		{
 			String outputFile = Path.GetFileNameWithoutExtension(scriptFile);
-			if (sourceDirectory.Length != 0
-				&& this._options.Preprocessor != PreprocessorKind.Builtin
-				&& outputFile.EndsWith(PreprocessSuffix, StringComparison.OrdinalIgnoreCase))
+			if (sourceDirectory.Length != 0 && this._options.Preprocessor != PreprocessorKind.Builtin)
 			{
-				outputFile = outputFile.Substring(0, outputFile.Length - PreprocessSuffix.Length);
+				Match intermediate = _intermediateName.Match(outputFile);
+				if (intermediate.Success)
+				{
+					outputFile = intermediate.Groups["name"].Value;
+				}
 			}
 
 			outputFile += ".int";
@@ -71,12 +81,19 @@ namespace FalloutScriptStudio.Core.Compilation
 			return Path.Combine(this._options.OutputDirectory, outputFile);
 		}
 
-		/// <summary>Gets the path of the intermediate preprocessed script that is fed to sslc (<c>name_[pre].ssl</c>).</summary>
+		/// <summary>
+		/// Gets the path of the intermediate preprocessed script that is fed to sslc (<c>name_[pre]~XXXXXXXX.ssl</c>). The suffix is a hash
+		/// of the full path of the script: a batch compilation walks the sub-folders and compiles in parallel, so two scripts of the same
+		/// name in different folders must not share (and delete under each other) one intermediate file.
+		/// </summary>
 		/// <param name="scriptFile">The original script.</param>
 		/// <returns>The full path in the scratch folder.</returns>
 		public String GetIntermediatePreprocessedPath(String scriptFile)
 		{
-			return Path.Combine(this._options.ScratchDirectory, Path.GetFileNameWithoutExtension(scriptFile) + PreprocessSuffix + ".ssl");
+			String fullPath = Path.GetFullPath(scriptFile);
+			Byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(fullPath.ToUpperInvariant()));
+			String name = Path.GetFileNameWithoutExtension(fullPath) + PreprocessSuffix + HashSeparator + Convert.ToHexString(hash, 0, 4);
+			return Path.Combine(this._options.ScratchDirectory, name + ".ssl");
 		}
 
 		/// <summary>Gets the path of the preprocessed script offered to the user (<c>name_[preproc].ssl</c>).</summary>

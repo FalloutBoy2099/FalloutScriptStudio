@@ -7,6 +7,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
+	using System.Windows.Threading;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using CommunityToolkit.Mvvm.Input;
 	using FalloutScriptStudio.Core.Dialogue;
@@ -26,7 +27,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 	/// The view model of the node code editor window (legacy <c>FlowchartTE</c>): edits the code of one dialogue node apart from
 	/// the script, lists the messages the code uses, and applies the code to the script when the user is done.
 	/// </summary>
-	public sealed partial class NodeCodeEditorViewModel : ToolWindowViewModelBase, IMessageLineTarget
+	public sealed partial class NodeCodeEditorViewModel : ToolWindowViewModelBase, IMessageLineTarget, IDisposable
 	{
 		/// <summary>
 		/// The first entry of the node list; it stands for "no node". It is a fixed marker, not a text: the window shows the
@@ -40,6 +41,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		private readonly IDialogService _dialogs;
 		private readonly IMessageEditorService _messageEditor;
 		private readonly INodeCodeSnippetStore? _snippets;
+		private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 		private DocumentViewModel? _script;
 		private NodeMessageRowViewModel? _sendRow;
 		private Boolean _refreshing;
@@ -80,6 +82,18 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			{
 				snippets.Changed += this.OnSnippetsChanged;
 			}
+		}
+
+		/// <summary>Stops listening to the snippet store, which outlives the window, so the closed editor can be released.</summary>
+		public void Dispose()
+		{
+			if (this._snippets is not null)
+			{
+				this._snippets.Changed -= this.OnSnippetsChanged;
+			}
+
+			this.Code.TextChanged -= this.OnCodeChanged;
+			this.Code.UndoStack.PropertyChanged -= this.OnUndoStackChanged;
 		}
 
 		/// <summary>Occurs after the code of the node was applied to the script.</summary>
@@ -539,7 +553,23 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 
 		private async Task SaveRowTextAsync(NodeMessageRowViewModel row)
 		{
-			if (row.FilePath is not null && !await this._messages.UpdateMessageTextAsync(row.FilePath, row.MessageNumber, row.Text))
+			if (MessageTextEditor.ContainsBraces(row.Text))
+			{
+				row.Revert();
+				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Flowchart.Msg.MessageFile.Title"), Loc.Get("Str.MessageEditor.Msg.BracesInText"));
+				return;
+			}
+
+			if (row.FilePath is null)
+			{
+				return;
+			}
+
+			if (await this._messages.UpdateMessageTextAsync(row.FilePath, row.MessageNumber, row.Text))
+			{
+				row.MarkSaved();
+			}
+			else
 			{
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Flowchart.Msg.MessageFile.Title"), Loc.Format("Str.Flowchart.Msg.MessageSaveFailed", row.FilePath));
 			}
@@ -575,6 +605,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 
 		private void OnSnippetsChanged(Object? sender, EventArgs e)
 		{
+			if (!this._dispatcher.CheckAccess())
+			{
+				// The store raises the event on the thread that finished its file operation; the list is bound to the window.
+				_ = this._dispatcher.BeginInvoke(new Action(() => this.OnSnippetsChanged(sender, e)));
+				return;
+			}
+
 			this.Snippets.Clear();
 			if (this._snippets is not null)
 			{

@@ -1,233 +1,276 @@
-<UserControl x:Class="FalloutScriptStudio.Views.Panels.ProceduresPanelView"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-			 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
-	<UserControl.Resources>
-		<HierarchicalDataTemplate DataType="{x:Type vm:TreeGroupNodeViewModel}" ItemsSource="{Binding Children}">
-			<TextBlock x:Name="Text"
-					   Text="{Binding Title}"
-					   FontWeight="SemiBold"
-					   Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-			<HierarchicalDataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsEmpty}" Value="True">
-					<Setter TargetName="Text" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
-				</DataTrigger>
-			</HierarchicalDataTemplate.Triggers>
-		</HierarchicalDataTemplate>
+<UserControl
+    x:Class="FalloutScriptStudio.Views.Panels.ProceduresPanelView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+    <UserControl.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type vm:TreeGroupNodeViewModel}" ItemsSource="{Binding Children}">
+            <TextBlock
+                x:Name="Text"
+                FontWeight="SemiBold"
+                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                Text="{Binding Title}" />
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsEmpty}" Value="True">
+                    <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
 
-		<HierarchicalDataTemplate DataType="{x:Type vm:ProcedureNodeViewModel}" ItemsSource="{Binding Children}">
-			<StackPanel Orientation="Horizontal">
-				<ui:SymbolIcon x:Name="Marker"
-							   Symbol="ArrowCircleRight24"
-							   FontSize="12"
-							   Margin="0,0,4,0"
-							   VerticalAlignment="Center"
-							   Foreground="{DynamicResource AccentFillColorDefaultBrush}"
-							   Visibility="Collapsed" />
-				<TextBlock x:Name="Text" Text="{Binding Title}" VerticalAlignment="Center" />
-			</StackPanel>
-			<HierarchicalDataTemplate.Triggers>
-				<DataTrigger Binding="{Binding IsStandard}" Value="True">
-					<Setter TargetName="Text" Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}" />
-				</DataTrigger>
-				<DataTrigger Binding="{Binding IsCurrent}" Value="True">
-					<Setter TargetName="Text" Property="FontWeight" Value="SemiBold" />
-					<Setter TargetName="Marker" Property="Visibility" Value="Visible" />
-				</DataTrigger>
-				<DataTrigger Binding="{Binding IsLocal}" Value="False">
-					<Setter TargetName="Text" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-				</DataTrigger>
-			</HierarchicalDataTemplate.Triggers>
-		</HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type vm:ProcedureNodeViewModel}" ItemsSource="{Binding Children}">
+            <StackPanel Orientation="Horizontal">
+                <ui:SymbolIcon
+                    x:Name="Marker"
+                    Margin="0,0,4,0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                    Symbol="ArrowCircleRight24"
+                    Visibility="Collapsed" />
+                <TextBlock
+                    x:Name="Text"
+                    VerticalAlignment="Center"
+                    Text="{Binding Title}" />
+            </StackPanel>
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsStandard}" Value="True">
+                    <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                    <Setter TargetName="Text" Property="FontWeight" Value="SemiBold" />
+                    <Setter TargetName="Marker" Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLocal}" Value="False">
+                    <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
 
-		<HierarchicalDataTemplate DataType="{x:Type vm:VariableNodeViewModel}" ItemsSource="{Binding Children}">
-			<TextBlock Text="{Binding Title}"
-					   FontStyle="Italic"
-					   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-		</HierarchicalDataTemplate>
+        <HierarchicalDataTemplate DataType="{x:Type vm:VariableNodeViewModel}" ItemsSource="{Binding Children}">
+            <TextBlock
+                FontStyle="Italic"
+                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                Text="{Binding Title}" />
+        </HierarchicalDataTemplate>
 
-		<HierarchicalDataTemplate x:Key="HandlerTemplate" DataType="{x:Type vm:HandlerMenuItemViewModel}" ItemsSource="{Binding Children}">
-			<TextBlock Text="{Binding Name}" ToolTip="{Binding Description}" />
-		</HierarchicalDataTemplate>
+        <HierarchicalDataTemplate
+            x:Key="HandlerTemplate"
+            DataType="{x:Type vm:HandlerMenuItemViewModel}"
+            ItemsSource="{Binding Children}">
+            <TextBlock Text="{Binding Name}" ToolTip="{Binding Description}" />
+        </HierarchicalDataTemplate>
 
-		<Style x:Key="HandlerMenuItemStyle" TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-			<Setter Property="Command" Value="{Binding PlacementTarget.Tag.CreateHandlerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-			<Setter Property="CommandParameter" Value="{Binding}" />
-			<Style.Triggers>
-				<DataTrigger Binding="{Binding IsSeparator}" Value="True">
-					<Setter Property="Visibility" Value="Collapsed" />
-				</DataTrigger>
-			</Style.Triggers>
-		</Style>
+        <Style
+            x:Key="HandlerMenuItemStyle"
+            BasedOn="{StaticResource {x:Type MenuItem}}"
+            TargetType="{x:Type MenuItem}">
+            <Setter Property="Command" Value="{Binding PlacementTarget.Tag.CreateHandlerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+            <Setter Property="CommandParameter" Value="{Binding}" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
-		<Style x:Key="ProcedureItemStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource ShellTreeViewItemStyle}">
-			<Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
-			<Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
-			<Setter Property="ToolTip" Value="{Binding ToolTip}" />
-			<Setter Property="AllowDrop" Value="True" />
-			<Setter Property="ContextMenu">
-				<Setter.Value>
-					<ContextMenu>
-						<MenuItem Header="{DynamicResource Str.Panels.MenuEditNodeCode}"
-								  FontWeight="Bold"
-								  Command="{Binding PlacementTarget.Tag.EditNodeCodeCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanEditNodeCode, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-						<Separator />
-						<MenuItem Header="{DynamicResource Str.Panels.MenuGoTo}"
-								  Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.IsSymbol, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-						<MenuItem Header="{DynamicResource Str.Panels.MenuFindReferences}"
-								  Command="{Binding PlacementTarget.Tag.FindReferencesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-						<Separator />
-						<MenuItem Header="{DynamicResource Str.Panels.MenuCreateProcedure}" InputGestureText="Ctrl+P"
-								  Command="{Binding PlacementTarget.Tag.CreateProcedureCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Add24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Panels.MenuCreateHandler}"
-								  ItemsSource="{Binding PlacementTarget.Tag.Handlers, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  ItemTemplate="{StaticResource HandlerTemplate}"
-								  ItemContainerStyle="{StaticResource HandlerMenuItemStyle}" />
-						<MenuItem Header="{DynamicResource Str.Panels.MenuRenameProcedure}"
-								  Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Rename24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Panels.MenuMoveUp}"
-								  Command="{Binding PlacementTarget.Tag.MoveUpCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="ArrowUp24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Panels.MenuMoveDown}"
-								  Command="{Binding PlacementTarget.Tag.MoveDownCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="ArrowDown24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Panels.MenuDeleteProcedure}"
-								  Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-								  IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Delete24" />
-							</MenuItem.Icon>
-						</MenuItem>
-					</ContextMenu>
-				</Setter.Value>
-			</Setter>
-			<EventSetter Event="MouseDoubleClick" Handler="OnItemMouseDoubleClick" />
-			<EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnItemPreviewMouseLeftButtonUp" />
-			<EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnItemPreviewMouseLeftButtonDown" />
-			<EventSetter Event="PreviewMouseMove" Handler="OnItemPreviewMouseMove" />
-			<EventSetter Event="DragOver" Handler="OnItemDragOver" />
-			<EventSetter Event="Drop" Handler="OnItemDrop" />
-		</Style>
-	</UserControl.Resources>
+        <Style
+            x:Key="ProcedureItemStyle"
+            BasedOn="{StaticResource ShellTreeViewItemStyle}"
+            TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
+            <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
+            <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="ContextMenu">
+                <Setter.Value>
+                    <ContextMenu>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.EditNodeCodeCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            FontWeight="Bold"
+                            Header="{DynamicResource Str.Panels.MenuEditNodeCode}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanEditNodeCode, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <Separator />
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuGoTo}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.IsSymbol, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.FindReferencesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuFindReferences}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <Separator />
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.CreateProcedureCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuCreateProcedure}"
+                            InputGestureText="Ctrl+P">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Add24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Header="{DynamicResource Str.Panels.MenuCreateHandler}"
+                            ItemContainerStyle="{StaticResource HandlerMenuItemStyle}"
+                            ItemTemplate="{StaticResource HandlerTemplate}"
+                            ItemsSource="{Binding PlacementTarget.Tag.Handlers, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.RenameCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuRenameProcedure}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Rename24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.MoveUpCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuMoveUp}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="ArrowUp24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.MoveDownCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuMoveDown}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="ArrowDown24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.DeleteCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuDeleteProcedure}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Delete24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="MouseDoubleClick" Handler="OnItemMouseDoubleClick" />
+            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="OnItemPreviewMouseLeftButtonUp" />
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="OnItemPreviewMouseLeftButtonDown" />
+            <EventSetter Event="PreviewMouseMove" Handler="OnItemPreviewMouseMove" />
+            <EventSetter Event="DragOver" Handler="OnItemDragOver" />
+            <EventSetter Event="Drop" Handler="OnItemDrop" />
+        </Style>
+    </UserControl.Resources>
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-		<StackPanel Orientation="Horizontal" Margin="4,2">
-			<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-					   Icon="{ui:SymbolIcon ArrowCircleUp24}"
-					   ToolTip="{DynamicResource Str.Panels.TipGoToBegin}"
-					   Command="{Binding GoToBeginCommand}" />
-			<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-					   Icon="{ui:SymbolIcon Add24}"
-					   ToolTip="{DynamicResource Str.Panels.TipCreateProcedure}"
-					   Command="{Binding CreateProcedureCommand}" />
-			<ToggleButton Width="26"
-						  Height="26"
-						  Padding="0"
-						  Margin="1,0"
-						  Background="Transparent"
-						  BorderThickness="0"
-						  ToolTip="{DynamicResource Str.Panels.TipShowArguments}"
-						  IsChecked="{Binding ShowArguments, Mode=TwoWay}">
-				<ui:SymbolIcon Symbol="TextDescription24" FontSize="14" />
-			</ToggleButton>
-			<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-					   Icon="{ui:SymbolIcon ChevronUpDown24}"
-					   ToolTip="{DynamicResource Str.Panels.TipToggleOutline}"
-					   Command="{Binding ToggleOutlineCommand}" />
-			<ToggleButton Width="26"
-						  Height="26"
-						  Padding="0"
-						  Margin="1,0"
-						  Background="Transparent"
-						  BorderThickness="0"
-						  ToolTip="{DynamicResource Str.Panels.TipOnlyProcedure}"
-						  IsChecked="{Binding OnlyCurrentProcedure, Mode=TwoWay}">
-				<ui:SymbolIcon Symbol="Target24" FontSize="14" />
-			</ToggleButton>
-			<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-					   Icon="{ui:SymbolIcon ArrowSync24}"
-					   ToolTip="{DynamicResource Str.Panels.TipRefreshParser}"
-					   Command="{Binding RefreshCommand}" />
-		</StackPanel>
+        <StackPanel Margin="4,2" Orientation="Horizontal">
+            <ui:Button
+                Command="{Binding GoToBeginCommand}"
+                Icon="{ui:SymbolIcon ArrowCircleUp24}"
+                Style="{StaticResource ShellSmallIconButtonStyle}"
+                ToolTip="{DynamicResource Str.Panels.TipGoToBegin}" />
+            <ui:Button
+                Command="{Binding CreateProcedureCommand}"
+                Icon="{ui:SymbolIcon Add24}"
+                Style="{StaticResource ShellSmallIconButtonStyle}"
+                ToolTip="{DynamicResource Str.Panels.TipCreateProcedure}" />
+            <ToggleButton
+                Width="26"
+                Height="26"
+                Margin="1,0"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                IsChecked="{Binding ShowArguments, Mode=TwoWay}"
+                ToolTip="{DynamicResource Str.Panels.TipShowArguments}">
+                <ui:SymbolIcon FontSize="14" Symbol="TextDescription24" />
+            </ToggleButton>
+            <ui:Button
+                Command="{Binding ToggleOutlineCommand}"
+                Icon="{ui:SymbolIcon ChevronUpDown24}"
+                Style="{StaticResource ShellSmallIconButtonStyle}"
+                ToolTip="{DynamicResource Str.Panels.TipToggleOutline}" />
+            <ToggleButton
+                Width="26"
+                Height="26"
+                Margin="1,0"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                IsChecked="{Binding OnlyCurrentProcedure, Mode=TwoWay}"
+                ToolTip="{DynamicResource Str.Panels.TipOnlyProcedure}">
+                <ui:SymbolIcon FontSize="14" Symbol="Target24" />
+            </ToggleButton>
+            <ui:Button
+                Command="{Binding RefreshCommand}"
+                Icon="{ui:SymbolIcon ArrowSync24}"
+                Style="{StaticResource ShellSmallIconButtonStyle}"
+                ToolTip="{DynamicResource Str.Panels.TipRefreshParser}" />
+        </StackPanel>
 
-		<ui:TextBox Grid.Row="1" Margin="6,4" PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}" ClearButtonEnabled="True" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+        <ui:TextBox
+            Grid.Row="1"
+            Margin="6,4"
+            ClearButtonEnabled="True"
+            PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
+            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
 
-		<TreeView x:Name="Tree"
-				  Grid.Row="2"
-				  ItemsSource="{Binding Groups}"
-				  ItemContainerStyle="{StaticResource ProcedureItemStyle}"
-				  BorderThickness="0"
-				  Background="Transparent"
-				  SelectedItemChanged="OnSelectedItemChanged"
-				  PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown">
-			<TreeView.ContextMenu>
-				<ContextMenu>
-					<MenuItem Header="{DynamicResource Str.Panels.MenuCreateProcedure}" InputGestureText="Ctrl+P" Command="{Binding CreateProcedureCommand}">
-						<MenuItem.Icon>
-							<ui:SymbolIcon Symbol="Add24" />
-						</MenuItem.Icon>
-					</MenuItem>
-					<MenuItem Header="{DynamicResource Str.Panels.MenuCreateHandler}"
-							  ItemsSource="{Binding Handlers}"
-							  ItemTemplate="{StaticResource HandlerTemplate}">
-						<MenuItem.ItemContainerStyle>
-							<Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-								<Setter Property="Command" Value="{Binding PlacementTarget.DataContext.CreateHandlerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
-								<Setter Property="CommandParameter" Value="{Binding}" />
-								<Style.Triggers>
-									<DataTrigger Binding="{Binding IsSeparator}" Value="True">
-										<Setter Property="Visibility" Value="Collapsed" />
-									</DataTrigger>
-								</Style.Triggers>
-							</Style>
-						</MenuItem.ItemContainerStyle>
-					</MenuItem>
-				</ContextMenu>
-			</TreeView.ContextMenu>
-		</TreeView>
+        <TreeView
+            x:Name="Tree"
+            Grid.Row="2"
+            Background="Transparent"
+            BorderThickness="0"
+            ItemContainerStyle="{StaticResource ProcedureItemStyle}"
+            ItemsSource="{Binding Groups}"
+            PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown"
+            SelectedItemChanged="OnSelectedItemChanged">
+            <TreeView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Command="{Binding CreateProcedureCommand}"
+                        Header="{DynamicResource Str.Panels.MenuCreateProcedure}"
+                        InputGestureText="Ctrl+P">
+                        <MenuItem.Icon>
+                            <ui:SymbolIcon Symbol="Add24" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem
+                        Header="{DynamicResource Str.Panels.MenuCreateHandler}"
+                        ItemTemplate="{StaticResource HandlerTemplate}"
+                        ItemsSource="{Binding Handlers}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="{x:Type MenuItem}">
+                                <Setter Property="Command" Value="{Binding PlacementTarget.DataContext.CreateHandlerCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                <Setter Property="CommandParameter" Value="{Binding}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSeparator}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                </ContextMenu>
+            </TreeView.ContextMenu>
+        </TreeView>
 
-		<TextBlock Grid.Row="2"
-				   Style="{StaticResource ShellCaptionTextStyle}"
-				   Text="{DynamicResource Str.Panels.EmptyProcedures}"
-				   TextWrapping="Wrap"
-				   TextAlignment="Center"
-				   Margin="16"
-				   VerticalAlignment="Top"
-				   IsHitTestVisible="False"
-				   Visibility="{Binding HasData, Converter={StaticResource InvertedBoolToVisibility}}" />
-	</Grid>
+        <TextBlock
+            Grid.Row="2"
+            Margin="16"
+            VerticalAlignment="Top"
+            IsHitTestVisible="False"
+            Style="{StaticResource ShellCaptionTextStyle}"
+            Text="{DynamicResource Str.Panels.EmptyProcedures}"
+            TextAlignment="Center"
+            TextWrapping="Wrap"
+            Visibility="{Binding HasData, Converter={StaticResource InvertedBoolToVisibility}}" />
+    </Grid>
 </UserControl>

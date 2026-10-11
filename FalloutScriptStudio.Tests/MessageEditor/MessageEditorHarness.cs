@@ -7,20 +7,24 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Messages;
 	using FalloutScriptStudio.Services.MessageEditor;
+	using FalloutScriptStudio.TestSupport;
 	using FalloutScriptStudio.ViewModels.MessageEditor;
 	using Microsoft.Extensions.Logging.Abstractions;
 
 	/// <summary>
 	/// Builds a <see cref="MessageEditorViewModel"/> with fake dialogs and settings and the real message file service,
-	/// working in a private temporary folder.
+	/// working in private scratch folders of <c>_test_files\work</c>.
 	/// </summary>
 	internal sealed class MessageEditorHarness : IDisposable
 	{
+		private readonly TestFolder _folder;
+		private readonly TestFolder _installation;
+
 		public MessageEditorHarness(Action<FakeSettingsService>? configure = null)
 		{
-			this.Folder = Path.Combine(Path.GetTempPath(), "msgeditor-tests-" + Guid.NewGuid().ToString("N"));
-			Directory.CreateDirectory(this.Folder);
-			this.Settings = new FakeSettingsService();
+			this._folder = new TestFolder("msgeditor");
+			this._installation = new TestFolder("msgeditor-app");
+			this.Settings = new FakeSettingsService(this._installation.Path);
 			configure?.Invoke(this.Settings);
 			this.Dialogs = new FakeDialogService();
 			this.Platform = new FakePlatform();
@@ -34,7 +38,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 			this.Editor.RowFocusRequested += (_, e) => this.FocusRequests.Add(e);
 		}
 
-		public String Folder { get; }
+		public String Folder => this._folder.Path;
 
 		public FakeSettingsService Settings { get; }
 
@@ -80,14 +84,8 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 		public void Dispose()
 		{
 			this.Editor.Dispose();
-			try
-			{
-				Directory.Delete(this.Folder, true);
-			}
-			catch (IOException)
-			{
-				// A leftover temporary folder does no harm.
-			}
+			this._folder.Dispose();
+			this._installation.Dispose();
 		}
 	}
 }

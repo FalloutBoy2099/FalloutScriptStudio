@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.IO
 {
 	using System;
-	using System.Globalization;
+	using System.Runtime.InteropServices;
 	using System.Text;
 
 	/// <summary>
@@ -13,7 +13,10 @@ namespace FalloutScriptStudio.Core.IO
 	/// </remarks>
 	public static class TextEncodings
 	{
-		private static readonly Lazy<Encoding> _ansi = new Lazy<Encoding>(CreateAnsi);
+		private const Int32 FallbackCodePage = 1252;
+
+		private static readonly Lazy<Encoding> _ansi = new Lazy<Encoding>(() => ResolveSystemEncoding(GetSystemAnsiCodePage));
+		private static readonly Lazy<Encoding> _oem = new Lazy<Encoding>(() => ResolveSystemEncoding(GetSystemOemCodePage));
 		private static readonly Lazy<Encoding> _oem866 = new Lazy<Encoding>(() => GetEncoding(866));
 
 		static TextEncodings()
@@ -21,8 +24,16 @@ namespace FalloutScriptStudio.Core.IO
 			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 		}
 
-		/// <summary>Gets the Windows ANSI code page of the current culture (what .NET Framework called <c>Encoding.Default</c>).</summary>
+		/// <summary>
+		/// Gets the Windows ANSI code page of the system (<c>GetACP</c>, what .NET Framework called <c>Encoding.Default</c>); it does
+		/// not depend on the regional format of the user. Windows-1252 when the system code page cannot be determined or is a Unicode one.
+		/// </summary>
 		public static Encoding Ansi => _ansi.Value;
+
+		/// <summary>
+		/// Gets the OEM code page of the system (<c>GetOEMCP</c>), the one the console and the batch files print in.
+		/// </summary>
+		public static Encoding Oem => _oem.Value;
 
 		/// <summary>Gets the DOS Cyrillic code page (cp866).</summary>
 		public static Encoding Oem866 => _oem866.Value;
@@ -30,11 +41,45 @@ namespace FalloutScriptStudio.Core.IO
 		/// <summary>Gets UTF-8 without a byte order mark.</summary>
 		public static Encoding Utf8 { get; } = new UTF8Encoding(false);
 
-		private static Encoding CreateAnsi()
+		/// <summary>
+		/// Gets the encoding of a system code page reported by <paramref name="getCodePage"/>. A Unicode code page (a system with the
+		/// UTF-8 option for legacy programs), an unknown or unsupported one, or a failing probe gives Windows-1252.
+		/// </summary>
+		/// <param name="getCodePage">Returns the code page of the system.</param>
+		/// <returns>The encoding.</returns>
+		public static Encoding ResolveSystemEncoding(Func<Int32> getCodePage)
 		{
-			Int32 codePage = CultureInfo.CurrentCulture.TextInfo.ANSICodePage;
-			return GetEncoding(codePage == 0 ? 1252 : codePage);
+			ArgumentNullException.ThrowIfNull(getCodePage);
+
+			Int32 codePage;
+			try
+			{
+				codePage = getCodePage();
+			}
+			catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException or InvalidOperationException)
+			{
+				codePage = FallbackCodePage;
+			}
+
+			Boolean unicode = codePage is 65000 or 65001 or 1200 or 1201 or 12000 or 12001;
+			return GetEncoding(codePage <= 0 || unicode ? FallbackCodePage : codePage);
 		}
+
+		private static Int32 GetSystemAnsiCodePage()
+		{
+			return OperatingSystem.IsWindows() ? (Int32)GetACP() : FallbackCodePage;
+		}
+
+		private static Int32 GetSystemOemCodePage()
+		{
+			return OperatingSystem.IsWindows() ? (Int32)GetOEMCP() : FallbackCodePage;
+		}
+
+		[DllImport("kernel32.dll")]
+		private static extern UInt32 GetACP();
+
+		[DllImport("kernel32.dll")]
+		private static extern UInt32 GetOEMCP();
 
 		private static Encoding GetEncoding(Int32 codePage)
 		{
@@ -44,7 +89,7 @@ namespace FalloutScriptStudio.Core.IO
 			}
 			catch (Exception ex) when (ex is ArgumentException or NotSupportedException)
 			{
-				return Encoding.Latin1;
+				return codePage == FallbackCodePage ? Encoding.Latin1 : GetEncoding(FallbackCodePage);
 			}
 		}
 	}

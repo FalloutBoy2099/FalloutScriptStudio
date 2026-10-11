@@ -37,14 +37,14 @@ namespace FalloutScriptStudio.Workspace
 		}
 
 		/// <summary>Refreshes the cached texts of the scripts that use the message file of a message document that was saved or reloaded.</summary>
-		private async Task RefreshScriptsOfMessageFileAsync(DocumentViewModel messageDocument)
+		private async Task RefreshScriptsOfMessageFileAsync(String? messagePath, DocumentKind messageKind)
 		{
-			if (messageDocument.Kind != DocumentKind.Message || messageDocument.FilePath is null)
+			if (messageKind != DocumentKind.Message || messagePath is null)
 			{
 				return;
 			}
 
-			String full = DocumentPaths.GetFullPath(messageDocument.FilePath);
+			String full = DocumentPaths.GetFullPath(messagePath);
 			foreach (DocumentViewModel script in this.Documents.Where(d => d.Kind == DocumentKind.Script && d.MessageFilePath is not null).ToList())
 			{
 				if (String.Equals(DocumentPaths.GetFullPath(script.MessageFilePath!), full, StringComparison.OrdinalIgnoreCase))

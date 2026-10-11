@@ -55,19 +55,30 @@ namespace FalloutScriptStudio.Core.Decompilation
 
 		private static DecompiledScript DecompileOnThisThread(Byte[] data, ScriptDecompilerOptions options)
 		{
-			DecompilationSession decompilation = new(data, options);
 			try
 			{
+				DecompilationSession decompilation = new(data, options);
 				decompilation.Read();
 				decompilation.InitializeDefinitions();
 				decompilation.ProcessCode();
 				return new DecompiledScript(decompilation.CreateSource(), decompilation.Messages);
 			}
-			catch (Exception exception) when (exception is ArgumentException or IndexOutOfRangeException or InvalidOperationException or KeyNotFoundException or OverflowException or InvalidCastException)
+			catch (Exception exception) when (IsDamageSymptom(exception))
 			{
-				// A damaged script leads the analysis to places it does not expect: whichever way it fails, it is a script it cannot read.
+				// A damaged script leads the analysis to places it does not expect (a missing node, a bad number, an index out of range...):
+				// whichever way it fails, it is a script it cannot read, and the caller must not see anything but the exception of the format.
 				throw new ScriptFormatException("Error: The script is damaged or not supported (" + exception.GetType().Name + ")", exception);
 			}
+		}
+
+		/// <summary>
+		/// Tells whether an exception of the analysis comes from the data of the script and so means "damaged or not supported". It does for
+		/// any exception but the exception of the format itself and the exhaustion of memory: a missing node (<see cref="NullReferenceException"/>),
+		/// a bad number (<see cref="FormatException"/>) or an index out of range are as much symptoms of a damaged script as an invalid operation.
+		/// </summary>
+		internal static Boolean IsDamageSymptom(Exception exception)
+		{
+			return exception is not (ScriptFormatException or OutOfMemoryException);
 		}
 
 		/// <summary>

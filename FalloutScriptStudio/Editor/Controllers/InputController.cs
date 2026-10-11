@@ -27,6 +27,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly KeyBinding _undoBinding = new KeyBinding(ApplicationCommands.Undo, Key.Back, ModifierKeys.Alt);
 		private Boolean _editing;
 		private Boolean _selectingPlaceholder;
+		private Boolean _attached;
 
 		public InputController(EditorContext context, CompletionController completion, TipController tips, SslIndentationStrategy indentation)
 		{
@@ -38,6 +39,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Attach()
 		{
+			this._attached = true;
 			TextArea area = this._context.TextArea;
 			area.PreviewKeyDown += this.OnPreviewKeyDown;
 			area.PreviewTextInput += this.OnPreviewTextInput;
@@ -59,6 +61,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Dispose()
 		{
+			this._attached = false;
 			TextArea area = this._context.TextArea;
 			area.PreviewKeyDown -= this.OnPreviewKeyDown;
 			area.PreviewTextInput -= this.OnPreviewTextInput;
@@ -390,7 +393,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			// A plain click inside a template placeholder selects it, so that typing replaces it.
 			this._context.TextArea.Dispatcher.BeginInvoke(new Action(() =>
 			{
-				if (this._context.TextArea.Selection.Length == 0)
+				if (this._attached && this._context.TextArea.Selection.Length == 0)
 				{
 					this.TrySelectPlaceholder(this._context.TextArea.Caret.Offset);
 				}

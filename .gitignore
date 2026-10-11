@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Scratch folders of the automated tests (the rest of _test_files is tracked)
+_test_files/work/

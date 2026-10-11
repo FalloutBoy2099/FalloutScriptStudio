@@ -54,8 +54,12 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			return Task.FromResult(this.YesNoCancelAnswers.Count > 0 ? this.YesNoCancelAnswers.Dequeue() : YesNoCancel.Cancel);
 		}
 
+		/// <summary>Gets or sets an action that runs when a prompt is shown (to change the world while the user "types").</summary>
+		public Action? OnPrompt { get; set; }
+
 		public Task<String?> PromptAsync(String title, String message, String defaultValue = "")
 		{
+			this.OnPrompt?.Invoke();
 			return Task.FromResult(this.PromptAnswer);
 		}
 

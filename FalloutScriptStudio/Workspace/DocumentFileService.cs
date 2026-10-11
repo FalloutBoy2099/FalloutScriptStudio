@@ -21,15 +21,17 @@ namespace FalloutScriptStudio.Workspace
 
 		private readonly ISettingsService _settings;
 		private readonly IDialogService _dialogs;
+		private readonly IDocumentFileWriter _writer;
 		private readonly ILogger _logger;
 
 		/// <summary>Initializes the service.</summary>
-		public DocumentFileService(ISettingsService settings, IDialogService dialogs, ILogger<DocumentFileService>? logger = null)
+		public DocumentFileService(ISettingsService settings, IDialogService dialogs, ILogger<DocumentFileService>? logger = null, IDocumentFileWriter? writer = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(dialogs);
 			this._settings = settings;
 			this._dialogs = dialogs;
+			this._writer = writer ?? new AtomicDocumentFileWriter();
 			this._logger = logger ?? NullLogger<DocumentFileService>.Instance;
 		}
 
@@ -97,33 +99,82 @@ namespace FalloutScriptStudio.Workspace
 		/// </summary>
 		public async Task<Boolean> WriteAsync(DocumentViewModel document, String path)
 		{
-			EditorSettings editor = this._settings.Settings.Editor;
-			if (editor.AutoRemoveTrailingSpaces && document.Kind != DocumentKind.Message)
+			ArgumentNullException.ThrowIfNull(document);
+			ArgumentException.ThrowIfNullOrEmpty(path);
+
+			// The kind comes from the target path: "Save as" may give the document another type (and so another encoding rule).
+			DocumentKind kind = DocumentViewModel.KindFromPath(path);
+			String text = document.TextDocument.Text;
+			String fileText = this._settings.Settings.Editor.AutoRemoveTrailingSpaces && kind != DocumentKind.Message
+				? DocumentTextCodec.TrimTrailingWhitespace(text)
+				: text;
+
+			Encoding encoding = this.GetSaveEncoding(document, kind);
+			String encodedText = kind == DocumentKind.Message && encoding.CodePage == 866 ? fileText.Replace('Х', 'X') : fileText;
+			Boolean switchedToUtf8 = false;
+			String? lost = FindUnrepresentableCharacter(encoding, encodedText);
+			if (lost is not null)
+			{
+				YesNoCancel answer = await this._dialogs.AskYesNoCancelAsync(
+					Loc.Get("Str.Shell.Dlg.UnrepresentableTitle"),
+					Loc.Format("Str.Shell.Dlg.UnrepresentableText", Path.GetFileName(path), encoding.EncodingName, lost),
+					Loc.Get("Str.Shell.Dlg.SaveAsUtf8"),
+					Loc.Get("Str.Shell.Dlg.SaveWithReplacement"));
+				if (answer == YesNoCancel.Cancel)
+				{
+					return false;
+				}
+
+				if (answer == YesNoCancel.Yes)
+				{
+					encoding = TextEncodings.Utf8;
+					encodedText = fileText;
+					switchedToUtf8 = true;
+				}
+			}
+
+			if (!await this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, encodedText)))
+			{
+				return false;
+			}
+
+			if (switchedToUtf8)
+			{
+				document.Encoding = encoding;
+			}
+
+			document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
+			if (!String.Equals(document.TextDocument.Text, text, StringComparison.Ordinal))
+			{
+				// The user typed while the file was being written: the file holds the older text, so the document stays modified.
+				document.TextDocument.UndoStack.DiscardOriginalFileMarker();
+				document.IsModified = true;
+				return true;
+			}
+
+			if (!String.Equals(fileText, text, StringComparison.Ordinal))
 			{
 				DocumentTextCodec.TrimTrailingWhitespace(document.TextDocument);
 			}
 
-			Encoding encoding = this.GetSaveEncoding(document);
-			String text = document.TextDocument.Text;
-			if (document.Kind == DocumentKind.Message && encoding.CodePage == 866)
-			{
-				text = text.Replace('Х', 'X');
-			}
-
-			try
-			{
-				await File.WriteAllTextAsync(path, text, encoding);
-			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-			{
-				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotSaveTitle"), path + "\n\n" + ex.Message);
-				return false;
-			}
-
-			document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
 			document.TextDocument.UndoStack.MarkAsOriginalFile();
 			document.IsModified = false;
 			return true;
+		}
+
+		/// <summary>
+		/// Writes a text file that is not (yet) an open document, for example a decompiled script. Shows an error and returns
+		/// <see langword="false"/> when the file cannot be written.
+		/// </summary>
+		/// <param name="path">The file.</param>
+		/// <param name="text">The text.</param>
+		/// <param name="encoding">The encoding (its byte order mark is written).</param>
+		public Task<Boolean> WriteTextAsync(String path, String text, Encoding encoding)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(path);
+			ArgumentNullException.ThrowIfNull(text);
+			ArgumentNullException.ThrowIfNull(encoding);
+			return this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, text));
 		}
 
 		/// <summary>Tells whether a file is a header located directly in the configured headers folder (its macros are global).</summary>
@@ -135,15 +186,61 @@ namespace FalloutScriptStudio.Workspace
 				&& String.Equals(DocumentPaths.GetFullPath(headers), DocumentPaths.GetFullPath(Path.GetDirectoryName(path) ?? String.Empty), StringComparison.OrdinalIgnoreCase);
 		}
 
-		private Encoding GetSaveEncoding(DocumentViewModel document)
+		private async Task<Boolean> TryWriteAsync(String path, Byte[] content)
 		{
-			EditorSettings editor = this._settings.Settings.Editor;
-			if (document.Kind == DocumentKind.Message)
+			try
 			{
-				return editor.FileEncoding.ToEncoding();
+				await this._writer.WriteAsync(path, content);
+				return true;
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LogWarning(ex, "Cannot write {File}", path);
+				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotSaveTitle"), path + "\n\n" + ex.Message);
+				return false;
+			}
+		}
+
+
+		private static Boolean IsUnicode(Encoding encoding)
+		{
+			return encoding.CodePage is 65001 or 1200 or 1201 or 12000 or 12001;
+		}
+
+		/// <summary>Finds the first character a code page cannot store (it would be written as "?"), described for the user.</summary>
+		private static String? FindUnrepresentableCharacter(Encoding encoding, String text)
+		{
+			if (IsUnicode(encoding))
+			{
+				return null;
 			}
 
-			if (document.IsParsable && editor.SaveScriptsAsUtf8)
+			Encoding strict = (Encoding)encoding.Clone();
+			strict.EncoderFallback = EncoderFallback.ExceptionFallback;
+			try
+			{
+				strict.GetByteCount(text);
+				return null;
+			}
+			catch (EncoderFallbackException ex)
+			{
+				Int32 codePoint = ex.IsUnknownSurrogate() ? Char.ConvertToUtf32(ex.CharUnknownHigh, ex.CharUnknownLow) : ex.CharUnknown;
+				String code = "U+" + codePoint.ToString("X4", System.Globalization.CultureInfo.InvariantCulture);
+				return codePoint is >= 0xD800 and <= 0xDFFF ? code : "'" + Char.ConvertFromUtf32(codePoint) + "' (" + code + ")";
+			}
+		}
+
+		private Encoding GetSaveEncoding(DocumentViewModel document, DocumentKind kind)
+		{
+			EditorSettings editor = this._settings.Settings.Editor;
+			if (kind == DocumentKind.Message)
+			{
+				// A message file that was read as Unicode (with or without a byte order mark) is written back the same way; the
+				// "ANSI / OEM 866" choice of the user applies to the code page files.
+				return document.Encoding is { } current && IsUnicode(current) ? current : editor.FileEncoding.ToEncoding();
+			}
+
+			if ((kind is DocumentKind.Script or DocumentKind.Header) && editor.SaveScriptsAsUtf8)
 			{
 				return TextEncodings.Utf8;
 			}

@@ -3,21 +3,23 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 	using System;
 	using System.IO;
 	using FalloutScriptStudio.Core.Compilation;
+	using FalloutScriptStudio.TestSupport;
 
 	/// <summary>
-	/// A throw-away installation folder layout (<c>resources</c>, <c>scrTemp</c>, <c>scripts</c>) in the temp folder.
+	/// A throw-away installation folder layout (<c>resources</c>, <c>scrTemp</c>, <c>scripts</c>) in a scratch folder of <c>_test_files\work</c>.
 	/// </summary>
 	internal sealed class TempWorkspace : IDisposable
 	{
+		private readonly TestFolder _folder = new TestFolder("workspace");
+
 		public TempWorkspace()
 		{
-			this.Root = Path.Combine(Path.GetTempPath(), "fss-tests-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(this.Resources);
 			Directory.CreateDirectory(this.Scratch);
 			Directory.CreateDirectory(this.Scripts);
 		}
 
-		public String Root { get; }
+		public String Root => this._folder.Path;
 
 		public String Resources => Path.Combine(this.Root, "resources");
 
@@ -55,14 +57,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 
 		public void Dispose()
 		{
-			try
-			{
-				Directory.Delete(this.Root, true);
-			}
-			catch (IOException)
-			{
-				// Leftover temp files are harmless.
-			}
+			this._folder.Dispose();
 		}
 	}
 }

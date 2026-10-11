@@ -9,6 +9,8 @@ namespace FalloutScriptStudio.Core.TextTools
 	/// <param name="Pattern">The text to find, or a regular expression when <see cref="UseRegex"/> is set.</param>
 	public sealed record SearchQuery(String Pattern)
 	{
+		private static readonly TimeSpan _defaultMatchTimeout = TimeSpan.FromSeconds(2);
+
 		/// <summary>Gets a value indicating whether the search is case sensitive.</summary>
 		public Boolean MatchCase { get; init; }
 
@@ -17,6 +19,12 @@ namespace FalloutScriptStudio.Core.TextTools
 
 		/// <summary>Gets a value indicating whether <see cref="Pattern"/> is a regular expression.</summary>
 		public Boolean UseRegex { get; init; }
+
+		/// <summary>
+		/// Gets the time limit of one regular expression operation. A pattern with catastrophic backtracking such as
+		/// <c>(a+)+b</c> then ends with a <see cref="RegexMatchTimeoutException"/> instead of freezing the caller.
+		/// </summary>
+		public TimeSpan MatchTimeout { get; init; } = _defaultMatchTimeout;
 
 		/// <summary>
 		/// Checks that the query can be executed.
@@ -35,7 +43,7 @@ namespace FalloutScriptStudio.Core.TextTools
 			{
 				try
 				{
-					_ = new Regex(this.Pattern, RegexOptions.CultureInvariant);
+					_ = new Regex(this.Pattern, RegexOptions.CultureInvariant, this.MatchTimeout);
 				}
 				catch (ArgumentException ex)
 				{
@@ -53,6 +61,7 @@ namespace FalloutScriptStudio.Core.TextTools
 		/// </summary>
 		/// <returns>A regular expression for a regex or whole-word query, or <c>null</c> for a plain text search.</returns>
 		/// <exception cref="ArgumentException">The pattern is an invalid regular expression.</exception>
+		/// <remarks>The regular expression stops with a <see cref="RegexMatchTimeoutException"/> after <see cref="MatchTimeout"/>.</remarks>
 		public Regex? CreateRegex()
 		{
 			RegexOptions options = RegexOptions.CultureInvariant;
@@ -63,12 +72,12 @@ namespace FalloutScriptStudio.Core.TextTools
 
 			if (this.UseRegex)
 			{
-				return new Regex(this.Pattern, options);
+				return new Regex(this.Pattern, options, this.MatchTimeout);
 			}
 
 			if (this.WholeWord)
 			{
-				return new Regex(@"(?<![\p{L}\p{N}_])" + Regex.Escape(this.Pattern) + @"(?![\p{L}\p{N}_])", options);
+				return new Regex(@"(?<![\p{L}\p{N}_])" + Regex.Escape(this.Pattern) + @"(?![\p{L}\p{N}_])", options, this.MatchTimeout);
 			}
 
 			return null;

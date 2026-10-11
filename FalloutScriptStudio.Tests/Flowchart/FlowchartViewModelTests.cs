@@ -123,11 +123,17 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			{
 				using FlowchartHarness harness = new FlowchartHarness();
 				await harness.Store.SaveAsync(FcdPath(harness), new FlowchartDocument("other.ssl"));
+				harness.ViewModel.AutoSaveChart = true;
 
 				await harness.LoadAsync();
 
 				Assert.Single(harness.Dialogs.Warnings);
 				Assert.Equal(5, harness.Canvas.Nodes.Count());
+				Assert.Null(harness.ViewModel.FilePath);
+
+				harness.ViewModel.OnClosing();
+
+				Assert.Equal("other.ssl", (await harness.Store.LoadAsync(FcdPath(harness))).ScriptName);
 			});
 		}
 
@@ -138,11 +144,41 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			{
 				using FlowchartHarness harness = new FlowchartHarness();
 				File.WriteAllText(FcdPath(harness), "this is not xml");
+				harness.ViewModel.AutoSaveChart = true;
 
 				await harness.LoadAsync();
 
 				Assert.Single(harness.Dialogs.Errors);
 				Assert.Equal(5, harness.Canvas.Nodes.Count());
+				Assert.Null(harness.ViewModel.FilePath);
+
+				harness.ViewModel.OnClosing();
+
+				Assert.Equal("this is not xml", File.ReadAllText(FcdPath(harness)));
+			});
+		}
+
+		[Fact]
+		public void Closing_WhenTheScriptCouldNotBeParsed_DoesNotOverwriteTheFileWithAnEmptyChart()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				using FlowchartHarness harness = new FlowchartHarness();
+				FlowchartDocument saved = new FlowchartDocument("dcjohn.ssl")
+				{
+					Nodes = new[] { new FlowchartNodeState("Node001") { X = 123, Y = 45 } },
+				};
+				await harness.Store.SaveAsync(FcdPath(harness), saved);
+				harness.WorkspaceRecorder.ParseSucceeds = false;
+				harness.Script.ProgramInfo = null;
+				harness.ViewModel.AutoSaveChart = true;
+
+				await harness.LoadAsync();
+				harness.ViewModel.OnClosing();
+
+				FlowchartDocument document = await harness.Store.LoadAsync(FcdPath(harness));
+				Assert.Equal(123, document.FindNode("Node001")!.X);
+				Assert.Empty(harness.Canvas.Nodes);
 			});
 		}
 

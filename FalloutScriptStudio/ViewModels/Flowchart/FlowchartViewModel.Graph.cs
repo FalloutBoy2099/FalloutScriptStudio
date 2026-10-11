@@ -30,7 +30,6 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				String? file = this._store.FindFile(script.FilePath);
 				if (file is not null)
 				{
-					this._fcdPath = file;
 					if (await this.LoadFileAsync(file))
 					{
 						return;
@@ -80,7 +79,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			}
 
 			this._nodeEditors.CloseFlowchartEditors(this._script);
-			if (this.AutoSaveChart && this._fcdPath is not null)
+			if (this.AutoSaveChart && this._loaded && this._fcdPath is not null)
 			{
 				FlowchartDocument document = this.CreateDocument();
 				String path = this._fcdPath;
@@ -133,12 +132,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				return;
 			}
 
-			String? previous = this._fcdPath;
-			this._fcdPath = path;
-			if (!await this.LoadFileAsync(path))
-			{
-				this._fcdPath = previous;
-			}
+			await this.LoadFileAsync(path);
 		}
 
 		/// <summary>Saves the flowchart to its file; asks for the file the first time.</summary>
@@ -186,7 +180,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			{
 				canvas.SaveToPng(path);
 			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or OutOfMemoryException or ArgumentException or InvalidOperationException or NotSupportedException)
 			{
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Flowchart.Menu.File.SaveImage"), Loc.Format("Str.Flowchart.Msg.ImageSaveFailed", ex.Message));
 			}
@@ -290,7 +284,8 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 
 		private IReadOnlyList<String> _missingMessageFiles = Array.Empty<String>();
 
-		private async Task<FlowchartModel> BuildModelAsync()
+		/// <summary>Builds the nodes of the script; <see langword="null"/> when the script could not be parsed (so nothing may be replaced or saved from it).</summary>
+		private async Task<FlowchartModel?> BuildModelAsync()
 		{
 			DocumentViewModel script = this.RequireScript();
 			if (script.ProgramInfo is null || script.NeedsParse)
@@ -301,7 +296,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			ProgramInfo? info = script.ProgramInfo;
 			if (info is null)
 			{
-				return FlowchartModel.Empty;
+				return null;
 			}
 
 			IDialogueMessageSource source = await this._messages.CreateSourceAsync(script);
@@ -333,7 +328,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			this._selfChange++;
 			try
 			{
-				this._model = await this.BuildModelAsync();
+				FlowchartModel? model = await this.BuildModelAsync();
+				if (model is null)
+				{
+					return;
+				}
+
+				this._model = model;
 				canvas.Clear();
 				Int32 shiftX = 0;
 				Int32 shiftY = 0;
@@ -348,6 +349,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				}
 
 				canvas.Refresh();
+				this._loaded = true;
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
 			}
@@ -396,7 +398,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			this._selfChange++;
 			try
 			{
-				this._model = await this.BuildModelAsync();
+				FlowchartModel? model = await this.BuildModelAsync();
+				if (model is null)
+				{
+					return;
+				}
+
+				this._model = model;
 				this.ReplaceNodes(newNodeName);
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
@@ -476,7 +484,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			this._selfChange++;
 			try
 			{
-				this._model = await this.BuildModelAsync();
+				FlowchartModel? model = await this.BuildModelAsync();
+				if (model is null)
+				{
+					return false;
+				}
+
+				this._model = model;
 				FlowchartReconciliation reconciliation = document.Reconcile(this._model.NodeNames);
 				canvas.Clear();
 				foreach (FlowchartNodeState state in reconciliation.Document.Nodes)
@@ -510,6 +524,8 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 
 				canvas.Zoom = document.Zoom > 0 ? document.Zoom : 1.0;
 				canvas.ScrollToOffset(document.PositionX, document.PositionY);
+				this._fcdPath = path;
+				this._loaded = true;
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
 				await this.ReportReconciliationAsync(reconciliation);

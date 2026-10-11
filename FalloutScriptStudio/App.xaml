@@ -1,49 +1,50 @@
-<Application x:Class="FalloutScriptStudio.App"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
-	<Application.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ui:ThemesDictionary Theme="Dark" />
-				<ui:ControlsDictionary />
-				<ResourceDictionary Source="Resources/ShellResources.xaml" />
-				<ResourceDictionary Source="Resources/EditorTemplates.xaml" />
-			</ResourceDictionary.MergedDictionaries>
+<Application
+    x:Class="FalloutScriptStudio.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ui:ThemesDictionary Theme="Dark" />
+                <ui:ControlsDictionary />
+                <ResourceDictionary Source="Resources/ShellResources.xaml" />
+                <ResourceDictionary Source="Resources/EditorTemplates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-			<!-- Dense layout, like DatExplorerIII: 12 px text and compact controls instead of the roomy WPF-UI defaults. -->
-			<sys:Double x:Key="ControlContentThemeFontSize">12</sys:Double>
-			<sys:Double x:Key="ContentControlFontSize">12</sys:Double>
-			<sys:Double x:Key="TextFontSize">12</sys:Double>
-			<sys:Double x:Key="MessageFontSize">12</sys:Double>
-			<sys:Double x:Key="TreeViewItemFontSize">12</sys:Double>
-			<sys:Double x:Key="DefaultDataGridFontSize">12</sys:Double>
-			<sys:Double x:Key="SubtitleFontSize">14</sys:Double>
-			<sys:Double x:Key="DefaultIconFontSize">14</sys:Double>
+            <!--  Dense layout, like DatExplorerIII: 12 px text and compact controls instead of the roomy WPF-UI defaults.  -->
+            <sys:Double x:Key="ControlContentThemeFontSize">12</sys:Double>
+            <sys:Double x:Key="ContentControlFontSize">12</sys:Double>
+            <sys:Double x:Key="TextFontSize">12</sys:Double>
+            <sys:Double x:Key="MessageFontSize">12</sys:Double>
+            <sys:Double x:Key="TreeViewItemFontSize">12</sys:Double>
+            <sys:Double x:Key="DefaultDataGridFontSize">12</sys:Double>
+            <sys:Double x:Key="SubtitleFontSize">14</sys:Double>
+            <sys:Double x:Key="DefaultIconFontSize">14</sys:Double>
 
-			<Thickness x:Key="ButtonPadding">8,3,8,3</Thickness>
-			<Thickness x:Key="ToggleButtonPadding">8,3,8,3</Thickness>
-			<Thickness x:Key="HyperlinkButtonPadding">6,2,6,2</Thickness>
-			<Thickness x:Key="ComboBoxPadding">8,3,8,3</Thickness>
-			<Thickness x:Key="ComboBoxEditableTextPadding">8,3,0,3</Thickness>
-			<Thickness x:Key="TextControlThemePadding">8,3,8,3</Thickness>
-			<Thickness x:Key="CheckBoxPadding">6,0,0,0</Thickness>
-			<Thickness x:Key="RadioButtonPadding">6,0,0,0</Thickness>
-			<Thickness x:Key="CardPadding">10</Thickness>
-			<Thickness x:Key="CardControlPadding">10,8,10,8</Thickness>
-			<Thickness x:Key="InfoBarPadding">10,6,10,6</Thickness>
-			<Thickness x:Key="ExpanderPadding">10,6,10,6</Thickness>
+            <Thickness x:Key="ButtonPadding">8,3,8,3</Thickness>
+            <Thickness x:Key="ToggleButtonPadding">8,3,8,3</Thickness>
+            <Thickness x:Key="HyperlinkButtonPadding">6,2,6,2</Thickness>
+            <Thickness x:Key="ComboBoxPadding">8,3,8,3</Thickness>
+            <Thickness x:Key="ComboBoxEditableTextPadding">8,3,0,3</Thickness>
+            <Thickness x:Key="TextControlThemePadding">8,3,8,3</Thickness>
+            <Thickness x:Key="CheckBoxPadding">6,0,0,0</Thickness>
+            <Thickness x:Key="RadioButtonPadding">6,0,0,0</Thickness>
+            <Thickness x:Key="CardPadding">10</Thickness>
+            <Thickness x:Key="CardControlPadding">10,8,10,8</Thickness>
+            <Thickness x:Key="InfoBarPadding">10,6,10,6</Thickness>
+            <Thickness x:Key="ExpanderPadding">10,6,10,6</Thickness>
 
-			<sys:Double x:Key="ComboBoxMinHeight">24</sys:Double>
-			<sys:Double x:Key="TextControlThemeMinHeight">24</sys:Double>
-			<sys:Double x:Key="ListViewItemMinHeight">22</sys:Double>
-			<sys:Double x:Key="TreeViewItemMinHeight">22</sys:Double>
-			<sys:Double x:Key="NavigationViewItemOnLeftMinHeight">30</sys:Double>
+            <sys:Double x:Key="ComboBoxMinHeight">24</sys:Double>
+            <sys:Double x:Key="TextControlThemeMinHeight">24</sys:Double>
+            <sys:Double x:Key="ListViewItemMinHeight">22</sys:Double>
+            <sys:Double x:Key="TreeViewItemMinHeight">22</sys:Double>
+            <sys:Double x:Key="NavigationViewItemOnLeftMinHeight">30</sys:Double>
 
-			<!-- A neutral button keeps a readable text color while the pointer is over it or presses it (it turned black on the dark theme). -->
-			<SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{DynamicResource TextFillColorPrimary}" />
-			<SolidColorBrush x:Key="ButtonForegroundPressed" Color="{DynamicResource TextFillColorSecondary}" />
-		</ResourceDictionary>
-	</Application.Resources>
+            <!--  A neutral button keeps a readable text color while the pointer is over it or presses it (it turned black on the dark theme).  -->
+            <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="{DynamicResource TextFillColorPrimary}" />
+            <SolidColorBrush x:Key="ButtonForegroundPressed" Color="{DynamicResource TextFillColorSecondary}" />
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

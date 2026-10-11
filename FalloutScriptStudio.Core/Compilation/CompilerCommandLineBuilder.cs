@@ -38,9 +38,9 @@ namespace FalloutScriptStudio.Core.Compilation
 				usePreprocess = preprocessOnly ? "-P " : "-p ";
 			}
 
-			String programDirectory = "-I\"" + this._options.ProgramDirectory + "\" ";
+			String programDirectory = "-I" + Quote(this._options.ProgramDirectory) + " ";
 			String includeDirs = this._options.SearchesIncludes
-				? "-I\"" + this._options.HeadersDirectory + "\" " + programDirectory
+				? "-I" + Quote(this._options.HeadersDirectory) + " " + programDirectory
 				: programDirectory;
 
 			return includeDirs
@@ -51,7 +51,7 @@ namespace FalloutScriptStudio.Core.Compilation
 				+ (this._options.DebugInfo ? "-d " : String.Empty)
 				+ (this.Define is not null ? "-m" + this.Define : String.Empty)
 				+ (this._options.ShortCircuit || shortCircuit ? " -s" : String.Empty)
-				+ " \"" + Path.GetFileName(inputFile) + "\" -o \"" + outputFile + "\"";
+				+ " " + Quote(Path.GetFileName(inputFile)) + " -o " + Quote(outputFile);
 		}
 
 		/// <summary>
@@ -66,22 +66,23 @@ namespace FalloutScriptStudio.Core.Compilation
 			String searchPaths = " .."; // the parent directory of the resources folder
 			if (this._options.SearchesIncludes)
 			{
-				searchPaths += " \"" + this._options.HeadersDirectory + "\"";
+				searchPaths += " " + Quote(this._options.HeadersDirectory);
 			}
 
-			String output = this.GetScratchRelativeToResources() + outputFileName;
+			// The full path, quoted: the user-profile layout puts the scratch folder in a path with spaces (and far from the resources folder).
+			String output = Quote(Path.Combine(Path.GetFullPath(this._options.ScratchDirectory), outputFileName));
 
 			if (this._options.Preprocessor == PreprocessorKind.Watcom)
 			{
 				// wcc: infile outfile -pc/l i-paths [-d"macro"]
-				return "\"" + inputFile + "\" " + output
+				return Quote(inputFile) + " " + output
 					+ (preprocessOnly ? " c" : " l")
 					+ searchPaths
 					+ (this.Define is not null ? " -d" + this.Define : String.Empty);
 			}
 
 			// mcpp: infile outfile -W1/0 i-paths [-D"macro"] [-P]
-			return "\"" + inputFile + "\" " + output
+			return Quote(inputFile) + " " + output
 				+ (this._options.ShowWarnings ? " 1" : " 0")
 				+ searchPaths
 				+ (this.Define is not null ? " -D" + this.Define : String.Empty)
@@ -97,15 +98,15 @@ namespace FalloutScriptStudio.Core.Compilation
 		/// <returns>The argument string.</returns>
 		public String BuildUserCompiler(String inputFile, String sourceDirectory, Boolean shortCircuit)
 		{
-			String quotedSourceDirectory = " \"" + sourceDirectory + "\"";
+			String quotedSourceDirectory = " " + Quote(sourceDirectory);
 			String headers = this._options.HeadersDirectory != null
-				? "\"" + this._options.HeadersDirectory + "\""
+				? Quote(this._options.HeadersDirectory)
 				: "..\\";
 			String output = !this._options.CompileToSourceDirectory && this._options.OutputDirectory != null
-				? " \"" + this._options.OutputDirectory + "\""
+				? " " + Quote(this._options.OutputDirectory)
 				: quotedSourceDirectory;
 
-			return "\"" + inputFile + "\" "
+			return Quote(inputFile) + " "
 				+ headers
 				+ output
 				+ " " + (this.Define ?? "0")
@@ -124,7 +125,7 @@ namespace FalloutScriptStudio.Core.Compilation
 		{
 			return (this._options.DecompileForFallout1 ? "-1" : String.Empty)
 				+ (this._options.TabsToSpaces ? " -s" + this._options.TabSize.ToString(CultureInfo.InvariantCulture) : String.Empty)
-				+ " \"" + inputFile + "\" \"" + outputFile + "\"";
+				+ " " + Quote(inputFile) + " " + Quote(outputFile);
 		}
 
 		/// <summary>
@@ -133,12 +134,31 @@ namespace FalloutScriptStudio.Core.Compilation
 		/// </summary>
 		private String? Define => String.IsNullOrWhiteSpace(this._options.PreprocessorDefine) ? null : this._options.PreprocessorDefine;
 
-		private String GetScratchRelativeToResources()
+		/// <summary>
+		/// Puts a path in double quotes. The C runtime of sslc, mcpp and wcc reads a backslash before a quote as an escape: <c>-I"C:\headers\"</c>
+		/// gives the argument <c>C:\headers"</c> and swallows the rest of the line. A trailing backslash is therefore removed, except from the
+		/// root of a drive (<c>D:</c> alone is the current folder of that drive), where it is doubled (two backslashes before the quote are
+		/// read as one).
+		/// </summary>
+		/// <param name="path">The path.</param>
+		/// <returns>The quoted path.</returns>
+		internal static String Quote(String? path)
 		{
-			String relative = Path.GetRelativePath(
-				Path.GetFullPath(this._options.ResourcesDirectory),
-				Path.GetFullPath(this._options.ScratchDirectory));
-			return relative + "\\";
+			path ??= String.Empty;
+			Int32 end = path.Length;
+			while (end > 0 && path[end - 1] == '\\')
+			{
+				end--;
+			}
+
+			if (end == path.Length)
+			{
+				return "\"" + path + "\"";
+			}
+
+			String trimmed = path.Substring(0, end);
+			Boolean root = trimmed.Length == 0 || (trimmed.Length == 2 && Char.IsAsciiLetter(trimmed[0]) && trimmed[1] == ':');
+			return "\"" + trimmed + (root ? "\\\\" : String.Empty) + "\"";
 		}
 	}
 }

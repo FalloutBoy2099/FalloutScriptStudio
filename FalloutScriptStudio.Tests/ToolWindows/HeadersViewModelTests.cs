@@ -5,12 +5,13 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using FalloutScriptStudio.TestSupport;
 	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Xunit;
 
 	public sealed class HeadersViewModelTests : IDisposable
 	{
-		private readonly String _directory = Path.Combine(Path.GetTempPath(), "fss-headers-" + Guid.NewGuid().ToString("N"));
+		private readonly String _directory = TestFiles.CreateWorkFolder("headers");
 
 		public HeadersViewModelTests()
 		{
@@ -23,7 +24,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public void Dispose()
 		{
-			Directory.Delete(this._directory, true);
+			TestFiles.DeleteWorkFolder(this._directory);
 		}
 
 		[Theory]

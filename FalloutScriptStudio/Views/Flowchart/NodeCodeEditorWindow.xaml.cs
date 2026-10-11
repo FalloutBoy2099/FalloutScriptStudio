@@ -152,6 +152,7 @@ namespace FalloutScriptStudio.Views.Flowchart
 			this.ViewModel.InsertTextRequested -= this.OnInsertTextRequested;
 			this.ViewModel.SelectRangeRequested -= this.OnSelectRangeRequested;
 			this.ViewModel.PropertyChanged -= this.OnViewModelPropertyChanged;
+			this.ViewModel.Dispose();
 			this.Dispose();
 		}
 

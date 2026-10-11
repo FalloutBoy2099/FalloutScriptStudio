@@ -55,7 +55,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 		/// <summary>Opens files by path (drag and drop, command line).</summary>
 		public async Task OpenFilesAsync(IEnumerable<String> paths)
 		{
-			await this._workspace.OpenDroppedFilesAsync(paths.ToList());
+			List<String> files = paths.ToList();
+			await this._workspace.GuardAsync(() => this._workspace.OpenDroppedFilesAsync(files));
 			this.RefreshRecentFiles();
 		}
 

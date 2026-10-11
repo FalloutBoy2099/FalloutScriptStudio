@@ -1,8 +1,10 @@
 namespace FalloutScriptStudio.ViewModels.Panels
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.IO;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using CommunityToolkit.Mvvm.Input;
@@ -13,13 +15,19 @@ namespace FalloutScriptStudio.ViewModels.Panels
 	using FalloutScriptStudio.Workspace.Project;
 
 	/// <summary>The "Solution" tab: the project folder as a tree of scripts, headers and message files.</summary>
-	public sealed partial class ProjectExplorerViewModel : ObservableObject
+	public sealed partial class ProjectExplorerViewModel : ObservableObject, IDisposable
 	{
+		private static readonly TimeSpan _defaultFilterDelay = TimeSpan.FromMilliseconds(250);
+
 		private readonly ISettingsService _settings;
 		private readonly IWorkspaceManager _workspace;
 		private readonly IDialogService _dialogs;
 		private readonly IShellService _shell;
 		private String? _loadedFolder;
+		private CancellationTokenSource? _filterCancellation;
+		private IReadOnlyList<String>? _fileIndex;
+		private String? _indexFolder;
+		private Boolean _indexCompiled;
 
 		/// <summary>Initializes the explorer and loads the project folder.</summary>
 		public ProjectExplorerViewModel(ISettingsService settings, IWorkspaceManager workspace, IDialogService dialogs, IShellService shell)
@@ -43,6 +51,15 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			};
 			this.Reload();
 		}
+
+		/// <summary>Gets or sets how long typing must pause before the file names are filtered (the filter text is debounced).</summary>
+		public TimeSpan FilterDelay { get; set; } = _defaultFilterDelay;
+
+		/// <summary>
+		/// Gets the filter run that was started last (completed when none is pending). The folder walk of a filter runs on a
+		/// worker thread and is cancelled by the next keystroke; its result is shown on the UI thread.
+		/// </summary>
+		public Task FilterTask { get; private set; } = Task.CompletedTask;
 
 		/// <summary>Gets the top level nodes (the content of the project folder, or the search results).</summary>
 		public ObservableCollection<ProjectNodeViewModel> Nodes { get; } = new ObservableCollection<ProjectNodeViewModel>();
@@ -70,6 +87,13 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		[RelayCommand]
 		public void Reload()
 		{
+			this._fileIndex = null;
+			this.Refresh();
+		}
+
+		private void Refresh()
+		{
+			this.CancelFilter();
 			this.Nodes.Clear();
 			String? folder = this.ProjectFolder;
 			this._loadedFolder = folder;
@@ -82,11 +106,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			ProjectFileFilter filter = new ProjectFileFilter(this.ShowCompiled);
 			if (this.FilterText.Trim().Length > 0)
 			{
-				foreach (String file in filter.Search(folder, this.FilterText.Trim()))
-				{
-					this.Nodes.Add(new ProjectNodeViewModel(file, false, filter));
-				}
-
+				this.StartFilter(folder, this.FilterText.Trim(), TimeSpan.Zero);
 				return;
 			}
 
@@ -148,14 +168,78 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			}
 		}
 
+		/// <summary>Cancels a pending filter run.</summary>
+		public void Dispose()
+		{
+			this.CancelFilter();
+		}
+
 		partial void OnFilterTextChanged(String value)
 		{
-			this.Reload();
+			String? folder = this.ProjectFolder;
+			String text = value.Trim();
+			if (text.Length == 0 || folder is null || !Directory.Exists(folder))
+			{
+				this.Refresh();
+				return;
+			}
+
+			this.StartFilter(folder, text, this.FilterDelay);
 		}
 
 		partial void OnShowCompiledChanged(Boolean value)
 		{
 			this.Reload();
+		}
+
+		private void CancelFilter()
+		{
+			CancellationTokenSource? cancellation = this._filterCancellation;
+			this._filterCancellation = null;
+			cancellation?.Cancel();
+			cancellation?.Dispose();
+		}
+
+		private void StartFilter(String folder, String text, TimeSpan delay)
+		{
+			this.CancelFilter();
+			CancellationTokenSource cancellation = new CancellationTokenSource();
+			this._filterCancellation = cancellation;
+			this.FilterTask = this.RunFilterAsync(folder, text, this.ShowCompiled, delay, cancellation.Token);
+		}
+
+		private async Task RunFilterAsync(String folder, String text, Boolean showCompiled, TimeSpan delay, CancellationToken cancellationToken)
+		{
+			try
+			{
+				if (delay > TimeSpan.Zero)
+				{
+					await Task.Delay(delay, cancellationToken);
+				}
+
+				// The folder is walked once (off the UI thread) and the names are filtered in memory until Reload() or a new folder.
+				IReadOnlyList<String>? index = this._fileIndex;
+				ProjectFileFilter filter = new ProjectFileFilter(showCompiled);
+				if (index is null || this._indexCompiled != showCompiled || !String.Equals(this._indexFolder, folder, StringComparison.OrdinalIgnoreCase))
+				{
+					index = await Task.Run(() => filter.ListAll(folder, cancellationToken), cancellationToken);
+					cancellationToken.ThrowIfCancellationRequested();
+					this._fileIndex = index;
+					this._indexFolder = folder;
+					this._indexCompiled = showCompiled;
+				}
+
+				IReadOnlyList<String> matches = ProjectFileFilter.FilterByName(index, text);
+				this.Nodes.Clear();
+				foreach (String file in matches)
+				{
+					this.Nodes.Add(new ProjectNodeViewModel(file, false, filter));
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				// A newer keystroke (or a reload) replaced this run.
+			}
 		}
 	}
 }

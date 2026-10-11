@@ -367,7 +367,7 @@ namespace FalloutScriptStudio.Editor
 
 		private void OnZoomChanged(Object? sender, EventArgs e)
 		{
-			this.Context.Editor.Dispatcher.BeginInvoke(new Action(this.Appearance.Apply));
+			// The appearance controller listens to the zoom itself and re-applies the font once.
 			this.ZoomChanged?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -377,6 +377,11 @@ namespace FalloutScriptStudio.Editor
 			if (!dispatcher.CheckAccess())
 			{
 				dispatcher.BeginInvoke(new Action(() => this.OnDocumentPropertyChanged(sender, e)));
+				return;
+			}
+
+			if (!this._started)
+			{
 				return;
 			}
 

@@ -40,9 +40,10 @@ C# parser takes over.
 
 ### Integration tests with the real tools
 
-The tests in `FalloutScriptStudio.Core.Tests\Native` run the real `parser.dll`, `compile.exe` and `int2ssl.exe` (folder
-`FSS_SSLC_DIR`, by default `tools\sslc-sfall5`; mod sources in `FSS_SSL_SAMPLES`).
-When the tools are missing the tests are **skipped**, not failed.
+The tests in `FalloutScriptStudio.Core.Tests\Native` run the real `parser.dll`, `compile.exe` and `int2ssl.exe` (copies in
+`_test_files\tools`, overridable with `FSS_SSLC_DIR`) on real scripts (`_test_files\samples`, overridable with `FSS_SSL_SAMPLES`).
+Every file the tests use or create stays in `_test_files` (see its `README.md`), never in `%TEMP%`; `_test_files\work` is the git-ignored scratch folder.
+When the tools or the optional sample sets are missing the tests are **skipped**, not failed.
 
 ## License and credits
 

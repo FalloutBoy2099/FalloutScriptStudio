@@ -231,6 +231,22 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		}
 
 		[Fact]
+		public async Task CreateFile_DoesNotOverwriteAFileThatAppearedMeanwhile()
+		{
+			String script = Path.Combine(this.DataScripts, "racy.ssl");
+			MessageFileLocation location = this._service.LocateForScript(script, null, this.CreateOptions());
+			Assert.False(location.Found);
+			Directory.CreateDirectory(this.DialogFolder);
+			String existing = Path.Combine(this.DialogFolder, "racy.msg");
+			await File.WriteAllTextAsync(existing, "{100}{}{Precious}");
+
+			String created = await this._service.CreateFileAsync(location);
+
+			Assert.Equal(existing, created);
+			Assert.Equal("{100}{}{Precious}", await File.ReadAllTextAsync(existing));
+		}
+
+		[Fact]
 		public async Task CreateFile_RequiresAKnownLocation()
 		{
 			MessageFileLocation unknown = new MessageFileLocation(false, null, null, null, MessageLookupIssues.ScriptsListEntryInvalid);

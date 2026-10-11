@@ -3,19 +3,17 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 	using System;
 	using System.IO;
 	using System.Text;
+	using FalloutScriptStudio.TestSupport;
 
-	/// <summary>A uniquely named temporary directory that is deleted when disposed.</summary>
-	internal sealed class ScriptToolsTempDirectory : IDisposable
+	/// <summary>A uniquely named scratch folder in <c>_test_files\work</c> that is deleted when disposed.</summary>
+	internal sealed class ScriptToolsTempDirectory : TestFolder
 	{
 		public ScriptToolsTempDirectory()
+			: base("scripttools")
 		{
-			this.Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "fss-scripttools-" + Guid.NewGuid().ToString("N"));
-			Directory.CreateDirectory(this.Path);
 		}
 
-		public String Path { get; }
-
-		public String Combine(params String[] parts)
+		public override String Combine(params String[] parts)
 		{
 			return System.IO.Path.GetFullPath(System.IO.Path.Combine(this.Path, System.IO.Path.Combine(parts)));
 		}
@@ -26,22 +24,6 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 			Directory.CreateDirectory(System.IO.Path.GetDirectoryName(full)!);
 			File.WriteAllBytes(full, (encoding ?? new UTF8Encoding(false)).GetBytes(content));
 			return full;
-		}
-
-		public void Dispose()
-		{
-			try
-			{
-				Directory.Delete(this.Path, true);
-			}
-			catch (IOException)
-			{
-				// Best effort cleanup of a temporary directory.
-			}
-			catch (UnauthorizedAccessException)
-			{
-				// Best effort cleanup of a temporary directory.
-			}
 		}
 	}
 }

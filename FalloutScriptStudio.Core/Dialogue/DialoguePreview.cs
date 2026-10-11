@@ -14,7 +14,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	/// </summary>
 	/// <remarks>
 	/// Create one instance per preview window, call <see cref="StartAsync"/>, then bind the window to <see cref="Rows"/>,
-	/// <see cref="NodeNames"/> and <see cref="CurrentNode"/>. The instance is not thread-safe; use it from the UI thread.
+	/// <see cref="NodeNames"/> and <see cref="CurrentNode"/>. The instance is not thread-safe; use it from the UI thread: the
+	/// asynchronous methods resume on the caller's context, so <see cref="Changed"/> is raised on the thread that called them.
 	/// </remarks>
 	public sealed class DialoguePreview
 	{
@@ -27,6 +28,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 		private String _scriptText = String.Empty;
 		private ProgramInfo? _info;
 		private Int32 _historyIndex = -1;
+		private Int32 _buildVersion;
 		private IReadOnlyList<DialoguePreviewRow> _rows = Array.Empty<DialoguePreviewRow>();
 		private IReadOnlyList<String> _nodeNames = Array.Empty<String>();
 
@@ -105,7 +107,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 			this._history.Add(start);
 			this._historyIndex = 0;
-			await this.BuildRowsAsync(cancellationToken).ConfigureAwait(false);
+			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}
 
@@ -128,7 +130,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			this._history.Clear();
 			this._history.Add(name);
 			this._historyIndex = 0;
-			await this.BuildRowsAsync(cancellationToken).ConfigureAwait(false);
+			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}
 
@@ -155,7 +157,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 			this._history.Add(name);
 			this._historyIndex++;
-			await this.BuildRowsAsync(cancellationToken).ConfigureAwait(false);
+			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}
 
@@ -170,7 +172,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			}
 
 			this._historyIndex--;
-			await this.BuildRowsAsync(cancellationToken).ConfigureAwait(false);
+			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}
 
@@ -185,7 +187,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			}
 
 			this._historyIndex++;
-			await this.BuildRowsAsync(cancellationToken).ConfigureAwait(false);
+			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}
 
@@ -264,6 +266,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 		private async Task BuildRowsAsync(CancellationToken cancellationToken)
 		{
+			Int32 version = ++this._buildVersion;
 			String? node = this.CurrentNode;
 			if (node is null || this._info is null || this._messages is null)
 			{
@@ -283,7 +286,13 @@ namespace FalloutScriptStudio.Core.Dialogue
 			IReadOnlyList<DialogueLine> lines = this._parser.ParseNode(body, this._info, new DialogueNodeParseOptions());
 			await this._messages.EnsureLoadedAsync(
 				lines.Where(l => l.UsesOtherMessageFile && l.Opcode.HasMessage()).Select(l => l.MessageFileNumber),
-				cancellationToken).ConfigureAwait(false);
+				cancellationToken);
+
+			if (version != this._buildVersion)
+			{
+				// A newer request changed the node while the message files were loading: its rows win.
+				return;
+			}
 
 			var rows = new List<DialoguePreviewRow>();
 			foreach (DialogueLine line in lines)

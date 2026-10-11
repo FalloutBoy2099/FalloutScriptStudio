@@ -56,7 +56,12 @@ namespace FalloutScriptStudio.Core.Decompilation
 			CompilerOptions options = request.Options;
 			CompilerPaths paths = new CompilerPaths(options);
 			StringBuilder output = new StringBuilder();
-			DecompilationOutputFiles.Prepare(paths, options);
+			DecompilationResult? preparationFailure = DecompilationOutputFiles.Prepare(paths, options);
+			if (preparationFailure != null)
+			{
+				outputProgress?.Report(preparationFailure.Output.TrimEnd());
+				return preparationFailure;
+			}
 
 			Byte[] data;
 			try
@@ -92,7 +97,16 @@ namespace FalloutScriptStudio.Core.Decompilation
 
 			// The text keeps the bytes of the compiled script (names and strings are single byte characters), as int2ssl did.
 			String source = script.Text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", LineBreak, StringComparison.Ordinal);
-			await File.WriteAllBytesAsync(paths.DecompilationFile, Encoding.Latin1.GetBytes(source), cancellationToken).ConfigureAwait(false);
+			try
+			{
+				await File.WriteAllBytesAsync(paths.DecompilationFile, Encoding.Latin1.GetBytes(source), cancellationToken).ConfigureAwait(false);
+			}
+			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LogWarning(exception, "The decompiled script {Script} could not be written", request.ScriptPath);
+				Report(output, outputProgress, "[Error] <none>:0: The decompiled script could not be written: " + exception.Message);
+				return new DecompilationResult(false, null, output.ToString());
+			}
 
 			Report(output, outputProgress, "[Done] Decompilation completed.");
 			return DecompilationOutputFiles.Complete(paths, request, output.ToString());

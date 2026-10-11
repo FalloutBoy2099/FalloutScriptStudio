@@ -23,6 +23,9 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 
 		public Int32 ConfirmCount { get; private set; }
 
+		/// <summary>Gets or sets a task that <see cref="ShowErrorAsync"/> waits for, to keep an error box open.</summary>
+		public Task? ErrorGate { get; set; }
+
 		public Task ShowInfoAsync(String title, String message)
 		{
 			this.Infos.Add(message);
@@ -38,7 +41,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		public Task ShowErrorAsync(String title, String message)
 		{
 			this.Errors.Add(message);
-			return Task.CompletedTask;
+			return this.ErrorGate ?? Task.CompletedTask;
 		}
 
 		public Task<Boolean> ConfirmAsync(String title, String message, String yesText = "Yes", String noText = "No")

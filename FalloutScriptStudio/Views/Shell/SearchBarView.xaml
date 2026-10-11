@@ -1,122 +1,146 @@
-<UserControl x:Class="FalloutScriptStudio.Views.Shell.SearchBarView"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
-	<Border Margin="8,4,8,6"
-			Padding="8,6"
-			CornerRadius="{StaticResource ShellCornerRadius}"
-			Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-			BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-			BorderThickness="1">
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-			</Grid.RowDefinitions>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" MinWidth="160" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+<UserControl
+    x:Class="FalloutScriptStudio.Views.Shell.SearchBarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <Border
+        Margin="8,4,8,6"
+        Padding="8,6"
+        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        BorderThickness="1"
+        CornerRadius="{StaticResource ShellCornerRadius}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="160" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-			<ToggleButton x:Name="ReplaceToggle"
-						  Grid.Row="0"
-						  Grid.Column="0"
-						  Width="28"
-						  Height="32"
-						  Margin="0,0,6,0"
-						  Padding="0"
-						  Background="Transparent"
-						  BorderThickness="0"
-						  ToolTip="{DynamicResource Str.Shell.Search.TipToggleReplace}">
-				<ui:SymbolIcon Symbol="ChevronRight24" FontSize="14" />
-			</ToggleButton>
+            <ToggleButton
+                x:Name="ReplaceToggle"
+                Grid.Row="0"
+                Grid.Column="0"
+                Width="28"
+                Height="32"
+                Margin="0,0,6,0"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                ToolTip="{DynamicResource Str.Shell.Search.TipToggleReplace}">
+                <ui:SymbolIcon FontSize="14" Symbol="ChevronRight24" />
+            </ToggleButton>
 
-			<ComboBox x:Name="SearchBox"
-					  Grid.Row="0"
-					  Grid.Column="1"
-					  IsEditable="True"
-					  ItemsSource="{Binding History}"
-					  Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
-					  ToolTip="{DynamicResource Str.Shell.Search.TipText}"
-					  PreviewKeyDown="OnSearchBoxPreviewKeyDown" />
+            <ComboBox
+                x:Name="SearchBox"
+                Grid.Row="0"
+                Grid.Column="1"
+                IsEditable="True"
+                ItemsSource="{Binding History}"
+                PreviewKeyDown="OnSearchBoxPreviewKeyDown"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                ToolTip="{DynamicResource Str.Shell.Search.TipText}" />
 
-			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="6,0,0,0">
-				<ToggleButton Content="Aa"
-							  Width="34"
-							  Height="32"
-							  Padding="0"
-							  Margin="0,0,2,0"
-							  FontWeight="SemiBold"
-							  IsChecked="{Binding MatchCase, Mode=TwoWay}"
-							  ToolTip="{DynamicResource Str.Shell.Search.TipMatchCase}" />
-				<ToggleButton Content="W"
-							  Width="34"
-							  Height="32"
-							  Padding="0"
-							  Margin="0,0,2,0"
-							  FontWeight="SemiBold"
-							  IsChecked="{Binding WholeWord, Mode=TwoWay}"
-							  ToolTip="{DynamicResource Str.Shell.Search.TipWholeWord}" />
-				<ToggleButton Content=".*"
-							  Width="34"
-							  Height="32"
-							  Padding="0"
-							  Margin="0,0,6,0"
-							  FontWeight="SemiBold"
-							  IsChecked="{Binding UseRegex, Mode=TwoWay}"
-							  ToolTip="{DynamicResource Str.Shell.Search.TipRegex}" />
-				<ui:Button Style="{StaticResource ShellIconButtonStyle}"
-						   Icon="{ui:SymbolIcon ArrowUp24}"
-						   ToolTip="{DynamicResource Str.Shell.Search.TipFindPrevious}"
-						   Command="{Binding FindPreviousCommand}" />
-				<ui:Button Style="{StaticResource ShellIconButtonStyle}"
-						   Icon="{ui:SymbolIcon ArrowDown24}"
-						   ToolTip="{DynamicResource Str.Shell.Search.TipFindNext}"
-						   Command="{Binding FindNextCommand}" />
-				<ui:Button Style="{StaticResource ShellIconButtonStyle}"
-						   Icon="{ui:SymbolIcon TextBulletListSquare24}"
-						   ToolTip="{DynamicResource Str.Shell.Search.TipFindAll}"
-						   Command="{Binding FindAllCommand}" />
-				<ui:Button Style="{StaticResource ShellIconButtonStyle}"
-						   Icon="{ui:SymbolIcon TextT24}"
-						   ToolTip="{DynamicResource Str.Shell.Search.TipUseSelection}"
-						   Command="{Binding UseSelectionCommand}" />
-				<TextBlock Style="{StaticResource ShellCaptionTextStyle}"
-						   Text="{Binding StatusText}"
-						   Margin="8,0"
-						   MinWidth="70"
-						   Visibility="{Binding StatusText, Converter={StaticResource EmptyToCollapsed}}" />
-				<ui:Button Style="{StaticResource ShellIconButtonStyle}"
-						   Icon="{ui:SymbolIcon Dismiss24}"
-						   ToolTip="{DynamicResource Str.Shell.Search.TipHide}"
-						   Command="{Binding HideCommand}" />
-			</StackPanel>
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="2"
+                Margin="6,0,0,0"
+                Orientation="Horizontal">
+                <ToggleButton
+                    Width="34"
+                    Height="32"
+                    Margin="0,0,2,0"
+                    Padding="0"
+                    Content="Aa"
+                    FontWeight="SemiBold"
+                    IsChecked="{Binding MatchCase, Mode=TwoWay}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipMatchCase}" />
+                <ToggleButton
+                    Width="34"
+                    Height="32"
+                    Margin="0,0,2,0"
+                    Padding="0"
+                    Content="W"
+                    FontWeight="SemiBold"
+                    IsChecked="{Binding WholeWord, Mode=TwoWay}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipWholeWord}" />
+                <ToggleButton
+                    Width="34"
+                    Height="32"
+                    Margin="0,0,6,0"
+                    Padding="0"
+                    Content=".*"
+                    FontWeight="SemiBold"
+                    IsChecked="{Binding UseRegex, Mode=TwoWay}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipRegex}" />
+                <ui:Button
+                    Command="{Binding FindPreviousCommand}"
+                    Icon="{ui:SymbolIcon ArrowUp24}"
+                    Style="{StaticResource ShellIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipFindPrevious}" />
+                <ui:Button
+                    Command="{Binding FindNextCommand}"
+                    Icon="{ui:SymbolIcon ArrowDown24}"
+                    Style="{StaticResource ShellIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipFindNext}" />
+                <ui:Button
+                    Command="{Binding FindAllCommand}"
+                    Icon="{ui:SymbolIcon TextBulletListSquare24}"
+                    Style="{StaticResource ShellIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipFindAll}" />
+                <ui:Button
+                    Command="{Binding UseSelectionCommand}"
+                    Icon="{ui:SymbolIcon TextT24}"
+                    Style="{StaticResource ShellIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipUseSelection}" />
+                <TextBlock
+                    MinWidth="70"
+                    Margin="8,0"
+                    Style="{StaticResource ShellCaptionTextStyle}"
+                    Text="{Binding StatusText}"
+                    Visibility="{Binding StatusText, Converter={StaticResource EmptyToCollapsed}}" />
+                <ui:Button
+                    Command="{Binding HideCommand}"
+                    Icon="{ui:SymbolIcon Dismiss24}"
+                    Style="{StaticResource ShellIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipHide}" />
+            </StackPanel>
 
-			<Grid Grid.Row="1"
-				  Grid.Column="1"
-				  Grid.ColumnSpan="2"
-				  Margin="0,6,0,0"
-				  Visibility="{Binding IsChecked, ElementName=ReplaceToggle, Converter={StaticResource BoolToVisibility}}">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<ui:TextBox x:Name="ReplaceBox"
-							Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"
-							PlaceholderText="{DynamicResource Str.Shell.Search.ReplaceWith}"
-							ToolTip="{DynamicResource Str.Shell.Search.TipReplaceText}"
-							PreviewKeyDown="OnReplaceBoxPreviewKeyDown" />
-				<StackPanel Grid.Column="1" Orientation="Horizontal" Margin="6,0,0,0">
-					<ui:Button Content="{DynamicResource Str.Common.Replace}"
-							   Margin="0,0,4,0"
-							   Command="{Binding ReplaceCommand}"
-							   ToolTip="{DynamicResource Str.Shell.Search.TipReplace}" />
-					<ui:Button Content="{DynamicResource Str.Shell.Search.ReplaceAll}"
-							   Command="{Binding ReplaceAllCommand}"
-							   ToolTip="{DynamicResource Str.Shell.Search.TipReplaceAll}" />
-				</StackPanel>
-			</Grid>
-		</Grid>
-	</Border>
+            <Grid
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Margin="0,6,0,0"
+                Visibility="{Binding IsChecked, ElementName=ReplaceToggle, Converter={StaticResource BoolToVisibility}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:TextBox
+                    x:Name="ReplaceBox"
+                    PlaceholderText="{DynamicResource Str.Shell.Search.ReplaceWith}"
+                    PreviewKeyDown="OnReplaceBoxPreviewKeyDown"
+                    Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"
+                    ToolTip="{DynamicResource Str.Shell.Search.TipReplaceText}" />
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="6,0,0,0"
+                    Orientation="Horizontal">
+                    <ui:Button
+                        Margin="0,0,4,0"
+                        Command="{Binding ReplaceCommand}"
+                        Content="{DynamicResource Str.Common.Replace}"
+                        ToolTip="{DynamicResource Str.Shell.Search.TipReplace}" />
+                    <ui:Button
+                        Command="{Binding ReplaceAllCommand}"
+                        Content="{DynamicResource Str.Shell.Search.ReplaceAll}"
+                        ToolTip="{DynamicResource Str.Shell.Search.TipReplaceAll}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
 </UserControl>

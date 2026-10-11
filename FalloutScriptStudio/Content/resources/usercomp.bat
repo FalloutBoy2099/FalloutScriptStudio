@@ -1,7 +1,7 @@
 @echo off
 rem *** Example user config for compiling script file ***
 
-if not exist %1 goto NOFILE
+if not exist "%~1" goto NOFILE
 set namescript=%~n1
 
 rem Include files path
@@ -23,9 +23,12 @@ set optimize=%5
 rem Compiling with Short-Circuit Evaluation option (last)
 set shortCircuit=%7
 
-rem Set name and path for preprocessing file
-set prefile=..\scrTemp\%namescript%_[pre].ssl
-if exist %prefile% del %prefile%
+rem Set name and path for preprocessing file. The editor passes its scratch folder in FSS_SCRATCH (it is not
+rem ..\scrTemp when the program is installed in a read-only folder); next to the resources folder otherwise.
+set "scrtemp=%FSS_SCRATCH%"
+if not defined scrtemp set "scrtemp=%~dp0..\scrTemp"
+set "prefile=%scrtemp%\%namescript%_[pre].ssl"
+if exist "%prefile%" del "%prefile%"
 if exist %namescript%.ssl del /q %namescript%.ssl
 
 echo -------------------------------------------------------------------------------
@@ -68,7 +71,7 @@ goto DONE
 :ERROR
 echo Compilation of script %namescript%.ssl error.
 echo Look for an error in preprocessing file: %prefile%
-move %namescript%.ssl %prefile%
+move "%namescript%.ssl" "%prefile%"
 Exit 1
 
 :DONE

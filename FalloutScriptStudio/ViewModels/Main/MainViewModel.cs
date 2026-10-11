@@ -342,12 +342,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 		/// <returns><see langword="true"/> when the window may close.</returns>
 		public async Task<Boolean> CanCloseAsync()
 		{
-			if (!await this._workspace.CloseAllAsync())
-			{
-				return false;
-			}
-
-			return await this._messageEditor.CloseAllAsync();
+			// The Message Editor windows close between the questions and the saving, so a "Cancel" in either place changes nothing.
+			return await this._workspace.CloseAllAsync(null, this._messageEditor.CloseAllAsync);
 		}
 
 		/// <summary>Stores the view state of the window.</summary>

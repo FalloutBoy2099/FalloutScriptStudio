@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Core.Messages;
@@ -23,6 +24,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IMessageEditorService _messageEditor;
 		private readonly ILogger _logger;
 		private readonly Dictionary<DocumentViewModel, Dictionary<Int32, String>> _messageTexts = new Dictionary<DocumentViewModel, Dictionary<Int32, String>>();
+		private readonly ConditionalWeakTable<DocumentViewModel, Object> _forgotten = new ConditionalWeakTable<DocumentViewModel, Object>();
 
 		/// <summary>Initializes the service.</summary>
 		public MessageAssociationService(
@@ -55,7 +57,7 @@ namespace FalloutScriptStudio.Workspace
 		{
 			ArgumentNullException.ThrowIfNull(document);
 			ArgumentNullException.ThrowIfNull(messages);
-			this._messageTexts[document] = messages.BuildTextMap();
+			this.Store(document, messages);
 		}
 
 		/// <summary>
@@ -86,7 +88,7 @@ namespace FalloutScriptStudio.Workspace
 				MessageDocument messages = text is not null
 					? MessageDocument.Parse(text.Split('\n').Select(line => line.TrimEnd('\r')).ToList())
 					: await this._messageFiles.ReadAsync(path, this._settings.Settings.ToMessageFileOptions().Encoding);
-				this._messageTexts[document] = messages.BuildTextMap();
+				this.Store(document, messages);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
@@ -97,7 +99,18 @@ namespace FalloutScriptStudio.Workspace
 		/// <summary>Drops the cached message texts of a closed document.</summary>
 		public void Forget(DocumentViewModel document)
 		{
+			ArgumentNullException.ThrowIfNull(document);
+			this._forgotten.AddOrUpdate(document, document);
 			this._messageTexts.Remove(document);
+		}
+
+		/// <summary>Remembers the texts of a script, unless the script was closed while its message file was being read.</summary>
+		private void Store(DocumentViewModel document, MessageDocument messages)
+		{
+			if (!this._forgotten.TryGetValue(document, out _))
+			{
+				this._messageTexts[document] = messages.BuildTextMap();
+			}
 		}
 
 		/// <summary>Opens the message editor for the message file of a script (asking to create the file when it does not exist).</summary>
@@ -156,7 +169,15 @@ namespace FalloutScriptStudio.Workspace
 					Loc.Format("Str.Shell.Dlg.MessageFileCreate", location.FileName, location.DefaultDirectory));
 				if (confirmed)
 				{
-					path = await this._messageFiles.CreateFileAsync(location);
+					try
+					{
+						path = await this._messageFiles.CreateFileAsync(location);
+					}
+					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+					{
+						this._logger.LogError(ex, "The message file {Path} could not be created", location.DefaultPath);
+						await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.MessageFileTitle"), Loc.Get("Str.MessageEditor.Msg.CreateFailed") + Environment.NewLine + ex.Message);
+					}
 				}
 			}
 
@@ -169,7 +190,7 @@ namespace FalloutScriptStudio.Workspace
 			try
 			{
 				MessageDocument messages = await this._messageFiles.ReadAsync(path, options.Encoding);
-				this._messageTexts[document] = messages.BuildTextMap();
+				this.Store(document, messages);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{

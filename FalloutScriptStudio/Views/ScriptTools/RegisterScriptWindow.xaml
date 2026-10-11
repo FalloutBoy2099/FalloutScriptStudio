@@ -1,161 +1,194 @@
-<ui:FluentWindow FontSize="12" x:Class="FalloutScriptStudio.Views.ScriptTools.RegisterScriptWindow"
-				 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-				 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-				 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-				 Title="{DynamicResource Str.ScriptTools.RegTitle}"
-				 Width="880"
-				 Height="620"
-				 MinWidth="560"
-				 MinHeight="340"
-				 ShowInTaskbar="False"
-				 WindowStartupLocation="CenterOwner"
-				 ExtendsContentIntoTitleBar="True"
-				 WindowBackdropType="Mica"
-				 Background="{DynamicResource ApplicationBackgroundBrush}"
-				 Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-				 KeyDown="OnWindowKeyDown">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+<ui:FluentWindow
+    x:Class="FalloutScriptStudio.Views.ScriptTools.RegisterScriptWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="{DynamicResource Str.ScriptTools.RegTitle}"
+    Width="880"
+    Height="620"
+    MinWidth="560"
+    MinHeight="340"
+    Background="{DynamicResource ApplicationBackgroundBrush}"
+    ExtendsContentIntoTitleBar="True"
+    FontSize="12"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    KeyDown="OnWindowKeyDown"
+    ShowInTaskbar="False"
+    WindowBackdropType="Mica"
+    WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<ui:TitleBar Grid.Row="0"
-					 Title="{DynamicResource Str.ScriptTools.RegTitle}"
-					 ShowMinimize="False"
-					 ShowMaximize="False" />
+        <ui:TitleBar
+            Title="{DynamicResource Str.ScriptTools.RegTitle}"
+            Grid.Row="0"
+            ShowMaximize="False"
+            ShowMinimize="False" />
 
-		<Grid Grid.Row="1" Margin="16,4,16,8">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="240" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<ui:Button Grid.Column="0"
-					   Content="{DynamicResource Str.Common.Save}"
-					   Appearance="Primary"
-					   Icon="{ui:SymbolIcon Save24}"
-					   Command="{Binding SaveCommand}"
-					   Click="OnSaveClick"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegSaveTip}" />
-			<ui:Button Grid.Column="1"
-					   Margin="12,0,0,0"
-					   Icon="{ui:SymbolIcon Add24}"
-					   Command="{Binding AddRowCommand}"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegAddRowTip}"
-					   AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegAddRowName}" />
-			<ui:Button Grid.Column="2"
-					   Margin="6,0,0,0"
-					   Icon="{ui:SymbolIcon Delete24}"
-					   Command="{Binding RemoveLastRowCommand}"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegDeleteRowTip}"
-					   AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegDeleteRowName}" />
-			<ui:TextBox Grid.Column="4"
-						Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}"
-						PlaceholderText="{DynamicResource Str.ScriptTools.RegFindPlaceholder}"
-						Icon="{ui:SymbolIcon Search24}"
-						ClearButtonEnabled="True"
-						AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindPlaceholder}">
-				<ui:TextBox.InputBindings>
-					<KeyBinding Key="Enter" Command="{Binding FindNextCommand}" />
-				</ui:TextBox.InputBindings>
-			</ui:TextBox>
-			<ui:Button Grid.Column="5"
-					   Margin="6,0,0,0"
-					   Icon="{ui:SymbolIcon ArrowUp24}"
-					   Command="{Binding FindPreviousCommand}"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegFindPrevTip}"
-					   AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindPrevName}" />
-			<ui:Button Grid.Column="6"
-					   Margin="6,0,0,0"
-					   Icon="{ui:SymbolIcon ArrowDown24}"
-					   Command="{Binding FindNextCommand}"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegFindNextTip}"
-					   AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindNextName}" />
-		</Grid>
+        <Grid Grid.Row="1" Margin="16,4,16,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:Button
+                Grid.Column="0"
+                Appearance="Primary"
+                Click="OnSaveClick"
+                Command="{Binding SaveCommand}"
+                Content="{DynamicResource Str.Common.Save}"
+                Icon="{ui:SymbolIcon Save24}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegSaveTip}" />
+            <ui:Button
+                Grid.Column="1"
+                Margin="12,0,0,0"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegAddRowName}"
+                Command="{Binding AddRowCommand}"
+                Icon="{ui:SymbolIcon Add24}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegAddRowTip}" />
+            <ui:Button
+                Grid.Column="2"
+                Margin="6,0,0,0"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegDeleteRowName}"
+                Command="{Binding RemoveLastRowCommand}"
+                Icon="{ui:SymbolIcon Delete24}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegDeleteRowTip}" />
+            <ui:TextBox
+                Grid.Column="4"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindPlaceholder}"
+                ClearButtonEnabled="True"
+                Icon="{ui:SymbolIcon Search24}"
+                PlaceholderText="{DynamicResource Str.ScriptTools.RegFindPlaceholder}"
+                Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}">
+                <ui:TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding FindNextCommand}" />
+                </ui:TextBox.InputBindings>
+            </ui:TextBox>
+            <ui:Button
+                Grid.Column="5"
+                Margin="6,0,0,0"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindPrevName}"
+                Command="{Binding FindPreviousCommand}"
+                Icon="{ui:SymbolIcon ArrowUp24}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegFindPrevTip}" />
+            <ui:Button
+                Grid.Column="6"
+                Margin="6,0,0,0"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegFindNextName}"
+                Command="{Binding FindNextCommand}"
+                Icon="{ui:SymbolIcon ArrowDown24}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegFindNextTip}" />
+        </Grid>
 
-		<ui:InfoBar Grid.Row="2"
-					Margin="16,0,16,8"
-					Severity="Informational"
-					Title=""
-					Message="{Binding NoticeMessage}"
-					IsOpen="{Binding HasNotice, Mode=OneWay}"
-					IsClosable="False" />
+        <ui:InfoBar
+            Title=""
+            Grid.Row="2"
+            Margin="16,0,16,8"
+            IsClosable="False"
+            IsOpen="{Binding HasNotice, Mode=OneWay}"
+            Message="{Binding NoticeMessage}"
+            Severity="Informational" />
 
-		<Grid Grid.Row="3"
-			  Margin="16,0,16,10"
-			  IsEnabled="{Binding CanDefine}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<TextBlock Grid.Column="0"
-					   VerticalAlignment="Center"
-					   Text="{DynamicResource Str.ScriptTools.RegDefineLabel}"
-					   ToolTip="{DynamicResource Str.ScriptTools.RegDefineTip}" />
-			<ui:TextBox Grid.Column="1"
-						Margin="10,0,10,0"
-						Text="{Binding DefineName, UpdateSourceTrigger=PropertyChanged}"
-						AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegDefineName}" />
-			<ui:ToggleSwitch Grid.Column="2"
-							 Content="{DynamicResource Str.ScriptTools.RegAllow}"
-							 IsChecked="{Binding AllowDefine}"
-							 ToolTip="{DynamicResource Str.ScriptTools.RegAllowTip}" />
-		</Grid>
+        <Grid
+            Grid.Row="3"
+            Margin="16,0,16,10"
+            IsEnabled="{Binding CanDefine}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Text="{DynamicResource Str.ScriptTools.RegDefineLabel}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegDefineTip}" />
+            <ui:TextBox
+                Grid.Column="1"
+                Margin="10,0,10,0"
+                AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegDefineName}"
+                Text="{Binding DefineName, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:ToggleSwitch
+                Grid.Column="2"
+                Content="{DynamicResource Str.ScriptTools.RegAllow}"
+                IsChecked="{Binding AllowDefine}"
+                ToolTip="{DynamicResource Str.ScriptTools.RegAllowTip}" />
+        </Grid>
 
-		<DataGrid x:Name="ScriptsGrid"
-				  Grid.Row="4"
-				  Margin="16,0,16,0"
-				  ItemsSource="{Binding Entries}"
-				  SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
-				  AutoGenerateColumns="False"
-				  CanUserAddRows="False"
-				  CanUserDeleteRows="False"
-				  CanUserSortColumns="False"
-				  CanUserReorderColumns="False"
-				  CanUserResizeRows="False"
-				  SelectionMode="Single"
-				  SelectionUnit="FullRow"
-				  HeadersVisibility="Column"
-				  GridLinesVisibility="Horizontal"
-				  RowHeaderWidth="0"
-				  EnableRowVirtualization="True"
-				  CurrentCellChanged="OnCurrentCellChanged"
-				  HorizontalScrollBarVisibility="Disabled"
-				  AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegGridName}">
-			<DataGrid.Columns>
-				<DataGridTemplateColumn Header="{DynamicResource Str.ScriptTools.RegColNumber}" Width="84" IsReadOnly="True" CanUserResize="False">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ui:Button Content="{Binding Number}"
-									   Appearance="Transparent"
-									   Padding="10,2"
-									   HorizontalAlignment="Stretch"
-									   Command="{Binding DataContext.OpenScriptCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-									   CommandParameter="{Binding}"
-									   ToolTip="{DynamicResource Str.ScriptTools.RegOpenTip}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTextColumn Header="{DynamicResource Str.ScriptTools.RegColFile}" Width="130" Binding="{Binding Script, UpdateSourceTrigger=LostFocus}" />
-				<DataGridTextColumn Header="{DynamicResource Str.ScriptTools.RegColDescriptions}" Width="2*" Binding="{Binding Description, UpdateSourceTrigger=LostFocus}" />
-				<DataGridTextColumn Header="{DynamicResource Str.ScriptTools.RegColLocalVars}" Width="70" Binding="{Binding LocalVars, UpdateSourceTrigger=LostFocus}" />
-				<DataGridTextColumn Header="{DynamicResource Str.ScriptTools.RegColGameName}" Width="*" Binding="{Binding GameName, UpdateSourceTrigger=LostFocus}" />
-			</DataGrid.Columns>
-		</DataGrid>
+        <DataGrid
+            x:Name="ScriptsGrid"
+            Grid.Row="4"
+            Margin="16,0,16,0"
+            AutoGenerateColumns="False"
+            AutomationProperties.Name="{DynamicResource Str.ScriptTools.RegGridName}"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False"
+            CanUserResizeRows="False"
+            CanUserSortColumns="False"
+            CurrentCellChanged="OnCurrentCellChanged"
+            EnableRowVirtualization="True"
+            GridLinesVisibility="Horizontal"
+            HeadersVisibility="Column"
+            HorizontalScrollBarVisibility="Disabled"
+            ItemsSource="{Binding Entries}"
+            RowHeaderWidth="0"
+            SelectedItem="{Binding SelectedEntry, Mode=TwoWay}"
+            SelectionMode="Single"
+            SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn
+                    Width="84"
+                    CanUserResize="False"
+                    Header="{DynamicResource Str.ScriptTools.RegColNumber}"
+                    IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ui:Button
+                                Padding="10,2"
+                                HorizontalAlignment="Stretch"
+                                Appearance="Transparent"
+                                Command="{Binding DataContext.OpenScriptCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}"
+                                Content="{Binding Number}"
+                                ToolTip="{DynamicResource Str.ScriptTools.RegOpenTip}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn
+                    Width="130"
+                    Binding="{Binding Script, UpdateSourceTrigger=LostFocus}"
+                    Header="{DynamicResource Str.ScriptTools.RegColFile}" />
+                <DataGridTextColumn
+                    Width="2*"
+                    Binding="{Binding Description, UpdateSourceTrigger=LostFocus}"
+                    Header="{DynamicResource Str.ScriptTools.RegColDescriptions}" />
+                <DataGridTextColumn
+                    Width="70"
+                    Binding="{Binding LocalVars, UpdateSourceTrigger=LostFocus}"
+                    Header="{DynamicResource Str.ScriptTools.RegColLocalVars}" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding GameName, UpdateSourceTrigger=LostFocus}"
+                    Header="{DynamicResource Str.ScriptTools.RegColGameName}" />
+            </DataGrid.Columns>
+        </DataGrid>
 
-		<TextBlock Grid.Row="5"
-				   Margin="16,8,16,10"
-				   Text="{Binding StatusText}"
-				   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-	</Grid>
+        <TextBlock
+            Grid.Row="5"
+            Margin="16,8,16,10"
+            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+            Text="{Binding StatusText}" />
+    </Grid>
 </ui:FluentWindow>

@@ -91,7 +91,12 @@ namespace FalloutScriptStudio.Core.Decompilation
 			CompilerPaths paths = new CompilerPaths(options);
 			CompilerCommandLineBuilder commandLines = new CompilerCommandLineBuilder(options);
 			StringBuilder output = new StringBuilder();
-			DecompilationOutputFiles.Prepare(paths, options);
+			DecompilationResult? preparationFailure = DecompilationOutputFiles.Prepare(paths, options);
+			if (preparationFailure != null)
+			{
+				outputProgress?.Report(preparationFailure.Output.TrimEnd());
+				return preparationFailure;
+			}
 
 			Boolean succeeded = false;
 			foreach (String exePath in GetPrograms(options))

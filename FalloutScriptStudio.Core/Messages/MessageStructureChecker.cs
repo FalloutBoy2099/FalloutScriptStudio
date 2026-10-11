@@ -32,7 +32,7 @@ namespace FalloutScriptStudio.Core.Messages
 			Boolean onlyOnce = false;
 			Boolean newLine = false;
 
-			List<Int32> usedNumbers = new List<Int32>();
+			HashSet<Int32> usedNumbers = new HashSet<Int32>();
 			List<(BuildErrorType Type, String Message, Int32 Offset, Int32 Length)> numberIssues = new List<(BuildErrorType, String, Int32, Int32)>();
 			List<(String Message, Int32 Offset)> hints = new List<(String, Int32)>();
 			List<Int32> missingCommentMarks = new List<Int32>();
@@ -214,7 +214,7 @@ namespace FalloutScriptStudio.Core.Messages
 			String text,
 			Int32 start,
 			Int32 length,
-			List<Int32> usedNumbers,
+			HashSet<Int32> usedNumbers,
 			List<(BuildErrorType Type, String Message, Int32 Offset, Int32 Length)> numberIssues)
 		{
 			String numberText = text.Substring(start, length);
@@ -224,13 +224,9 @@ namespace FalloutScriptStudio.Core.Messages
 			}
 			else if (Int32.TryParse(numberText, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 number) && number > 0)
 			{
-				if (usedNumbers.Contains(number))
+				if (!usedNumbers.Add(number))
 				{
 					numberIssues.Add((BuildErrorType.Warning, "Duplicate message line number: " + number.ToString(CultureInfo.InvariantCulture), start, length));
-				}
-				else
-				{
-					usedNumbers.Add(number);
 				}
 			}
 			else

@@ -5,6 +5,7 @@ namespace FalloutScriptStudio.Core.Tests.TextTools
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Tests.Functions;
 	using FalloutScriptStudio.Core.TextTools;
+	using FalloutScriptStudio.TestSupport;
 	using Xunit;
 
 	public class ProcedureHandlerCatalogTests
@@ -68,7 +69,7 @@ namespace FalloutScriptStudio.Core.Tests.TextTools
 		[Fact]
 		public async Task LoadAsync_MissingFile_ReturnsEmptyCatalog()
 		{
-			ProcedureHandlerCatalog catalog = await ProcedureHandlerCatalog.LoadAsync(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "nope-" + Guid.NewGuid().ToString("N") + ".ini"));
+			ProcedureHandlerCatalog catalog = await ProcedureHandlerCatalog.LoadAsync(System.IO.Path.Combine(TestFiles.Work, "nope-" + Guid.NewGuid().ToString("N") + ".ini"));
 
 			Assert.Empty(catalog.Entries);
 		}

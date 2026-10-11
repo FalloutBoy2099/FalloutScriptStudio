@@ -1,8 +1,10 @@
 namespace FalloutScriptStudio.Tests.Shell
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Services;
@@ -108,7 +110,8 @@ namespace FalloutScriptStudio.Tests.Shell
 				using WorkspaceHarness harness = new WorkspaceHarness();
 				using TempFolder project = CreateProject();
 				harness.Settings.Update(settings => settings.Paths.SolutionFolder = project.Path);
-				ProjectExplorerViewModel explorer = new ProjectExplorerViewModel(harness.Settings, harness.Workspace, harness.Dialogs, new FakeShellService());
+				using ProjectExplorerViewModel explorer = new ProjectExplorerViewModel(harness.Settings, harness.Workspace, harness.Dialogs, new FakeShellService());
+				explorer.FilterDelay = TimeSpan.Zero;
 
 				Assert.True(explorer.HasProject);
 				ProjectNodeViewModel root = Assert.Single(explorer.Nodes);
@@ -116,12 +119,109 @@ namespace FalloutScriptStudio.Tests.Shell
 				Assert.Equal(new[] { "dialog", "headers", "scripts" }, root.Children.Select(c => c.Name));
 
 				explorer.FilterText = "npc";
+				await explorer.FilterTask;
 				Assert.Equal(new[] { "npc.fcd", "npc.msg" }, explorer.Nodes.Select(n => n.Name).OrderBy(n => n));
 
 				explorer.FilterText = String.Empty;
 				Assert.Single(explorer.Nodes);
 				await Task.CompletedTask;
 			});
+		}
+
+		[Fact]
+		public void Typing_in_the_filter_is_debounced_and_does_not_walk_the_folder_synchronously()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				using TempFolder project = CreateProject();
+				harness.Settings.Update(settings => settings.Paths.SolutionFolder = project.Path);
+				using ProjectExplorerViewModel explorer = new ProjectExplorerViewModel(harness.Settings, harness.Workspace, harness.Dialogs, new FakeShellService());
+				explorer.FilterDelay = TimeSpan.FromMilliseconds(150);
+				ProjectNodeViewModel root = Assert.Single(explorer.Nodes);
+
+				explorer.FilterText = "n";
+				Task first = explorer.FilterTask;
+				explorer.FilterText = "np";
+				Task second = explorer.FilterTask;
+				explorer.FilterText = "npc";
+
+				Assert.Same(root, Assert.Single(explorer.Nodes));
+				await explorer.FilterTask;
+				await first;
+				await second;
+				Assert.Equal(new[] { "npc.fcd", "npc.msg" }, explorer.Nodes.Select(n => n.Name).OrderBy(n => n));
+			});
+		}
+
+		[Fact]
+		public void Clearing_the_filter_cancels_the_pending_run_and_restores_the_tree()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				using TempFolder project = CreateProject();
+				harness.Settings.Update(settings => settings.Paths.SolutionFolder = project.Path);
+				using ProjectExplorerViewModel explorer = new ProjectExplorerViewModel(harness.Settings, harness.Workspace, harness.Dialogs, new FakeShellService());
+				explorer.FilterDelay = TimeSpan.FromMilliseconds(100);
+
+				explorer.FilterText = "npc";
+				Task pending = explorer.FilterTask;
+				explorer.FilterText = String.Empty;
+				await pending;
+				await Task.Delay(200);
+
+				ProjectNodeViewModel root = Assert.Single(explorer.Nodes);
+				Assert.True(root.IsDirectory);
+			});
+		}
+
+		[Fact]
+		public void Filtering_reuses_the_folder_walk_until_the_explorer_is_reloaded()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				using TempFolder project = CreateProject();
+				harness.Settings.Update(settings => settings.Paths.SolutionFolder = project.Path);
+				using ProjectExplorerViewModel explorer = new ProjectExplorerViewModel(harness.Settings, harness.Workspace, harness.Dialogs, new FakeShellService());
+				explorer.FilterDelay = TimeSpan.Zero;
+				explorer.FilterText = "npc";
+				await explorer.FilterTask;
+				File.Delete(project.Combine("dialog", "npc.msg"));
+
+				explorer.FilterText = "npc.";
+				await explorer.FilterTask;
+				Assert.Equal(2, explorer.Nodes.Count);
+
+				explorer.Reload();
+				await explorer.FilterTask;
+				Assert.Equal(new[] { "npc.fcd" }, explorer.Nodes.Select(n => n.Name));
+			});
+		}
+
+		[Fact]
+		public void A_cancelled_walk_stops_with_an_operation_canceled_exception()
+		{
+			using TempFolder folder = CreateProject();
+			using CancellationTokenSource cancellation = new CancellationTokenSource();
+			cancellation.Cancel();
+			ProjectFileFilter filter = new ProjectFileFilter(false);
+
+			Assert.Throws<OperationCanceledException>(() => filter.ListAll(folder.Path, cancellation.Token));
+			Assert.Throws<OperationCanceledException>(() => filter.Search(folder.Path, "a", cancellation.Token));
+		}
+
+		[Fact]
+		public void The_name_filter_keeps_the_order_and_caps_the_result()
+		{
+			String[] files = Enumerable.Range(0, ProjectFileFilter.MaxSearchResults + 20).Select(i => @"C:\p\file" + i + ".ssl").Append(@"C:\p\other.h").ToArray();
+
+			IReadOnlyList<String> found = ProjectFileFilter.FilterByName(files, "FILE");
+
+			Assert.Equal(ProjectFileFilter.MaxSearchResults, found.Count);
+			Assert.Equal(@"C:\p\file0.ssl", found[0]);
+			Assert.Equal(new[] { @"C:\p\other.h" }, ProjectFileFilter.FilterByName(files, "other"));
 		}
 
 		[Fact]

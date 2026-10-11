@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# cmd.exe needs CRLF in batch files (labels and goto break otherwise)
+*.bat text eol=crlf
+
+# Real tools and sample sources of the automated tests: the bytes must stay those of the originals
+# (the tools are binary or LF text, the sample sources are CRLF text)
+_test_files/tools/** -text
+_test_files/samples/** text eol=crlf

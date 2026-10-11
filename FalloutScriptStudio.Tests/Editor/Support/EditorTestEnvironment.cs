@@ -6,11 +6,12 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Editor;
+	using FalloutScriptStudio.TestSupport;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
 	using Microsoft.Extensions.Logging.Abstractions;
 
-	/// <summary>The services of an editor under test: real settings in a temporary folder, a fixed theme and a recording workspace.</summary>
+	/// <summary>The services of an editor under test: real settings in a scratch folder of <c>_test_files\work</c>, a fixed theme and a recording workspace.</summary>
 	public sealed class EditorTestEnvironment : IDisposable
 	{
 		private readonly String _directory;
@@ -19,7 +20,7 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 		public EditorTestEnvironment(Boolean dark = false, String? baseDirectory = null, IUserMacroSource? userMacros = null)
 		{
 			this._ownsDirectory = baseDirectory is null;
-			this._directory = baseDirectory ?? Path.Combine(Path.GetTempPath(), "fss-editor-tests-" + Guid.NewGuid().ToString("N"));
+			this._directory = baseDirectory ?? TestFiles.CreateWorkFolder("editor");
 			Directory.CreateDirectory(this._directory);
 
 			this.SettingsService = new SettingsService(
@@ -89,13 +90,7 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 				return;
 			}
 
-			try
-			{
-				Directory.Delete(this._directory, true);
-			}
-			catch (IOException)
-			{
-			}
+			TestFiles.DeleteWorkFolder(this._directory);
 		}
 	}
 }

@@ -35,6 +35,19 @@ standing in for an archive) or to **decompile `.int` scripts** (`FalloutScriptSt
 path (`CompilerSettings.Decompiler` / `ExternalDecompilerPath`; `int2ssl_v35.exe` is the fallback, or the only tool with "Use the old decompiler").
 Compilation still needs the user-supplied `compile.exe` (sslc); the preprocessors `mcpp`/`wcc` and `parser.dll` stay optional.
 
+## Settings, scratch folder and instances
+
+* `SettingsService` never writes blank defaults over real data: a file is saved only when this process changed it, and a file that
+  changed on disk meanwhile (a second process, such as the stand-alone message editor) is merged property by property (three-way JSON
+  merge against the content loaded). A file that exists but cannot be read (after a few retries) is neither taken for absent nor
+  overwritten. `App.OnExit` saves only when `Load` completed.
+* The scratch folder is prepared and deleted by the main editor only; the stand-alone message editor (`.msg` argument) shares it and never
+  purges it. Leftovers that cannot be deleted are logged, never fatal (read-only attributes are cleared first).
+* External tools get the scratch folder in the `FSS_SCRATCH` environment variable (`usercomp.bat` uses it); paths on their command lines
+  are absolute, quoted and without a trailing backslash (except for a drive root, which is doubled).
+* Intermediate preprocessed scripts are named `name_[pre]~<hash of the full path>.ssl`, so scripts of the same name in different folders can
+  be compiled in parallel.
+
 ## Native parser (`parser.dll`) and the parser host
 
 `parser.dll` is the 32-bit front end of the sfall compiler. It gives exact procedures, variables, references and includes, but it has
@@ -61,10 +74,16 @@ access violation cannot be caught on .NET. **The application therefore never loa
 
 ## Tests against the real tools
 
-`FalloutScriptStudio.Core.Tests/Native` runs the real `parser.dll` (through the real host), `compile.exe` and `int2ssl.exe`. They look in
-`%FSS_SSLC_DIR%` or `D:\Git\Fallout\FO2tweaksMk2\tools\sslc-sfall5`; real mod sources are taken from `%FSS_SSL_SAMPLES%` (default
-`D:\Git\Fallout`). When something is missing the tests are reported as **skipped** (`[RealToolFact]` / `[RealToolTheory]`), not failed.
+`FalloutScriptStudio.Core.Tests/Native` runs the real `parser.dll` (through the real host), `compile.exe` and `int2ssl.exe`. They are
+found in `_test_files\tools` at the repository root (override: `%FSS_SSLC_DIR%`); the real mod sources are the sample sets of
+`_test_files\samples` (FO2tweaksMk2 is shipped; InventoryFilterMk2 and PartyOrdersMk2 are optional; override: `%FSS_SSL_SAMPLES%`).
+When something is missing the tests are reported as **skipped** (`[RealToolFact]` / `[RealToolTheory]`), not failed.
 The protocol, the crash breaker, timeouts and cancellation are also tested with simulated hosts (`FakeParserHost`).
+
+All files of the tests live in `_test_files` (see its `README.md`): the tools and samples are read-only, the tests create their scratch
+folders only through `TestFolder` / `TestFiles.CreateWorkFolder` (`_test_files\work\<name>-<guid>`, git-ignored, deleted on dispose and
+swept when older than one hour at the start of a run). `TestFiles.cs` and `TestFolder.cs` (in `FalloutScriptStudio.Core.Tests\Support`)
+are linked into both test projects. Tests must never use `Path.GetTempPath()` or any other folder outside `_test_files`.
 
 ## Composition
 

@@ -19,6 +19,9 @@ namespace FalloutScriptStudio.Core.Compilation
 	/// </summary>
 	public sealed class ScriptCompiler : IScriptCompiler
 	{
+		/// <summary>The environment variable that tells the batch files where the scratch folder is (it is not <c>..\scrTemp</c> in the user-profile layout).</summary>
+		public const String ScratchDirectoryVariable = "FSS_SCRATCH";
+
 		private const String LineBreak = "\r\n";
 
 		private readonly IProcessRunner _processRunner;
@@ -85,16 +88,26 @@ namespace FalloutScriptStudio.Core.Compilation
 					.Append('-', 22);
 			}
 
-			Directory.CreateDirectory(options.ScratchDirectory);
+			try
+			{
+				Directory.CreateDirectory(options.ScratchDirectory);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LogError(ex, "The scratch folder {Folder} could not be created", options.ScratchDirectory);
+				output.Append(LineBreak).Append("[Error] <none>:0: The scratch folder could not be created: ").Append(ex.Message);
+				return new CompilationResult { Success = false, Output = output.ToString() };
+			}
 
 			Boolean success;
 			if (options.UseUserCommand && !request.PreprocessOnly)
 			{
+				// The batch file is run by cmd.exe, which prints in the OEM code page of the system.
 				success = await this.RunToolAsync(
 					Path.Combine(options.ResourcesDirectory, "usercomp.bat"),
 					commandLines.BuildUserCompiler(sourceFile, sourceDirectory, request.ShortCircuit),
 					options.ResourcesDirectory,
-					TextEncodings.Ansi.CodePage == 1251 ? TextEncodings.Oem866 : null,
+					TextEncodings.Oem,
 					output,
 					request,
 					cancellationToken).ConfigureAwait(false);
@@ -107,7 +120,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			String? preprocessedCopy = null;
 			if (request.PreprocessOnly && success && !request.Batch)
 			{
-				preprocessedCopy = MovePreprocessedFile(paths, sourceFile);
+				preprocessedCopy = this.MovePreprocessedFile(paths, sourceFile);
 			}
 
 			String? producedFile = null;
@@ -188,14 +201,14 @@ namespace FalloutScriptStudio.Core.Compilation
 					return preprocessSucceeded;
 				}
 
-				// Rename preprocess.ssl to <scriptname>_[pre].ssl
+				// Rename preprocess.ssl to <scriptname>_[pre]~<hash of the full path>.ssl (two scripts of the same name must not share the file)
 				inputFile = paths.GetIntermediatePreprocessedPath(sourceFile);
 				try
 				{
 					File.Delete(inputFile);
 					File.Move(preprocessed, inputFile);
 				}
-				catch (IOException ex)
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{
 					this._logger.LogError(ex, "The preprocessed file {File} could not be moved", preprocessed);
 					output.Append(LineBreak).Append("[Error] <none>:0: The preprocessed file is missing: ").Append(ex.Message);
@@ -226,7 +239,16 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 
 			// A stale result must never be mistaken for the output of this run.
-			File.Delete(Path.Combine(options.ScratchDirectory, outputName));
+			try
+			{
+				File.Delete(Path.Combine(options.ScratchDirectory, outputName));
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LogError(ex, "The previous preprocessed file {File} could not be deleted", outputName);
+				output.Append(LineBreak).Append("[Error] <none>:0: The previous preprocessed file could not be deleted: ").Append(ex.Message);
+				return false;
+			}
 
 			Boolean success = await this.RunToolAsync(
 				Path.Combine(options.ResourcesDirectory, watcom ? "wcc.bat" : "mcpp.bat"),
@@ -310,6 +332,9 @@ namespace FalloutScriptStudio.Core.Compilation
 			try
 			{
 				File.Copy(outputFile, backupFile, true);
+
+				// The copy keeps the read-only attribute of the script, which would make it impossible to delete or to clean up later.
+				File.SetAttributes(backupFile, FileAttributes.Normal);
 				return backupFile;
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
@@ -376,6 +401,10 @@ namespace FalloutScriptStudio.Core.Compilation
 						Arguments = arguments,
 						WorkingDirectory = workingDirectory,
 						OutputEncoding = outputEncoding,
+						Environment = new Dictionary<String, String>
+						{
+							[ScratchDirectoryVariable] = Path.GetFullPath(request.Options.ScratchDirectory),
+						},
 					},
 					cancellationToken).ConfigureAwait(false);
 			}
@@ -398,27 +427,44 @@ namespace FalloutScriptStudio.Core.Compilation
 		private static async Task<String> ReadErrorLogAsync(CompilerOptions options, CancellationToken cancellationToken)
 		{
 			String file = Path.Combine(options.ResourcesDirectory, options.Preprocessor == PreprocessorKind.Mcpp ? "mcpp.err" : "wcc.err");
-			if (!File.Exists(file))
+			try
+			{
+				if (!File.Exists(file))
+				{
+					return String.Empty;
+				}
+
+				// mcpp and wcc write their log in the ANSI code page of the system, like the rest of the chain: as UTF-8 an accented path is damaged
+				// and the entries no longer lead to the script.
+				String text = await File.ReadAllTextAsync(file, TextEncodings.Ansi, cancellationToken).ConfigureAwait(false);
+				File.Delete(file);
+				return text;
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
 				return String.Empty;
 			}
-
-			String text = await File.ReadAllTextAsync(file, cancellationToken).ConfigureAwait(false);
-			File.Delete(file);
-			return text;
 		}
 
-		private static String? MovePreprocessedFile(CompilerPaths paths, String sourceFile)
+		private String? MovePreprocessedFile(CompilerPaths paths, String sourceFile)
 		{
-			if (!File.Exists(paths.PreprocessFile))
+			try
 			{
+				if (!File.Exists(paths.PreprocessFile))
+				{
+					return null;
+				}
+
+				String target = paths.GetPreprocessedCopyPath(sourceFile);
+				File.Delete(target);
+				File.Move(paths.PreprocessFile, target);
+				return target;
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LogWarning(ex, "The preprocessed script {Script} could not be moved to its final name", sourceFile);
 				return null;
 			}
-
-			String target = paths.GetPreprocessedCopyPath(sourceFile);
-			File.Delete(target);
-			File.Move(paths.PreprocessFile, target);
-			return target;
 		}
 	}
 }

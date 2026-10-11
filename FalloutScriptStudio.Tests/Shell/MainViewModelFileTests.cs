@@ -5,6 +5,7 @@ namespace FalloutScriptStudio.Tests.Shell
 	using System.Linq;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Documents;
+	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Tests.Shell.Support;
 	using FalloutScriptStudio.ViewModels.Main;
 	using Xunit;
@@ -165,6 +166,52 @@ namespace FalloutScriptStudio.Tests.Shell
 
 				Assert.False(await harness.Main.CanCloseAsync());
 				Assert.Single(harness.Workspace.Documents);
+			});
+		}
+
+		[Fact]
+		public void Cancelling_the_message_editors_on_exit_keeps_every_tab_and_unsaved_change()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				DocumentViewModel a = await harness.OpenFileAsync("a.ssl", Script);
+				DocumentViewModel b = await harness.OpenFileAsync("b.ssl", Script);
+				a.TextDocument.Insert(0, "// a\r\n");
+				b.TextDocument.Insert(0, "// b\r\n");
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.No);
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Yes);
+				harness.MessageEditor.CloseAllResult = false;
+
+				Boolean canClose = await harness.Main.CanCloseAsync();
+
+				Assert.False(canClose);
+				Assert.Equal(1, harness.MessageEditor.CloseAllCount);
+				Assert.Equal(2, harness.Workspace.Documents.Count);
+				Assert.True(a.IsModified);
+				Assert.True(b.IsModified);
+				Assert.Equal(Script, File.ReadAllText(a.FilePath!));
+			});
+		}
+
+		[Fact]
+		public void Cancelling_a_later_save_question_on_exit_leaves_the_message_editors_open()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				DocumentViewModel a = await harness.OpenFileAsync("a.ssl", Script);
+				DocumentViewModel b = await harness.OpenFileAsync("b.ssl", Script);
+				a.TextDocument.Insert(0, "// a\r\n");
+				b.TextDocument.Insert(0, "// b\r\n");
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.No);
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Cancel);
+
+				Boolean canClose = await harness.Main.CanCloseAsync();
+
+				Assert.False(canClose);
+				Assert.Equal(0, harness.MessageEditor.CloseAllCount);
+				Assert.Equal(2, harness.Workspace.Documents.Count);
 			});
 		}
 

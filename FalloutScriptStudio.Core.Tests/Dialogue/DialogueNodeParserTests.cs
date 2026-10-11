@@ -200,6 +200,20 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 		}
 
 		[Fact]
+		public void UserRules_AreFoundInTheOrderOfTheLine_NotInTheOrderOfTheRules()
+		{
+			var rules = new DialogueFunctionRules(new[]
+			{
+				DialogueFunctionRule.FromOneBased(DialogueOpcode.Option, "OptA", messageArg: 1, nodeArg: 2, iqArg: 3, totalArgs: 3),
+				DialogueFunctionRule.FromOneBased(DialogueOpcode.Option, "OptB", messageArg: 1, nodeArg: 2, iqArg: 3, totalArgs: 3),
+			});
+
+			IReadOnlyList<DialogueLine> lines = Parse("   OptB(101, Node001, 4); OptA(102, Node002, 5);", null, rules);
+
+			Assert.Equal(new[] { (101, "Node001"), (102, "Node002") }, lines.Select(l => (l.MessageNumber, l.ToNode ?? String.Empty)).ToArray());
+		}
+
+		[Fact]
 		public void UserRule_ForANodeJumpMacro()
 		{
 			var rules = new DialogueFunctionRules(new[] { DialogueFunctionRule.FromOneBased(DialogueOpcode.CallMacro, "GotoNode", messageArg: 0, nodeArg: 1, totalArgs: 1) });

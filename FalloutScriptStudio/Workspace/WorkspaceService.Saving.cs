@@ -102,7 +102,7 @@ namespace FalloutScriptStudio.Workspace
 				await this._parser.ParseAsync(document, true);
 			}
 
-			await this.RefreshScriptsOfMessageFileAsync(document);
+			await this.RefreshScriptsOfMessageFileAsync(document.FilePath, document.Kind);
 			return true;
 		}
 
@@ -140,7 +140,8 @@ namespace FalloutScriptStudio.Workspace
 				await this._parser.ReloadGlobalMacrosAsync();
 			}
 
-			await this.RefreshScriptsOfMessageFileAsync(document);
+			// The kind of the target path counts, not the one the document had before "Save as".
+			await this.RefreshScriptsOfMessageFileAsync(path, DocumentViewModel.KindFromPath(path));
 			return true;
 		}
 	}

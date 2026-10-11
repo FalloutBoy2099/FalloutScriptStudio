@@ -119,6 +119,24 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		}
 
 		[Fact]
+		public void ShowRegisterScript_CalledTwiceWhileTheFirstIsStillOpening_PreparesOnlyOneWindow()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				TaskCompletionSource gate = new TaskCompletionSource();
+				this._dialogs.ErrorGate = gate.Task;
+				IScriptToolService service = this._provider.GetRequiredService<IScriptToolService>();
+
+				Task first = service.ShowRegisterScriptAsync(null);
+				Task second = service.ShowRegisterScriptAsync(null);
+				gate.SetResult();
+				await Task.WhenAll(first, second);
+
+				Assert.Single(this._dialogs.Errors);
+			});
+		}
+
+		[Fact]
 		public async Task Flowchart_OfAScriptThatWasNeverSaved_AsksToSaveItFirst()
 		{
 			IScriptToolService service = this._provider.GetRequiredService<IScriptToolService>();

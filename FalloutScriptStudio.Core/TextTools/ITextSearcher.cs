@@ -6,6 +6,10 @@ namespace FalloutScriptStudio.Core.TextTools
 	/// <summary>
 	/// Searches and replaces in plain text; every result is an offset/length pair (legacy <c>Utilities.Search…</c> methods).
 	/// </summary>
+	/// <remarks>
+	/// Every method that runs a regular expression query throws a <see cref="System.Text.RegularExpressions.RegexMatchTimeoutException"/>
+	/// when the pattern takes longer than <see cref="SearchQuery.MatchTimeout"/> (catastrophic backtracking).
+	/// </remarks>
 	public interface ITextSearcher
 	{
 		/// <summary>Finds the first match at or after an offset.</summary>

@@ -20,6 +20,9 @@ namespace FalloutScriptStudio.Tests.Flowchart
 
 		public Boolean UpdateSucceeds { get; set; } = true;
 
+		/// <summary>Gets or sets a value indicating whether loading other message files finishes on a thread-pool thread, like the real source does.</summary>
+		public Boolean LoadOnAnotherThread { get; set; }
+
 		/// <summary>Gets the other message files (by file number) that new sources report as not found, with the path they were expected at.</summary>
 		public Dictionary<Int32, String> MissingFiles { get; } = new Dictionary<Int32, String>();
 
@@ -33,7 +36,34 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		{
 			this.SourcesCreated++;
 			IDialogueMessageSource source = new DialogueMessageSource(this._messages, FlowchartSamples.MessagePath);
-			return Task.FromResult<IDialogueMessageSource>(this.MissingFiles.Count == 0 ? source : new MissingFilesSource(source, this.MissingFiles));
+			IDialogueMessageSource result = this.MissingFiles.Count == 0 ? source : new MissingFilesSource(source, this.MissingFiles);
+			return Task.FromResult(this.LoadOnAnotherThread ? new ThreadHoppingSource(result) : result);
+		}
+
+		private sealed class ThreadHoppingSource : IDialogueMessageSource
+		{
+			private readonly IDialogueMessageSource _inner;
+
+			public ThreadHoppingSource(IDialogueMessageSource inner)
+			{
+				this._inner = inner;
+			}
+
+			public async Task EnsureLoadedAsync(IEnumerable<Int32> messageFileNumbers, CancellationToken cancellationToken = default)
+			{
+				await Task.Delay(30, cancellationToken).ConfigureAwait(false);
+				await this._inner.EnsureLoadedAsync(messageFileNumbers, cancellationToken).ConfigureAwait(false);
+			}
+
+			public DialogueMessageLookup GetMessage(Int32 messageFileNumber, Int32 messageNumber)
+			{
+				return this._inner.GetMessage(messageFileNumber, messageNumber);
+			}
+
+			public String? GetMessageFilePath(Int32 messageFileNumber)
+			{
+				return this._inner.GetMessageFilePath(messageFileNumber);
+			}
 		}
 
 		private sealed class MissingFilesSource : IDialogueMessageSource

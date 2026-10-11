@@ -137,7 +137,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			var launcher = new RecordingLauncher();
 			using var fixture = new NativeParserFixture();
-			using var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe, RequestTimeout = TimeSpan.FromMilliseconds(1) }, null, launcher);
+			using var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe, WorkingDirectoryRoot = this._directory.Combine("hostroot"), RequestTimeout = TimeSpan.FromMilliseconds(1) }, null, launcher);
 
 			NativeParseResult result = await parser.ParseAsync("procedure start begin\r\nend\r\n", fixture.Write("scripts\\t.ssl", "x"), fixture.CreateOptions(), CancellationToken.None);
 
@@ -152,7 +152,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			var launcher = new RecordingLauncher();
 			using var fixture = new NativeParserFixture();
-			using var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe }, null, launcher);
+			using var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe, WorkingDirectoryRoot = this._directory.Combine("hostroot") }, null, launcher);
 			String script = fixture.Write("scripts\\c.ssl", "x");
 			using var cts = new CancellationTokenSource();
 
@@ -177,7 +177,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			var launcher = new RecordingLauncher();
 			using var fixture = new NativeParserFixture();
-			var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe }, null, launcher);
+			var parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe, WorkingDirectoryRoot = this._directory.Combine("hostroot") }, null, launcher);
 			String script = fixture.Write("scripts\\d.ssl", "x");
 			await parser.ParseAsync("procedure start begin\r\nend\r\n", script, fixture.CreateOptions(), CancellationToken.None);
 			IParserHostProcess host = Assert.Single(launcher.Started);

@@ -172,5 +172,32 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 			Assert.False(MessageTextEditor.TryReplaceText(lines, 7, "x"));
 			Assert.Equal(new[] { "{100}{}{a}" }, lines);
 		}
+
+		[Fact]
+		public void MessageTextEditor_ReplacesTheTextEvenWhenTheDescriptionContainsABrace()
+		{
+			List<String> lines = new List<String> { "{100}{}{Hi} # x{y}", "\t{101}{snd}{Bye} {note}" };
+
+			Assert.True(MessageTextEditor.TryReplaceText(lines, 100, "Hello"));
+			Assert.True(MessageTextEditor.TryReplaceText(lines, 101, "See you"));
+
+			Assert.Equal(new[] { "{100}{}{Hello} # x{y}", "\t{101}{snd}{See you} {note}" }, lines);
+			MessageDocument document = MessageDocument.Parse(lines);
+			Assert.Equal("Hello", document.FindMessage(100)!.Text);
+			Assert.Equal(" # x{y}", document.FindMessage(100)!.Description);
+		}
+
+		[Theory]
+		[InlineData("a{b")]
+		[InlineData("a}b")]
+		[InlineData("{}")]
+		public void MessageTextEditor_RejectsATextWithBraces(String text)
+		{
+			List<String> lines = new List<String> { "{100}{}{old} # d" };
+
+			Assert.True(MessageTextEditor.ContainsBraces(text));
+			Assert.False(MessageTextEditor.TryReplaceText(lines, 100, text));
+			Assert.Equal(new[] { "{100}{}{old} # d" }, lines);
+		}
 	}
 }

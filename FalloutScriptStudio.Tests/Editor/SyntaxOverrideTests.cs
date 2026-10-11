@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Tests.Editor
 	using System.Linq;
 	using FalloutScriptStudio.Editor;
 	using FalloutScriptStudio.Editor.Highlighting;
+	using FalloutScriptStudio.TestSupport;
 	using FalloutScriptStudio.Tests.Editor.Support;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Highlighting;
@@ -29,7 +30,7 @@ namespace FalloutScriptStudio.Tests.Editor
 			+ "\t</RuleSet>\r\n"
 			+ "</SyntaxDefinition>\r\n";
 
-		private readonly String _directory = Path.Combine(Path.GetTempPath(), "fss-syntax-tests-" + Guid.NewGuid().ToString("N"));
+		private readonly String _directory = TestFiles.CreateWorkFolder("syntax");
 
 		public SyntaxOverrideTests()
 		{
@@ -38,13 +39,7 @@ namespace FalloutScriptStudio.Tests.Editor
 
 		public void Dispose()
 		{
-			try
-			{
-				Directory.Delete(this._directory, true);
-			}
-			catch (IOException)
-			{
-			}
+			TestFiles.DeleteWorkFolder(this._directory);
 		}
 
 		private static String? ColorOf(IHighlightingDefinition definition, String text, String word)

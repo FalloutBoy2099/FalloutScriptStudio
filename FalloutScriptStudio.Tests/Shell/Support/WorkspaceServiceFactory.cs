@@ -39,7 +39,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				new ExternalChangeDetector(dialogs),
 				new MessageAssociationService(settings, new MessageFileService(NullLogger<MessageFileService>.Instance), dialogs, messageEditor, NullLogger<MessageAssociationService>.Instance),
 				new ProcedureOperations(settings, parser, dialogs, new ProcedureTextService(), scriptTools),
-				new ReferenceResultsPresenter(dialogs, output),
+				new ReferenceResultsPresenter(dialogs, output, settings),
 				scriptTools);
 		}
 	}

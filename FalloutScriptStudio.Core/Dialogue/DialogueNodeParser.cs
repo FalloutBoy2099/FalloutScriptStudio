@@ -315,9 +315,10 @@ namespace FalloutScriptStudio.Core.Dialogue
 			}
 		}
 
-		/// <summary>Finds the first user rule of a kind whose name occurs in the code, starting at an index.</summary>
+		/// <summary>Finds the first occurrence in the code, from an index, of the name of a user rule of a kind (whatever the order of the rules).</summary>
 		private static Int32 FindUserRule(DialogueFunctionRules rules, String code, Int32 from, DialogueOpcode kind)
 		{
+			Int32 first = -1;
 			foreach (DialogueFunctionRule rule in rules.Rules)
 			{
 				if (rule.IsDefault || rule.Opcode != kind)
@@ -326,13 +327,13 @@ namespace FalloutScriptStudio.Core.Dialogue
 				}
 
 				Int32 index = code.IndexOf(rule.Name, from, StringComparison.OrdinalIgnoreCase);
-				if (index != -1)
+				if (index != -1 && (first == -1 || index < first))
 				{
-					return index;
+					first = index;
 				}
 			}
 
-			return -1;
+			return first;
 		}
 
 		private static void Add(

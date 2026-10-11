@@ -1,7 +1,9 @@
 namespace FalloutScriptStudio.Core.Tests.Dialogue
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Dialogue;
 	using FalloutScriptStudio.Core.Messages;
@@ -16,7 +18,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 			return new DialoguePreview(new DialogueNodeParser(new DialogueFunctionRules()), new ProcedureTextService());
 		}
 
-		private static async Task<DialoguePreview> StartAsync(Int32 caretLine = 1, String? script = null, FakeMessageSource? messages = null)
+		private static async Task<DialoguePreview> StartAsync(Int32 caretLine = 1, String? script = null, IDialogueMessageSource? messages = null)
 		{
 			DialoguePreview preview = Create();
 			String text = script ?? DialogueSamples.Script();
@@ -273,6 +275,74 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 			await preview.RefreshAsync();
 
 			Assert.Equal(3, raised);
+		}
+
+		[Fact]
+		public async Task Changed_IsRaisedOnTheCallersContext_WhenMessageFilesLoadOnAnotherThread()
+		{
+			using PumpSynchronizationContext pump = new PumpSynchronizationContext();
+			DialoguePreview preview = Create();
+			String text = DialogueSamples.Script();
+			ProgramInfo info = DialogueSamples.CreateInfo(text);
+			AsyncMessageSource source = new AsyncMessageSource(DialogueSamples.Messages()) { OnEnsure = _ => Task.Delay(30) };
+			SynchronizationContext? seen = null;
+			preview.Changed += (_, _) => seen = SynchronizationContext.Current;
+
+			Boolean ready = await pump.RunAsync(() => preview.StartAsync(text, info, source, 33));
+
+			Assert.True(ready);
+			Assert.Equal("Node001", preview.CurrentNode);
+			Assert.Same(pump, seen);
+		}
+
+		[Fact]
+		public async Task Follow_AStaleResultDoesNotOverwriteANewerOne()
+		{
+			TaskCompletionSource gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+			AsyncMessageSource source = new AsyncMessageSource(DialogueSamples.Messages()) { OnEnsure = files => files.Count > 0 ? gate.Task : Task.CompletedTask };
+			DialoguePreview preview = await StartAsync(messages: source);
+
+			Task<Boolean> follow = preview.FollowAsync(preview.Rows[1]);
+			await preview.GoBackAsync();
+			gate.SetResult();
+			await follow;
+
+			Assert.Equal("talk_p_proc", preview.CurrentNode);
+			Assert.Equal("Hello there, stranger.", preview.Rows[0].MessageText);
+			Assert.Equal(5, preview.Rows.Count);
+		}
+
+		private sealed class AsyncMessageSource : IDialogueMessageSource
+		{
+			private readonly FakeMessageSource _inner;
+
+			public AsyncMessageSource(FakeMessageSource inner)
+			{
+				this._inner = inner;
+			}
+
+			public Func<IReadOnlyList<Int32>, Task>? OnEnsure { get; init; }
+
+			public async Task EnsureLoadedAsync(IEnumerable<Int32> messageFileNumbers, CancellationToken cancellationToken = default)
+			{
+				List<Int32> numbers = messageFileNumbers.Where(n => n > 0).ToList();
+				if (this.OnEnsure is not null)
+				{
+					await this.OnEnsure(numbers).ConfigureAwait(false);
+				}
+
+				await this._inner.EnsureLoadedAsync(numbers, cancellationToken).ConfigureAwait(false);
+			}
+
+			public DialogueMessageLookup GetMessage(Int32 messageFileNumber, Int32 messageNumber)
+			{
+				return this._inner.GetMessage(messageFileNumber, messageNumber);
+			}
+
+			public String? GetMessageFilePath(Int32 messageFileNumber)
+			{
+				return this._inner.GetMessageFilePath(messageFileNumber);
+			}
 		}
 	}
 }

@@ -169,9 +169,11 @@ namespace FalloutScriptStudio.Core.TextTools
 				return index < 0 ? null : new TextSpan(index, query.Pattern.Length);
 			}
 
+			// The whole text is matched (the input is never truncated at the limit, otherwise the look-arounds of a whole-word
+			// query would see an artificial end of text); only matches that end at or before the limit are kept.
 			TextSpan? last = null;
-			Match match = regex.Match(text, 0, limit);
-			while (match.Success)
+			Match match = regex.Match(text);
+			while (match.Success && match.Index + match.Length <= limit)
 			{
 				if (match.Length > 0)
 				{

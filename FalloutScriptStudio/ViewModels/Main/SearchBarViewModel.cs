@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Linq;
+	using System.Text.RegularExpressions;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using CommunityToolkit.Mvvm.Input;
 	using FalloutScriptStudio.Core.Compilation;
@@ -18,6 +19,9 @@ namespace FalloutScriptStudio.ViewModels.Main
 	public sealed partial class SearchBarViewModel : ObservableObject
 	{
 		private const Int32 MaxHighlightedMatches = 2000;
+
+		// The live highlight runs on the UI thread at every keystroke, so a slow pattern gets much less time than an explicit command.
+		private static readonly TimeSpan _highlightTimeout = TimeSpan.FromMilliseconds(250);
 
 		private readonly IWorkspace _workspace;
 		private readonly ISettingsService _settings;
@@ -149,9 +153,16 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 
 			Int32 start = editor.SelectionLength > 0 ? editor.SelectionStart + 1 : editor.CaretOffset;
-			TextSpan? span = this._searcher.FindNext(document.TextDocument.Text, this.Query, start, true);
-			this.Select(editor, span, span is { } found && found.Offset < start ? Loc.Get("Str.Shell.Search.WrappedToStart") : String.Empty);
-			this.RememberQuery();
+			try
+			{
+				TextSpan? span = this._searcher.FindNext(document.TextDocument.Text, this.Query, start, true);
+				this.Select(editor, span, span is { } found && found.Offset < start ? Loc.Get("Str.Shell.Search.WrappedToStart") : String.Empty);
+				this.RememberQuery();
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+			}
 		}
 
 		/// <summary>Finds the previous match before the selection, wrapping at the beginning.</summary>
@@ -164,9 +175,16 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 
 			Int32 end = editor.SelectionLength > 0 ? editor.SelectionStart : editor.CaretOffset;
-			TextSpan? span = this._searcher.FindPrevious(document.TextDocument.Text, this.Query, end, true);
-			this.Select(editor, span, span is { } found && found.End > end ? Loc.Get("Str.Shell.Search.WrappedToEnd") : String.Empty);
-			this.RememberQuery();
+			try
+			{
+				TextSpan? span = this._searcher.FindPrevious(document.TextDocument.Text, this.Query, end, true);
+				this.Select(editor, span, span is { } found && found.End > end ? Loc.Get("Str.Shell.Search.WrappedToEnd") : String.Empty);
+				this.RememberQuery();
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+			}
 		}
 
 		/// <summary>Replaces the current match (when the selection is one) and moves to the next one.</summary>
@@ -180,10 +198,18 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 			if (editor.SelectionLength > 0)
 			{
-				TextEdit? edit = this._searcher.ReplaceNext(document.TextDocument.Text, this.Query, this.ReplaceText, editor.SelectionStart, false);
-				if (edit is not null && edit.Offset == editor.SelectionStart && edit.Length == editor.SelectionLength)
+				try
 				{
-					editor.ReplaceSelection(edit.NewText);
+					TextEdit? edit = this._searcher.ReplaceNext(document.TextDocument.Text, this.Query, this.ReplaceText, editor.SelectionStart, false);
+					if (edit is not null && edit.Offset == editor.SelectionStart && edit.Length == editor.SelectionLength)
+					{
+						editor.ReplaceSelection(edit.NewText);
+					}
+				}
+				catch (RegexMatchTimeoutException)
+				{
+					this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+					return;
 				}
 			}
 
@@ -199,7 +225,17 @@ namespace FalloutScriptStudio.ViewModels.Main
 				return;
 			}
 
-			ReplaceResult result = this._searcher.ReplaceAll(document.TextDocument.Text, this.Query, this.ReplaceText);
+			ReplaceResult result;
+			try
+			{
+				result = this._searcher.ReplaceAll(document.TextDocument.Text, this.Query, this.ReplaceText);
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+				return;
+			}
+
 			if (result.Count == 0)
 			{
 				this._sounds.PlayNotFound();
@@ -222,7 +258,17 @@ namespace FalloutScriptStudio.ViewModels.Main
 				return;
 			}
 
-			IReadOnlyList<SearchResultRow> rows = this._searcher.FindAllLines(document.TextDocument.Text, document.FilePath ?? BuildError.NoFile, this.Query);
+			IReadOnlyList<SearchResultRow> rows;
+			try
+			{
+				rows = this._searcher.FindAllLines(document.TextDocument.Text, document.FilePath ?? BuildError.NoFile, this.Query);
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+				return;
+			}
+
 			if (rows.Count == 0)
 			{
 				this._sounds.PlayNotFound();
@@ -319,7 +365,15 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 
 			String text = this._workspace.ActiveDocument!.TextDocument.Text;
-			editor.SetSearchMatches(this._searcher.FindAll(text, this.Query).Take(MaxHighlightedMatches).ToList());
+			try
+			{
+				editor.SetSearchMatches(this._searcher.FindAll(text, this.Query with { MatchTimeout = _highlightTimeout }).Take(MaxHighlightedMatches).ToList());
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				editor.ClearSearchMatches();
+				this.StatusText = Loc.Get("Str.Shell.Search.TooSlow");
+			}
 		}
 
 		private void RememberQuery()

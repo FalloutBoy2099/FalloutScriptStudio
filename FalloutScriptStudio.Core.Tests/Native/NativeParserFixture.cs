@@ -10,7 +10,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 	using FalloutScriptStudio.Core.Tests.Parsing;
 
 	/// <summary>
-	/// Shared state of the integration tests that run the real <c>parser.dll</c> through the real parser host: a temporary folder with
+	/// Shared state of the integration tests that run the real <c>parser.dll</c> through the real parser host: a scratch folder with
 	/// a copy of the library and one <see cref="OutOfProcessNativeParser"/> (so that many tests reuse one host process).
 	/// </summary>
 	public sealed class NativeParserFixture : IDisposable
@@ -30,7 +30,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 				Directory.CreateDirectory(resources);
 				this.ParserDllPath = Path.Combine(resources, "parser.dll");
 				File.Copy(SslcTools.ParserDll, this.ParserDllPath);
-				this.Parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe });
+				this.Parser = new OutOfProcessNativeParser(new NativeParserHostOptions { HostPath = SslcTools.HostExe, WorkingDirectoryRoot = this._directory.Combine("hostroot") });
 			}
 		}
 
@@ -62,13 +62,13 @@ namespace FalloutScriptStudio.Core.Tests.Native
 			};
 		}
 
-		/// <summary>Writes a file below the temporary folder and returns its full path.</summary>
+		/// <summary>Writes a file below the scratch folder and returns its full path.</summary>
 		public String Write(String relativePath, String content)
 		{
 			return this._directory.Write(relativePath, content);
 		}
 
-		/// <summary>Copies a folder (recursively) below the temporary folder and returns the full path of the copy.</summary>
+		/// <summary>Copies a folder (recursively) below the scratch folder and returns the full path of the copy.</summary>
 		public String CopyDirectory(String source, String relativeTarget)
 		{
 			String target = Path.Combine(this._directory.Path, relativeTarget);

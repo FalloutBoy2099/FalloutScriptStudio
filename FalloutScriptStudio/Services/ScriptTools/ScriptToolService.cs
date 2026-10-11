@@ -23,7 +23,9 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		private readonly IServiceProvider _services;
 		private readonly IDialogService _dialogs;
 
+		private readonly HashSet<DocumentViewModel> _previewsOpening = new HashSet<DocumentViewModel>();
 		private RegisterScriptWindow? _registerWindow;
+		private Boolean _registerOpening;
 		private AdvancedSearchWindow? _searchWindow;
 		private readonly Dictionary<DocumentViewModel, FlowchartWindow> _flowcharts = new Dictionary<DocumentViewModel, FlowchartWindow>();
 		private readonly Dictionary<DocumentViewModel, DialoguePreviewWindow> _previews = new Dictionary<DocumentViewModel, DialoguePreviewWindow>();
@@ -69,6 +71,25 @@ namespace FalloutScriptStudio.Services.ScriptTools
 
 		/// <inheritdoc />
 		public async Task ShowRegisterScriptAsync(DocumentViewModel? script)
+		{
+			if (this._registerOpening)
+			{
+				// The window is still being prepared (a double click): a second one would open next to it.
+				return;
+			}
+
+			this._registerOpening = true;
+			try
+			{
+				await this.OpenRegisterScriptAsync(script);
+			}
+			finally
+			{
+				this._registerOpening = false;
+			}
+		}
+
+		private async Task OpenRegisterScriptAsync(DocumentViewModel? script)
 		{
 			String? scriptFileName = null;
 			if (script is not null)
@@ -175,18 +196,31 @@ namespace FalloutScriptStudio.Services.ScriptTools
 				return;
 			}
 
-			DialoguePreviewWindow window = this._services.GetRequiredService<DialoguePreviewWindow>();
-			if (!await window.ViewModel.InitializeAsync(script))
+			if (!this._previewsOpening.Add(script))
 			{
-				window.ViewModel.Dispose();
-				await this._dialogs.ShowInfoAsync(Loc.Get("Str.ScriptTools.ToolsPreviewTitle"), Loc.Get("Str.ScriptTools.ToolsPreviewNoDialogue"));
+				// The preview of this script is still being prepared (a double click): a second window would open next to it.
 				return;
 			}
 
-			window.Owner = ScriptToolWindowHelper.FindOwner(window);
-			window.Closed += (_, _) => this._previews.Remove(script);
-			this._previews[script] = window;
-			window.Show();
+			try
+			{
+				DialoguePreviewWindow window = this._services.GetRequiredService<DialoguePreviewWindow>();
+				if (!await window.ViewModel.InitializeAsync(script))
+				{
+					window.ViewModel.Dispose();
+					await this._dialogs.ShowInfoAsync(Loc.Get("Str.ScriptTools.ToolsPreviewTitle"), Loc.Get("Str.ScriptTools.ToolsPreviewNoDialogue"));
+					return;
+				}
+
+				window.Owner = ScriptToolWindowHelper.FindOwner(window);
+				window.Closed += (_, _) => this._previews.Remove(script);
+				this._previews[script] = window;
+				window.Show();
+			}
+			finally
+			{
+				this._previewsOpening.Remove(script);
+			}
 		}
 
 		/// <inheritdoc />

@@ -77,6 +77,20 @@ namespace FalloutScriptStudio.Workspace
 				return null;
 			}
 
+			// The file was read asynchronously: another open of the same path (a second drop, the command line and a forwarded
+			// instance...) may have added its tab in the meantime.
+			DocumentViewModel? opened = this.FindDocument(path);
+			if (opened is not null)
+			{
+				if (options.Activate)
+				{
+					this.ActiveDocument = opened;
+				}
+
+				DocumentNavigation.Navigate(opened, options);
+				return opened;
+			}
+
 			DocumentViewModel document = DocumentFactory.Create(path, this.FormatOnOpen(path, decoded.Text), decoded.Encoding);
 			document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
 			this.AddDocument(document, options.Activate);
@@ -172,7 +186,7 @@ namespace FalloutScriptStudio.Workspace
 		{
 			if (document.IsParsable)
 			{
-				_ = this.ParseFirstAsync(document);
+				_ = this.GuardAsync(() => this.ParseFirstAsync(document));
 			}
 
 			if (options.Line > 0)
@@ -208,7 +222,17 @@ namespace FalloutScriptStudio.Workspace
 
 		private async Task<DocumentViewModel?> OpenCopyAsync(String path, OpenDocumentOptions options)
 		{
-			DecodedText decoded = await this._files.ReadAsync(path);
+			DecodedText decoded;
+			try
+			{
+				decoded = await this._files.ReadAsync(path);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotOpenTitle"), ex.Message);
+				return null;
+			}
+
 			DocumentViewModel copy = DocumentFactory.Create(null, this.FormatOnOpen(path, decoded.Text), decoded.Encoding);
 			copy.Kind = DocumentViewModel.KindFromPath(path);
 			copy.IsModified = true;
@@ -229,17 +253,51 @@ namespace FalloutScriptStudio.Workspace
 				return null;
 			}
 
+			String? target = options.TemporaryDecompile ? null : script.TargetPath;
+			if (target is not null)
+			{
+				DocumentViewModel? existing = this.FindDocument(target);
+				if (existing is not null
+					&& !await this._dialogs.ConfirmAsync(Loc.Get("Str.Shell.Dlg.DecompileTargetOpenTitle"), Loc.Format("Str.Shell.Dlg.DecompileTargetOpen", existing.FileName)))
+				{
+					// The user keeps the open tab as it is; nothing is overwritten.
+					if (options.Activate)
+					{
+						this.ActiveDocument = existing;
+					}
+
+					return existing;
+				}
+
+				if (!await this._decompiler.SaveTargetAsync(script))
+				{
+					// The error was shown; the decompiled text stays in an unsaved tab instead of being lost.
+					target = null;
+				}
+				else if (existing is not null && this.Documents.Contains(existing))
+				{
+					// The tab of the file shows the new source instead of a second tab being opened on the same file.
+					await this.ReloadAsync(existing);
+					if (options.Activate)
+					{
+						this.ActiveDocument = existing;
+					}
+
+					return existing;
+				}
+			}
+
 			DocumentViewModel document;
 			if (options.TemporaryDecompile)
 			{
 				document = DocumentFactory.Create(script.OutputFilePath, script.Text, script.Encoding);
 				document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(script.OutputFilePath);
 			}
-			else if (script.TargetPath is not null)
+			else if (target is not null)
 			{
-				document = DocumentFactory.Create(script.TargetPath, script.Text, script.Encoding);
-				document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(script.TargetPath);
-				this.AddToRecent(script.TargetPath);
+				document = DocumentFactory.Create(target, script.Text, script.Encoding);
+				document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(target);
+				this.AddToRecent(target);
 			}
 			else
 			{
@@ -251,7 +309,7 @@ namespace FalloutScriptStudio.Workspace
 			this.AddDocument(document, options.Activate);
 			if (document.IsParsable)
 			{
-				_ = this.ParseFirstAsync(document);
+				_ = this.GuardAsync(() => this.ParseFirstAsync(document));
 			}
 
 			return document;

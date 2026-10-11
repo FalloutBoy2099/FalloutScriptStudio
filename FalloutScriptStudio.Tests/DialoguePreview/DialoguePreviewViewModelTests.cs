@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Tests.DialoguePreview
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Messages;
@@ -24,6 +25,29 @@ namespace FalloutScriptStudio.Tests.DialoguePreview
 			{
 				await Task.Delay(20);
 			}
+		}
+
+		[Fact]
+		public void Initialize_WhenAnotherMessageFileLoadsOnAThreadPoolThread_UpdatesTheBoundListsOnTheUiThread()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				String script = FlowchartSamples.Script().Replace("   Reply(100);", "   Reply(message_str(123, 100));", StringComparison.Ordinal);
+				using FlowchartHarness harness = new FlowchartHarness(script);
+				harness.Messages.LoadOnAnotherThread = true;
+				DialoguePreviewViewModel preview = harness.CreatePreview();
+				Int32 uiThread = Environment.CurrentManagedThreadId;
+				List<Int32> threads = new List<Int32>();
+				preview.Rows.CollectionChanged += (_, _) => threads.Add(Environment.CurrentManagedThreadId);
+				preview.NodeNames.CollectionChanged += (_, _) => threads.Add(Environment.CurrentManagedThreadId);
+
+				Boolean started = await preview.InitializeAsync(harness.Script);
+
+				Assert.True(started);
+				Assert.Equal(3, preview.Rows.Count);
+				Assert.NotEmpty(threads);
+				Assert.All(threads, thread => Assert.Equal(uiThread, thread));
+			});
 		}
 
 		[Fact]

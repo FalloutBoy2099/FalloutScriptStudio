@@ -1,8 +1,10 @@
 namespace FalloutScriptStudio.Core.Tests.Dialogue
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Dialogue;
 	using FalloutScriptStudio.Core.Tests.Functions;
@@ -15,6 +17,23 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 		public void Dispose()
 		{
 			this._folder.Dispose();
+		}
+
+		[Fact]
+		public async Task Changed_IsRaisedOnTheCallersContext()
+		{
+			using PumpSynchronizationContext pump = new PumpSynchronizationContext();
+			using NodeCodeSnippetStore store = new NodeCodeSnippetStore(this._folder.Combine("CustomCode.ini"));
+			List<SynchronizationContext?> seen = new List<SynchronizationContext?>();
+			store.Changed += (_, _) => seen.Add(SynchronizationContext.Current);
+
+			Boolean added = await pump.RunAsync(() => store.AddAsync("greeting", "Reply(100);"));
+			Boolean removed = await pump.RunAsync(() => store.RemoveAsync("greeting"));
+
+			Assert.True(added);
+			Assert.True(removed);
+			Assert.Equal(2, seen.Count);
+			Assert.All(seen, context => Assert.Same(pump, context));
 		}
 
 		[Fact]

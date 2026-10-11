@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.Compilation
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
@@ -28,6 +29,14 @@ namespace FalloutScriptStudio.Core.Compilation
 			if (request.WorkingDirectory != null)
 			{
 				startInfo.WorkingDirectory = request.WorkingDirectory;
+			}
+
+			if (request.Environment != null)
+			{
+				foreach (KeyValuePair<String, String> variable in request.Environment)
+				{
+					startInfo.Environment[variable.Key] = variable.Value;
+				}
 			}
 
 			if (request.CaptureOutput)

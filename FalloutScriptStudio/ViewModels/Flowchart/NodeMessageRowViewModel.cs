@@ -12,6 +12,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 	{
 		private readonly Action<NodeMessageRowViewModel>? _edited;
 		private Boolean _initializing = true;
+		private String _savedText;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NodeMessageRowViewModel"/> class.
@@ -24,6 +25,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			this.Source = source;
 			this._edited = edited;
 			this.Text = source.Text;
+			this._savedText = this.Text;
 			this._initializing = false;
 		}
 
@@ -54,6 +56,26 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		/// <summary>Gets or sets the text of the message; changing it changes the message file.</summary>
 		[ObservableProperty]
 		public partial String Text { get; set; } = String.Empty;
+
+		/// <summary>Remembers the current text as the one stored in the message file.</summary>
+		public void MarkSaved()
+		{
+			this._savedText = this.Text;
+		}
+
+		/// <summary>Puts back the text stored in the message file, without treating it as an edit.</summary>
+		public void Revert()
+		{
+			this._initializing = true;
+			try
+			{
+				this.Text = this._savedText;
+			}
+			finally
+			{
+				this._initializing = false;
+			}
+		}
 
 		partial void OnTextChanged(String value)
 		{

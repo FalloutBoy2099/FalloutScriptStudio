@@ -44,7 +44,7 @@ namespace FalloutScriptStudio.Workspace
 
 		public Boolean TryOpenAsText(String messageFilePath)
 		{
-			_ = this._workspace.OpenAsync(messageFilePath, new OpenDocumentOptions { AddToRecent = false });
+			_ = this._workspace.GuardAsync(() => this._workspace.OpenAsync(messageFilePath, new OpenDocumentOptions { AddToRecent = false }));
 			return true;
 		}
 	}

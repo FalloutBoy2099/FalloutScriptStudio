@@ -19,6 +19,7 @@ These rules are **mandatory**: the `.editorconfig` at the root is enforced at bu
 * Names of types, methods, properties, variables, comments, log messages and UI texts: **in English**
   (translate the Russian of the legacy code).
 * One public class per file, file name = type name.
+* **XAML is formatted with XamlStyler** with its default settings (4 spaces, one attribute per line, no `Settings.XamlStyler` file), as in the other projects of the author. Install it once with `dotnet tool install --global XamlStyler.Console`, then run `xstyler -f <file>` (or `xstyler -d <folder> -r`) before committing; `xstyler -p -f <file>` only checks. XamlStyler writes a UTF-8 BOM: remove it, XAML files are UTF-8 without BOM like the rest.
 
 Compliant example:
 
@@ -59,7 +60,8 @@ namespace FalloutScriptStudio.Core.Parsing
 ## 3. Encodings (a .NET Core pitfall)
 
 `Encoding.Default` is **UTF-8** in .NET Core; the legacy code read scripts in the Windows ANSI code page.
-Use `FalloutScriptStudio.Core.IO.TextEncodings` (`Ansi`, `Oem866`, `Utf8`) — never `Encoding.Default`.
+Use `FalloutScriptStudio.Core.IO.TextEncodings` (`Ansi` = system ANSI code page from `GetACP`, not the regional format of the user; `Oem` = `GetOEMCP`, what
+cmd.exe batch files print in; `Oem866`, `Utf8`) — never `Encoding.Default`.
 
 ## 4. Native
 

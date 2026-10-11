@@ -20,6 +20,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private readonly EditorContext _context;
 		private readonly Dictionary<TextView, TabMarkerRenderer> _tabMarkers = new Dictionary<TextView, TabMarkerRenderer>();
+		private Boolean _attached;
+		private Boolean _applyPending;
 
 		public AppearanceController(EditorContext context)
 		{
@@ -31,14 +33,26 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Attach()
 		{
+			if (this._attached)
+			{
+				return;
+			}
+
+			this._attached = true;
 			this.Apply();
 			this._context.Services.OptionsChanged += this.OnServicesChanged;
 			this._context.Services.ThemeChanged += this.OnServicesChanged;
 			this._context.Services.ZoomChanged += this.OnServicesChanged;
 		}
 
+		/// <summary>
+		/// Detaches the controller and removes its renderers from the editor controls. It can be called more than once; an
+		/// <see cref="Apply"/> that was queued before is dropped (the controls may belong to another session by then).
+		/// </summary>
 		public void Dispose()
 		{
+			this._attached = false;
+			this._applyPending = false;
 			this._context.Services.OptionsChanged -= this.OnServicesChanged;
 			this._context.Services.ThemeChanged -= this.OnServicesChanged;
 			this._context.Services.ZoomChanged -= this.OnServicesChanged;
@@ -64,6 +78,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 		/// <summary>Applies options, theme, font and zoom to the editor and its linked (split view) editors.</summary>
 		public void Apply()
 		{
+			if (!this._attached)
+			{
+				return;
+			}
+
 			foreach (TextEditor editor in this._context.AllEditors)
 			{
 				this.ApplyTo(editor);
@@ -76,6 +95,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 		/// <param name="editor">The control.</param>
 		public void ApplyTo(TextEditor editor)
 		{
+			if (!this._attached)
+			{
+				return;
+			}
+
 			EditorOptions options = this._context.Options;
 			EditorPalette palette = this._context.Palette;
 			Boolean isMessage = this._context.IsMessage;
@@ -175,7 +199,25 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private void OnServicesChanged(Object? sender, EventArgs e)
 		{
-			this._context.Editor.Dispatcher.BeginInvoke(new Action(this.Apply));
+			// Options, theme and zoom often change together: one deferred Apply covers all of them.
+			if (!this._attached || this._applyPending)
+			{
+				return;
+			}
+
+			this._applyPending = true;
+			this._context.Editor.Dispatcher.BeginInvoke(new Action(this.ApplyDeferred));
+		}
+
+		private void ApplyDeferred()
+		{
+			if (!this._attached || !this._applyPending)
+			{
+				return;
+			}
+
+			this._applyPending = false;
+			this.Apply();
 		}
 	}
 }

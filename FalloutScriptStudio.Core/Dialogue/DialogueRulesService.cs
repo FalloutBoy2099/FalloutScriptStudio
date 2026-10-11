@@ -17,6 +17,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 		private readonly String _filePath;
 		private readonly SemaphoreSlim _gate = new SemaphoreSlim(1, 1);
 		private DialogueFunctionRules _current = new DialogueFunctionRules();
+		private IReadOnlyList<String> _fileLines = Array.Empty<String>();
+		private Boolean _loaded;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DialogueRulesService"/> class.
@@ -40,20 +42,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			await this._gate.WaitAsync(cancellationToken).ConfigureAwait(false);
 			try
 			{
-				IReadOnlyList<DialogueFunctionRule> rules = Array.Empty<DialogueFunctionRule>();
-				if (File.Exists(this._filePath))
-				{
-					try
-					{
-						rules = DialogueFunctionRulesFile.Parse(await File.ReadAllLinesAsync(this._filePath, cancellationToken).ConfigureAwait(false));
-					}
-					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-					{
-						rules = Array.Empty<DialogueFunctionRule>();
-					}
-				}
-
-				Volatile.Write(ref this._current, new DialogueFunctionRules(rules));
+				await this.ReadFileAsync(cancellationToken).ConfigureAwait(false);
 			}
 			finally
 			{
@@ -72,9 +61,22 @@ namespace FalloutScriptStudio.Core.Dialogue
 			await this._gate.WaitAsync(cancellationToken).ConfigureAwait(false);
 			try
 			{
+				if (!this._loaded)
+				{
+					await this.ReadFileAsync(cancellationToken).ConfigureAwait(false);
+				}
+
+				if (!this._loaded)
+				{
+					// The file exists but could not be read: writing now would replace the user's rules by an empty list.
+					throw new IOException("The dialogue rules file could not be read, so it was not overwritten: " + this._filePath);
+				}
+
 				var rules = new DialogueFunctionRules(userRules.Select(r => r.IsDefault ? r.AsUserRule() : r).ToList());
-				String content = String.Join("\r\n", DialogueFunctionRulesFile.Format(rules.Rules)) + "\r\n";
+				IReadOnlyList<String> lines = DialogueFunctionRulesFile.Format(rules.Rules, this._fileLines);
+				String content = String.Join("\r\n", lines) + "\r\n";
 				await AtomicFile.WriteAllBytesAsync(this._filePath, new UTF8Encoding(false).GetBytes(content), cancellationToken).ConfigureAwait(false);
+				this._fileLines = lines;
 				Volatile.Write(ref this._current, rules);
 			}
 			finally
@@ -83,6 +85,35 @@ namespace FalloutScriptStudio.Core.Dialogue
 			}
 
 			this.Changed?.Invoke(this, EventArgs.Empty);
+		}
+
+		private async Task ReadFileAsync(CancellationToken cancellationToken)
+		{
+			IReadOnlyList<String> lines = Array.Empty<String>();
+			Boolean readable = true;
+			if (File.Exists(this._filePath))
+			{
+				try
+				{
+					lines = await File.ReadAllLinesAsync(this._filePath, cancellationToken).ConfigureAwait(false);
+				}
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+				{
+					readable = false;
+				}
+			}
+
+			if (readable)
+			{
+				this._fileLines = lines;
+				Volatile.Write(ref this._current, new DialogueFunctionRules(DialogueFunctionRulesFile.Parse(lines)));
+			}
+			else if (!this._loaded)
+			{
+				Volatile.Write(ref this._current, new DialogueFunctionRules());
+			}
+
+			this._loaded = this._loaded || readable;
 		}
 
 		/// <summary>Releases the lock of the service.</summary>

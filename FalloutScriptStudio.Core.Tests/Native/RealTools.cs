@@ -17,7 +17,13 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		/// <summary>int2ssl.exe.</summary>
 		Decompiler = 4,
 
-		/// <summary>The folder with real SSL sources.</summary>
-		Samples = 8,
+		/// <summary>The sample scripts of FO2tweaksMk2 (shipped in <c>_test_files\samples</c>).</summary>
+		Fo2TweaksSamples = 8,
+
+		/// <summary>The optional sample set InventoryFilterMk2 (not shipped).</summary>
+		InventoryFilterSamples = 16,
+
+		/// <summary>The optional sample set PartyOrdersMk2 (not shipped).</summary>
+		PartyOrdersSamples = 32,
 	}
 }

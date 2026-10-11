@@ -24,5 +24,10 @@
 		<ProjectReference Include="..\FalloutScriptStudio\FalloutScriptStudio.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<!-- The scratch folder and file locator shared with the Core tests (everything lives in _test_files at the repository root). -->
+		<Compile Include="..\FalloutScriptStudio.Core.Tests\Support\*.cs" Link="Support\%(Filename)%(Extension)" />
+	</ItemGroup>
+
 </Project>
 

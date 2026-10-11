@@ -3,6 +3,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Text.RegularExpressions;
 	using FalloutScriptStudio.Core.TextTools;
 	using FalloutScriptStudio.Services.ScriptTools.Search;
 	using Xunit;
@@ -179,6 +180,19 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 			IReadOnlyList<TextEdit> edits = matcher.ComputeReplacements("a", "$1");
 
 			Assert.Equal("$1", TextEditApplier.Apply("a", edits));
+		}
+
+		[Fact]
+		public void CatastrophicRegex_ThrowsATimeoutExceptionInsteadOfHanging()
+		{
+			Boolean ok = SearchMatcher.TryCreate(new SearchOptions("(a+)+b", false, false, true), out SearchMatcher? matcher, out String? error, TimeSpan.FromMilliseconds(50));
+			Assert.True(ok, error);
+			String line = new String('a', 45) + "c";
+
+			Assert.Throws<RegexMatchTimeoutException>(() => matcher!.FindFirst(line, 0));
+			Assert.Throws<RegexMatchTimeoutException>(() => matcher!.FindAll(line));
+			Assert.Throws<RegexMatchTimeoutException>(() => matcher!.FindNext(line, 0, true));
+			Assert.Throws<RegexMatchTimeoutException>(() => matcher!.ComputeReplacements(line, "x"));
 		}
 
 		[Fact]

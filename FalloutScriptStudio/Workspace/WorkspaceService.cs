@@ -11,6 +11,8 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.ScriptTools;
+	using Microsoft.Extensions.Logging;
+	using Microsoft.Extensions.Logging.Abstractions;
 
 	/// <summary>
 	/// The set of open documents and the application-level operations on them: opening (including decompilation of compiled
@@ -33,6 +35,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly ProcedureOperations _procedures;
 		private readonly ReferenceResultsPresenter _references;
 		private readonly IScriptToolService _scriptTools;
+		private readonly ILogger _logger;
 
 		private DocumentViewModel? _active;
 		private DocumentViewModel? _previousActive;
@@ -51,7 +54,8 @@ namespace FalloutScriptStudio.Workspace
 			MessageAssociationService messages,
 			ProcedureOperations procedures,
 			ReferenceResultsPresenter references,
-			IScriptToolService scriptTools)
+			IScriptToolService scriptTools,
+			ILogger<WorkspaceService>? logger = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(parser);
@@ -79,6 +83,7 @@ namespace FalloutScriptStudio.Workspace
 			this._procedures = procedures;
 			this._references = references;
 			this._scriptTools = scriptTools;
+			this._logger = logger ?? NullLogger<WorkspaceService>.Instance;
 			this._parser.Parsed += (_, document) => this.DocumentParsed?.Invoke(this, document);
 		}
 
@@ -119,7 +124,7 @@ namespace FalloutScriptStudio.Workspace
 
 					if (value.Kind == DocumentKind.Script && value.MessageFilePath is not null)
 					{
-						_ = this.RefreshMessageTextsAsync(value);
+						_ = this.GuardAsync(() => this.RefreshMessageTextsAsync(value));
 					}
 				}
 
@@ -146,24 +151,109 @@ namespace FalloutScriptStudio.Workspace
 				return true;
 			}
 
-			// Like the legacy editor, the flowchart and the node code editors of a script close with its tab (before the save question,
-			// so the node code that is applied is saved too).
-			await this._scriptTools.CloseToolWindowsAsync(document);
-
-			if (document.IsModified)
+			Boolean? save = await this.AskToSaveAsync(document);
+			if (save is null || (save == true && !await this.SaveForCloseAsync(document)))
 			{
-				YesNoCancel answer = await this._dialogs.AskYesNoCancelAsync(Loc.Get("Str.Shell.Dlg.UnsavedTitle"), Loc.Format("Str.Shell.Dlg.UnsavedText", document.FileName));
-				if (answer == YesNoCancel.Cancel)
+				return false;
+			}
+
+			this.RemoveDocument(document);
+			return true;
+		}
+
+		public async Task<Boolean> CloseAllAsync(DocumentViewModel? except = null, Func<Task<Boolean>>? beforeClosing = null)
+		{
+			List<DocumentViewModel> targets = this.Documents.Reverse().Where(d => !ReferenceEquals(d, except)).ToList();
+
+			// Every question comes first: a "Cancel" at any point must leave all the tabs (and their unsaved text) untouched.
+			List<DocumentViewModel> toSave = new List<DocumentViewModel>();
+			foreach (DocumentViewModel document in targets)
+			{
+				if (!this.Documents.Contains(document))
+				{
+					continue;
+				}
+
+				Boolean? save = await this.AskToSaveAsync(document);
+				if (save is null)
 				{
 					return false;
 				}
 
-				if (answer == YesNoCancel.Yes && (!await this.SaveAsync(document) || document.IsModified))
+				if (save == true)
+				{
+					toSave.Add(document);
+				}
+			}
+
+			if (beforeClosing is not null && !await beforeClosing())
+			{
+				return false;
+			}
+
+			foreach (DocumentViewModel document in toSave)
+			{
+				if (this.Documents.Contains(document) && !await this.SaveForCloseAsync(document))
 				{
 					return false;
 				}
 			}
 
+			foreach (DocumentViewModel document in targets)
+			{
+				if (this.Documents.Contains(document))
+				{
+					this.RemoveDocument(document);
+				}
+			}
+
+			return true;
+		}
+
+		public async Task GuardAsync(Func<Task> operation)
+		{
+			ArgumentNullException.ThrowIfNull(operation);
+			try
+			{
+				await operation();
+			}
+			catch (OperationCanceledException)
+			{
+				// The operation was cancelled on purpose: nothing to report.
+			}
+			catch (Exception ex)
+			{
+				this._logger.LogError(ex, "A background operation failed");
+				this._output.ReportStatus(Loc.Format("Str.Shell.Output.OperationFailed", ex.Message));
+			}
+		}
+
+		/// <summary>
+		/// Closes the tool windows of a script and, when the document is modified, asks whether to save it. Nothing is saved or closed here.
+		/// </summary>
+		/// <returns><see langword="true"/> to save the document before closing it, <see langword="false"/> to close it as it is, <see langword="null"/> when the user cancelled.</returns>
+		private async Task<Boolean?> AskToSaveAsync(DocumentViewModel document)
+		{
+			// Like the legacy editor, the flowchart and the node code editors of a script close with its tab (before the save question,
+			// so the node code that is applied is saved too).
+			await this._scriptTools.CloseToolWindowsAsync(document);
+
+			if (!document.IsModified)
+			{
+				return false;
+			}
+
+			YesNoCancel answer = await this._dialogs.AskYesNoCancelAsync(Loc.Get("Str.Shell.Dlg.UnsavedTitle"), Loc.Format("Str.Shell.Dlg.UnsavedText", document.FileName));
+			return answer == YesNoCancel.Cancel ? null : answer == YesNoCancel.Yes;
+		}
+
+		private async Task<Boolean> SaveForCloseAsync(DocumentViewModel document)
+		{
+			return await this.SaveAsync(document) && !document.IsModified;
+		}
+
+		private void RemoveDocument(DocumentViewModel document)
+		{
 			this.RememberDocumentState(document);
 			this._parser.Detach(document);
 
@@ -194,25 +284,6 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			this.DocumentClosed?.Invoke(this, document);
-			return true;
-		}
-
-		public async Task<Boolean> CloseAllAsync(DocumentViewModel? except = null)
-		{
-			foreach (DocumentViewModel document in this.Documents.Reverse().ToList())
-			{
-				if (ReferenceEquals(document, except))
-				{
-					continue;
-				}
-
-				if (!await this.CloseAsync(document))
-				{
-					return false;
-				}
-			}
-
-			return true;
 		}
 
 		public void MoveDocument(Int32 oldIndex, Int32 newIndex)

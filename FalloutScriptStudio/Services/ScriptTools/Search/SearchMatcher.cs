@@ -33,8 +33,13 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		/// <param name="options">What to look for.</param>
 		/// <param name="matcher">The matcher; <see langword="null"/> when the options are not valid.</param>
 		/// <param name="error">Why the options are not valid; <see langword="null"/> on success.</param>
+		/// <param name="regexTimeout">The time limit of one regular expression operation; <see langword="null"/> for the default of 3 seconds.</param>
 		/// <returns><see langword="true"/> when a matcher was created.</returns>
-		public static Boolean TryCreate(SearchOptions options, out SearchMatcher? matcher, out String? error)
+		/// <remarks>
+		/// A regular expression that exceeds the time limit (catastrophic backtracking) makes the matching methods throw a
+		/// <see cref="RegexMatchTimeoutException"/>; callers on the UI or a worker thread catch it and report the pattern as too slow.
+		/// </remarks>
+		public static Boolean TryCreate(SearchOptions options, out SearchMatcher? matcher, out String? error, TimeSpan? regexTimeout = null)
 		{
 			ArgumentNullException.ThrowIfNull(options);
 
@@ -60,7 +65,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 
 			try
 			{
-				matcher = new SearchMatcher(options, new Regex(options.Text, regexOptions, RegexTimeout));
+				matcher = new SearchMatcher(options, new Regex(options.Text, regexOptions, regexTimeout ?? RegexTimeout));
 				error = null;
 				return true;
 			}

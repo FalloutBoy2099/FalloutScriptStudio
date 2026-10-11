@@ -14,11 +14,11 @@ namespace FalloutScriptStudio.Tests.Editor
 		private const String Unit = "   ";
 
 		/// <summary>Simulates Enter: breaks the line at the end of the first line and lets the strategy indent the new line.</summary>
-		private static TextDocument PressEnter(String text, Int32 lineNumber, Func<Int32, Boolean>? isFoldStart = null)
+		private static TextDocument PressEnter(String text, Int32 lineNumber, Func<Int32, Boolean>? isFoldStart = null, String newLine = "\r\n")
 		{
 			TextDocument document = new TextDocument(text);
 			DocumentLine begin = document.GetLineByNumber(lineNumber);
-			document.Insert(begin.EndOffset, "\r\n");
+			document.Insert(begin.EndOffset, newLine);
 			SslIndentationStrategy strategy = new SslIndentationStrategy(() => Unit) { IsFoldStart = isFoldStart };
 			strategy.IndentLine(document, document.GetLineByNumber(lineNumber + 1));
 			return document;
@@ -115,9 +115,146 @@ namespace FalloutScriptStudio.Tests.Editor
 		[Fact]
 		public void IfBeginWhoseSuccessorEndsWithEnd_AddsElseBegin()
 		{
-			TextDocument document = PressEnter("if (a) then begin\r\n\r\nx := 1 end", 1);
+			TextDocument document = PressEnter("procedure p begin\r\nif (a) then begin\r\n\r\nx := 1 end", 2);
 
-			Assert.Equal("if (a) then begin\r\n   \r\nend\r\nelse begin\r\n\r\nx := 1 end", document.Text);
+			Assert.Equal("procedure p begin\r\nif (a) then begin\r\n   \r\nend\r\nelse begin\r\n\r\nx := 1 end", document.Text);
+		}
+
+		[Fact]
+		public void IfBeginWhoseBlockAlreadyHasItsEnd_DoesNotAddASecondEnd()
+		{
+			TextDocument document = PressEnter("if (a) then begin\r\n\r\n   foo;\r\nend", 1);
+
+			Assert.Equal("if (a) then begin\r\n   \r\n\r\n   foo;\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void WhileBeginInsideAClosedProcedure_WhoseBlockHasItsEnd_DoesNotAddAnEnd()
+		{
+			TextDocument document = PressEnter("procedure p begin\r\n   while (a) do begin\r\n\r\n      foo;\r\n   end\r\nend", 2);
+
+			Assert.Equal("procedure p begin\r\n   while (a) do begin\r\n      \r\n\r\n      foo;\r\n   end\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void NestedBeginsWithAllTheirEnds_DoNotAddAnEnd()
+		{
+			TextDocument document = PressEnter(
+				"procedure p begin\r\n   if (a) then begin\r\n      if (b) then begin\r\n\r\n      end\r\n   end\r\nend",
+				2);
+
+			Assert.Equal(
+				"procedure p begin\r\n   if (a) then begin\r\n      \r\n      if (b) then begin\r\n\r\n      end\r\n   end\r\nend",
+				document.Text);
+		}
+
+		[Fact]
+		public void NewBeginInsideAProcedureWhoseEndFollows_StillGetsItsOwnEnd()
+		{
+			TextDocument document = PressEnter("procedure p begin\r\n   if (a) then begin\r\n\r\n   foo;\r\nend", 2);
+
+			Assert.Equal("procedure p begin\r\n   if (a) then begin\r\n      \r\n   end\r\n\r\n   foo;\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void LoneBeginWhoseBlockAlreadyHasItsEnd_DoesNotAddASecondEnd()
+		{
+			TextDocument document = PressEnter("procedure start\r\nbegin\r\n\r\n   foo;\r\nend", 2);
+
+			Assert.Equal("procedure start\r\nbegin\r\n   \r\n\r\n   foo;\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void ProcedureHeaderOnTwoLinesWithItsEnd_DoesNotAddASecondEnd()
+		{
+			TextDocument document = PressEnter("procedure foo(variable a,\r\n   variable b) begin\r\n\r\n   foo;\r\nend", 2);
+
+			Assert.Equal("procedure foo(variable a,\r\n   variable b) begin\r\n      \r\n\r\n   foo;\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void ProcedureHeaderOnTwoLinesWithoutEnd_GetsAnEnd()
+		{
+			TextDocument document = PressEnter("procedure foo(variable a,\r\n   variable b) begin", 2);
+
+			Assert.Equal("procedure foo(variable a,\r\n   variable b) begin\r\n      \r\n   end", document.Text);
+		}
+
+		[Fact]
+		public void ExistingEndOnTheLastLineWithoutNewline_DoesNotAddASecondEnd()
+		{
+			TextDocument document = PressEnter("x begin\r\n\r\nend", 1);
+
+			Assert.Equal("x begin\r\n   \r\n\r\nend", document.Text);
+		}
+
+		[Fact]
+		public void LfDocument_WithoutEnd_AddsAnEndWithLfBreaks()
+		{
+			TextDocument document = PressEnter("procedure x begin\n\nlast", 1, newLine: "\n");
+
+			Assert.Equal("procedure x begin\n   \nend\n\nlast", document.Text);
+		}
+
+		[Fact]
+		public void LfDocument_WithItsEnd_DoesNotAddASecondEnd()
+		{
+			TextDocument document = PressEnter("procedure x begin\n\n   foo;\nend", 1, newLine: "\n");
+
+			Assert.Equal("procedure x begin\n   \n\n   foo;\nend", document.Text);
+		}
+
+		[Fact]
+		public void EndInCommentsAndStrings_DoesNotCountAsTheClosingEnd()
+		{
+			TextDocument document = PressEnter("procedure x begin\r\n\r\n// end\r\n/* end */\r\nfoo(\"end\");", 1);
+
+			Assert.Equal("procedure x begin\r\n   \r\nend\r\n\r\n// end\r\n/* end */\r\nfoo(\"end\");", document.Text);
+		}
+
+		[Fact]
+		public void IsBlockClosed_RequiresABalancedText()
+		{
+			Assert.True(SslIndentationRules.IsBlockClosed("x begin\r\nend", 7));
+			Assert.False(SslIndentationRules.IsBlockClosed("x begin\r\nfoo;", 7));
+			Assert.False(SslIndentationRules.IsBlockClosed("procedure p begin\r\n if a then begin\r\nend", 35));
+		}
+
+		[Fact]
+		public void EnterKeyInTheEditor_AfterBeginWithAnExistingEnd_AddsNothingAndUndoesInOneStep()
+		{
+			UiThread.Run(() =>
+			{
+				using EditorTestEnvironment env = new EditorTestEnvironment();
+				const String Source = "procedure start begin\r\n   if (a) then begin\r\n\r\n      foo;\r\n   end\r\nend";
+				DocumentViewModel document = env.CreateDocument(Source);
+				using EditorSession session = env.StartSession(document);
+				session.Context.TextArea.Caret.Offset = document.TextDocument.GetLineByNumber(2).EndOffset;
+
+				TypingSimulator.Type(session, "\n");
+
+				Assert.Equal("procedure start begin\r\n   if (a) then begin\r\n      \r\n\r\n      foo;\r\n   end\r\nend", document.TextDocument.Text);
+				document.TextDocument.UndoStack.Undo();
+				Assert.Equal(Source, document.TextDocument.Text);
+			});
+		}
+
+		[Fact]
+		public void EnterKeyInTheEditor_AddedEndIsUndoneInOneStep()
+		{
+			UiThread.Run(() =>
+			{
+				using EditorTestEnvironment env = new EditorTestEnvironment();
+				DocumentViewModel document = env.CreateDocument("procedure start begin");
+				using EditorSession session = env.StartSession(document);
+				session.Context.TextArea.Caret.Offset = document.TextDocument.TextLength;
+
+				TypingSimulator.Type(session, "\n");
+				Assert.Equal("procedure start begin\r\n   \r\nend", document.TextDocument.Text);
+				document.TextDocument.UndoStack.Undo();
+
+				Assert.Equal("procedure start begin", document.TextDocument.Text);
+			});
 		}
 
 		[Fact]

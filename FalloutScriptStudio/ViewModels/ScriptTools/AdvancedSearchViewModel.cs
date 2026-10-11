@@ -514,7 +514,18 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			List<(DocumentViewModel Document, IReadOnlyList<TextEdit> Edits)> plans = new List<(DocumentViewModel, IReadOnlyList<TextEdit>)>();
 			foreach (DocumentViewModel document in documents)
 			{
-				IReadOnlyList<TextEdit> edits = matcher.ComputeReplacements(document.TextDocument.Text, this.ReplaceText);
+				IReadOnlyList<TextEdit> edits;
+				try
+				{
+					edits = matcher.ComputeReplacements(document.TextDocument.Text, this.ReplaceText);
+				}
+				catch (RegexMatchTimeoutException)
+				{
+					this.StatusText = String.Empty;
+					this.ErrorMessage = Loc.Get("Str.ScriptTools.SearchErrRegexTimeout");
+					return;
+				}
+
 				if (edits.Count > 0)
 				{
 					plans.Add((document, edits));

@@ -35,8 +35,21 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			return this.Open(options.FilePath, options.Target);
 		}
 
+		/// <summary>Gets or sets an exception that <see cref="OpenForScriptAsync"/> throws.</summary>
+		public Exception? OpenForScriptFailure { get; set; }
+
+		/// <summary>Gets or sets the answer of <see cref="CloseAllAsync"/> (false: the user cancelled).</summary>
+		public Boolean CloseAllResult { get; set; } = true;
+
+		public Int32 CloseAllCount { get; private set; }
+
 		public Task<Boolean> OpenForScriptAsync(String scriptPath, Int32? scriptNameId, IMessageLineTarget target, Boolean createIfMissing = true)
 		{
+			if (this.OpenForScriptFailure is not null)
+			{
+				throw this.OpenForScriptFailure;
+			}
+
 			this.Opened.Add(scriptPath);
 			this.Targets.Add(target);
 			return Task.FromResult(true);
@@ -44,7 +57,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public Task<Boolean> CloseAllAsync()
 		{
-			return Task.FromResult(true);
+			this.CloseAllCount++;
+			return Task.FromResult(this.CloseAllResult);
 		}
 	}
 }

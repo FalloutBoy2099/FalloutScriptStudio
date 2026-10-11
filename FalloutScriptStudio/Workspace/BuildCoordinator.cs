@@ -319,6 +319,9 @@ namespace FalloutScriptStudio.Workspace
 				return new BuildOutcome(false, null);
 			}
 
+			// A parse that was waiting for the typing pause must not compete with the compiler, but it must not be lost either:
+			// it runs again when the compilation is over (otherwise the parser data stays old until the next keystroke).
+			Boolean parseWasPending = document.NeedsParse || this._parser.IsPending(document);
 			this._parser.Cancel(document);
 			document.NeedsParse = false;
 
@@ -331,9 +334,20 @@ namespace FalloutScriptStudio.Workspace
 				PreprocessOnly = mode.Preprocess,
 			};
 
-			CompilationResult result = mode.Preprocess
-				? await this._compiler.PreprocessAsync(request)
-				: await this._compiler.CompileAsync(request);
+			CompilationResult result;
+			try
+			{
+				result = mode.Preprocess
+					? await this._compiler.PreprocessAsync(request)
+					: await this._compiler.CompileAsync(request);
+			}
+			finally
+			{
+				if (parseWasPending && document.IsParsable && !this._parser.IsPending(document) && this._workspace.Documents.Contains(document))
+				{
+					_ = this._parser.ParseAsync(document, true);
+				}
+			}
 
 			document.BuildErrors = result.Errors;
 			if (mode.Preprocess)

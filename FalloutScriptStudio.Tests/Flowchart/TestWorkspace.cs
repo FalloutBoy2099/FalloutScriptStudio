@@ -29,6 +29,9 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		/// <summary>Gets the number of parses requested.</summary>
 		public Int32 ParseCount { get; private set; }
 
+		/// <summary>Gets or sets a value indicating whether a requested parse produces the program info (<see langword="false"/> simulates a parse that fails or is cancelled).</summary>
+		public Boolean ParseSucceeds { get; set; } = true;
+
 		/// <summary>Gets or sets the new name the rename gives, or <see langword="null"/> when the user cancels.</summary>
 		public String? RenameTo { get; set; }
 
@@ -101,6 +104,11 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		private Task Parse(DocumentViewModel document)
 		{
 			this.ParseCount++;
+			if (!this.ParseSucceeds)
+			{
+				return Task.CompletedTask;
+			}
+
 			document.ProgramInfo = new InternalParser().Parse(document.TextDocument.Text, document.FilePath);
 			document.NeedsParse = false;
 			this.RaiseParsed(document);

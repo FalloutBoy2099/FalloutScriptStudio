@@ -3,18 +3,16 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 	using System;
 	using System.IO;
 	using FalloutScriptStudio.Core.Configuration;
+	using FalloutScriptStudio.TestSupport;
 	using Xunit;
 
 	public sealed class AppPathsTests : IDisposable
 	{
-		private readonly String _root = Path.Combine(Path.GetTempPath(), "fss-paths-" + Guid.NewGuid().ToString("N"));
+		private readonly String _root = TestFiles.CreateWorkFolder("paths");
 
 		public void Dispose()
 		{
-			if (Directory.Exists(this._root))
-			{
-				Directory.Delete(this._root, true);
-			}
+			TestFiles.DeleteWorkFolder(this._root);
 		}
 
 		[Fact]

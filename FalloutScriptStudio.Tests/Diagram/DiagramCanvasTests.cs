@@ -9,6 +9,7 @@ namespace FalloutScriptStudio.Tests.Diagram
 	using System.Windows.Media.Imaging;
 	using FalloutScriptStudio.Controls.Diagram;
 	using FalloutScriptStudio.Controls.Diagram.Model;
+	using FalloutScriptStudio.TestSupport;
 	using Xunit;
 
 	public sealed class DiagramCanvasTests
@@ -540,6 +541,64 @@ namespace FalloutScriptStudio.Tests.Diagram
 					Byte[] data = stream.ToArray();
 					Assert.True(data.Length > 100);
 					Assert.Equal(new Byte[] { 0x89, 0x50, 0x4E, 0x47 }, data.Take(4).ToArray());
+				}
+			});
+		}
+
+		[Fact]
+		public void GetExportSize_OfAHugeDiagram_StaysWithinThePixelBudget()
+		{
+			StaTestRunner.Run(() =>
+			{
+				DiagramCanvas canvas = new DiagramCanvas();
+				canvas.AddItem(CreateNode("far-left", 0, 0));
+				canvas.AddItem(CreateNode("far-right", 40000, 40000));
+
+				(Int32 width, Int32 height) = canvas.GetExportSize();
+
+				Assert.InRange(width, 1, 16384);
+				Assert.InRange(height, 1, 16384);
+				Assert.True((Int64)width * height <= 64L * 1000 * 1000, $"{width}x{height} pixels is more than the 32-bit process can allocate");
+			});
+		}
+
+		[Fact]
+		public void GetExportSize_OfASmallDiagram_IsNotReduced()
+		{
+			StaTestRunner.Run(() =>
+			{
+				DiagramCanvas canvas = new DiagramCanvas();
+				canvas.AddItem(CreateNode("node001", 20, 20));
+
+				(Int32 width, Int32 height) = canvas.GetExportSize();
+				BitmapSource bitmap = canvas.RenderToBitmap();
+
+				Assert.Equal((bitmap.PixelWidth, bitmap.PixelHeight), (width, height));
+			});
+		}
+
+		[Fact]
+		public void SaveToPng_ToAFile_ReplacesTheExistingFileAndLeavesNoTemporaryFile()
+		{
+			StaTestRunner.Run(() =>
+			{
+				String folder = TestFiles.CreateWorkFolder("png");
+				Directory.CreateDirectory(folder);
+				try
+				{
+					String path = Path.Combine(folder, "chart.png");
+					File.WriteAllText(path, "old");
+					DiagramCanvas canvas = new DiagramCanvas();
+					canvas.AddItem(CreateNode("node001", 20, 20));
+
+					canvas.SaveToPng(path);
+
+					Assert.Equal(new Byte[] { 0x89, 0x50, 0x4E, 0x47 }, File.ReadAllBytes(path).Take(4).ToArray());
+					Assert.Equal(new[] { path }, Directory.GetFiles(folder));
+				}
+				finally
+				{
+					TestFiles.DeleteWorkFolder(folder);
 				}
 			});
 		}

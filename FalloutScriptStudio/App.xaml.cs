@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
@@ -45,6 +46,12 @@ namespace FalloutScriptStudio
 		private AppPaths? _paths;
 		private FileLoggerProvider? _log;
 
+		/// <summary>Whether the settings were read: until then the service holds blank defaults that must never reach the files.</summary>
+		private Boolean _settingsLoaded;
+
+		/// <summary>Whether this process prepared the scratch folder and so alone may delete it (the stand-alone message editor shares it with a main editor).</summary>
+		private Boolean _ownsScratch;
+
 		protected override async void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
@@ -71,22 +78,25 @@ namespace FalloutScriptStudio
 
 		protected override void OnExit(ExitEventArgs e)
 		{
-			try
+			if (this._settingsLoaded)
 			{
-				this._services?.GetService<ISettingsService>()?.Save();
+				try
+				{
+					this._services?.GetService<ISettingsService>()?.Save();
+				}
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+				{
+					this._log?.Write("Saving the settings failed: " + ex.Message);
+				}
 			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			else
 			{
-				this._log?.Write("Saving the settings failed: " + ex.Message);
+				this._log?.Write("The settings were not loaded; the settings files are left as they are.");
 			}
 
-			try
+			if (this._ownsScratch && this._paths != null)
 			{
-				this._paths?.DeleteScratchDirectory();
-			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-			{
-				this._log?.Write("Deleting the scratch folder failed: " + ex.Message);
+				this.LogProblems("Deleting the scratch folder", this._paths.DeleteScratchDirectory());
 			}
 
 			this.Dispose();
@@ -103,6 +113,14 @@ namespace FalloutScriptStudio
 			this._log?.Dispose();
 			this._log = null;
 			GC.SuppressFinalize(this);
+		}
+
+		private void LogProblems(String operation, IReadOnlyList<String> problems)
+		{
+			foreach (String problem in problems)
+			{
+				this._log?.Write(operation + ": " + problem);
+			}
 		}
 
 		private static Boolean IsMessageFile(String[] arguments)
@@ -231,19 +249,26 @@ namespace FalloutScriptStudio
 
 		private async Task StartAsync(String[] arguments, String baseDirectory)
 		{
-			SingleInstanceService singleInstance = new SingleInstanceService(baseDirectory);
-			if (!singleInstance.TryAcquire())
+			SingleInstanceService singleInstance = new SingleInstanceService(baseDirectory, diagnostics: this._log!.Write);
+			Boolean primary = singleInstance.TryAcquire();
+			if (!primary && arguments.Length > 0)
 			{
-				if (arguments.Length == 0)
+				// The running instance may still be starting: the send waits for it. When it never answers, it has probably ended meanwhile.
+				this._log!.Write("Passing the command line to the running instance...");
+				if (await singleInstance.SendArgumentsAsync(arguments))
 				{
-					MessageBox.Show(Loc.Get("Str.Shell.App.AlreadyRunning"), ApplicationName, MessageBoxButton.OK, MessageBoxImage.Information);
-				}
-				else
-				{
-					this._log!.Write("Passed the command line to the running instance.");
-					await singleInstance.SendArgumentsAsync(arguments);
+					singleInstance.Dispose();
+					this.Shutdown();
+					return;
 				}
 
+				this._log!.Write("The running instance did not take the command line.");
+				primary = singleInstance.TryAcquire();
+			}
+
+			if (!primary)
+			{
+				MessageBox.Show(Loc.Get("Str.Shell.App.AlreadyRunning"), ApplicationName, MessageBoxButton.OK, MessageBoxImage.Information);
 				singleInstance.Dispose();
 				this.Shutdown();
 				return;
@@ -255,10 +280,20 @@ namespace FalloutScriptStudio
 			this._services = collection.BuildServiceProvider();
 
 			// The scratch folder, the settings (the legacy files are imported automatically) and the theme.
-			this._paths!.EnsureCreated();
-			this._paths.PrepareScratchDirectory();
+			// None of this may stop the settings from being read: a failure here used to end the start-up before Load, and the exit then
+			// wrote the blank defaults over the real settings files.
+			Boolean standalone = IsMessageFile(arguments);
+			this.LogProblems("Preparing the folders", this._paths!.EnsureCreated());
+			if (!standalone)
+			{
+				// The stand-alone message editor runs next to a main editor that owns the scratch folder: it neither purges nor deletes it.
+				this.LogProblems("Preparing the scratch folder", this._paths.PrepareScratchDirectory());
+				this._ownsScratch = true;
+			}
+
 			ISettingsService settings = this._services.GetRequiredService<ISettingsService>();
 			settings.Load();
+			this._settingsLoaded = true;
 			await this._services.GetRequiredService<IUserKeywordStore>().LoadAsync();
 			await this._services.GetRequiredService<IFunctionCatalogService>().LoadAsync();
 			await this._services.GetRequiredService<IDialogueRulesService>().LoadAsync();
@@ -267,9 +302,10 @@ namespace FalloutScriptStudio
 			this._services.GetRequiredService<IThemeService>().Apply(GetStartupTheme(layoutStore, settings));
 			Loc.Initialize(layoutStore.Load().Language ?? Loc.DetectSystemLanguage());
 
-			if (IsMessageFile(arguments))
+			if (standalone)
 			{
-				// Stand-alone message editor: the main window is not created, and other editors may start.
+				// Stand-alone message editor: the main window is not created, and other editors may start. It shares the settings files with
+				// them: the settings service only writes what this process changed (and merges it into the files as they are then).
 				singleInstance.Dispose();
 				this._singleInstance = null;
 				this.RunStandaloneMessageEditor(arguments[0]);

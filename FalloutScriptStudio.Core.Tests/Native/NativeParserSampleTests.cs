@@ -13,9 +13,10 @@ namespace FalloutScriptStudio.Core.Tests.Native
 	using Xunit;
 
 	/// <summary>
-	/// Parses the real scripts of the author's mods (copied to a temporary folder) with the real <c>parser.dll</c>, compares the verdict
-	/// with the real <c>compile.exe</c> and checks the reported lines against the text of the files. Skipped when the repositories or
-	/// the tools are absent, see <see cref="SslcTools"/>.
+	/// Parses the real scripts of the author's mods (<c>_test_files\samples</c>, copied to a scratch folder first) with the real
+	/// <c>parser.dll</c>, compares the verdict with the real <c>compile.exe</c> and checks the reported lines against the text of the
+	/// files. Skipped when the tools or the sample set are absent (InventoryFilterMk2 and PartyOrdersMk2 are optional sample sets that
+	/// are not shipped), see <see cref="SslcTools"/>.
 	/// </summary>
 	public sealed class NativeParserSampleTests : IClassFixture<NativeParserFixture>
 	{
@@ -81,7 +82,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 			return (run.ExitCode == 0, run.Output);
 		}
 
-		[RealToolFact(RealTools.Parser | RealTools.Compiler | RealTools.Samples)]
+		[RealToolFact(RealTools.Parser | RealTools.Compiler | RealTools.Fo2TweaksSamples)]
 		public async Task Parse_Fo2TweaksScripts_AgreeWithTheCompilerAndTheLinesMatchTheSourceText()
 		{
 			String sources = this._fixture.CopyDirectory(SslcTools.Fo2TweaksSources, "fo2tweaks");
@@ -123,7 +124,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 			Assert.True(problems.Count == 0, String.Join(Environment.NewLine, problems));
 		}
 
-		[RealToolFact(RealTools.Parser | RealTools.Samples)]
+		[RealToolFact(RealTools.Parser | RealTools.InventoryFilterSamples)]
 		public async Task Parse_InventoryFilterMainScript_FollowsTheIncludesOfAllModules()
 		{
 			String sources = this._fixture.CopyDirectory(SslcTools.InventoryFilterSources, "invenfilter");
@@ -151,7 +152,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 			Assert.NotEmpty(result.Variables);
 		}
 
-		[RealToolFact(RealTools.Parser | RealTools.Samples)]
+		[RealToolFact(RealTools.Parser | RealTools.PartyOrdersSamples)]
 		public async Task Parse_ScriptWhoseHeadersAreMissing_ReportsEveryMissingIncludeInTheLog()
 		{
 			String sources = this._fixture.CopyDirectory(SslcTools.PartyOrdersSources, "partyorders");

@@ -92,7 +92,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 
 			String line = builder.BuildExternalPreprocessor(@"C:\src\test.ssl", "preprocess.ssl", false);
 
-			Assert.Equal("\"C:\\src\\test.ssl\" ..\\scrTemp\\preprocess.ssl 1 ..", line);
+			Assert.Equal("\"C:\\src\\test.ssl\" \"C:\\Editor\\scrTemp\\preprocess.ssl\" 1 ..", line);
 		}
 
 		[Fact]
@@ -108,7 +108,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 
 			String line = new CompilerCommandLineBuilder(options).BuildExternalPreprocessor(@"C:\src\test.ssl", "x.tmp", true);
 
-			Assert.Equal("\"C:\\src\\test.ssl\" ..\\scrTemp\\x.tmp 0 .. \"C:\\h\" -DFOO=1 -P", line);
+			Assert.Equal("\"C:\\src\\test.ssl\" \"C:\\Editor\\scrTemp\\x.tmp\" 0 .. \"C:\\h\" -DFOO=1 -P", line);
 		}
 
 		[Fact]
@@ -123,8 +123,8 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 			};
 			CompilerCommandLineBuilder builder = new CompilerCommandLineBuilder(options);
 
-			Assert.Equal("\"C:\\src\\test.ssl\" ..\\scrTemp\\p.ssl l .. \"C:\\h\" -dFOO", builder.BuildExternalPreprocessor(@"C:\src\test.ssl", "p.ssl", false));
-			Assert.Equal("\"C:\\src\\test.ssl\" ..\\scrTemp\\p.ssl c .. \"C:\\h\" -dFOO", builder.BuildExternalPreprocessor(@"C:\src\test.ssl", "p.ssl", true));
+			Assert.Equal("\"C:\\src\\test.ssl\" \"C:\\Editor\\scrTemp\\p.ssl\" l .. \"C:\\h\" -dFOO", builder.BuildExternalPreprocessor(@"C:\src\test.ssl", "p.ssl", false));
+			Assert.Equal("\"C:\\src\\test.ssl\" \"C:\\Editor\\scrTemp\\p.ssl\" c .. \"C:\\h\" -dFOO", builder.BuildExternalPreprocessor(@"C:\src\test.ssl", "p.ssl", true));
 		}
 
 		[Fact]

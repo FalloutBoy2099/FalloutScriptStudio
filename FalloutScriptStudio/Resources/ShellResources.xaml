@@ -1,78 +1,91 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-					xmlns:conv="clr-namespace:FalloutScriptStudio.Resources.Converters">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:FalloutScriptStudio.Resources.Converters"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
 
-	<!-- Converters -->
-	<BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-	<conv:InvertedBooleanToVisibilityConverter x:Key="InvertedBoolToVisibility" />
-	<conv:CountToVisibilityConverter x:Key="CountToVisibility" />
-	<conv:EmptyStringToCollapsedConverter x:Key="EmptyToCollapsed" />
-	<conv:DocumentKindToSymbolConverter x:Key="DocumentKindToSymbol" />
-	<conv:ErrorTypeToSymbolConverter x:Key="ErrorTypeToSymbol" />
-	<conv:ProjectNodeToSymbolConverter x:Key="ProjectNodeToSymbol" />
+    <!--  Converters  -->
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <conv:InvertedBooleanToVisibilityConverter x:Key="InvertedBoolToVisibility" />
+    <conv:CountToVisibilityConverter x:Key="CountToVisibility" />
+    <conv:EmptyStringToCollapsedConverter x:Key="EmptyToCollapsed" />
+    <conv:DocumentKindToSymbolConverter x:Key="DocumentKindToSymbol" />
+    <conv:ErrorTypeToSymbolConverter x:Key="ErrorTypeToSymbol" />
+    <conv:ProjectNodeToSymbolConverter x:Key="ProjectNodeToSymbol" />
 
-	<!-- Spacing and shape tokens -->
-	<CornerRadius x:Key="ShellCornerRadius">6</CornerRadius>
-	<CornerRadius x:Key="ShellSmallCornerRadius">4</CornerRadius>
-	<Thickness x:Key="ShellPagePadding">8</Thickness>
-	<Thickness x:Key="ShellRowGap">0,0,0,8</Thickness>
+    <!--  Spacing and shape tokens  -->
+    <CornerRadius x:Key="ShellCornerRadius">6</CornerRadius>
+    <CornerRadius x:Key="ShellSmallCornerRadius">4</CornerRadius>
+    <Thickness x:Key="ShellPagePadding">8</Thickness>
+    <Thickness x:Key="ShellRowGap">0,0,0,8</Thickness>
 
-	<!-- Compact icon button used by the toolbar and the panel headers -->
-	<Style x:Key="ShellIconButtonStyle" TargetType="{x:Type ui:Button}" BasedOn="{StaticResource {x:Type ui:Button}}">
-		<Setter Property="Appearance" Value="Transparent" />
-		<Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="MinWidth" Value="32" />
-		<Setter Property="MinHeight" Value="32" />
-		<Setter Property="Width" Value="32" />
-		<Setter Property="Height" Value="32" />
-		<Setter Property="Margin" Value="1,0" />
-		<Setter Property="HorizontalContentAlignment" Value="Center" />
-		<Setter Property="VerticalContentAlignment" Value="Center" />
-	</Style>
+    <!--  Compact icon button used by the toolbar and the panel headers  -->
+    <Style
+        x:Key="ShellIconButtonStyle"
+        BasedOn="{StaticResource {x:Type ui:Button}}"
+        TargetType="{x:Type ui:Button}">
+        <Setter Property="Appearance" Value="Transparent" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinWidth" Value="32" />
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="Width" Value="32" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Margin" Value="1,0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
 
-	<Style x:Key="ShellSmallIconButtonStyle" TargetType="{x:Type ui:Button}" BasedOn="{StaticResource ShellIconButtonStyle}">
-		<Setter Property="MinWidth" Value="26" />
-		<Setter Property="MinHeight" Value="26" />
-		<Setter Property="Width" Value="26" />
-		<Setter Property="Height" Value="26" />
-	</Style>
+    <Style
+        x:Key="ShellSmallIconButtonStyle"
+        BasedOn="{StaticResource ShellIconButtonStyle}"
+        TargetType="{x:Type ui:Button}">
+        <Setter Property="MinWidth" Value="26" />
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="Width" Value="26" />
+        <Setter Property="Height" Value="26" />
+    </Style>
 
-	<Style x:Key="ShellToolbarSeparatorStyle" TargetType="{x:Type Rectangle}">
-		<Setter Property="Width" Value="1" />
-		<Setter Property="Height" Value="20" />
-		<Setter Property="Margin" Value="6,0" />
-		<Setter Property="Fill" Value="{DynamicResource DividerStrokeColorDefaultBrush}" />
-	</Style>
+    <Style x:Key="ShellToolbarSeparatorStyle" TargetType="{x:Type Rectangle}">
+        <Setter Property="Width" Value="1" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Margin" Value="6,0" />
+        <Setter Property="Fill" Value="{DynamicResource DividerStrokeColorDefaultBrush}" />
+    </Style>
 
-	<!-- Tree view items bound to view models with IsExpanded / IsSelected -->
-	<Style x:Key="ShellTreeViewItemStyle" TargetType="{x:Type TreeViewItem}" BasedOn="{StaticResource {x:Type TreeViewItem}}">
-		<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-		<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-		<Setter Property="Padding" Value="2,1" />
-		<Setter Property="MinHeight" Value="24" />
-		<Setter Property="FontSize" Value="12" />
-	</Style>
+    <!--  Tree view items bound to view models with IsExpanded / IsSelected  -->
+    <Style
+        x:Key="ShellTreeViewItemStyle"
+        BasedOn="{StaticResource {x:Type TreeViewItem}}"
+        TargetType="{x:Type TreeViewItem}">
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+        <Setter Property="Padding" Value="2,1" />
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
 
-	<!-- Muted caption text -->
-	<Style x:Key="ShellCaptionTextStyle" TargetType="{x:Type TextBlock}">
-		<Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-		<Setter Property="FontSize" Value="12" />
-		<Setter Property="VerticalAlignment" Value="Center" />
-	</Style>
+    <!--  Muted caption text  -->
+    <Style x:Key="ShellCaptionTextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
 
-	<!-- Log text -->
-	<Style x:Key="ShellLogTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-		<Setter Property="FontFamily" Value="Consolas" />
-		<Setter Property="FontSize" Value="12" />
-		<Setter Property="IsReadOnly" Value="True" />
-		<Setter Property="TextWrapping" Value="NoWrap" />
-		<Setter Property="AcceptsReturn" Value="True" />
-		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-		<Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
-		<Setter Property="BorderThickness" Value="0" />
-		<Setter Property="Background" Value="Transparent" />
-		<Setter Property="Padding" Value="8,4" />
-	</Style>
+    <!--  Log text  -->
+    <Style
+        x:Key="ShellLogTextBoxStyle"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type TextBox}">
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
 </ResourceDictionary>

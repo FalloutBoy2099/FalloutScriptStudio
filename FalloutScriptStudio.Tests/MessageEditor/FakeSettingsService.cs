@@ -10,9 +10,16 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 	/// </summary>
 	internal sealed class FakeSettingsService : ISettingsService
 	{
+		/// <summary>Initializes a new instance of the <see cref="FakeSettingsService"/> class.</summary>
+		/// <param name="baseDirectory">The program folder of the fake installation (a scratch folder of the test).</param>
+		public FakeSettingsService(String baseDirectory)
+		{
+			this.Paths = AppPaths.FromBaseDirectory(baseDirectory);
+		}
+
 		public event EventHandler<SettingsChangedEventArgs>? SettingsChanged;
 
-		public AppPaths Paths { get; } = AppPaths.FromBaseDirectory(System.IO.Path.GetTempPath());
+		public AppPaths Paths { get; }
 
 		public AppSettings Settings { get; private set; } = new AppSettings();
 

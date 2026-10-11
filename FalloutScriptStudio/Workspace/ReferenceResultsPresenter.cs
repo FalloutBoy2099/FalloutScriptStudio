@@ -4,9 +4,10 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Text;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.IO;
+	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services;
@@ -16,14 +17,17 @@ namespace FalloutScriptStudio.Workspace
 	{
 		private readonly IDialogService _dialogs;
 		private readonly IOutputSink _output;
+		private readonly ISettingsService _settings;
 
 		/// <summary>Initializes the presenter.</summary>
-		public ReferenceResultsPresenter(IDialogService dialogs, IOutputSink output)
+		public ReferenceResultsPresenter(IDialogService dialogs, IOutputSink output, ISettingsService settings)
 		{
 			ArgumentNullException.ThrowIfNull(dialogs);
 			ArgumentNullException.ThrowIfNull(output);
+			ArgumentNullException.ThrowIfNull(settings);
 			this._dialogs = dialogs;
 			this._output = output;
+			this._settings = settings;
 		}
 
 		/// <summary>Shows the references of a symbol, or a message when there are none.</summary>
@@ -41,6 +45,7 @@ namespace FalloutScriptStudio.Workspace
 				return;
 			}
 
+			Encoding fileEncoding = this._settings.Settings.Editor.FileEncoding.ToEncoding();
 			Dictionary<String, String[]> lineCache = new Dictionary<String, String[]>(StringComparer.OrdinalIgnoreCase);
 			List<BuildError> results = new List<BuildError>();
 			Int32 lastLine = 0;
@@ -48,7 +53,7 @@ namespace FalloutScriptStudio.Workspace
 			foreach (SourceReference reference in references)
 			{
 				String file = reference.File ?? BuildError.NoFile;
-				String[] lines = GetLines(lineCache, openTexts, file);
+				String[] lines = GetLines(lineCache, openTexts, file, fileEncoding);
 				String lineText = reference.Line >= 1 && reference.Line <= lines.Length ? lines[reference.Line - 1] : String.Empty;
 				if (lastLine != reference.Line)
 				{
@@ -64,7 +69,7 @@ namespace FalloutScriptStudio.Workspace
 			this._output.ShowSearchResults(results, "Str.Shell.Output.References", symbolName);
 		}
 
-		private static String[] GetLines(Dictionary<String, String[]> cache, IReadOnlyDictionary<String, String> open, String file)
+		private static String[] GetLines(Dictionary<String, String[]> cache, IReadOnlyDictionary<String, String> open, String file, Encoding fallback)
 		{
 			if (cache.TryGetValue(file, out String[]? lines))
 			{
@@ -81,7 +86,7 @@ namespace FalloutScriptStudio.Workspace
 			{
 				try
 				{
-					text = DocumentTextCodec.Decode(File.ReadAllBytes(full), TextEncodings.Ansi).Text;
+					text = DocumentTextCodec.Decode(File.ReadAllBytes(full), fallback).Text;
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{

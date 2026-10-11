@@ -34,7 +34,7 @@ namespace FalloutScriptStudio.Core.Messages
 		/// </summary>
 		/// <param name="location">The location returned by a lookup; its default path must be known.</param>
 		/// <param name="cancellationToken">Cancels the operation.</param>
-		/// <returns>The path of the created file.</returns>
+		/// <returns>The path of the created file; a file that already exists there is left untouched.</returns>
 		/// <exception cref="InvalidOperationException">The location has no default path.</exception>
 		Task<String> CreateFileAsync(MessageFileLocation location, CancellationToken cancellationToken = default);
 

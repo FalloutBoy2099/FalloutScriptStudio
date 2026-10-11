@@ -29,6 +29,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly EditorPopupResources _resources = new EditorPopupResources();
 		private CompletionWindow? _window;
 		private Window? _ownerWindow;
+		private Boolean _attached;
 
 		public CompletionController(EditorContext context)
 		{
@@ -43,6 +44,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Attach()
 		{
+			this._attached = true;
 			this._context.TextArea.TextEntered += this.OnTextEntered;
 			this._context.TextArea.TextEntering += this.OnTextEntering;
 			this._context.TextArea.PreviewKeyDown += this.OnPreviewKeyDown;
@@ -55,6 +57,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		public void Dispose()
 		{
+			this._attached = false;
 			this._context.TextArea.TextEntered -= this.OnTextEntered;
 			this._context.TextArea.TextEntering -= this.OnTextEntering;
 			this._context.TextArea.PreviewKeyDown -= this.OnPreviewKeyDown;
@@ -222,6 +225,15 @@ namespace FalloutScriptStudio.Editor.Controllers
 			this.Show(false);
 		}
 
+		private void ShowAfterBackspace()
+		{
+			// The session may have been stopped while the callback was queued: the control then belongs to another session.
+			if (this._attached)
+			{
+				this.Show(false);
+			}
+		}
+
 		private void OnPreviewKeyDown(Object sender, KeyEventArgs e)
 		{
 			if (e.Key != Key.Back || this._window is null)
@@ -231,7 +243,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 			// The list narrows while typing but never widens: after a backspace it is rebuilt for the shorter prefix.
 			this.Close();
-			this._context.Editor.Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() => this.Show(false)));
+			this._context.Editor.Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(this.ShowAfterBackspace));
 		}
 	}
 }

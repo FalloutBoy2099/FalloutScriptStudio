@@ -35,7 +35,7 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>
 		/// Decompiles a <c>.int</c> file, logging to the Build tab. Unless the decompilation is temporary the user is asked where to
-		/// save the source, and the source is written there.
+		/// save the source; the caller then writes it with <see cref="SaveTargetAsync"/> (after checking that the target is not open).
 		/// </summary>
 		/// <returns>The decompiled script, or <see langword="null"/> (an error was already shown) when the decompilation failed.</returns>
 		public async Task<DecompiledScript?> DecompileAsync(String path, OpenDocumentOptions options)
@@ -76,13 +76,18 @@ namespace FalloutScriptStudio.Workspace
 					Loc.Get("Str.Shell.Filter.Script"),
 					Path.GetDirectoryName(path),
 					Path.GetFileNameWithoutExtension(path) + ".ssl");
-				if (target is not null)
-				{
-					await File.WriteAllTextAsync(target, text, decoded.Encoding);
-				}
 			}
 
 			return new DecompiledScript(text, decoded.Encoding, result.OutputFilePath, target);
+		}
+
+		/// <summary>Writes the decompiled source to the file the user chose (an error is shown when it fails).</summary>
+		/// <param name="script">The decompiled script.</param>
+		/// <returns><see langword="true"/> when the file was written; <see langword="false"/> when the script has no target or the write failed.</returns>
+		public Task<Boolean> SaveTargetAsync(DecompiledScript script)
+		{
+			ArgumentNullException.ThrowIfNull(script);
+			return script.TargetPath is null ? Task.FromResult(false) : this._files.WriteTextAsync(script.TargetPath, script.Text, script.Encoding);
 		}
 	}
 }

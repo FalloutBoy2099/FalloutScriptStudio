@@ -102,7 +102,8 @@ namespace FalloutScriptStudio.Editor.Text
 		}
 
 		/// <summary>
-		/// Adds the <c>end</c> of a block that was just opened. The text below the new line decides: the line right under it must
+		/// Adds the <c>end</c> of a block that was just opened, unless the block is already closed further down (begin/end depth
+		/// scan of the whole text). The text below the new line decides: the line right under it must
 		/// be empty (or missing, at the end of the document). After an <c>if ... begin</c> one more line is needed, and an
 		/// <c>else begin</c> is added too when that following line ends with <c>end</c>.
 		/// </summary>
@@ -116,6 +117,11 @@ namespace FalloutScriptStudio.Editor.Text
 			}
 
 			if (SslIndentationRules.StartsWithWord(code, "procedure") && this.IsFoldStart?.Invoke(begin.LineNumber) == true)
+			{
+				return;
+			}
+
+			if (SslIndentationRules.IsBlockClosed(document.Text, begin.EndOffset))
 			{
 				return;
 			}

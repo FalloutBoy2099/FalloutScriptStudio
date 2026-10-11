@@ -292,6 +292,26 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			});
 		}
 
+		[Theory]
+		[InlineData("a{b")]
+		[InlineData("a}b")]
+		public void EditingTheTextOfARow_WithBraces_IsRejectedAndRestored(String text)
+		{
+			StaTestRunner.Run(async () =>
+			{
+				using FlowchartHarness harness = new FlowchartHarness();
+				NodeCodeEditorViewModel editor = await OpenAsync(harness);
+				String original = editor.Rows[0].Text;
+
+				editor.Rows[0].Text = text;
+				await Task.Delay(50);
+
+				Assert.Empty(harness.Messages.Updates);
+				Assert.Equal(original, editor.Rows[0].Text);
+				Assert.Contains("Curly braces", Assert.Single(harness.Dialogs.Errors), StringComparison.Ordinal);
+			});
+		}
+
 		[Fact]
 		public void MissingMessages_AreErrorRowsThatCannotBeEdited()
 		{
@@ -342,6 +362,44 @@ namespace FalloutScriptStudio.Tests.Flowchart
 				harness.Dialogs.PromptAnswer = null;
 				await editor.StoreSnippetAsync("ignored");
 				Assert.Single(editor.Snippets);
+			});
+		}
+
+		[Fact]
+		public void Snippets_ChangedOnAnotherThread_AreRefreshedOnTheUiThread()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				using FlowchartHarness harness = new FlowchartHarness();
+				FakeNodeCodeSnippetStore store = new FakeNodeCodeSnippetStore();
+				NodeCodeEditorViewModel editor = await OpenAsync(harness, "Node001", store);
+				Int32 uiThread = Environment.CurrentManagedThreadId;
+				List<Int32> notifiedOn = new List<Int32>();
+				editor.Snippets.CollectionChanged += (_, _) => notifiedOn.Add(Environment.CurrentManagedThreadId);
+				store.Snippets = new[] { new NodeCodeSnippet("greeting", "Reply(100);") };
+
+				await Task.Run(store.RaiseChanged);
+				await Task.Delay(100);
+
+				Assert.Equal("greeting", Assert.Single(editor.Snippets).Name);
+				Assert.NotEmpty(notifiedOn);
+				Assert.All(notifiedOn, thread => Assert.Equal(uiThread, thread));
+			});
+		}
+
+		[Fact]
+		public void Dispose_StopsListeningToTheSnippetStore()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				using FlowchartHarness harness = new FlowchartHarness();
+				FakeNodeCodeSnippetStore store = new FakeNodeCodeSnippetStore();
+				NodeCodeEditorViewModel editor = await OpenAsync(harness, "Node001", store);
+				Assert.Equal(1, store.SubscriberCount);
+
+				editor.Dispose();
+
+				Assert.Equal(0, store.SubscriberCount);
 			});
 		}
 

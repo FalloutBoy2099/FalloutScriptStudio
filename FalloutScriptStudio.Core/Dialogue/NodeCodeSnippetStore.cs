@@ -17,6 +17,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	/// legacy line is everything after the first <c>|</c>. A line without a <c>|</c> that follows a snippet is read as the continuation of
 	/// that snippet (how the legacy editor stored multi-line code), so the snippets of a legacy file survive the first save. The store never
 	/// writes the file before it was read: <see cref="AddAsync"/> and <see cref="RemoveAsync"/> load it first when needed.
+	/// The asynchronous methods resume on the caller's synchronization context, so <see cref="Changed"/> is raised on the thread
+	/// that called them (the UI thread for the application).
 	/// </remarks>
 	public sealed class NodeCodeSnippetStore : INodeCodeSnippetStore, IDisposable
 	{
@@ -85,10 +87,10 @@ namespace FalloutScriptStudio.Core.Dialogue
 		/// <inheritdoc />
 		public async Task LoadAsync(CancellationToken cancellationToken = default)
 		{
-			await this._gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+			await this._gate.WaitAsync(cancellationToken);
 			try
 			{
-				await this.ReadFileAsync(cancellationToken).ConfigureAwait(false);
+				await this.ReadFileAsync(cancellationToken);
 			}
 			finally
 			{
@@ -110,17 +112,17 @@ namespace FalloutScriptStudio.Core.Dialogue
 				return false;
 			}
 
-			await this._gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+			await this._gate.WaitAsync(cancellationToken);
 			try
 			{
-				if (!await this.EnsureLoadedAsync(cancellationToken).ConfigureAwait(false))
+				if (!await this.EnsureLoadedAsync(cancellationToken))
 				{
 					return false;
 				}
 
 				List<NodeCodeSnippet> list = this.Snippets.Where(s => !String.Equals(s.Name, cleanName, StringComparison.Ordinal)).ToList();
 				list.Add(new NodeCodeSnippet(cleanName, code));
-				await this.SaveAsync(list, cancellationToken).ConfigureAwait(false);
+				await this.SaveAsync(list, cancellationToken);
 				Volatile.Write(ref this._snippets, list);
 			}
 			finally
@@ -137,10 +139,10 @@ namespace FalloutScriptStudio.Core.Dialogue
 		{
 			ArgumentNullException.ThrowIfNull(name);
 
-			await this._gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+			await this._gate.WaitAsync(cancellationToken);
 			try
 			{
-				if (!await this.EnsureLoadedAsync(cancellationToken).ConfigureAwait(false))
+				if (!await this.EnsureLoadedAsync(cancellationToken))
 				{
 					return false;
 				}
@@ -151,7 +153,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 					return false;
 				}
 
-				await this.SaveAsync(list, cancellationToken).ConfigureAwait(false);
+				await this.SaveAsync(list, cancellationToken);
 				Volatile.Write(ref this._snippets, list);
 			}
 			finally

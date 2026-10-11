@@ -1,287 +1,310 @@
-<UserControl x:Class="FalloutScriptStudio.Views.Shell.OutputPanelView"
-			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-			 xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Main"
-			 x:Name="Root">
-	<UserControl.Resources>
-		<DataTemplate DataType="{x:Type vm:ParserLogTabViewModel}">
-			<TextBox Style="{StaticResource ShellLogTextBoxStyle}"
-					 Text="{Binding Output.ParserText, Mode=OneWay}" />
-		</DataTemplate>
+<UserControl
+    x:Class="FalloutScriptStudio.Views.Shell.OutputPanelView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Main"
+    x:Name="Root">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:ParserLogTabViewModel}">
+            <TextBox Style="{StaticResource ShellLogTextBoxStyle}" Text="{Binding Output.ParserText, Mode=OneWay}" />
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type vm:BuildLogTabViewModel}">
-			<TextBox Style="{StaticResource ShellLogTextBoxStyle}"
-					 Text="{Binding Output.BuildText, Mode=OneWay}" />
-		</DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BuildLogTabViewModel}">
+            <TextBox Style="{StaticResource ShellLogTextBoxStyle}" Text="{Binding Output.BuildText, Mode=OneWay}" />
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type vm:ErrorsTabViewModel}">
-			<DataGrid ItemsSource="{Binding Output.Errors}"
-					  SelectedItem="{Binding Output.SelectedError, Mode=TwoWay}"
-					  AutoGenerateColumns="False"
-					  IsReadOnly="True"
-					  HeadersVisibility="Column"
-					  GridLinesVisibility="None"
-					  SelectionMode="Single"
-					  CanUserAddRows="False"
-					  CanUserResizeRows="False"
-					  RowHeaderWidth="0"
-					  BorderThickness="0"
-					  Background="Transparent"
-					  MouseDoubleClick="OnErrorsDoubleClick">
-				<DataGrid.GroupStyle>
-					<GroupStyle>
-						<GroupStyle.HeaderTemplate>
-							<DataTemplate>
-								<TextBlock Text="{Binding Name}"
-										   FontWeight="SemiBold"
-										   Margin="8,6,0,2"
-										   Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
-							</DataTemplate>
-						</GroupStyle.HeaderTemplate>
-						<GroupStyle.ContainerStyle>
-							<Style TargetType="{x:Type GroupItem}">
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="{x:Type GroupItem}">
-											<StackPanel>
-												<ContentPresenter />
-												<ItemsPresenter />
-											</StackPanel>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-						</GroupStyle.ContainerStyle>
-					</GroupStyle>
-				</DataGrid.GroupStyle>
-				<DataGrid.Columns>
-					<DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
-						<DataGridTemplateColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Type}" />
-						</DataGridTemplateColumn.Header>
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-								<StackPanel Orientation="Horizontal" Margin="8,0">
-									<ui:SymbolIcon x:Name="TypeIcon"
-												   Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}"
-												   FontSize="14"
-												   Margin="0,0,6,0" />
-									<TextBlock Text="{Binding TypeText}" VerticalAlignment="Center" />
-								</StackPanel>
-								<DataTemplate.Triggers>
-									<DataTrigger Binding="{Binding Type}" Value="Error">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Type}" Value="Warning">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Type}" Value="Search">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-									</DataTrigger>
-								</DataTemplate.Triggers>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTextColumn Width="170" Binding="{Binding FileName}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.File}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-					<DataGridTextColumn Width="80" Binding="{Binding LineText}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Line}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-					<DataGridTextColumn Width="*" Binding="{Binding Message}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Message}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-				</DataGrid.Columns>
-				<DataGrid.ContextMenu>
-					<ContextMenu>
-						<MenuItem Header="{DynamicResource Str.Shell.Output.CopySelected}" Command="{Binding Output.CopySelectedCommand}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Copy24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Shell.Output.Refresh}" Command="{Binding Output.RefreshCommand}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="ArrowSync24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<MenuItem Header="{DynamicResource Str.Shell.Output.ClearAll}" Command="{Binding Output.ClearAllCommand}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Delete24" />
-							</MenuItem.Icon>
-						</MenuItem>
-						<Separator />
-						<MenuItem Header="{DynamicResource Str.Shell.Output.AutoRefresh}" IsCheckable="True" IsChecked="{Binding Output.AutoRefresh, Mode=TwoWay}" />
-						<MenuItem Header="{DynamicResource Str.Shell.Output.ShowParserLog}" IsCheckable="True" IsChecked="{Binding Output.ShowParserEntries, Mode=TwoWay}" />
-						<MenuItem Header="{DynamicResource Str.Shell.Output.ShowBuildLog}" IsCheckable="True" IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
-					</ContextMenu>
-				</DataGrid.ContextMenu>
-			</DataGrid>
-		</DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ErrorsTabViewModel}">
+            <DataGrid
+                AutoGenerateColumns="False"
+                Background="Transparent"
+                BorderThickness="0"
+                CanUserAddRows="False"
+                CanUserResizeRows="False"
+                GridLinesVisibility="None"
+                HeadersVisibility="Column"
+                IsReadOnly="True"
+                ItemsSource="{Binding Output.Errors}"
+                MouseDoubleClick="OnErrorsDoubleClick"
+                RowHeaderWidth="0"
+                SelectedItem="{Binding Output.SelectedError, Mode=TwoWay}"
+                SelectionMode="Single">
+                <DataGrid.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Margin="8,6,0,2"
+                                    FontWeight="SemiBold"
+                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Text="{Binding Name}" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                            <StackPanel>
+                                                <ContentPresenter />
+                                                <ItemsPresenter />
+                                            </StackPanel>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Type}" />
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
+                                <StackPanel Margin="8,0" Orientation="Horizontal">
+                                    <ui:SymbolIcon
+                                        x:Name="TypeIcon"
+                                        Margin="0,0,6,0"
+                                        FontSize="14"
+                                        Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding TypeText}" />
+                                </StackPanel>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="Error">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="Search">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Width="170" Binding="{Binding FileName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.File}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="80" Binding="{Binding LineText}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Line}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Binding="{Binding Message}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Message}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding Output.CopySelectedCommand}" Header="{DynamicResource Str.Shell.Output.CopySelected}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Copy24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding Output.RefreshCommand}" Header="{DynamicResource Str.Shell.Output.Refresh}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="ArrowSync24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding Output.ClearAllCommand}" Header="{DynamicResource Str.Shell.Output.ClearAll}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Delete24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.AutoRefresh}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.AutoRefresh, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.ShowParserLog}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowParserEntries, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.ShowBuildLog}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </DataTemplate>
 
-		<DataTemplate DataType="{x:Type vm:ResultsTabViewModel}">
-			<DataGrid ItemsSource="{Binding Results}"
-					  SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
-					  AutoGenerateColumns="False"
-					  IsReadOnly="True"
-					  HeadersVisibility="Column"
-					  GridLinesVisibility="None"
-					  SelectionMode="Single"
-					  CanUserAddRows="False"
-					  CanUserResizeRows="False"
-					  RowHeaderWidth="0"
-					  BorderThickness="0"
-					  Background="Transparent"
-					  MouseDoubleClick="OnErrorsDoubleClick">
-				<DataGrid.Columns>
-					<DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
-						<DataGridTemplateColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Type}" />
-						</DataGridTemplateColumn.Header>
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-								<StackPanel Orientation="Horizontal" Margin="8,0">
-									<ui:SymbolIcon x:Name="TypeIcon"
-												   Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}"
-												   FontSize="14"
-												   Margin="0,0,6,0" />
-									<TextBlock Text="{Binding TypeText}" VerticalAlignment="Center" />
-								</StackPanel>
-								<DataTemplate.Triggers>
-									<DataTrigger Binding="{Binding Type}" Value="Error">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Type}" Value="Warning">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
-									</DataTrigger>
-									<DataTrigger Binding="{Binding Type}" Value="Search">
-										<Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-									</DataTrigger>
-								</DataTemplate.Triggers>
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTextColumn Width="170" Binding="{Binding FileName}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.File}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-					<DataGridTextColumn Width="80" Binding="{Binding LineText}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Line}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-					<DataGridTextColumn Width="*" Binding="{Binding Message}">
-						<DataGridTextColumn.Header>
-							<TextBlock Text="{DynamicResource Str.Common.Message}" />
-						</DataGridTextColumn.Header>
-					</DataGridTextColumn>
-				</DataGrid.Columns>
-				<DataGrid.ContextMenu>
-					<ContextMenu>
-						<MenuItem Header="{DynamicResource Str.Shell.Output.CopySelected}" Command="{Binding CopySelectedCommand}">
-							<MenuItem.Icon>
-								<ui:SymbolIcon Symbol="Copy24" />
-							</MenuItem.Icon>
-						</MenuItem>
-					</ContextMenu>
-				</DataGrid.ContextMenu>
-			</DataGrid>
-		</DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ResultsTabViewModel}">
+            <DataGrid
+                AutoGenerateColumns="False"
+                Background="Transparent"
+                BorderThickness="0"
+                CanUserAddRows="False"
+                CanUserResizeRows="False"
+                GridLinesVisibility="None"
+                HeadersVisibility="Column"
+                IsReadOnly="True"
+                ItemsSource="{Binding Results}"
+                MouseDoubleClick="OnErrorsDoubleClick"
+                RowHeaderWidth="0"
+                SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+                SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
+                        <DataGridTemplateColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Type}" />
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
+                                <StackPanel Margin="8,0" Orientation="Horizontal">
+                                    <ui:SymbolIcon
+                                        x:Name="TypeIcon"
+                                        Margin="0,0,6,0"
+                                        FontSize="14"
+                                        Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding TypeText}" />
+                                </StackPanel>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="Error">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="Search">
+                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Width="170" Binding="{Binding FileName}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.File}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="80" Binding="{Binding LineText}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Line}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Binding="{Binding Message}">
+                        <DataGridTextColumn.Header>
+                            <TextBlock Text="{DynamicResource Str.Common.Message}" />
+                        </DataGridTextColumn.Header>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding CopySelectedCommand}" Header="{DynamicResource Str.Shell.Output.CopySelected}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Copy24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ParserHeader">
-			<TextBlock Text="{DynamicResource Str.Shell.Output.TabParser}" ToolTip="{DynamicResource Str.Shell.Output.TipParser}" />
-		</DataTemplate>
+        <DataTemplate x:Key="ParserHeader">
+            <TextBlock Text="{DynamicResource Str.Shell.Output.TabParser}" ToolTip="{DynamicResource Str.Shell.Output.TipParser}" />
+        </DataTemplate>
 
-		<DataTemplate x:Key="BuildHeader">
-			<TextBlock Text="{DynamicResource Str.Shell.Output.TabBuild}" ToolTip="{DynamicResource Str.Shell.Output.TipBuild}" />
-		</DataTemplate>
+        <DataTemplate x:Key="BuildHeader">
+            <TextBlock Text="{DynamicResource Str.Shell.Output.TabBuild}" ToolTip="{DynamicResource Str.Shell.Output.TipBuild}" />
+        </DataTemplate>
 
-		<DataTemplate x:Key="ErrorsHeader">
-			<StackPanel Orientation="Horizontal" ToolTip="{DynamicResource Str.Shell.Output.TipErrors}">
-				<TextBlock Text="{DynamicResource Str.Shell.Output.TabErrors}" />
-				<Border Margin="6,0,0,0"
-						Padding="6,0"
-						CornerRadius="8"
-						Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
-						Visibility="{Binding Output.ErrorCount, Converter={StaticResource CountToVisibility}}">
-					<TextBlock Text="{Binding Output.ErrorCount}"
-							   FontSize="11"
-							   Foreground="{DynamicResource SystemFillColorCriticalBrush}" />
-				</Border>
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ErrorsHeader">
+            <StackPanel Orientation="Horizontal" ToolTip="{DynamicResource Str.Shell.Output.TipErrors}">
+                <TextBlock Text="{DynamicResource Str.Shell.Output.TabErrors}" />
+                <Border
+                    Margin="6,0,0,0"
+                    Padding="6,0"
+                    Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+                    CornerRadius="8"
+                    Visibility="{Binding Output.ErrorCount, Converter={StaticResource CountToVisibility}}">
+                    <TextBlock
+                        FontSize="11"
+                        Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                        Text="{Binding Output.ErrorCount}" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ResultsHeader">
-			<StackPanel Orientation="Horizontal" ToolTip="{Binding Title}">
-				<TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
-				<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-						   Margin="6,0,0,0"
-						   Icon="{ui:SymbolIcon Dismiss12}"
-						   ToolTip="{DynamicResource Str.Common.Close}"
-						   Command="{Binding CloseCommand}" />
-			</StackPanel>
-		</DataTemplate>
-	</UserControl.Resources>
-	<Border Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-			BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-			BorderThickness="0,1,0,0">
-		<Grid>
-			<TabControl x:Name="OutputTabs" FontSize="12"
-						ItemsSource="{Binding Output.Tabs}"
-						SelectedIndex="{Binding Output.SelectedTab, Mode=TwoWay}"
-						Background="Transparent"
-						BorderThickness="0"
-						Padding="0"
-						SelectionChanged="OnOutputTabsSelectionChanged">
-				<TabControl.ItemTemplate>
-					<DataTemplate>
-						<ContentControl Content="{Binding}" Focusable="False">
-							<ContentControl.Style>
-								<Style TargetType="{x:Type ContentControl}">
-									<Setter Property="ContentTemplate" Value="{StaticResource ResultsHeader}" />
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding Kind}" Value="Parser">
-											<Setter Property="ContentTemplate" Value="{StaticResource ParserHeader}" />
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Kind}" Value="Build">
-											<Setter Property="ContentTemplate" Value="{StaticResource BuildHeader}" />
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Kind}" Value="Errors">
-											<Setter Property="ContentTemplate" Value="{StaticResource ErrorsHeader}" />
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</ContentControl.Style>
-						</ContentControl>
-					</DataTemplate>
-				</TabControl.ItemTemplate>
-			</TabControl>
+        <DataTemplate x:Key="ResultsHeader">
+            <StackPanel Orientation="Horizontal" ToolTip="{Binding Title}">
+                <TextBlock VerticalAlignment="Center" Text="{Binding Title}" />
+                <ui:Button
+                    Margin="6,0,0,0"
+                    Command="{Binding CloseCommand}"
+                    Icon="{ui:SymbolIcon Dismiss12}"
+                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Common.Close}" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Border
+        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        BorderThickness="0,1,0,0">
+        <Grid>
+            <TabControl
+                x:Name="OutputTabs"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
+                FontSize="12"
+                ItemsSource="{Binding Output.Tabs}"
+                SelectedIndex="{Binding Output.SelectedTab, Mode=TwoWay}"
+                SelectionChanged="OnOutputTabsSelectionChanged">
+                <TabControl.ItemTemplate>
+                    <DataTemplate>
+                        <ContentControl Content="{Binding}" Focusable="False">
+                            <ContentControl.Style>
+                                <Style TargetType="{x:Type ContentControl}">
+                                    <Setter Property="ContentTemplate" Value="{StaticResource ResultsHeader}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Kind}" Value="Parser">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource ParserHeader}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Kind}" Value="Build">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource BuildHeader}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Kind}" Value="Errors">
+                                            <Setter Property="ContentTemplate" Value="{StaticResource ErrorsHeader}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
+                    </DataTemplate>
+                </TabControl.ItemTemplate>
+            </TabControl>
 
-			<StackPanel Orientation="Horizontal"
-						HorizontalAlignment="Right"
-						VerticalAlignment="Top"
-						Margin="0,3,6,0">
-				<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-						   Icon="{ui:SymbolIcon ArrowSync24}"
-						   ToolTip="{DynamicResource Str.Shell.Output.Refresh}"
-						   Command="{Binding Output.RefreshCommand}" />
-				<ui:Button Style="{StaticResource ShellSmallIconButtonStyle}"
-						   Icon="{ui:SymbolIcon Delete24}"
-						   ToolTip="{DynamicResource Str.Shell.Output.ClearAll}"
-						   Command="{Binding Output.ClearAllCommand}" />
-				<ui:Button x:Name="MinimizeButton"
-						   Style="{StaticResource ShellSmallIconButtonStyle}"
-						   Icon="{ui:SymbolIcon ChevronDown24}"
-						   ToolTip="{DynamicResource Str.Shell.Output.Minimize}"
-						   Command="{Binding ToggleOutputMinimizedCommand}" />
-			</StackPanel>
-		</Grid>
-	</Border>
+            <StackPanel
+                Margin="0,3,6,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <ui:Button
+                    Command="{Binding Output.RefreshCommand}"
+                    Icon="{ui:SymbolIcon ArrowSync24}"
+                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Output.Refresh}" />
+                <ui:Button
+                    Command="{Binding Output.ClearAllCommand}"
+                    Icon="{ui:SymbolIcon Delete24}"
+                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Output.ClearAll}" />
+                <ui:Button
+                    x:Name="MinimizeButton"
+                    Command="{Binding ToggleOutputMinimizedCommand}"
+                    Icon="{ui:SymbolIcon ChevronDown24}"
+                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Output.Minimize}" />
+            </StackPanel>
+        </Grid>
+    </Border>
 </UserControl>

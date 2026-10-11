@@ -100,6 +100,79 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 		}
 
 		[Fact]
+		public void RulesFile_Format_KeepsCommentsAndUnknownLinesInTheirPlace()
+		{
+			String[] existing =
+			{
+				";Format: Type, Name, CountArgs, MsgLine, MsgFile, Node, IQ",
+				"; my own notes",
+				"Option, NOptionX, 3, 1, 0, 2, 3",
+				"this line is not a rule",
+				"",
+				"Call, GotoNode, 1, 0, 0, 1, 0",
+				"Option, Removed, 1, 1, 0, 0, 0",
+				"Option, Short, 1, 1",
+			};
+			var rules = new DialogueFunctionRules(new[]
+			{
+				DialogueFunctionRule.FromOneBased(DialogueOpcode.Option, "NOptionX", 2, 0, 3, 3, 3),
+				DialogueFunctionRule.FromOneBased(DialogueOpcode.CallMacro, "GotoNode", 0, 0, 1, 0, 1),
+				DialogueFunctionRule.FromOneBased(DialogueOpcode.Reply, "Added", 1, 0, 0, 0, 1),
+			});
+
+			var lines = DialogueFunctionRulesFile.Format(rules.Rules, existing);
+
+			Assert.Equal(
+				new[]
+				{
+					";Format: Type, Name, CountArgs, MsgLine, MsgFile, Node, IQ",
+					"; my own notes",
+					"Option, NOptionX, 3, 2, 0, 3, 3",
+					"this line is not a rule",
+					"",
+					"Call, GotoNode, 1, 0, 0, 1, 0",
+					"Option, Short, 1, 1",
+					"Reply, Added, 1, 1, 0, 0, 0",
+				},
+				lines.ToArray());
+		}
+
+		[Fact]
+		public async Task Service_Save_KeepsTheCommentsOfTheFile()
+		{
+			String path = this._folder.Combine("DialogFunc.cfg");
+			File.WriteAllText(path, ";Format: Type, Name, CountArgs, MsgLine, MsgFile, Node, IQ\r\n; keep me\r\nOption, NOptionX, 3, 1, 0, 2, 3\r\nbroken line\r\n");
+			var service = new DialogueRulesService(path);
+
+			await service.SaveAsync(new[] { DialogueFunctionRule.FromOneBased(DialogueOpcode.Option, "NOptionX", 1, 0, 2, 3, 3), DialogueFunctionRule.FromOneBased(DialogueOpcode.Reply, "Say", 1, 0, 0, 0, 1) });
+
+			Assert.Equal(
+				new[] { ";Format: Type, Name, CountArgs, MsgLine, MsgFile, Node, IQ", "; keep me", "Option, NOptionX, 3, 1, 0, 2, 3", "broken line", "Reply, Say, 1, 1, 0, 0, 0" },
+				File.ReadAllLines(path));
+		}
+
+		[Fact]
+		public async Task Service_Save_NeverOverwritesAFileThatCouldNotBeRead()
+		{
+			String path = this._folder.Combine("DialogFunc.cfg");
+			File.WriteAllText(path, "Option, NOptionX, 3, 1, 0, 2, 3\r\n");
+			var service = new DialogueRulesService(path);
+			DialogueFunctionRules loaded;
+			using (new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None))
+			{
+				loaded = await service.LoadAsync();
+
+				Assert.Empty(loaded.UserRules);
+				await Assert.ThrowsAsync<IOException>(() => service.SaveAsync(new[] { DialogueFunctionRule.FromOneBased(DialogueOpcode.Reply, "Say", 1, 0, 0, 0, 1) }));
+			}
+
+			Assert.Equal("Option, NOptionX, 3, 1, 0, 2, 3\r\n", File.ReadAllText(path));
+
+			await service.SaveAsync(new[] { DialogueFunctionRule.FromOneBased(DialogueOpcode.Option, "NOptionX", 1, 0, 2, 3, 3) });
+			Assert.Contains("Option, NOptionX, 3, 1, 0, 2, 3", File.ReadAllText(path));
+		}
+
+		[Fact]
 		public void OpcodeNames_MapToTheRuleKinds()
 		{
 			Assert.Equal(DialogueOpcode.Option, DialogueOpcodeExtensions.ParseRuleKind("Option"));

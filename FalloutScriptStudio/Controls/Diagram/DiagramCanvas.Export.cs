@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System.IO;
 	using System.Windows.Media.Imaging;
 	using FalloutScriptStudio.Controls.Diagram.Internal;
+	using FalloutScriptStudio.Core.Configuration;
 
 	// Rendering the diagram to a bitmap or a PNG file.
 	public sealed partial class DiagramCanvas
@@ -11,12 +12,23 @@ namespace FalloutScriptStudio.Controls.Diagram
 		/// <summary>
 		/// Renders the whole diagram (not just the visible part) to a bitmap, without selection decorations.
 		/// </summary>
-		/// <param name="scale">Pixels per world unit; reduced automatically so that no side exceeds 16384 pixels.</param>
+		/// <param name="scale">Pixels per world unit; reduced automatically so that no side exceeds 16384 pixels and the image has at most 64 million pixels.</param>
 		/// <param name="margin">Empty border around the diagram in world units.</param>
 		/// <returns>A frozen bitmap.</returns>
 		public BitmapSource RenderToBitmap(Double scale = 1.0, Double margin = 20.0)
 		{
 			return DiagramBitmapExporter.Render(this._scene, scale, margin);
+		}
+
+		/// <summary>
+		/// Gets the size of the image <see cref="RenderToBitmap"/> would produce, without rendering it.
+		/// </summary>
+		/// <param name="scale">Pixels per world unit.</param>
+		/// <param name="margin">Empty border around the diagram in world units.</param>
+		/// <returns>The width and height in pixels, after the automatic reduction of a diagram that is too large.</returns>
+		public (Int32 Width, Int32 Height) GetExportSize(Double scale = 1.0, Double margin = 20.0)
+		{
+			return DiagramBitmapExporter.GetSize(this._scene, scale, margin);
 		}
 
 		/// <summary>
@@ -35,14 +47,19 @@ namespace FalloutScriptStudio.Controls.Diagram
 		/// <summary>
 		/// Renders the whole diagram to a PNG file.
 		/// </summary>
+		/// <remarks>
+		/// The image is rendered and encoded first, then written through a temporary file, so a failing render never truncates an
+		/// existing file.
+		/// </remarks>
 		/// <param name="path">Destination file; an existing file is overwritten.</param>
 		/// <param name="scale">Pixels per world unit.</param>
 		public void SaveToPng(String path, Double scale = 1.0)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(path);
-			using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
+			using (MemoryStream buffer = new MemoryStream())
 			{
-				this.SaveToPng(stream, scale);
+				this.SaveToPng(buffer, scale);
+				AtomicFile.WriteAllBytes(path, buffer.ToArray());
 			}
 		}
 	}

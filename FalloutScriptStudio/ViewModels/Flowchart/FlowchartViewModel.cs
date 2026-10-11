@@ -45,6 +45,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		private DiagramCanvas? _canvas;
 		private FlowchartModel _model = FlowchartModel.Empty;
 		private String? _fcdPath;
+		private Boolean _loaded;
 		private Boolean _loadingOptions;
 		private Boolean _syncingZoom;
 		private Boolean _busy;

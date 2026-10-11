@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 
 	/// <summary>
@@ -140,20 +141,33 @@ namespace FalloutScriptStudio.Core.Configuration
 		}
 
 		/// <summary>
-		/// Creates the folders the program writes to (settings, templates and the scratch folder).
+		/// Creates the folders the program writes to (settings, templates and the scratch folder). It never throws for a problem with
+		/// the file system: whatever cannot be done is reported, and the start-up goes on.
 		/// </summary>
-		public void EnsureCreated()
+		/// <returns>The problems that were met (empty when everything worked).</returns>
+		public IReadOnlyList<String> EnsureCreated()
 		{
-			Directory.CreateDirectory(this.SettingsDirectory);
-			Directory.CreateDirectory(this.TemplatesDirectory);
-			Directory.CreateDirectory(this.ScratchDirectory);
-			this.CopyShippedTemplates();
+			List<String> problems = new List<String>();
+			foreach (String directory in new[] { this.SettingsDirectory, this.TemplatesDirectory, this.ScratchDirectory })
+			{
+				try
+				{
+					Directory.CreateDirectory(directory);
+				}
+				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+				{
+					problems.Add("The folder " + directory + " could not be created: " + ex.Message);
+				}
+			}
+
+			this.CopyShippedTemplates(problems);
+			return problems;
 		}
 
 		/// <summary>
 		/// When the templates live in the user profile, makes the templates shipped with the program available there.
 		/// </summary>
-		private void CopyShippedTemplates()
+		private void CopyShippedTemplates(List<String> problems)
 		{
 			String shipped = Path.Combine(this.ResourcesDirectory, "templates");
 			if (!Directory.Exists(shipped) || String.Equals(Path.GetFullPath(shipped), Path.GetFullPath(this.TemplatesDirectory), StringComparison.OrdinalIgnoreCase))
@@ -161,41 +175,100 @@ namespace FalloutScriptStudio.Core.Configuration
 				return;
 			}
 
-			foreach (String file in Directory.GetFiles(shipped))
+			try
 			{
-				String target = Path.Combine(this.TemplatesDirectory, Path.GetFileName(file));
-				if (!File.Exists(target))
+				foreach (String file in Directory.GetFiles(shipped))
 				{
-					File.Copy(file, target);
+					String target = Path.Combine(this.TemplatesDirectory, Path.GetFileName(file));
+					try
+					{
+						if (!File.Exists(target))
+						{
+							File.Copy(file, target);
+						}
+					}
+					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+					{
+						problems.Add("The template " + file + " could not be copied: " + ex.Message);
+					}
 				}
 			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				problems.Add("The templates in " + shipped + " could not be listed: " + ex.Message);
+			}
 		}
 
 		/// <summary>
-		/// Creates the scratch folder or, if it exists, deletes the files left over from a previous session.
+		/// Creates the scratch folder or, if it exists, deletes the files left over from a previous session. A leftover that cannot be
+		/// deleted (a locked file, a read-only file that cannot be made writable) is skipped, never an exception.
 		/// </summary>
-		public void PrepareScratchDirectory()
+		/// <returns>The leftovers that could not be deleted (empty when everything worked).</returns>
+		public IReadOnlyList<String> PrepareScratchDirectory()
 		{
+			List<String> problems = new List<String>();
+			try
+			{
+				if (!Directory.Exists(this.ScratchDirectory))
+				{
+					Directory.CreateDirectory(this.ScratchDirectory);
+					return problems;
+				}
+
+				foreach (String file in Directory.GetFiles(this.ScratchDirectory))
+				{
+					TryDeleteFile(file, problems);
+				}
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				problems.Add("The scratch folder " + this.ScratchDirectory + " could not be prepared: " + ex.Message);
+			}
+
+			return problems;
+		}
+
+		/// <summary>
+		/// Deletes the scratch folder with everything in it (done when the program exits). Read-only files are made writable first; what
+		/// cannot be deleted is skipped, never an exception.
+		/// </summary>
+		/// <returns>The files and folders that could not be deleted (empty when everything worked).</returns>
+		public IReadOnlyList<String> DeleteScratchDirectory()
+		{
+			List<String> problems = new List<String>();
 			if (!Directory.Exists(this.ScratchDirectory))
 			{
-				Directory.CreateDirectory(this.ScratchDirectory);
-				return;
+				return problems;
 			}
 
-			foreach (String file in Directory.GetFiles(this.ScratchDirectory))
+			try
 			{
-				File.Delete(file);
+				foreach (String file in Directory.GetFiles(this.ScratchDirectory, "*", SearchOption.AllDirectories))
+				{
+					TryDeleteFile(file, problems);
+				}
+
+				Directory.Delete(this.ScratchDirectory, true);
 			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				problems.Add("The scratch folder " + this.ScratchDirectory + " could not be deleted: " + ex.Message);
+			}
+
+			return problems;
 		}
 
-		/// <summary>
-		/// Deletes the scratch folder with everything in it (done when the program exits).
-		/// </summary>
-		public void DeleteScratchDirectory()
+		private static void TryDeleteFile(String file, List<String> problems)
 		{
-			if (Directory.Exists(this.ScratchDirectory))
+			try
 			{
-				Directory.Delete(this.ScratchDirectory, true);
+				// The backup of a read-only compiled script keeps the read-only attribute and could never be deleted otherwise.
+				File.SetAttributes(file, FileAttributes.Normal);
+				File.Delete(file);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				problems.Add("The file " + file + " could not be deleted: " + ex.Message);
 			}
 		}
 	}

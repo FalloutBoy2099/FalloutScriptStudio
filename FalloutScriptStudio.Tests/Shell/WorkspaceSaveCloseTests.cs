@@ -260,7 +260,102 @@ namespace FalloutScriptStudio.Tests.Shell
 				Boolean result = await harness.Workspace.CloseAllAsync();
 
 				Assert.False(result);
-				Assert.Single(harness.Workspace.Documents);
+				Assert.Equal(2, harness.Workspace.Documents.Count);
+				Assert.True(a.IsModified);
+				Assert.True(b.IsModified);
+			});
+		}
+
+		[Fact]
+		public void Cancelling_the_close_of_several_modified_documents_loses_no_change()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				DocumentViewModel a = await harness.OpenFileAsync("a.ssl", Script);
+				DocumentViewModel b = await harness.OpenFileAsync("b.ssl", Script);
+				a.TextDocument.Insert(0, "// a\r\n");
+				b.TextDocument.Insert(0, "// b\r\n");
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Yes);
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Cancel);
+
+				Boolean result = await harness.Workspace.CloseAllAsync();
+
+				Assert.False(result);
+				Assert.Equal(2, harness.Workspace.Documents.Count);
+				Assert.StartsWith("// b", b.TextDocument.Text, StringComparison.Ordinal);
+				Assert.Equal(Script, File.ReadAllText(b.FilePath!));
+				Assert.Equal(Script, File.ReadAllText(a.FilePath!));
+			});
+		}
+
+		[Fact]
+		public void Closing_all_saves_and_closes_only_after_every_question_was_answered()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				DocumentViewModel a = await harness.OpenFileAsync("a.ssl", Script);
+				DocumentViewModel b = await harness.OpenFileAsync("b.ssl", Script);
+				a.TextDocument.Insert(0, "// a\r\n");
+				b.TextDocument.Insert(0, "// b\r\n");
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Yes);
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.No);
+
+				Boolean result = await harness.Workspace.CloseAllAsync();
+
+				Assert.True(result);
+				Assert.Empty(harness.Workspace.Documents);
+				Assert.Equal(Script, File.ReadAllText(a.FilePath!));
+				Assert.StartsWith("// b", File.ReadAllText(b.FilePath!), StringComparison.Ordinal);
+			});
+		}
+
+		[Fact]
+		public void A_refusal_of_the_step_before_closing_leaves_every_tab_and_file_alone()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				DocumentViewModel a = await harness.OpenFileAsync("a.ssl", Script);
+				DocumentViewModel b = await harness.OpenFileAsync("b.ssl", Script);
+				a.TextDocument.Insert(0, "// a\r\n");
+				harness.Dialogs.YesNoCancelAnswers.Enqueue(YesNoCancel.Yes);
+				Int32 calls = 0;
+
+				Boolean result = await harness.Workspace.CloseAllAsync(null, () =>
+				{
+					calls++;
+					return Task.FromResult(false);
+				});
+
+				Assert.False(result);
+				Assert.Equal(1, calls);
+				Assert.Equal(new[] { a, b }, harness.Workspace.Documents.ToArray());
+				Assert.True(a.IsModified);
+				Assert.Equal(Script, File.ReadAllText(a.FilePath!));
+			});
+		}
+
+		[Fact]
+		public void Save_as_uses_the_encoding_and_the_message_refresh_of_the_new_file_type()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using WorkspaceHarness harness = new WorkspaceHarness();
+				harness.Settings.Update(settings => settings.Editor.FileEncoding = FalloutScriptStudio.Core.Configuration.TextEncodingKind.Oem866);
+				DocumentViewModel script = await harness.OpenFileAsync("scripts/npc.ssl", Script);
+				String target = harness.Folder.Combine("scripts", "npc.msg");
+				script.MessageFilePath = target;
+				DocumentViewModel untitled = harness.Workspace.CreateNew("{100}{}{\u041f\u0440\u0438\u0432\u0435\u0442}\r\n");
+				harness.Dialogs.SaveFileAnswer = target;
+
+				Boolean saved = await harness.Workspace.SaveAsAsync(untitled);
+
+				Assert.True(saved);
+				Assert.Equal(DocumentKind.Message, untitled.Kind);
+				Assert.Equal(FalloutScriptStudio.Core.IO.TextEncodings.Oem866.GetBytes("{100}{}{\u041f\u0440\u0438\u0432\u0435\u0442}\r\n"), File.ReadAllBytes(target));
+				Assert.Equal("\u041f\u0440\u0438\u0432\u0435\u0442", harness.Workspace.GetMessageText(script, 100));
 			});
 		}
 

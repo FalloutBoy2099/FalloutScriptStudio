@@ -47,6 +47,25 @@ namespace FalloutScriptStudio.Workspace
 			return new DecodedText(fallback.GetString(bytes), fallback);
 		}
 
+		/// <summary>Encodes a text the way it is written to a file: the byte order mark of the encoding (if any) followed by the text.</summary>
+		public static Byte[] Encode(Encoding encoding, String text)
+		{
+			ArgumentNullException.ThrowIfNull(encoding);
+			ArgumentNullException.ThrowIfNull(text);
+
+			Byte[] preamble = encoding.GetPreamble();
+			Byte[] body = encoding.GetBytes(text);
+			if (preamble.Length == 0)
+			{
+				return body;
+			}
+
+			Byte[] result = new Byte[preamble.Length + body.Length];
+			preamble.CopyTo(result, 0);
+			body.CopyTo(result, preamble.Length);
+			return result;
+		}
+
 		/// <summary>Converts every line ending of the text to <c>CR LF</c>.</summary>
 		public static String NormalizeNewLines(String text)
 		{
@@ -91,6 +110,16 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			return result.ToString();
+		}
+
+		/// <summary>Returns the text without the spaces and tabs at the end of its lines (the same rule as the document overload).</summary>
+		public static String TrimTrailingWhitespace(String text)
+		{
+			ArgumentNullException.ThrowIfNull(text);
+
+			TextDocument copy = new TextDocument(text);
+			copy.UndoStack.SizeLimit = 0;
+			return TrimTrailingWhitespace(copy) ? copy.Text : text;
 		}
 
 		/// <summary>Removes spaces and tabs at the end of every line as one undoable change.</summary>

@@ -188,14 +188,16 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 			ProcessRunRequest preprocess = this._runner.Requests[0];
 			Assert.Equal(Path.Combine(this._workspace.Resources, "mcpp.bat"), preprocess.FileName);
 			Assert.Equal(this._workspace.Resources, preprocess.WorkingDirectory);
-			Assert.Equal($"\"{script}\" ..\\scrTemp\\preprocess.ssl 1 ..", preprocess.Arguments);
+			Assert.Equal($"\"{script}\" \"{Path.Combine(this._workspace.Scratch, "preprocess.ssl")}\" 1 ..", preprocess.Arguments);
 
 			ProcessRunRequest compile = this._runner.Requests[1];
 			Assert.Equal(this._workspace.Scratch, compile.WorkingDirectory);
 			String expectedInt = Path.Combine(this._workspace.Scripts, "test.int");
-			Assert.Equal($"-I\"{this._workspace.Root}\" -q -l -O1 -d  \"test_[pre].ssl\" -o \"{expectedInt}\"", compile.Arguments);
+			String intermediate = new CompilerPaths(options).GetIntermediatePreprocessedPath(script);
+			Assert.Matches(@"^test_\[pre\]~[0-9A-F]{8}\.ssl$", Path.GetFileName(intermediate));
+			Assert.Equal($"-I\"{this._workspace.Root}\" -q -l -O1 -d  \"{Path.GetFileName(intermediate)}\" -o \"{expectedInt}\"", compile.Arguments);
 
-			Assert.True(File.Exists(Path.Combine(this._workspace.Scratch, "test_[pre].ssl")));
+			Assert.True(File.Exists(intermediate));
 			Assert.False(File.Exists(Path.Combine(this._workspace.Scratch, "preprocess.ssl")));
 			Assert.False(File.Exists(Path.Combine(this._workspace.Resources, "mcpp.err")));
 			Assert.Contains("External MCPP preprocessing script: test.ssl", result.Output, StringComparison.Ordinal);

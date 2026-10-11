@@ -8,13 +8,14 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 	using FalloutScriptStudio.Core.Compilation;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Services.ScriptTools.Search;
+	using FalloutScriptStudio.TestSupport;
 	using FalloutScriptStudio.ViewModels.ScriptTools;
 	using Xunit;
 
 	public sealed class AdvancedSearchViewModelTests
 	{
-		private static readonly String PathA = Path.Combine(Path.GetTempPath(), "fss-search-a.ssl");
-		private static readonly String PathB = Path.Combine(Path.GetTempPath(), "fss-search-b.ssl");
+		private static readonly String PathA = Path.Combine(TestFiles.Work, "search-a.ssl");
+		private static readonly String PathB = Path.Combine(TestFiles.Work, "search-b.ssl");
 
 		private sealed class Harness : IDisposable
 		{
@@ -389,6 +390,26 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 				await harness.ViewModel.ReplaceAllCommand.ExecuteAsync(null);
 
 				Assert.Equal("a = 1\r\n", document.TextDocument.Text);
+			});
+		}
+
+		[Fact]
+		public void ReplaceAll_WithARegexThatTimesOut_ReportsTheErrorAndChangesNothing()
+		{
+			StaTestRunner.Run(async () =>
+			{
+				using Harness harness = new Harness();
+				String text = new String('a', 40) + "!\r\n";
+				DocumentViewModel document = harness.Workspace.AddDocument(PathA, text);
+				harness.ViewModel.UseRegex = true;
+				harness.ViewModel.SearchText = "(a|aa)+$";
+				harness.ViewModel.ReplaceText = "x";
+				harness.ViewModel.IsCurrentScope = true;
+
+				await harness.ViewModel.ReplaceAllCommand.ExecuteAsync(null);
+
+				Assert.Contains("too long", harness.ViewModel.ErrorMessage, StringComparison.Ordinal);
+				Assert.Equal(text, document.TextDocument.Text);
 			});
 		}
 

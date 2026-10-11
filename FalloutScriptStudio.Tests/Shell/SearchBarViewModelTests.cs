@@ -230,6 +230,32 @@ namespace FalloutScriptStudio.Tests.Shell
 		}
 
 		[Fact]
+		public void A_catastrophic_regex_reports_a_slow_pattern_instead_of_freezing()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				ShellHarness harness = new ShellHarness();
+				using ShellHarness _h = harness;
+				DocumentViewModel document = await harness.OpenFileAsync("slow.ssl", new String('a', 45) + "c\r\n");
+				FakeEditorSurface editor = harness.AttachEditor(document);
+				harness.Search.UseRegex = true;
+				harness.Search.Show(false);
+
+				harness.Search.SearchText = "(a+)+b";
+				Assert.Contains("too slow", harness.Search.StatusText, StringComparison.OrdinalIgnoreCase);
+
+				harness.Search.SearchText = "(a+)+";
+				Assert.Equal(String.Empty, harness.Search.StatusText);
+
+				harness.Search.SearchText = "(a+)+b";
+				harness.Search.FindNext();
+				Assert.Contains("too slow", harness.Search.StatusText, StringComparison.OrdinalIgnoreCase);
+				Assert.Equal(0, harness.Sounds.NotFoundCount);
+				Assert.Equal(0, editor.SelectionLength);
+			});
+		}
+
+		[Fact]
 		public void The_bar_does_not_open_without_a_document()
 		{
 			using ShellHarness harness = new ShellHarness();

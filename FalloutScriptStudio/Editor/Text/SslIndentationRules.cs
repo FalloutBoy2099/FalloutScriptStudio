@@ -140,5 +140,65 @@ namespace FalloutScriptStudio.Editor.Text
 
 			return null;
 		}
+
+		/// <summary>
+		/// Determines whether the block opened by the <c>begin</c> that ends at <paramref name="openerEnd"/> already has its
+		/// <c>end</c>. Comments, strings and brace blocks are ignored. The <c>end</c> that follows must exist (a begin/end depth
+		/// counter reaches zero) and the whole text must be balanced, otherwise that <c>end</c> belongs to an enclosing block
+		/// (the new <c>begin</c> was typed inside a procedure whose own <c>end</c> follows).
+		/// </summary>
+		/// <param name="text">The whole text.</param>
+		/// <param name="openerEnd">Offset just after the <c>begin</c> that opens the block.</param>
+		/// <returns><see langword="true"/> when the block is already closed.</returns>
+		public static Boolean IsBlockClosed(String text, Int32 openerEnd)
+		{
+			LexicalMap map = LexicalMap.Build(text);
+			Int32 begins = 0;
+			Int32 ends = 0;
+			Int32 depth = 1;
+			Boolean matched = false;
+			Int32 i = 0;
+			while (i < text.Length)
+			{
+				if (!WordFinder.IsWordChar(text[i]))
+				{
+					i++;
+					continue;
+				}
+
+				Int32 start = i;
+				while (i < text.Length && WordFinder.IsWordChar(text[i]))
+				{
+					i++;
+				}
+
+				Int32 length = i - start;
+				Boolean isBegin = length == 5 && String.Compare(text, start, "begin", 0, 5, StringComparison.OrdinalIgnoreCase) == 0;
+				Boolean isEnd = length == 3 && String.Compare(text, start, "end", 0, 3, StringComparison.OrdinalIgnoreCase) == 0;
+				if ((!isBegin && !isEnd) || !map.IsCodeAt(start))
+				{
+					continue;
+				}
+
+				if (isBegin)
+				{
+					begins++;
+				}
+				else
+				{
+					ends++;
+				}
+
+				if (start < openerEnd || matched)
+				{
+					continue;
+				}
+
+				depth += isBegin ? 1 : -1;
+				matched = depth == 0;
+			}
+
+			return matched && ends >= begins;
+		}
 	}
 }

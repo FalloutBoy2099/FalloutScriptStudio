@@ -91,6 +91,12 @@ namespace FalloutScriptStudio.Core.Messages
 			String path = location.DefaultPath
 				?? throw new InvalidOperationException("The location does not define where the message file would be created.");
 
+			if (File.Exists(path))
+			{
+				// The file appeared since it was located: it must not be replaced by the empty template.
+				return path;
+			}
+
 			Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 			await AtomicFile.WriteAllBytesAsync(path, TextEncodings.Utf8.GetBytes(MessageFileTexts.NewFileContent), cancellationToken).ConfigureAwait(false);
 			if (this._logger.IsEnabled(LogLevel.Information))
