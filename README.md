@@ -1,6 +1,6 @@
 # Fallout Script Studio (by Kain)
 
-SSL script editor for Fallout 1/2 (sfall) — a complete rewrite in **.NET 10 / WPF / Fluent UI (WPF-UI)** of the legacy *Sfall Script Editor* (WinForms, kept in `_reference/`).
+SSL script editor for Fallout 1/2 (sfall) — a complete rewrite in **.NET 10 / WPF / Fluent UI (WPF-UI)** of the legacy *Sfall Script Editor* (WinForms).
 
 ## Features
 
@@ -41,12 +41,12 @@ C# parser takes over.
 ### Integration tests with the real tools
 
 The tests in `FalloutScriptStudio.Core.Tests\Native` run the real `parser.dll`, `compile.exe` and `int2ssl.exe` (folder
-`FSS_SSLC_DIR`, by default `D:\Git\Fallout\FO2tweaksMk2\tools\sslc-sfall5`; mod sources in `FSS_SSL_SAMPLES`, by default `D:\Git\Fallout`).
+`FSS_SSLC_DIR`, by default `tools\sslc-sfall5`; mod sources in `FSS_SSL_SAMPLES`).
 When the tools are missing the tests are **skipped**, not failed.
 
 ## License and credits
 
-Distributed under the **GNU GPL v3** license (see `LICENSE`). Rewrite of the original *Sfall Script Editor* (kept in `_reference/`, same license);
+Distributed under the **GNU GPL v3** license (see `LICENSE`). Rewrite of the original *Sfall Script Editor* (same license);
 the optional `compile.exe` / `parser.dll` / `int2ssl.exe` tools come from the sfall project and keep their own licenses.
 
 User data: next to the executable (portable mode); if that folder is not writable (for example `Program Files`), in `%LOCALAPPDATA%\FalloutScriptStudio`.
