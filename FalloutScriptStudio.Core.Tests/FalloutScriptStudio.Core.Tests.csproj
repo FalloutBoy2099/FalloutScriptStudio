@@ -21,8 +21,8 @@
 	<PropertyGroup>
 		<!-- The tests start the real host from a sub-folder of the test output. -->
 		<ParserHostDestination>ParserHost\</ParserHostDestination>
-		<AssemblyVersion>2026.10.11.2</AssemblyVersion>
-		<FileVersion>2026.10.11.2</FileVersion>
+		<AssemblyVersion>2026.10.12.3</AssemblyVersion>
+		<FileVersion>2026.10.12.3</FileVersion>
 	</PropertyGroup>
 
 	<Import Project="..\ParserHost.targets" />
