@@ -54,6 +54,6 @@ When the tools or the optional sample sets are missing the tests are **skipped**
 ## License and credits
 
 Distributed under the **GNU GPL v3** license (see `LICENSE`). Rewrite of the original *Sfall Script Editor* (same license);
-the optional `compile.exe` / `parser.dll` / `int2ssl.exe` tools come from the sfall project and keep their own licenses.
+`parser.dll` (shipped in `resources\`) and the optional `compile.exe` / `int2ssl.exe` tools come from the sfall project and keep their own licenses.
 
 User data: next to the executable (portable mode); if that folder is not writable (for example `Program Files`), in `%LOCALAPPDATA%\FalloutScriptStudio`.
