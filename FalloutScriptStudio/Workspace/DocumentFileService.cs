@@ -9,6 +9,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.IO;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
@@ -23,9 +24,10 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IDialogService _dialogs;
 		private readonly IDocumentFileWriter _writer;
 		private readonly ILogger _logger;
+		private readonly IProblemService _problems;
 
 		/// <summary>Initializes the service.</summary>
-		public DocumentFileService(ISettingsService settings, IDialogService dialogs, ILogger<DocumentFileService>? logger = null, IDocumentFileWriter? writer = null)
+		public DocumentFileService(ISettingsService settings, IDialogService dialogs, ILogger<DocumentFileService>? logger = null, IDocumentFileWriter? writer = null, IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(dialogs);
@@ -33,6 +35,7 @@ namespace FalloutScriptStudio.Workspace
 			this._dialogs = dialogs;
 			this._writer = writer ?? new AtomicDocumentFileWriter();
 			this._logger = logger ?? NullLogger<DocumentFileService>.Instance;
+			this._problems = problems ?? new ProblemService();
 		}
 
 		/// <summary>Builds the filter of the "Save as" dialog with the file type of <paramref name="kind"/> first.</summary>
@@ -86,7 +89,8 @@ namespace FalloutScriptStudio.Workspace
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{
-					this._logger.LogWarning(ex, "Cannot read the default template {File}", file);
+					this._logger.TemplateNotRead(ex, file);
+					this._problems.Report(ProblemFactory.OpenFailed(file, ex) with { Severity = ProblemSeverity.Warning });
 				}
 			}
 
@@ -133,10 +137,13 @@ namespace FalloutScriptStudio.Workspace
 				}
 			}
 
-			if (!await this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, encodedText)))
+			if (!await this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, encodedText), document))
 			{
 				return false;
 			}
+
+			// The document is on disk again: an earlier "cannot save" no longer applies.
+			_ = this._problems.Remove(problem => ReferenceEquals(problem.Owner, document) && problem.Origin == ProblemOrigins.Save);
 
 			if (switchedToUtf8)
 			{
@@ -174,19 +181,19 @@ namespace FalloutScriptStudio.Workspace
 			ArgumentException.ThrowIfNullOrEmpty(path);
 			ArgumentNullException.ThrowIfNull(text);
 			ArgumentNullException.ThrowIfNull(encoding);
-			return this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, text));
+			return this.TryWriteAsync(path, DocumentTextCodec.Encode(encoding, text), null);
 		}
 
 		/// <summary>Tells whether a file is a header located directly in the configured headers folder (its macros are global).</summary>
 		public Boolean IsGlobalHeader(String path)
 		{
-			String? headers = this._settings.Settings.Paths.HeadersDirectory;
+			String? headers = this._settings.Effective.Settings.Paths.HeadersDirectory;
 			return headers is not null
 				&& String.Equals(Path.GetExtension(path), ".h", StringComparison.OrdinalIgnoreCase)
 				&& String.Equals(DocumentPaths.GetFullPath(headers), DocumentPaths.GetFullPath(Path.GetDirectoryName(path) ?? String.Empty), StringComparison.OrdinalIgnoreCase);
 		}
 
-		private async Task<Boolean> TryWriteAsync(String path, Byte[] content)
+		private async Task<Boolean> TryWriteAsync(String path, Byte[] content, DocumentViewModel? owner)
 		{
 			try
 			{
@@ -195,8 +202,10 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "Cannot write {File}", path);
-				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotSaveTitle"), path + "\n\n" + ex.Message);
+				this._logger.FileNotWritten(ex, path);
+				Problem problem = ProblemFactory.SaveFailed(path, ex, owner);
+				this._problems.Report(problem);
+				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotSaveTitle"), path + "\n\n" + ex.Message + "\n\n" + problem.Hint);
 				return false;
 			}
 		}

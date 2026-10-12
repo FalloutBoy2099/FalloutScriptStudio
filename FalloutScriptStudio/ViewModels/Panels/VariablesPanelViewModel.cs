@@ -60,9 +60,13 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			_ = TreeFilter.Apply(this.Groups, this.FilterText);
 		}
 
-		/// <summary>Rebuilds the tree from the parse data of the active document.</summary>
+		/// <summary>
+		/// Brings the tree up to date with the parse data of the active document: the nodes of the document that is already shown are
+		/// updated in place, the tree of another document is built from scratch.
+		/// </summary>
 		public void Rebuild()
 		{
+			DocumentViewModel? previous = this._document;
 			if (this._document is not null && this.Groups.Count > 0)
 			{
 				Dictionary<String, Boolean> old = this._expandState.GetOrCreateValue(this._document);
@@ -73,19 +77,24 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			}
 
 			this._document = this._workspace.ActiveDocument;
-			this.Groups.Clear();
 			ProgramInfo? info = this._document?.ProgramInfo;
 			if (this._document is null || info is null)
 			{
+				this.Groups.Clear();
 				this.HasData = false;
 				return;
 			}
 
 			Dictionary<String, Boolean> state = this._expandState.GetOrCreateValue(this._document);
-			foreach (TreeGroupNodeViewModel group in SymbolTreeBuilder.BuildVariableGroups(info, this._document.FileName))
+			IReadOnlyList<TreeGroupNodeViewModel> fresh = SymbolTreeBuilder.BuildVariableGroups(info, this._document.FileName);
+			if (!ReferenceEquals(previous, this._document) || !TreeSync.TryMergeGroups(this.Groups, fresh, _ => { }))
 			{
-				group.IsExpanded = state.TryGetValue(group.Key, out Boolean expanded) ? expanded : true;
-				this.Groups.Add(group);
+				this.Groups.Clear();
+				foreach (TreeGroupNodeViewModel group in fresh)
+				{
+					group.IsExpanded = state.TryGetValue(group.Key, out Boolean expanded) ? expanded : true;
+					this.Groups.Add(group);
+				}
 			}
 
 			this.HasData = this.Groups.Count > 0;

@@ -87,5 +87,15 @@ namespace FalloutScriptStudio.Documents
 
 		/// <summary>Writes a short message in the status bar / output panel.</summary>
 		void ReportStatus(String message);
+
+		/// <summary>
+		/// Reports that something failed: the message goes to the status bar and, in the main window, also to the list of problems of the
+		/// Errors tab (where it stays until it is cleared). The default implementation only writes to the status bar.
+		/// </summary>
+		/// <param name="message">What failed, in the current language.</param>
+		void ReportFailure(String message)
+		{
+			this.ReportStatus(message);
+		}
 	}
 }

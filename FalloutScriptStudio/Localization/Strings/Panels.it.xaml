@@ -8,9 +8,9 @@
     <sys:String x:Key="Str.Panels.TabFunctions">Funzioni</sys:String>
     <sys:String x:Key="Str.Panels.TabSolution">Soluzione</sys:String>
     <sys:String x:Key="Str.Panels.TabTipProcedures">Procedure dello script. Doppio clic per andare a una, Ctrl+clic per inserirne il nome.</sys:String>
-    <sys:String x:Key="Str.Panels.TabTipVariables">Variabili dello script e dei suoi header.</sys:String>
+    <sys:String x:Key="Str.Panels.TabTipVariables">Variabili dello script e delle sue intestazioni.</sys:String>
     <sys:String x:Key="Str.Panels.TabTipFunctions">Funzioni standard e frammenti di codice dell'utente. Doppio clic o Ctrl+clic inserisce il codice.</sys:String>
-    <sys:String x:Key="Str.Panels.TabTipSolution">Script, header e file di messaggi della cartella del progetto.</sys:String>
+    <sys:String x:Key="Str.Panels.TabTipSolution">Script, intestazioni e file di messaggi della cartella del progetto.</sys:String>
     <sys:String x:Key="Str.Panels.TipGoToBegin">Vai all'inizio dello script</sys:String>
     <sys:String x:Key="Str.Panels.TipCreateProcedure">Crea una nuova procedura (Ctrl+P)</sys:String>
     <sys:String x:Key="Str.Panels.TipShowArguments">Mostra gli argomenti delle procedure</sys:String>
@@ -48,9 +48,9 @@
     <sys:String x:Key="Str.Panels.GroupLocalProcedures">Procedure locali</sys:String>
     <sys:String x:Key="Str.Panels.GroupGlobalVariables">Variabili globali</sys:String>
     <sys:String x:Key="Str.Panels.GroupScriptVariables">Variabili dello script</sys:String>
-    <sys:String x:Key="Str.Panels.TipGlobalProcedures">Procedure dichiarate e definite nei file header.</sys:String>
+    <sys:String x:Key="Str.Panels.TipGlobalProcedures">Procedure dichiarate e definite nei file di intestazione.</sys:String>
     <sys:String x:Key="Str.Panels.TipLocalProcedures">Procedure dichiarate e definite in questo script.</sys:String>
-    <sys:String x:Key="Str.Panels.TipGlobalVariables">Variabili dichiarate e definite nei file header.</sys:String>
+    <sys:String x:Key="Str.Panels.TipGlobalVariables">Variabili dichiarate e definite nei file di intestazione.</sys:String>
     <sys:String x:Key="Str.Panels.TipScriptVariables">Variabili dichiarate e definite in questo script.</sys:String>
     <sys:String x:Key="Str.Panels.HintProcedure">- Tieni premuto Ctrl e fai clic per inserire il nome della procedura nello script.&#10; - Fai doppio clic per andare alla procedura.</sys:String>
     <sys:String x:Key="Str.Panels.HintVariable">- Tieni premuto Ctrl e fai clic per inserire il nome della variabile nello script.&#10; - Fai doppio clic per andare alla variabile.</sys:String>

@@ -42,5 +42,39 @@ namespace FalloutScriptStudio.Tests.Shell
 				Assert.True(harness.MessageEditor.Options[0].StartMaximized);
 			});
 		}
+
+		[Fact]
+		public void A_folder_on_the_command_line_is_opened_as_the_project_and_the_window_comes_to_the_front()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				String folder = harness.Folder.Combine("mod");
+				System.IO.Directory.CreateDirectory(folder);
+				CommandLineHandler handler = new CommandLineHandler(harness.Workspace, harness.MessageEditor, harness.ScriptTools, harness.Dialogs, harness.Projects);
+
+				Boolean opened = await handler.HandleAsync(new[] { folder });
+
+				Assert.True(opened);
+				Assert.Equal(folder, harness.Projects.Folder);
+				Assert.Empty(harness.Workspace.Documents);
+				Assert.Empty(harness.Dialogs.Messages);
+			});
+		}
+
+		[Fact]
+		public void A_folder_is_ignored_when_no_project_service_is_given()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				CommandLineHandler handler = new CommandLineHandler(harness.Workspace, harness.MessageEditor, harness.ScriptTools, harness.Dialogs);
+
+				Boolean opened = await handler.HandleAsync(new[] { harness.Folder.Path });
+
+				Assert.False(opened);
+				Assert.Empty(harness.Workspace.Documents);
+			});
+		}
 	}
 }

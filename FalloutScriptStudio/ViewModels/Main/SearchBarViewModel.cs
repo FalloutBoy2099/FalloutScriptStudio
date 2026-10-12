@@ -367,7 +367,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			String text = this._workspace.ActiveDocument!.TextDocument.Text;
 			try
 			{
-				editor.SetSearchMatches(this._searcher.FindAll(text, this.Query with { MatchTimeout = _highlightTimeout }).Take(MaxHighlightedMatches).ToList());
+				editor.SetSearchMatches(this._searcher.FindAll(text, this.Query with { MatchTimeout = _highlightTimeout }, MaxHighlightedMatches));
 			}
 			catch (RegexMatchTimeoutException)
 			{

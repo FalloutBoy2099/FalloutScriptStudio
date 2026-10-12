@@ -94,27 +94,37 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		[ObservableProperty]
 		public partial TreeNodeViewModel? SelectedNode { get; set; }
 
-		/// <summary>Rebuilds the tree from the parse data of the active document.</summary>
+		/// <summary>
+		/// Brings the tree up to date with the parse data of the active document. The nodes of the document that is already shown are
+		/// updated in place (a tree that is built again makes WPF create all its items again after every parse); the tree of another
+		/// document is built from scratch.
+		/// </summary>
 		public void Rebuild()
 		{
+			DocumentViewModel? previous = this._document;
 			this.StoreExpandState();
 			this._document = this._workspace.ActiveDocument;
 			String? selectedKey = this.SelectedNode?.Key;
-			this.Groups.Clear();
 
 			ProgramInfo? info = this._document?.ProgramInfo;
 			this.HasData = info is not null && this._document is { IsParsable: true };
 			if (this._document is null || info is null || !this.HasData)
 			{
+				this.Groups.Clear();
 				this.SelectedNode = null;
 				return;
 			}
 
 			Dictionary<String, Boolean> state = this._expandState.GetOrCreateValue(this._document);
-			foreach (TreeGroupNodeViewModel group in SymbolTreeBuilder.BuildProcedureGroups(info, this._document.FileName, this.ShowArguments))
+			IReadOnlyList<TreeGroupNodeViewModel> fresh = SymbolTreeBuilder.BuildProcedureGroups(info, this._document.FileName, this.ShowArguments);
+			if (!ReferenceEquals(previous, this._document) || !TreeSync.TryMergeGroups(this.Groups, fresh, node => ApplyExpandState(node, state, false)))
 			{
-				ApplyExpandState(group, state, true);
-				this.Groups.Add(group);
+				this.Groups.Clear();
+				foreach (TreeGroupNodeViewModel group in fresh)
+				{
+					ApplyExpandState(group, state, true);
+					this.Groups.Add(group);
+				}
 			}
 
 			if (selectedKey is not null)

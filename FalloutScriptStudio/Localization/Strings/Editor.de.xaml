@@ -22,14 +22,14 @@
     <sys:String x:Key="Str.Editor.Cmd.TrimTrailingSpaces">Nachgestellte Leerzeichen entfernen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ConvertHexDec">Wert umwandeln: Hex &lt;&gt; Dez</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ToggleOutline">Gliederung</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.CollapseAll">Alle zuklappen</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.ExpandAll">Alle aufklappen</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.CollapseAll">Alle einklappen</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExpandAll">Alle ausklappen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.HighlightWord">Hervorheben</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToDeclaration">Zur Deklaration springen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Zur Definition springen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Verweise suchen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Umbenennen</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Include öffnen</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Include-Datei öffnen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Vervollständigungsliste anzeigen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Zu den Deklarationen springen</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Zeile löschen</sys:String>
@@ -48,8 +48,10 @@
     <sys:String x:Key="Str.Editor.Menu.RenameNone">Umbenennen: Keine</sys:String>
     <sys:String x:Key="Str.Editor.Tip.Note">Hinweis</sys:String>
     <sys:String x:Key="Str.Editor.Tip.IncludeError">Fehler beim Analysieren des Inhalts der Header-Datei.</sys:String>
-    <sys:String x:Key="Str.Editor.Tip.Message">Meldung {0}</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.Message">Nachricht {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Datei nicht gefunden: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Drücken Sie die TAB-Taste, um den Autocode einzufügen.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Keine Verweise für „{0}“ gefunden.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Skripteditor</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Skripteditor, zweite Ansicht</sys:String>
 </ResourceDictionary>

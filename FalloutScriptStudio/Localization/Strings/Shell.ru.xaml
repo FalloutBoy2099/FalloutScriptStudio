@@ -7,7 +7,7 @@
     <sys:String x:Key="Str.Shell.App.StartFailed" xml:space="preserve">Не удалось запустить программу:&#10;&#10;{0}&#10;&#10;Подробности записаны в sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.App.UnexpectedError" xml:space="preserve">Произошла непредвиденная ошибка:&#10;&#10;{0}&#10;&#10;Подробности записаны в sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.Build.AllCompiled">Все скрипты ({0}) успешно скомпилированы</sys:String>
-    <sys:String x:Key="Str.Shell.Build.CompileFailed">Не удалось скомпилировать: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileFailed">Не удалось скомпилировать {0}: см. вкладку «Ошибки».</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompileTitle">Компиляция</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledAll">Скомпилировано {0} из {1} открытых скриптов.</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledOk">{0} успешно скомпилирован</sys:String>
@@ -19,11 +19,11 @@
     <sys:String x:Key="Str.Shell.Build.MassCompileTitle">Массовая компиляция</sys:String>
     <sys:String x:Key="Str.Shell.Build.NoScripts">В {0} не найдено скриптов (*.ssl).</sys:String>
     <sys:String x:Key="Str.Shell.Build.NotSsl">Этот файл не является SSL-скриптом.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Не задана папка для скомпилированных скриптов.&#10;Перед компиляцией укажите выходную папку в настройках.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Папка для скомпилированных скриптов не задана.&#10;Выберите папку вывода в настройках (или включите компиляцию рядом с исходным скриптом) и повторите компиляцию.</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessFailed">Ошибка препроцессора! Подробности — на вкладке «Сборка».</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessedMissing">Файл после препроцессора не найден.</sys:String>
     <sys:String x:Key="Str.Shell.Build.RoundtripUserCommand">Сначала отключите компиляцию через пользовательский пакетный файл.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Не задана выходная папка скриптов.&#10;Сначала выберите папку скриптов в настройках.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Папка вывода скриптов не задана.&#10;Массовая компиляция записывает туда скомпилированные скрипты: сначала выберите папку в настройках.</sys:String>
     <sys:String x:Key="Str.Shell.Build.SelectMassFolder">Выберите папку со скриптами для компиляции</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchivePrompt">Имя скрипта в папке скриптов архива (например, klamath.int):</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchiveTitle">Открыть из архива игры</sys:String>
@@ -40,9 +40,9 @@
     <sys:String x:Key="Str.Shell.Dlg.ClearRecentPrompt">Очистить список недавних файлов?</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.CreateProcedureTitle">Создание процедуры</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileErrorTitle">Ошибка декомпиляции</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Не удалось декомпилировать скрипт «{0}». Подробности — на вкладке «Сборка».</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Не удалось декомпилировать скрипт «{0}». Прочитайте вывод декомпилятора на вкладке «Сборка»; другой декомпилятор (см. настройки компилятора) может справиться.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DocsNotFound" xml:space="preserve">Не удалось открыть документацию в браузере. Она доступна онлайн по адресу:&#10;{0}</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Не удалось запустить программу:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Не удалось запустить программу:&#10;{0}&#10;Выберите внешний редактор ещё раз в настройках.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExternalEditorTitle">Внешний редактор</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExtractionFailedTitle">Ошибка извлечения</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileAlreadyOpen" xml:space="preserve">Этот файл уже открыт.&#10;&#10;Открыть его копию?</sys:String>
@@ -52,14 +52,14 @@
     <sys:String x:Key="Str.Shell.Dlg.FileChangedTitle">Файл изменён</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowed">Этот тип файлов нельзя открыть в редакторе.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowedTitle">Файл не поддерживается</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Файл не найден:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Файл не найден:&#10;{0}&#10;Возможно, он был перемещён или удалён.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FlowchartScriptMissing">Файл скрипта для этой блок-схемы не найден.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Блок-схема узлов</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Заголовочный файл не найден:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Блок-схема диалога</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Файл заголовка не найден:&#10;{0}&#10;Проверьте путь в #include и папку заголовков в настройках.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ImportedRename">Импортированные символы пока нельзя переименовать.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Подключаемые файлы с относительным путём нельзя открыть из несохранённого скрипта.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Подключаемые файлы с относительным путём нельзя открыть из несохранённого скрипта. Сначала сохраните скрипт.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileCreate" xml:space="preserve">Файл сообщений этого скрипта не найден.&#10;&#10;Создать {0} в {1}?</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Файл сообщений, связанный с этим скриптом, не найден.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Файл сообщений, связанный с этим скриптом, не найден. Проверьте папки сообщений и язык в настройках или создайте файл в редакторе сообщений.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileTitle">Файл сообщений</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameHasSpaces">Имя скрипта с пробелами зарегистрировать нельзя.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameMacroNotFound" xml:space="preserve">Макрос NAME в этом скрипте не найден или у него нет номера скрипта.&#10;Файл сообщений будет сопоставлен по имени скрипта.</sys:String>
@@ -67,7 +67,7 @@
     <sys:String x:Key="Str.Shell.Dlg.NameTooLong">Имя файла скрипта не должно превышать 8 символов, иначе его нельзя зарегистрировать.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NewNamePrompt">Новое имя для «{0}»:</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NoErrorsFound">Ошибок не найдено.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.NoMessageFileKind">Для этого типа файлов нельзя задать файл сообщений.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.NoMessageFileKind">У файлов этого типа не может быть связанного файла сообщений.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NoPlaces">Подходящих мест не найдено.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NoReferences">Ссылки не найдены.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.OpenFileTitle">Открытие файла</sys:String>
@@ -96,7 +96,7 @@
     <sys:String x:Key="Str.Shell.Dlg.ScriptMissingTitle">Файл скрипта не найден</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsListTitle">Список скриптов</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsLstInvalid">Не удалось прочитать связанное имя из scripts.lst.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Файл scripts.lst отсутствует в выходной папке скриптов.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Файл scripts.lst отсутствует в папке вывода скриптов. Проверьте папку вывода в настройках.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectArchiveTitle">Выберите архив игры Fallout</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectEditorTitle">Выберите внешний редактор</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectHeadersTitle">Выберите заголовочные файлы</sys:String>
@@ -122,10 +122,8 @@
     <sys:String x:Key="Str.Shell.Menu.CheckMessageStructure">Проверить структуру текста сообщений</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ClearRecent">Очистить список недавних файлов</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CloseAll">Закрыть все</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Code">Код</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CollapseAll">Свернуть все</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CommentText">Закомментировать текст</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Compile">Компиляция</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileAllOpen">Компилировать все открытые</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileScript">Компилировать скрипт</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ConvertAllTabsToSpaces">Преобразовать все табуляции в пробелы</sys:String>
@@ -134,11 +132,10 @@
     <sys:String x:Key="Str.Shell.Menu.ConvertLeadingTabsToSpaces">Преобразовать начальные табуляции в пробелы</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecompileFallout1">Декомпилировать для Fallout 1</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecreaseIndent">Уменьшить отступ</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Добавлять define в Scripts.h</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Dialog">Диалог</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Добавлять define в scripts.h</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DialoguePreview">Просмотр и тестирование</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Documentation">Документация</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Edit">Правка</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.AssociateFiles">Связать типы файлов…</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Empty">(пусто)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingOem">OEM-866 (DOS / русская)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingWindows">По умолчанию Windows</sys:String>
@@ -153,33 +150,31 @@
     <sys:String x:Key="Str.Shell.Menu.FormatSelection">Форматировать выделенное</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Forward">Вперёд</sys:String>
     <sys:String x:Key="Str.Shell.Menu.FunctionTree">Дерево функций</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Настройка функций</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Функции диалогов</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDeclaration">Перейти к объявлению</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDefinition">Перейти к определению</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToLine">Перейти к строке...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToProcedure">Перейти к процедуре...</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Headers">Заголовки</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightParseErrors">Подсвечивать ошибки разбора</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightWord">Подсветить слово</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncludeFile">Подключить файл к коду...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncreaseIndent">Увеличить отступ</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LineNumbers">Номера строк</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.LogWindow">Окно журнала</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.LogWindow">Панель журнала</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LowerCase">Строчные буквы</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MassCompile">Массовая компиляция</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Редактор файлов сообщений</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Редактор сообщений</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MessageEncoding">Кодировка файлов сообщений</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewFromTemplate">Создать из шаблона</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewScript">Новый скрипт</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NoTemplates">(нет шаблонов)</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Блок-схема узлов</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Блок-схема диалога</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Open">Открыть...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenAllIncludes">Открыть все подключённые файлы</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenFromArchive">Открыть скрипт из архива игры...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenHeader">Открыть заголовочный файл...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenInclude">Открыть подключаемый файл</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenRecent">Недавние файлы</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Options">Параметры</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Preprocess">Препроцессор</sys:String>
     <sys:String x:Key="Str.Shell.Menu.QuickFind">Быстрый поиск</sys:String>
     <sys:String x:Key="Str.Shell.Menu.RegisterScript">Зарегистрировать текущий скрипт...</sys:String>
@@ -190,9 +185,7 @@
     <sys:String x:Key="Str.Shell.Menu.SaveAs">Сохранить как...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAsTemplate">Сохранить как шаблон...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveUtf8">Сохранять в UTF-8</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Script">Скрипт</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ScriptsListEditor">Редактор списка скриптов</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.SetProjectFolder">Задать папку проекта...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Settings">Настройки...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowIndentLine">Показывать линию отступа</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowWhitespace">Показывать табуляции и пробелы</sys:String>
@@ -205,7 +198,6 @@
     <sys:String x:Key="Str.Shell.Menu.UpperCase">Прописные буквы</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompiler">Использовать старый декомпилятор</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompilerTip">Используется только внешним декомпилятором int2ssl. Выберите его в разделе «Настройки» &gt; «Компилятор», чтобы включить эту опцию.</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.View">Вид</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomIn">Увеличить</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomOut">Уменьшить</sys:String>
     <sys:String x:Key="Str.Shell.Output.AutoRefresh">Автообновление</sys:String>
@@ -225,7 +217,7 @@
     <sys:String x:Key="Str.Shell.Output.TabErrors">Ошибки</sys:String>
     <sys:String x:Key="Str.Shell.Output.TabParser">Парсер</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipBuild">Вывод компилятора.</sys:String>
-    <sys:String x:Key="Str.Shell.Output.TipErrors">Ошибки, предупреждения и результаты поиска. Дважды щёлкните запись, чтобы перейти к ней.</sys:String>
+    <sys:String x:Key="Str.Shell.Output.TipErrors">Ошибки, предупреждения и другие проблемы скриптов и инструментов. Дважды щёлкните запись или нажмите Enter, чтобы перейти к ней.</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipParser">Вывод парсера скриптов.</sys:String>
     <sys:String x:Key="Str.Shell.Output.UnresolvedReferences">Не удалось найти ссылок: {0}.</sys:String>
     <sys:String x:Key="Str.Shell.Parser.Builtin">Парсер: встроенный (нативный парсер недоступен)</sys:String>
@@ -282,17 +274,17 @@
     <sys:String x:Key="Str.Shell.Tip.DecreaseIndent">Уменьшить отступ (Alt+Q)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.DefineToScriptsHeader">Добавлять define для скрипта в scripts.h при его регистрации.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.FindReplaceBar">Панель поиска и замены (Ctrl+H)</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Flowchart">Блок-схема узлов диалога</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Flowchart">Блок-схема диалога</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Forward">Перейти к следующей позиции</sys:String>
     <sys:String x:Key="Str.Shell.Tip.GoToProcedure">Перейти к процедуре (Alt+P)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.MassCompile">Массовая компиляция проекта</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Редактор файлов сообщений</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Редактор сообщений</sys:String>
     <sys:String x:Key="Str.Shell.Tip.NewScript">Создать новый скрипт (Ctrl+N)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Open">Открыть файл (Ctrl+O)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.ParserStatus">Нажмите, чтобы обновить данные парсера.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Preprocess">Открыть скрипт в том виде, который он имеет после препроцессора.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.PreprocessorDefine">Определение препроцессора, используемое при компиляции и разборе скрипта (для директив #if).</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Project">Папка проекта. Нажмите, чтобы открыть её в проводнике.</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Project">Проект не открыт. Нажмите, чтобы открыть папку проекта.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.QuickFind">Найти следующее вхождение слова под курсором.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Redo">Повторить (Ctrl+Y)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.RegisterScript">Добавить скрипт в scripts.lst.</sys:String>
@@ -323,4 +315,110 @@
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpenTitle">Декомпиляция</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpen">Файл {0} уже открыт на вкладке. Перезаписать его декомпилированным исходным кодом и перезагрузить вкладку? Несохранённые изменения на вкладке будут потеряны.</sys:String>
     <sys:String x:Key="Str.Shell.Output.OperationFailed">Операция не выполнена: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupTools">Инструменты</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupFiles">Файлы</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupSettings">Настройки</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupMessages">Файлы сообщений</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowErrors">Показать или скрыть ошибки</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowWarnings">Показать или скрыть предупреждения</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowInfo">Показать или скрыть сведения</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.FilterSources">Выбрать, какие источники показывать</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.CopyAll">Копировать всё</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Next">Следующая проблема</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Previous">Предыдущая проблема</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.NoProblems">Проблем нет.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.StatusTip">Ошибок: {0}, предупреждений: {1}. Нажмите, чтобы открыть список проблем.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Show">Показать проблемы</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Compile">Компиляция {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CompileCounted">Компиляция {0} ({1}/{2})</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Preprocess">Препроцессор: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.RoundTrip">Круговая проверка {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompile">Массовая компиляция</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompileCounted">Массовая компиляция ({1}/{2}): {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Decompile">Декомпиляция {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancelling">Отмена: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancel">Отменить выполняемую операцию</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CancelTip">Отмена (Esc в панели журнала, Ctrl+Break)</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.DecompileCancelled">Декомпиляция {0} отменена.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.AlreadyRunning">Другая операция сборки ещё выполняется. Дождитесь её завершения или сначала отмените её (Esc в панели журнала).</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileCancelled">Компиляция {0} отменена.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.PreprocessCancelled">Препроцессор для {0} отменён.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.RoundTripCancelled">Круговая проверка {0} отменена.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileAllCancelled">Компиляция отменена: скомпилировано {0} из {1} открытых скриптов.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.MassCompileCancelled">Массовая компиляция отменена: скомпилировано {0} из {1}, с ошибками: {2}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.LogCancelled">Компиляция отменена пользователем.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFound">{0} не найден: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFoundHint">Поместите {0} в папку {1} (или исправьте настройки компилятора) и повторите сборку.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailed">Не удалось запустить {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailedHint">Убедитесь, что {0} — допустимая программа для этой системы и что Windows или антивирус её не блокируют (свойства файла, «Разблокировать»).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.CompileFailedNoDetails">{0} не удалось скомпилировать, но инструмент не указал место ошибки.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.PreprocessFailed">Не удалось выполнить препроцессинг {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SeeBuildLogHint">Полный вывод инструмента смотрите на вкладке «Сборка».</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSet">Папка для скомпилированных скриптов не задана.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSetHint">Выберите её в настройках или включите компиляцию рядом с исходным скриптом.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScript">{0} не является скриптом SSL и не может быть скомпилирован.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScriptHint">Компилировать можно только файлы .ssl. Сначала сохраните текст как файл .ssl.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailed">Не удалось сохранить {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedHint">Убедитесь, что файл не открыт в другой программе и что вы можете записывать в его папку, или сохраните его в другом месте командой «Сохранить как».</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedReadOnlyHint">Файл доступен только для чтения. Снимите атрибут «Только чтение» в проводнике или используйте «Сохранить как».</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailed">Не удалось открыть {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailedHint">Убедитесь, что файл существует, что вы можете его читать и что он не заблокирован другой программой.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFound">Файл {0} не существует.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFoundHint">Возможно, он был перемещён или удалён. Откройте его снова командой «Файл, Открыть».</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallback">{0} не является корректным UTF-8 и был прочитан как {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallbackHint">Если буквы с диакритикой отображаются неверно, измените кодировку файлов в настройках (или преобразуйте файл в UTF-8) и откройте его снова.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailed">Не удалось декомпилировать {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailedHint">Прочитайте вывод декомпилятора на вкладке «Сборка». Другой декомпилятор может справиться (см. настройки компилятора).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailed">Не удалось извлечь {0} из архива: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailedHint">Выберите архив .dat (или папку) игры, содержащей этот скрипт.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFound">Подключаемый файл {0} не найден.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFoundHint">Проверьте путь в #include и папку заголовков в настройках.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissing">Для {0} не найден файл сообщений (.msg).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissingHint">Проверьте папки сообщений и язык в настройках или создайте файл в редакторе сообщений.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailable">Нативный парсер (parser.dll) недоступен; используется встроенный парсер.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailableHint">Скопируйте parser.dll в папку resources, чтобы получать точные данные о процедурах и переменных, или отключите нативный парсер в настройках.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBroken">Нативный парсер перестал работать: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBrokenHint">Его заменил встроенный парсер. Замените parser.dll или отключите нативный парсер в настройках, если это повторяется.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailed">Не удалось проанализировать {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailedHint">Измените текст или сохраните файл ещё раз; подробности в файле журнала.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamaged">Файл настроек {0} повреждён; используются значения по умолчанию.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamagedHint">Копия повреждённого файла сохранена рядом (.corrupt). Проверьте настройки и сохраните их снова.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadable">Не удаётся прочитать файл настроек {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadableHint">Файл оставлен без изменений. Закройте программу, которая его удерживает, и перезапустите редактор.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailed">Не удалось сохранить файл настроек {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailedHint">Убедитесь, что вы можете записывать в папку настроек и что диск не заполнен.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailed">Не удалось запустить внешний редактор {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailedHint">Выберите программу ещё раз в настройках.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailed">Операция не выполнена: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailedHint">Повторите попытку; подробности в файле журнала.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSettings">Открыть настройки: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionFolder">Открыть папку</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.OpenProject">Открыть проект...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.RecentProjects">Недавние проекты</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ClearRecentProjects">Очистить список недавних проектов</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ProjectSettings">Настройки проекта...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CreateProjectSettings">Создать настройки проекта</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CloseProject">Закрыть проект</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.ProjectOpen">Проект: {0}. Нажмите, чтобы открыть настройки проекта.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.RecentProjectsTitle">Недавние проекты</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ClearRecentProjectsPrompt">Очистить список недавних проектов?</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ProjectFolderNotFound">Папка проекта {0} не существует.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.SettingsCreated">Создан {0} для проекта {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.Detected">Для этого скрипта найден файл проекта в {0}. Перейти на этот проект можно на вкладке «Ошибки».</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetected">Этот скрипт принадлежит проекту в {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetectedHint">Перейдите на проект, чтобы использовать его настройки компилятора, заголовков и папок.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSwitchProject">Перейти на этот проект</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ShowProjectFolder">Показать папку проекта в проводнике</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.Progress">Ход выполнения</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.DocumentTabs">Открытые документы</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.File">Фай_л</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Edit">П_равка</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Code">К_од</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Script">Скрип_т</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Headers">За_головки</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Dialog">Д_иалог</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Compile">Ко_мпиляция</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.View">_Вид</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Options">Парам_етры</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Help">_Справка</sys:String>
 </ResourceDictionary>

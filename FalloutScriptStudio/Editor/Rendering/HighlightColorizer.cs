@@ -2,7 +2,6 @@ namespace FalloutScriptStudio.Editor.Rendering
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
 	using FalloutScriptStudio.Core.TextTools;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Rendering;
@@ -92,11 +91,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 
 		private static void Replace(TextSegmentCollection<TextSegment> collection, IEnumerable<TextSpan> spans)
 		{
-			foreach (TextSegment segment in collection.ToArray())
-			{
-				collection.Remove(segment);
-			}
-
+			collection.Clear();
 			foreach (TextSpan span in spans)
 			{
 				if (span.Length > 0)

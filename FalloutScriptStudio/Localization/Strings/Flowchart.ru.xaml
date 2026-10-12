@@ -19,13 +19,13 @@
     <sys:String x:Key="Str.Flowchart.Template.Empty">&lt;Пусто&gt;</sys:String>
     <sys:String x:Key="Str.Flowchart.Template.Code">Код шаблона {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Create">Создать</sys:String>
-    <sys:String x:Key="Str.Flowchart.NoNodeChoice">&lt;Снять выбор&gt;</sys:String>
+    <sys:String x:Key="Str.Flowchart.NoNodeChoice">&lt;Снять выбор узла&gt;</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.File.Open">Открыть блок-схему</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.File.Save">Сохранить блок-схему</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Сохранить блок-схему как изображение</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Узел диалога</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Заметка</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Настройка функций</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Функции диалогов</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Правила, по которым блок-схема определяет, какие функции и макросы показывают сообщения и переходят к узлам.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Не создавать узел выхода</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Не создавать на блок-схеме узел выхода из диалога (обычно Node999).</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Номер строки в файле сообщений. Щёлкните, чтобы открыть редактор сообщений.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Открыть редактор сообщений на этом сообщении</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Текст сообщения</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Файл msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Файл сообщений</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Узлы:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Отображаемый узел диалога</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Узел диалога</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Щёлкните, чтобы ввести текст...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Файл отсутствует</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Файл сообщений для диалога не найден.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Блок-схема диалога</sys:String>
 </ResourceDictionary>

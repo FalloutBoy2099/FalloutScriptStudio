@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
 
@@ -12,11 +13,33 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Occurs after the settings were loaded, replaced with <see cref="Apply"/> or changed with <see cref="Update"/>.</summary>
 		event EventHandler<SettingsChangedEventArgs>? SettingsChanged;
 
+		/// <summary>Occurs when a file of the settings folder is found damaged or unreadable, or could not be saved.</summary>
+		event EventHandler<SettingsProblem>? ProblemRaised
+		{
+			add { }
+			remove { }
+		}
+
 		/// <summary>Gets the paths of the installation.</summary>
 		AppPaths Paths { get; }
 
+		/// <summary>Gets the problems met so far with the files of the settings folder (a later <see cref="ProblemRaised"/> adds to them).</summary>
+		IReadOnlyList<SettingsProblem> Problems => Array.Empty<SettingsProblem>();
+
 		/// <summary>Gets the current settings. Never <see langword="null"/>, even before <see cref="Load"/> (then it holds the defaults).</summary>
 		AppSettings Settings { get; }
+
+		/// <summary>Gets the folder of the active project, or <see langword="null"/> when no project is open.</summary>
+		String? ActiveProjectFolder => null;
+
+		/// <summary>Gets the overrides of the active project (absolute paths), or <see langword="null"/> when there is none or the project has no settings file.</summary>
+		ProjectSettings? ActiveProject => null;
+
+		/// <summary>
+		/// Gets the settings that are really in effect: the global ones with the overrides of the active project. Every consumer of the
+		/// compiler, header, include, define and message folder options reads them from here.
+		/// </summary>
+		EffectiveSettings Effective => new EffectiveSettings(this.Settings, this.PreprocessorDefines, this.ActiveProjectFolder, this.ActiveProject);
 
 		/// <summary>Gets the recent script and message files.</summary>
 		RecentFiles Recent { get; }
@@ -59,6 +82,16 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <param name="cancellationToken">Cancels the operation.</param>
 		/// <returns>A task that completes when everything is written.</returns>
 		Task SaveAsync(CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Makes a project the one whose overrides are in effect and raises <see cref="SettingsChanged"/>. The project service calls it; the
+		/// settings of the instance must not be modified afterwards.
+		/// </summary>
+		/// <param name="folder">The folder of the project, or <see langword="null"/> for no project.</param>
+		/// <param name="project">The overrides of the project (absolute paths), or <see langword="null"/> when it has none.</param>
+		void SetActiveProject(String? folder, ProjectSettings? project)
+		{
+		}
 
 		/// <summary>
 		/// Replaces the current settings (typically with an edited <see cref="AppSettings.Clone"/>) and raises <see cref="SettingsChanged"/>.

@@ -5,18 +5,23 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Linq;
 	using System.Text;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Compilation;
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.ToolWindows;
 
 	/// <summary>
 	/// Runs the build commands of the main window: compile, preprocess, round trip, compile all open scripts and mass compile.
 	/// Results are stored in the documents (<see cref="DocumentViewModel.BuildLog"/>, <see cref="DocumentViewModel.BuildErrors"/>)
-	/// and announced through the output panel, the status bar, a toast and a sound.
+	/// and announced through the output panel, the status bar, a toast and a sound; tools that are missing or cannot be started become
+	/// <see cref="Problem"/>s with a fix hint. Every command is one cancellable operation of the <see cref="IOperationTracker"/>: only one
+	/// runs at a time, the status bar shows what it does, and <see cref="Cancel"/> stops it (the tool processes are killed and the files
+	/// they were writing are cleaned up or restored).
 	/// </summary>
 	public sealed class BuildCoordinator
 	{
@@ -30,6 +35,8 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IShellNotificationService _notifications;
 		private readonly ISoundService _sounds;
 		private readonly IToolWindowService _toolWindows;
+		private readonly IOperationTracker _operations;
+		private readonly IProblemService _problems;
 		private Boolean _busy;
 
 		/// <summary>Initializes the coordinator.</summary>
@@ -43,7 +50,9 @@ namespace FalloutScriptStudio.Workspace
 			IOutputSink output,
 			IShellNotificationService notifications,
 			ISoundService sounds,
-			IToolWindowService toolWindows)
+			IToolWindowService toolWindows,
+			IOperationTracker? operations = null,
+			IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(compiler);
@@ -65,39 +74,41 @@ namespace FalloutScriptStudio.Workspace
 			this._notifications = notifications;
 			this._sounds = sounds;
 			this._toolWindows = toolWindows;
+			this._operations = operations ?? new OperationTracker();
+			this._problems = problems ?? new ProblemService();
+			this._operations.Changed += (_, _) => this.UpdateBusy();
 		}
 
 		/// <summary>Raised when <see cref="IsBusy"/> changed.</summary>
 		public event EventHandler? BusyChanged;
 
-		/// <summary>Gets a value indicating whether a build command is running.</summary>
-		public Boolean IsBusy
+		/// <summary>Gets a value indicating whether a long operation (a build command or a decompilation) is running.</summary>
+		public Boolean IsBusy => this._operations.IsRunning;
+
+		/// <summary>Gets the tracker of the running operation, for the status bar.</summary>
+		public IOperationTracker Operations => this._operations;
+
+		/// <summary>Cancels the running operation, if any.</summary>
+		/// <returns><see langword="true"/> when an operation was asked to stop.</returns>
+		public Boolean Cancel()
 		{
-			get => this._busy;
-			private set
-			{
-				if (this._busy != value)
-				{
-					this._busy = value;
-					this.BusyChanged?.Invoke(this, EventArgs.Empty);
-				}
-			}
+			return this._operations.Cancel();
 		}
 
 		/// <summary>Compiles a script (menu "Compile Script", F8).</summary>
 		public async Task<Boolean> CompileAsync(DocumentViewModel document)
 		{
 			ArgumentNullException.ThrowIfNull(document);
-			if (this.IsBusy)
+			using IOperation? operation = this.Begin(OperationKind.Compile, document.FileName, 0);
+			if (operation is null)
 			{
 				return false;
 			}
 
-			this.IsBusy = true;
 			try
 			{
-				this._output.ClearErrors();
-				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, true, false, false));
+				this.PrepareBuild(document);
+				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, true, false, false), operation.Token);
 				if (outcome.Success)
 				{
 					document.ParserErrors = Array.Empty<BuildError>();
@@ -105,84 +116,94 @@ namespace FalloutScriptStudio.Workspace
 
 				return outcome.Success;
 			}
-			finally
+			catch (OperationCanceledException) when (operation.Token.IsCancellationRequested)
 			{
-				this.IsBusy = false;
+				this.ReportCancelled(document, "Str.Shell.Build.CompileCancelled");
+				return false;
 			}
 		}
 
 		/// <summary>Compiles every open script (menu "Compile All Open").</summary>
 		public async Task<Boolean> CompileAllOpenAsync()
 		{
-			if (this.IsBusy)
+			List<DocumentViewModel> scripts = this._workspace.Documents.Where(document => document.Kind == DocumentKind.Script).ToList();
+			using IOperation? operation = this.Begin(OperationKind.CompileAll, String.Empty, scripts.Count);
+			if (operation is null)
 			{
 				return false;
 			}
 
-			this.IsBusy = true;
+			this._output.ClearErrors();
+			this._problems.ClearOrigin(ProblemOrigins.BuildTool);
+			StringBuilder full = new StringBuilder();
+			List<BuildError> allErrors = new List<BuildError>();
+			Int32 compiled = 0;
+			Int32 attempted = 0;
+			Boolean cancelled = false;
 			try
 			{
-				this._output.ClearErrors();
-				StringBuilder full = new StringBuilder();
-				List<BuildError> allErrors = new List<BuildError>();
-				Int32 compiled = 0;
-				Int32 total = 0;
-				foreach (DocumentViewModel document in this._workspace.Documents.ToList())
+				foreach (DocumentViewModel document in scripts)
 				{
-					if (document.Kind != DocumentKind.Script)
+					operation.Token.ThrowIfCancellationRequested();
+					if (!this._workspace.Documents.Contains(document))
 					{
 						continue;
 					}
 
-					total++;
-					BuildOutcome outcome = await this.RunAsync(document, new BuildMode(false, false, false, false));
+					attempted++;
+					operation.Report(document.FileName, attempted, scripts.Count);
+					this._problems.ClearOwner(document, ProblemSource.Build, ProblemSource.Settings);
+					BuildOutcome outcome = await this.RunAsync(document, new BuildMode(false, false, false, false), operation.Token);
 					if (outcome.Success)
 					{
 						compiled++;
 					}
 
-					if (outcome.Result is not null)
+					foreach (BuildErrorType type in new[] { BuildErrorType.Error, BuildErrorType.Warning, BuildErrorType.Message })
 					{
-						foreach (BuildErrorType type in new[] { BuildErrorType.Error, BuildErrorType.Warning, BuildErrorType.Message })
-						{
-							allErrors.AddRange(outcome.Result.Errors.Where(error => error.Type == type));
-						}
+						allErrors.AddRange(outcome.Errors.Where(error => error.Type == type));
 					}
 
 					full.AppendLine(document.BuildLog).AppendLine();
 				}
-
-				// Like the legacy editor, the error list holds the errors of every compiled script, not only those of the active one.
-				this._output.ShowBuildErrors(allErrors);
-				this._output.SetBuildText(full.ToString());
-				this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompiledAll", compiled, total));
-				if (total > 0 && compiled == total)
-				{
-					this._notifications.Show(Loc.Get("Str.Shell.Build.CompiledTitle"), Loc.Format("Str.Shell.Build.AllCompiled", total), NotificationKind.Success);
-				}
-
-				return compiled == total;
 			}
-			finally
+			catch (OperationCanceledException) when (operation.Token.IsCancellationRequested)
 			{
-				this.IsBusy = false;
+				cancelled = true;
 			}
+
+			// Like the legacy editor, the error list holds the errors of every compiled script, not only those of the active one.
+			this._output.ShowBuildErrors(allErrors);
+			this._output.SetBuildText(full.ToString());
+			if (cancelled)
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompileAllCancelled", compiled, scripts.Count));
+				return false;
+			}
+
+			this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompiledAll", compiled, attempted));
+			if (attempted > 0 && compiled == attempted)
+			{
+				this._notifications.Show(Loc.Get("Str.Shell.Build.CompiledTitle"), Loc.Format("Str.Shell.Build.AllCompiled", attempted), NotificationKind.Success);
+			}
+
+			return compiled == attempted;
 		}
 
 		/// <summary>Preprocesses a script and opens the preprocessed copy (menu "Preprocess", F4).</summary>
 		public async Task<Boolean> PreprocessAsync(DocumentViewModel document)
 		{
 			ArgumentNullException.ThrowIfNull(document);
-			if (this.IsBusy)
+			using IOperation? operation = this.Begin(OperationKind.Preprocess, document.FileName, 0);
+			if (operation is null)
 			{
 				return false;
 			}
 
-			this.IsBusy = true;
 			try
 			{
-				this._output.ClearErrors();
-				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, false, true, false));
+				this.PrepareBuild(document);
+				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, false, true, false), operation.Token);
 				if (!outcome.Success)
 				{
 					await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Menu.Preprocess"), Loc.Get("Str.Shell.Build.PreprocessFailed"));
@@ -198,9 +219,10 @@ namespace FalloutScriptStudio.Workspace
 				await this._workspace.OpenAsync(file, new OpenDocumentOptions { AddToRecent = false });
 				return true;
 			}
-			finally
+			catch (OperationCanceledException) when (operation.Token.IsCancellationRequested)
 			{
-				this.IsBusy = false;
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.PreprocessCancelled", document.FileName));
+				return false;
 			}
 		}
 
@@ -210,6 +232,7 @@ namespace FalloutScriptStudio.Workspace
 			ArgumentNullException.ThrowIfNull(document);
 			if (this.IsBusy)
 			{
+				this.ReportBusy();
 				return false;
 			}
 
@@ -219,24 +242,33 @@ namespace FalloutScriptStudio.Workspace
 				return false;
 			}
 
-			this.IsBusy = true;
+			using IOperation? operation = this.Begin(OperationKind.RoundTrip, document.FileName, 0);
+			if (operation is null)
+			{
+				return false;
+			}
+
 			try
 			{
-				this._output.ClearErrors();
-				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, false, false, true));
+				this.PrepareBuild(document);
+				BuildOutcome outcome = await this.RunAsync(document, new BuildMode(true, false, false, true), operation.Token);
 				if (!outcome.Success || document.FilePath is null)
 				{
 					return false;
 				}
 
-				CompilerOptions options = this._settings.Settings.ToCompilerOptions(this._settings.Paths);
+				CompilerOptions options = this._settings.Effective.ToCompilerOptions(this._settings.Paths);
 				String compiled = this._compiler.GetOutputPath(document.FilePath, options, true);
-				await this._workspace.OpenAsync(compiled, new OpenDocumentOptions { AddToRecent = false, TemporaryDecompile = true, ClearBuildLog = false });
-				return true;
+				DocumentViewModel? decompiled = await this._workspace.OpenAsync(
+					compiled,
+					new OpenDocumentOptions { AddToRecent = false, TemporaryDecompile = true, ClearBuildLog = false, CancellationToken = operation.Token });
+				operation.Token.ThrowIfCancellationRequested();
+				return decompiled is not null;
 			}
-			finally
+			catch (OperationCanceledException) when (operation.Token.IsCancellationRequested)
 			{
-				this.IsBusy = false;
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.RoundTripCancelled", document.FileName));
+				return false;
 			}
 		}
 
@@ -245,12 +277,14 @@ namespace FalloutScriptStudio.Workspace
 		{
 			if (this.IsBusy)
 			{
+				this.ReportBusy();
 				return;
 			}
 
-			PathSettings paths = this._settings.Settings.Paths;
+			PathSettings paths = this._settings.Effective.Settings.Paths;
 			if (paths.OutputDirectory is null)
 			{
+				this._problems.Report(ProblemFactory.OutputFolderNotSet(null));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Build.MassCompileTitle"), Loc.Get("Str.Shell.Build.ScriptsFolderNotSet"));
 				return;
 			}
@@ -274,49 +308,132 @@ namespace FalloutScriptStudio.Workspace
 				return;
 			}
 
-			this.IsBusy = true;
-			try
+			using IOperation? operation = this.Begin(OperationKind.MassCompile, String.Empty, scripts.Count);
+			if (operation is null)
 			{
-				BatchCompileResult result = await this._toolWindows.RunBatchCompileAsync(scripts);
-				this._output.ReportStatus(Loc.Format("Str.Shell.Build.MassCompileStatus", result.Compiled, result.Found, result.Failed));
+				return;
 			}
-			finally
+
+			this._problems.ClearOrigin(ProblemOrigins.MassCompile);
+			this._problems.ClearOrigin(ProblemOrigins.BuildTool);
+			Progress<BatchCompileProgress> progress = new Progress<BatchCompileProgress>(
+				item => operation.Report(Path.GetFileName(item.ScriptPath), item.Completed, item.Total));
+			BatchCompileResult result = await this._toolWindows.RunBatchCompileAsync(scripts, progress, operation.Token);
+			this.ReportBatchFailures(result);
+			this._output.ReportStatus(result.Cancelled
+				? Loc.Format("Str.Shell.Build.MassCompileCancelled", result.Compiled, result.Found, result.Failed)
+				: Loc.Format("Str.Shell.Build.MassCompileStatus", result.Compiled, result.Found, result.Failed));
+		}
+
+		private void UpdateBusy()
+		{
+			Boolean busy = this._operations.IsRunning;
+			if (busy != this._busy)
 			{
-				this.IsBusy = false;
+				this._busy = busy;
+				this.BusyChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
-		private async Task<BuildOutcome> RunAsync(DocumentViewModel document, BuildMode mode)
+		private IOperation? Begin(OperationKind kind, String subject, Int32 total)
+		{
+			IOperation? operation = this._operations.TryBegin(kind, subject, total);
+			if (operation is null)
+			{
+				this.ReportBusy();
+			}
+
+			return operation;
+		}
+
+		private void ReportBusy()
+		{
+			this._output.ReportStatus(Loc.Get("Str.Shell.Build.AlreadyRunning"));
+		}
+
+		private void PrepareBuild(DocumentViewModel document)
+		{
+			this._output.ClearErrors();
+			this._problems.ClearOrigin(ProblemOrigins.BuildTool);
+			this._problems.ClearOwner(document, ProblemSource.Build, ProblemSource.Settings);
+		}
+
+		private void ReportCancelled(DocumentViewModel document, String statusKey)
+		{
+			document.BuildLog = Loc.Get("Str.Shell.Build.LogCancelled");
+			this._output.ReportStatus(Loc.Format(statusKey, document.FileName));
+		}
+
+		private void ReportBatchFailures(BatchCompileResult result)
+		{
+			CompilerOptions options = this._settings.Effective.ToCompilerOptions(this._settings.Paths);
+			BuildLogParser logParser = new BuildLogParser();
+			List<Problem> reported = new List<Problem>();
+			foreach (BatchCompileFailure failure in result.Failures)
+			{
+				IReadOnlyList<BuildError> errors = logParser.Parse(failure.Output, failure.ScriptPath, options.Preprocessor);
+				List<BuildError> failures = errors.Where(error => error.Type == BuildErrorType.Error).Take(10).ToList();
+				if (failures.Count == 0)
+				{
+					reported.Add(ProblemFactory.BuildFailedWithoutDetails(failure.ScriptPath, false, null) with { Origin = ProblemOrigins.MassCompile });
+					continue;
+				}
+
+				foreach (BuildError error in failures)
+				{
+					reported.Add(Problem.FromBuildError(error, ProblemSource.Build) with { Origin = ProblemOrigins.MassCompile });
+				}
+			}
+
+			this._problems.ReportRange(reported);
+		}
+
+		/// <summary>Removes the log entries that only repeat a tool failure: the failure is reported as a problem with a hint instead.</summary>
+		private static IReadOnlyList<BuildError> WithoutToolFailureEntries(CompilationResult result)
+		{
+			if (result.ToolFailures.Count == 0)
+			{
+				return result.Errors;
+			}
+
+			return result.Errors
+				.Where(error => !(error.Type == BuildErrorType.Error && result.ToolFailures.Any(failure => error.Message.Contains(failure.LogMessage, StringComparison.Ordinal))))
+				.ToList();
+		}
+
+		private async Task<BuildOutcome> RunAsync(DocumentViewModel document, BuildMode mode, CancellationToken cancellationToken)
 		{
 			if (document.Kind != DocumentKind.Script)
 			{
+				this._problems.Report(ProblemFactory.NotAScript(document.FileName, document));
 				if (mode.ShowMessages)
 				{
 					await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Build.CompileTitle"), Loc.Get("Str.Shell.Build.NotSsl"));
 				}
 
-				return new BuildOutcome(false, null);
+				return new BuildOutcome(false, null, Array.Empty<BuildError>());
 			}
 
-			CompilerSettings compiler = this._settings.Settings.Compiler;
-			if (!mode.Preprocess && !compiler.CompileToSourceDirectory && this._settings.Settings.Paths.OutputDirectory is null)
+			CompilerSettings compiler = this._settings.Effective.Settings.Compiler;
+			if (!mode.Preprocess && !compiler.CompileToSourceDirectory && this._settings.Effective.Settings.Paths.OutputDirectory is null)
 			{
+				this._problems.Report(ProblemFactory.OutputFolderNotSet(document));
 				if (mode.ShowMessages)
 				{
 					await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Build.CompileTitle"), Loc.Get("Str.Shell.Build.OutputFolderNotSet"));
 				}
 
-				return new BuildOutcome(false, null);
+				return new BuildOutcome(false, null, Array.Empty<BuildError>());
 			}
 
 			if (document.IsModified && !await this._workspace.SaveAsync(document))
 			{
-				return new BuildOutcome(false, null);
+				return new BuildOutcome(false, null, Array.Empty<BuildError>());
 			}
 
 			if (document.FilePath is null || document.IsModified)
 			{
-				return new BuildOutcome(false, null);
+				return new BuildOutcome(false, null, Array.Empty<BuildError>());
 			}
 
 			// A parse that was waiting for the typing pause must not compete with the compiler, but it must not be lost either:
@@ -328,7 +445,7 @@ namespace FalloutScriptStudio.Workspace
 			CompilationRequest request = new CompilationRequest
 			{
 				ScriptPath = document.FilePath,
-				Options = this._settings.Settings.ToCompilerOptions(this._settings.Paths),
+				Options = this._settings.Effective.ToCompilerOptions(this._settings.Paths),
 				ShortCircuit = document.ProgramInfo?.ShortCircuitEvaluation ?? false,
 				TemporaryOutput = mode.Temporary,
 				PreprocessOnly = mode.Preprocess,
@@ -338,8 +455,8 @@ namespace FalloutScriptStudio.Workspace
 			try
 			{
 				result = mode.Preprocess
-					? await this._compiler.PreprocessAsync(request)
-					: await this._compiler.CompileAsync(request);
+					? await this._compiler.PreprocessAsync(request, cancellationToken)
+					: await this._compiler.CompileAsync(request, cancellationToken);
 			}
 			finally
 			{
@@ -349,12 +466,24 @@ namespace FalloutScriptStudio.Workspace
 				}
 			}
 
-			document.BuildErrors = result.Errors;
+			IReadOnlyList<BuildError> errors = WithoutToolFailureEntries(result);
+			foreach (ToolFailure failure in result.ToolFailures)
+			{
+				this._problems.Report(ProblemFactory.FromToolFailure(failure));
+			}
+
+			if (!result.Success && result.ToolFailures.Count == 0 && !errors.Any(error => error.Type == BuildErrorType.Error))
+			{
+				// The tool failed without saying where (a user batch file, for example): the list must still say that something failed.
+				this._problems.Report(ProblemFactory.BuildFailedWithoutDetails(document.FilePath, mode.Preprocess, document));
+			}
+
+			document.BuildErrors = errors;
 			if (mode.Preprocess)
 			{
 				document.BuildLog = result.Output;
 				this._output.ShowTab(OutputTab.Build);
-				return new BuildOutcome(result.Success, result);
+				return new BuildOutcome(result.Success, result, errors);
 			}
 
 			if (result.Success)
@@ -373,15 +502,15 @@ namespace FalloutScriptStudio.Workspace
 				this._sounds.PlayCompileFailed();
 				if (mode.ShowMessages && compiler.WarnOnFailedCompile)
 				{
-					this._output.ShowTab(compiler.UseUserCommand ? OutputTab.Build : OutputTab.Errors);
+					this._output.ShowTab(compiler.UseUserCommand && result.ToolFailures.Count == 0 ? OutputTab.Build : OutputTab.Errors);
 				}
 			}
 
-			return new BuildOutcome(result.Success, result);
+			return new BuildOutcome(result.Success, result, errors);
 		}
 
 		private readonly record struct BuildMode(Boolean ShowMessages, Boolean ShowSuccess, Boolean Preprocess, Boolean Temporary);
 
-		private readonly record struct BuildOutcome(Boolean Success, CompilationResult? Result);
+		private readonly record struct BuildOutcome(Boolean Success, CompilationResult? Result, IReadOnlyList<BuildError> Errors);
 	}
 }

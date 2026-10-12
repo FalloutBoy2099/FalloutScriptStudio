@@ -14,7 +14,6 @@
     <sys:String x:Key="Str.Common.No">否</sys:String>
     <sys:String x:Key="Str.Common.Close">关闭</sys:String>
     <sys:String x:Key="Str.Common.Save">保存</sys:String>
-    <sys:String x:Key="Str.Common.Browse">浏览...</sys:String>
     <sys:String x:Key="Str.Common.Add">添加</sys:String>
     <sys:String x:Key="Str.Common.Remove">移除</sys:String>
     <sys:String x:Key="Str.Common.Delete">删除</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">帮助</sys:String>
     <sys:String x:Key="Str.Common.About">关于</sys:String>
     <sys:String x:Key="Str.Common.Loading">正在加载...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">最小化</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">最大化</sys:String>
+    <sys:String x:Key="Str.Common.Restore">还原</sys:String>
 </ResourceDictionary>

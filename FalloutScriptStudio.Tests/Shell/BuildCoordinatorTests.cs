@@ -38,7 +38,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 				Assert.True(result);
 				Assert.Equal(new[] { document.FilePath }, harness.Compiler.Compiled);
-				Assert.Contains("Compilation Successfully!", document.BuildLog, StringComparison.Ordinal);
+				Assert.Contains("Compilation succeeded.", document.BuildLog, StringComparison.Ordinal);
 				Assert.Empty(document.ParserErrors);
 				Assert.NotNull(toast);
 				Assert.Equal(NotificationKind.Success, toast!.Kind);
@@ -61,7 +61,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 				Assert.False(result);
 				Assert.Equal(1, harness.Sounds.CompileFailedCount);
-				Assert.Contains("Compilation Failed!", document.BuildLog, StringComparison.Ordinal);
+				Assert.Contains("Compilation failed.", document.BuildLog, StringComparison.Ordinal);
 				Assert.Equal("bad", Assert.Single(document.BuildErrors).Message);
 				Assert.Equal((Int32)OutputTab.Errors, harness.Output.SelectedTab);
 				Assert.Equal("bad", Assert.Single(harness.Output.Errors).Message);

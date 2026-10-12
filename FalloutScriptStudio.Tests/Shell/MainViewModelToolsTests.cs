@@ -155,6 +155,71 @@ namespace FalloutScriptStudio.Tests.Shell
 		}
 
 		[Fact]
+		public void The_first_run_never_asks_to_associate_the_file_types()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Dialogs.ConfirmAnswer = true;
+
+				await harness.Main.RunFirstRunAsync();
+
+				Assert.Equal(0, harness.FileAssociation.AssociateCount);
+				Assert.Empty(harness.Dialogs.Confirmations);
+				Assert.True(harness.Settings.Settings.IsFirstRunCompleted);
+			});
+		}
+
+		[Fact]
+		public void The_help_menu_associates_the_file_types_when_the_user_confirms()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Dialogs.ConfirmAnswer = true;
+
+				await harness.Main.AssociateFileTypesAsync();
+
+				Assert.Equal(1, harness.FileAssociation.AssociateCount);
+				Assert.Equal(harness.Paths.ResourcesDirectory, harness.FileAssociation.LastIconsDirectory);
+				Assert.Single(harness.Dialogs.Confirmations);
+				Assert.Single(harness.Dialogs.Messages);
+			});
+		}
+
+		[Fact]
+		public void The_help_menu_does_nothing_when_the_user_declines_the_association()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Dialogs.ConfirmAnswer = false;
+
+				await harness.Main.AssociateFileTypesAsync();
+
+				Assert.Equal(0, harness.FileAssociation.AssociateCount);
+				Assert.Empty(harness.Dialogs.Messages);
+			});
+		}
+
+		[Fact]
+		public void The_help_menu_reports_a_registry_failure_instead_of_crashing()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Dialogs.ConfirmAnswer = true;
+				harness.FileAssociation.FailWith = new UnauthorizedAccessException("denied");
+
+				await harness.Main.AssociateFileTypesAsync();
+
+				Assert.Equal(0, harness.FileAssociation.AssociateCount);
+				String message = Assert.Single(harness.Dialogs.Messages);
+				Assert.Contains("denied", message);
+			});
+		}
+
+		[Fact]
 		public void The_theme_command_applies_and_stores_the_mode()
 		{
 			using ShellHarness harness = new ShellHarness();
@@ -505,7 +570,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				harness.Settings.Update(settings => settings.Paths.SolutionFolder = harness.Folder.Path);
 				await harness.Main.OpenProjectFolderAsync();
 				Assert.Equal(harness.Folder.Path, Assert.Single(harness.Shell.Folders));
-				Assert.Equal("Project: " + harness.Folder.Path, harness.Main.ProjectText);
+				Assert.Equal("Project: " + System.IO.Path.GetFileName(harness.Folder.Path), harness.Main.ProjectText);
 			});
 		}
 

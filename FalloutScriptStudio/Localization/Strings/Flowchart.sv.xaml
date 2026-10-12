@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Spara flödesschema som bild</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Dialognod</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Anteckning</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funktionskonfiguration</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Dialogfunktioner</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Redigerar reglerna som talar om för flödesschemat vilka funktioner och makron som visar meddelanden och hoppar till noder.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Skapa ingen utgångsnod</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Skapar ingen utgångsnod för dialogen (vanligen Node999) i flödesschemat.</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Radnummer i meddelandefilen. Klicka för att öppna meddelanderedigeraren.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Öppna meddelanderedigeraren vid det här meddelandet</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Meddelandetext</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Msg-fil</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Meddelandefil</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Noder:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Dialognoden som visas</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Dialognod</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Klicka här för att skriva text...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Filen saknas</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Meddelandefilen för dialogen hittades inte.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Flödesschema för dialogen</sys:String>
 </ResourceDictionary>

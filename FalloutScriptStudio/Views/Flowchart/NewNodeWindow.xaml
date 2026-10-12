@@ -14,6 +14,8 @@
     FontSize="12"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ShowInTaskbar="False"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
     <ui:FluentWindow.Resources>

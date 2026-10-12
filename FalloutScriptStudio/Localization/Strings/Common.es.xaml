@@ -14,12 +14,11 @@
     <sys:String x:Key="Str.Common.No">No</sys:String>
     <sys:String x:Key="Str.Common.Close">Cerrar</sys:String>
     <sys:String x:Key="Str.Common.Save">Guardar</sys:String>
-    <sys:String x:Key="Str.Common.Browse">Examinar...</sys:String>
     <sys:String x:Key="Str.Common.Add">Añadir</sys:String>
     <sys:String x:Key="Str.Common.Remove">Quitar</sys:String>
     <sys:String x:Key="Str.Common.Delete">Eliminar</sys:String>
     <sys:String x:Key="Str.Common.Clear">Borrar</sys:String>
-    <sys:String x:Key="Str.Common.Rename">Renombrar</sys:String>
+    <sys:String x:Key="Str.Common.Rename">Cambiar nombre</sys:String>
     <sys:String x:Key="Str.Common.Copy">Copiar</sys:String>
     <sys:String x:Key="Str.Common.Cut">Cortar</sys:String>
     <sys:String x:Key="Str.Common.Paste">Pegar</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">Ayuda</sys:String>
     <sys:String x:Key="Str.Common.About">Acerca de</sys:String>
     <sys:String x:Key="Str.Common.Loading">Cargando...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">Minimizar</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">Maximizar</sys:String>
+    <sys:String x:Key="Str.Common.Restore">Restaurar</sys:String>
 </ResourceDictionary>

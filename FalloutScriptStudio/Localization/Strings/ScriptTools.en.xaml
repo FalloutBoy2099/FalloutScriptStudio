@@ -45,7 +45,7 @@
     <sys:String x:Key="Str.ScriptTools.RegFindPrevName">Find previous</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegFindNextTip">Find the next match.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegFindNextName">Find next</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RegDefineLabel">Add definition for script to Scripts.h:</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegDefineLabel">Add definition for script to scripts.h:</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegDefineTip">Adds a #define for the script to scripts.h when the list is saved.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegDefineName">Definition name</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegAllow">Allow</sys:String>
@@ -62,8 +62,8 @@
     <sys:String x:Key="Str.ScriptTools.RegNothingFound">Nothing found.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegAttention">Attention</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegAskSave">Save all changes to the files?</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RegErrCannotOpen">The script list cannot be opened.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RegErrRead">The script list could not be read: {0}</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegErrCannotOpen">The scripts list cannot be opened.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegErrRead">The scripts list could not be read: {0}</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegErrSave">The files could not be saved: {0}</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegErrDefineNoHeader" xml:space="preserve">The definition was not added to the header file.&#10;Reason: scripts.h could not be found.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegErrDefineBadName" xml:space="preserve">The definition was not added to the header file.&#10;Reason: '{0}' is not a valid name.</sys:String>
@@ -85,22 +85,22 @@
     <sys:String x:Key="Str.ScriptTools.RegPathFileNotFound">The file {0} was not found.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegPathHeaderNotSet">The path to scripts.h is not set.</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsContinue">Continue</sys:String>
-    <sys:String x:Key="Str.ScriptTools.ToolsFlowchartTitle">Nodes flowchart</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ToolsFlowchartTitle">Dialogue flowchart</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsFlowchartSaveFirst">Save the script first: the flowchart is saved next to the script.</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsPreviewTitle">Dialogue preview</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsPreviewNoDialogue">The script has no dialogue to preview: put the caret inside a dialogue node, or add a talk_p_proc procedure.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchTitle">Search &amp; Replace</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFindText">Find text</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceText">Replace text</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchMatchCase">Match case</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchWholeWord">Whole word only</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchRegex">Regular expression</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchMatchCase">_Match case</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchWholeWord">_Whole word only</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchRegex">_Regular expression</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchIn">Search in</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeCurrent">Current script</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeCurrent">_Current script</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeCurrentTip">Search in the active script.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeOpen">All open scripts</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeOpen">_All open scripts</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeOpenTip">Search in all open scripts, including their unsaved changes.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeFolder">Files in a folder</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeFolder">Fi_les in a folder</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeFolderTip">Search in the files of a folder.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFolderTip">The folder to search; the list holds the folders you used before.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFolderName">Folder to search</sys:String>
@@ -109,11 +109,11 @@
     <sys:String x:Key="Str.ScriptTools.SearchRemoveFolderName">Remove saved folder</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFileTypes">File types</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFileTypesTip">File masks separated by semicolons.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchIncludeSubfolders">Include subfolders</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindNext">Find next</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchIncludeSubfolders">_Include subfolders</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindNext">_Find next</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFindNextTip">Find the next match in the open scripts; in a folder search lists all matches.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindAll">Find all</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindAllTip">List every matching line and show it in the output panel.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindAll">Fi_nd all</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindAllTip">List every matching line in the Errors tab.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceTip">Replace the selected match and find the next one.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceAll">Replace all</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceAllTip">Replace every match in the current script or in all open scripts.</sys:String>
@@ -141,7 +141,7 @@
     <sys:String x:Key="Str.ScriptTools.RulesTitle">Dialogue functions</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesIntro">Tell the dialogue parser and the flowchart which of your own macros or procedures work like the engine's dialogue functions. The rules are saved to DialogFunc.cfg and apply to every script.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesBuiltIn">Always recognized: {0}.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RulesAdd">Add rule</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesAdd">_Add rule</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesAddTip">Adds a rule for another macro or procedure.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesRemoveTip">Removes the selected rule (Delete).</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesGridName">Dialogue function rules</sys:String>
@@ -183,7 +183,7 @@
     <sys:String x:Key="Str.ScriptTools.RulesErrPositionUsed">{0} uses argument {1}, which is already used by another column.</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfTitleAdd">Add function</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfTitleEdit">Edit function</sys:String>
-    <sys:String x:Key="Str.ScriptTools.UfNamePlaceholder">Name shown in the functions tree</sys:String>
+    <sys:String x:Key="Str.ScriptTools.UfNamePlaceholder">Name shown in the function tree</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfNameAutomation">Function name</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfDescription">Short description</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfDescriptionPlaceholder">Shown as a tool tip of the function</sys:String>
@@ -201,7 +201,7 @@
     <sys:String x:Key="Str.ScriptTools.MacroAfter">After</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroDefinedIn">Defined in {0}</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroDeclaredAt">{0}, line {1}</sys:String>
-    <sys:String x:Key="Str.ScriptTools.MacroDeselectAll">Deselect all</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroDeselectAll">_Deselect all</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroTreeName">Occurrences of the macro name</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroRenameTip">Renames the ticked occurrences (Ctrl+Enter).</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSectionOpen">Open scripts</sys:String>
@@ -213,4 +213,12 @@
     <sys:String x:Key="Str.ScriptTools.MacroSummaryOne">{0} of {1} occurrence selected in {2} file.</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSummaryOneFile">{0} of {1} occurrences selected in {2} file.</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSummaryMany">{0} of {1} occurrences selected in {2} files.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnBrowse">_Browse...</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnReplace">R_eplace</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnReplaceAll">Re_place all</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesBtnRemove">_Remove</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesBtnSave">_Save</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Save</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Select all</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Rename</sys:String>
 </ResourceDictionary>

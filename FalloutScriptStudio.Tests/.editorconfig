@@ -1,0 +1,15 @@
+[*.cs]
+# Test method names use underscores (Method_Condition_Result) on purpose.
+dotnet_diagnostic.CA1707.severity = none
+# Inline arrays in test data (theories, expected values) are clearer than shared static fields.
+dotnet_diagnostic.CA1861.severity = none
+# Performance rules (indexers instead of First(), concrete types) do not matter in test code.
+dotnet_diagnostic.CA1826.severity = none
+dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CA1863.severity = none
+# xunit collection definitions are named ...Collection.
+dotnet_diagnostic.CA1711.severity = none
+# The DispatchProxy subclasses of the fakes cannot be sealed (the runtime derives its proxy from them).
+dotnet_diagnostic.CA1852.severity = none
+# The logger tests call the logger directly on purpose.
+dotnet_diagnostic.CA1848.severity = none

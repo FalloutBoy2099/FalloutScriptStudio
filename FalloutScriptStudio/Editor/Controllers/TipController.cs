@@ -34,6 +34,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly DispatcherTimer _codeTipTimer = new DispatcherTimer();
 		private ToolTip? _hoverTip;
 		private Popup? _codeTip;
+		private Boolean _codeTipShown;
 		private Int32 _codeTipAnchor = -1;
 		private Window? _ownerWindow;
 
@@ -48,7 +49,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		public Popup? CodeTipPopup => this._codeTip;
 
 		/// <summary>Gets a value indicating whether a code tip is visible.</summary>
-		public Boolean IsCodeTipVisible => this._codeTip is { IsOpen: true };
+		public Boolean IsCodeTipVisible => this._codeTip is not null && this._codeTipShown;
 
 		/// <summary>Gets a value indicating whether a code tip bound to a parenthesis is visible.</summary>
 		public Boolean IsParameterTipVisible => this.IsCodeTipVisible && this._codeTipAnchor >= 0;
@@ -106,6 +107,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		{
 			this._codeTipTimer.Stop();
 			this._codeTipAnchor = -1;
+			this._codeTipShown = false;
 			if (this._codeTip is not null)
 			{
 				this._codeTip.IsOpen = false;
@@ -279,7 +281,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			this._hoverTip.PlacementTarget = view;
 			this._hoverTip.HorizontalOffset = point.X;
 			this._hoverTip.VerticalOffset = point.Y + 20;
-			this._hoverTip.IsOpen = true;
+			this._context.Services.Popups.Show(this._hoverTip);
 			return true;
 		}
 
@@ -403,7 +405,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 				Child = chrome,
 			};
 			this._codeTipAnchor = parenOffset;
-			this._codeTip.IsOpen = true;
+			this._context.Services.Popups.Show(this._codeTip);
+			this._codeTipShown = true;
 			this._codeTipTimer.Interval = duration;
 			this._codeTipTimer.Start();
 		}

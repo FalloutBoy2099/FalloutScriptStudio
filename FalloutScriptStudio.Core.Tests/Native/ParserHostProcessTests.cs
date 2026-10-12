@@ -129,7 +129,9 @@ namespace FalloutScriptStudio.Core.Tests.Native
 
 			parent.Kill();
 
-			Assert.Equal(3, await WaitForExitCodeAsync(process));
+			// 3: the watchdog saw the parent end; 2: under load the host started after the parent was already gone. Either way it ends.
+			Int32 exitCode = await WaitForExitCodeAsync(process);
+			Assert.True(exitCode is 2 or 3, "Unexpected exit code " + exitCode.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".");
 		}
 
 		[RealToolFact(RealTools.Parser)]

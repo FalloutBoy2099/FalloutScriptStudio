@@ -17,10 +17,11 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		private readonly FakeSettingsService _settings = new FakeSettingsService(@"C:\fss");
 		private readonly FakeThemeService _theme = new FakeThemeService();
 		private readonly FakeDialogService _dialogs = new FakeDialogService();
+		private readonly FakeFileAssociationService _association = new FakeFileAssociationService();
 
 		private SettingsViewModel Create(params String[] fonts)
 		{
-			return new SettingsViewModel(this._settings, this._theme, this._dialogs, new FileAssociationService(), new FakeFontCatalog(fonts));
+			return new SettingsViewModel(this._settings, this._theme, this._dialogs, this._association, new FakeFontCatalog(fonts));
 		}
 
 		[Fact]

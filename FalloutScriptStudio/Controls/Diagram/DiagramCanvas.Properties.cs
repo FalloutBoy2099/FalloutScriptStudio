@@ -183,6 +183,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 			}
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "The signature is fixed by CoerceValueCallback.")]
 		private static Object CoerceZoom(DependencyObject d, Object baseValue)
 		{
 			DiagramCanvas canvas = (DiagramCanvas)d;

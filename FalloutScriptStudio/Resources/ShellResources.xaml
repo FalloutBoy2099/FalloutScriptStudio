@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:conv="clr-namespace:FalloutScriptStudio.Resources.Converters"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
 
@@ -18,6 +19,11 @@
     <CornerRadius x:Key="ShellSmallCornerRadius">4</CornerRadius>
     <Thickness x:Key="ShellPagePadding">8</Thickness>
     <Thickness x:Key="ShellRowGap">0,0,0,8</Thickness>
+
+    <!--  Every title bar names its minimize, maximize and close buttons for a screen reader  -->
+    <Style BasedOn="{StaticResource {x:Type ui:TitleBar}}" TargetType="{x:Type ui:TitleBar}">
+        <Setter Property="a11y:TitleBarNames.Localize" Value="True" />
+    </Style>
 
     <!--  Compact icon button used by the toolbar and the panel headers  -->
     <Style
@@ -44,6 +50,89 @@
         <Setter Property="MinHeight" Value="26" />
         <Setter Property="Width" Value="26" />
         <Setter Property="Height" Value="26" />
+    </Style>
+
+    <!--  Thin icon button (24 x 22, 12 px icon) for the toolbar of the log panel  -->
+    <Style
+        x:Key="ShellCompactIconButtonStyle"
+        BasedOn="{StaticResource ShellIconButtonStyle}"
+        TargetType="{x:Type ui:Button}">
+        <Setter Property="MinWidth" Value="24" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!--  Counter toggle (icon and count): flat, only a light background when it is on  -->
+    <Style x:Key="ShellCounterToggleStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Margin" Value="1,0" />
+        <Setter Property="Padding" Value="5,0" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border
+                        x:Name="Chrome"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{StaticResource ShellSmallCornerRadius}">
+                        <ContentPresenter VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Compact button with text used by the status bar  -->
+    <Style
+        x:Key="ShellStatusButtonStyle"
+        BasedOn="{StaticResource {x:Type ui:Button}}"
+        TargetType="{x:Type ui:Button}">
+        <Setter Property="Appearance" Value="Transparent" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Padding" Value="6,0" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--  Status bar button that shows a text: the text is its name and the tool tip explains it  -->
+    <Style
+        x:Key="ShellStatusTextButtonStyle"
+        BasedOn="{StaticResource {x:Type ui:Button}}"
+        TargetType="{x:Type ui:Button}">
+        <Setter Property="Appearance" Value="Transparent" />
+        <Setter Property="AutomationProperties.HelpText" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="Padding" Value="6,0" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--  Icon toggle: the tool tip is also the accessible name  -->
+    <Style
+        x:Key="ShellIconToggleStyle"
+        BasedOn="{StaticResource {x:Type ToggleButton}}"
+        TargetType="{x:Type ToggleButton}">
+        <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
     </Style>
 
     <Style x:Key="ShellToolbarSeparatorStyle" TargetType="{x:Type Rectangle}">

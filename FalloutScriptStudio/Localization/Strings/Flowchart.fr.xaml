@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Enregistrer l’organigramme comme image</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Nœud de dialogue</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Note</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Configuration des fonctions</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Fonctions de dialogue</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Modifie les règles qui indiquent à l’organigramme quelles fonctions et macros affichent des messages et sautent vers des nœuds.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Ne pas créer de nœud de sortie</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Ne crée pas de nœud de sortie du dialogue (généralement Node999) dans l’organigramme.</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Numéro de ligne dans le fichier de messages. Cliquez pour ouvrir l’éditeur de messages.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Ouvrir l’éditeur de messages sur ce message</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Texte du message</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Fichier msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Fichier de messages</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Nœuds :</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Le nœud de dialogue à afficher</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Nœud de dialogue</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Cliquez ici pour saisir du texte...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Fichier manquant</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Le fichier de messages du dialogue est introuvable.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Organigramme du dialogue</sys:String>
 </ResourceDictionary>

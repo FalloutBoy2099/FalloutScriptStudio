@@ -112,10 +112,10 @@
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFileQuestion">Vytvořit soubor zpráv {0}?</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreatedIn">Soubor bude vytvořen v: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFailed">Soubor zpráv se nepodařilo vytvořit:</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">Soubor Scripts.lst neexistuje ve složce zkompilovaných skriptů.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Přidružený název se ze Scripts.lst nepodařilo přečíst.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">Soubor scripts.lst neexistuje ve složce zkompilovaných skriptů.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Přidružený název se ze scripts.lst nepodařilo přečíst.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.NameMacroMissing">Makro NAME nebylo v tomto skriptu nalezeno nebo nemá číslo skriptu.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Soubor zpráv se místo toho přiřadí podle názvu skriptu.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Soubor zpráv se místo toho přidruží podle názvu skriptu.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Deleted">Soubor už na disku neexistuje. Uložením se vytvoří znovu.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.ChangedUnsaved">Soubor byl změněn jiným programem. Opětovným načtením se neuložené změny zahodí.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Changed">Soubor byl změněn jiným programem.</sys:String>
@@ -150,4 +150,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.MissingNumber">Chybí číslo řádku zprávy.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Neplatné číslo řádku zprávy.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Duplicitní číslo řádku zprávy: {0}</sys:String>
+    <sys:String x:Key="Str.MessageEditor.A11y.Grid">Zprávy</sys:String>
 </ResourceDictionary>

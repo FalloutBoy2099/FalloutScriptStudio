@@ -2,10 +2,12 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.IO;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Compilation;
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Core.Parsing;
 
@@ -17,9 +19,18 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IDialogService _dialogs;
 		private readonly IOutputSink _output;
 		private readonly DocumentFileService _files;
+		private readonly IOperationTracker _operations;
+		private readonly IProblemService _problems;
 
 		/// <summary>Initializes the service.</summary>
-		public ScriptDecompilationService(ISettingsService settings, IScriptCompiler compiler, IDialogService dialogs, IOutputSink output, DocumentFileService files)
+		public ScriptDecompilationService(
+			ISettingsService settings,
+			IScriptCompiler compiler,
+			IDialogService dialogs,
+			IOutputSink output,
+			DocumentFileService files,
+			IOperationTracker? operations = null,
+			IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(compiler);
@@ -31,13 +42,15 @@ namespace FalloutScriptStudio.Workspace
 			this._dialogs = dialogs;
 			this._output = output;
 			this._files = files;
+			this._operations = operations ?? new OperationTracker();
+			this._problems = problems ?? new ProblemService();
 		}
 
 		/// <summary>
 		/// Decompiles a <c>.int</c> file, logging to the Build tab. Unless the decompilation is temporary the user is asked where to
 		/// save the source; the caller then writes it with <see cref="SaveTargetAsync"/> (after checking that the target is not open).
 		/// </summary>
-		/// <returns>The decompiled script, or <see langword="null"/> (an error was already shown) when the decompilation failed.</returns>
+		/// <returns>The decompiled script, or <see langword="null"/> (an error was already shown) when the decompilation failed or was cancelled.</returns>
 		public async Task<DecompiledScript?> DecompileAsync(String path, OpenDocumentOptions options)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(path);
@@ -50,17 +63,46 @@ namespace FalloutScriptStudio.Workspace
 
 			this._output.ShowTab(OutputTab.Build);
 			Progress<String> progress = new Progress<String>(line => this._output.AppendBuildLine(line));
-			DecompilationResult result = await this._compiler.DecompileAsync(
-				new DecompilationRequest
+
+			// A round trip hands over the token of its own operation; opening a compiled script is an operation of its own that the user can cancel.
+			IOperation? own = options.CancellationToken.CanBeCanceled ? null : this._operations.TryBegin(OperationKind.Decompile, Path.GetFileName(path));
+			CancellationToken token = own?.Token ?? options.CancellationToken;
+			DecompilationResult result;
+			try
+			{
+				result = await this._compiler.DecompileAsync(
+					new DecompilationRequest
+					{
+						ScriptPath = path,
+						Options = this._settings.Effective.ToCompilerOptions(this._settings.Paths),
+						TemporaryOutput = options.TemporaryDecompile,
+					},
+					progress,
+					token);
+			}
+			catch (OperationCanceledException) when (token.IsCancellationRequested)
+			{
+				if (own is not null)
 				{
-					ScriptPath = path,
-					Options = this._settings.Settings.ToCompilerOptions(this._settings.Paths),
-					TemporaryOutput = options.TemporaryDecompile,
-				},
-				progress);
+					this._output.ReportStatus(Loc.Format("Str.Shell.Operation.DecompileCancelled", Path.GetFileName(path)));
+				}
+
+				return null;
+			}
+			finally
+			{
+				// The decompiler is done: choosing where to save the source is not part of the cancellable operation.
+				own?.Dispose();
+			}
 
 			if (!result.Success || result.OutputFilePath is null || !File.Exists(result.OutputFilePath))
 			{
+				foreach (ToolFailure failure in result.ToolFailures)
+				{
+					this._problems.Report(ProblemFactory.FromToolFailure(failure));
+				}
+
+				this._problems.Report(ProblemFactory.DecompileFailed(path));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.DecompileErrorTitle"), Loc.Format("Str.Shell.Dlg.DecompileFailed", path));
 				return null;
 			}

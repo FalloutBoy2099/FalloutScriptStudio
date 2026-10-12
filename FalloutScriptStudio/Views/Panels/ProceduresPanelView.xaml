@@ -81,6 +81,7 @@
             <Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
             <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
             <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
             <Setter Property="AllowDrop" Value="True" />
             <Setter Property="ContextMenu">
                 <Setter.Value>
@@ -187,6 +188,7 @@
                 Height="26"
                 Margin="1,0"
                 Padding="0"
+                AutomationProperties.Name="{DynamicResource Str.Panels.TipShowArguments}"
                 Background="Transparent"
                 BorderThickness="0"
                 IsChecked="{Binding ShowArguments, Mode=TwoWay}"
@@ -203,6 +205,7 @@
                 Height="26"
                 Margin="1,0"
                 Padding="0"
+                AutomationProperties.Name="{DynamicResource Str.Panels.TipOnlyProcedure}"
                 Background="Transparent"
                 BorderThickness="0"
                 IsChecked="{Binding OnlyCurrentProcedure, Mode=TwoWay}"
@@ -219,17 +222,20 @@
         <ui:TextBox
             Grid.Row="1"
             Margin="6,4"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
             ClearButtonEnabled="True"
             PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
-            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
 
         <TreeView
             x:Name="Tree"
             Grid.Row="2"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TabProcedures}"
             Background="Transparent"
             BorderThickness="0"
             ItemContainerStyle="{StaticResource ProcedureItemStyle}"
             ItemsSource="{Binding Groups}"
+            KeyDown="OnTreeKeyDown"
             PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown"
             SelectedItemChanged="OnSelectedItemChanged">
             <TreeView.ContextMenu>

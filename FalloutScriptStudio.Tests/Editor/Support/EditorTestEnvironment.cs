@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Editor;
+	using FalloutScriptStudio.Tests.Support;
 	using FalloutScriptStudio.TestSupport;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
@@ -30,15 +31,19 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			this.SettingsService.Settings.Editor.TabsToSpaces = true;
 			this.SettingsService.Settings.Editor.TabSize = 3;
 
+			this.Popups = new HiddenEditorPopups();
 			this.Theme = new FixedThemeService(dark);
 			(IWorkspace workspace, RecordingWorkspace recorder) = RecordingWorkspace.Create();
 			this.Workspace = workspace;
 			this.Recorder = recorder;
 			this.CollapsedStore = new InMemoryCollapsedProcedureStore();
-			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros);
+			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros, popups: this.Popups);
 		}
 
 		public SettingsService SettingsService { get; }
+
+		/// <summary>Gets the presenter that records the popups of the editors instead of opening them.</summary>
+		public HiddenEditorPopups Popups { get; }
 
 		public FixedThemeService Theme { get; }
 

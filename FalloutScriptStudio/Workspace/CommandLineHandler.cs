@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
+	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services;
@@ -17,9 +18,15 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IMessageEditorService _messageEditor;
 		private readonly IScriptToolService _scriptTools;
 		private readonly IDialogService _dialogs;
+		private readonly IProjectService? _projects;
 
 		/// <summary>Initializes the handler.</summary>
-		public CommandLineHandler(IWorkspaceManager workspace, IMessageEditorService messageEditor, IScriptToolService scriptTools, IDialogService dialogs)
+		/// <param name="workspace">The workspace the documents are opened in.</param>
+		/// <param name="messageEditor">Opens message files.</param>
+		/// <param name="scriptTools">Opens flowcharts.</param>
+		/// <param name="dialogs">Shows the messages.</param>
+		/// <param name="projects">Opens a folder given on the command line as the project; without it a folder is ignored.</param>
+		public CommandLineHandler(IWorkspaceManager workspace, IMessageEditorService messageEditor, IScriptToolService scriptTools, IDialogService dialogs, IProjectService? projects = null)
 		{
 			ArgumentNullException.ThrowIfNull(workspace);
 			ArgumentNullException.ThrowIfNull(messageEditor);
@@ -29,9 +36,10 @@ namespace FalloutScriptStudio.Workspace
 			this._messageEditor = messageEditor;
 			this._scriptTools = scriptTools;
 			this._dialogs = dialogs;
+			this._projects = projects;
 		}
 
-		/// <summary>Opens each argument: scripts and headers in tabs, message files in the message editor, flowcharts through their script.</summary>
+		/// <summary>Opens each argument: scripts and headers in tabs, message files in the message editor, flowcharts through their script, a folder as the project.</summary>
 		/// <returns><see langword="true"/> when at least one tab was opened or activated.</returns>
 		public async Task<Boolean> HandleAsync(IEnumerable<String> arguments)
 		{
@@ -46,6 +54,13 @@ namespace FalloutScriptStudio.Workspace
 				}
 
 				String path = Path.GetFullPath(argument);
+				if (Directory.Exists(path))
+				{
+					// A folder is a project; the window is brought to the front like for a tab.
+					opened |= this._projects?.Open(path) == true;
+					continue;
+				}
+
 				String extension = Path.GetExtension(path).ToLowerInvariant();
 				if (extension == ".msg")
 				{

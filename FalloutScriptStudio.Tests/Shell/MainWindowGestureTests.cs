@@ -50,6 +50,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				Key.OemMinus or Key.Subtract => "-",
 				Key.OemQuestion or Key.Divide => "/",
 				Key.Multiply => "*",
+				Key.Cancel => "Break",
 				>= Key.D0 and <= Key.D9 => ((Int32)(key - Key.D0)).ToString(System.Globalization.CultureInfo.InvariantCulture),
 				_ => key.ToString(),
 			};
@@ -198,7 +199,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				.Single(element => ((String?)element.Attribute("IsChecked"))?.Contains("FormatCodeOnOpen", StringComparison.Ordinal) == true);
 
 			Assert.Equal("True", (String?)item.Attribute("IsCheckable"));
-			Assert.Equal("Str.Shell.Menu.Code", ExtractKey(item.Parent!.Attribute("Header")!.Value));
+			Assert.Equal("Str.Shell.MenuBar.Code", ExtractKey(item.Parent!.Attribute("Header")!.Value));
 		}
 
 		private static String ExtractKey(String resource)

@@ -101,7 +101,7 @@ namespace FalloutScriptStudio.Core.Messages
 			await AtomicFile.WriteAllBytesAsync(path, TextEncodings.Utf8.GetBytes(MessageFileTexts.NewFileContent), cancellationToken).ConfigureAwait(false);
 			if (this._logger.IsEnabled(LogLevel.Information))
 			{
-				this._logger.LogInformation("Created the message file {Path}", path);
+				this._logger.FileCreated(path);
 			}
 
 			return path;
@@ -141,7 +141,7 @@ namespace FalloutScriptStudio.Core.Messages
 		{
 			if (!MessageTextEditor.TryReplaceText(lines, messageId, text))
 			{
-				this._logger.LogWarning("Message {MessageId} was not found in {Path}", messageId, path);
+				this._logger.MessageNotFound(messageId, path);
 				return false;
 			}
 
@@ -252,7 +252,7 @@ namespace FalloutScriptStudio.Core.Messages
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "The message folder {Directory} could not be searched", directory);
+				this._logger.FolderNotSearched(ex, directory);
 			}
 
 			return null;

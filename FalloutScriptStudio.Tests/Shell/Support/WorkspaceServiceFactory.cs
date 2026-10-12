@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	using FalloutScriptStudio.Core.Messages;
 	using FalloutScriptStudio.Core.Refactoring;
 	using FalloutScriptStudio.Core.TextTools;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.MessageEditor;
 	using FalloutScriptStudio.Services.ScriptTools;
@@ -24,9 +25,11 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			IOutputSink output,
 			IMessageEditorService messageEditor,
 			IScriptToolService scriptTools,
-			IDialogueDialogsService dialogueDialogs)
+			IDialogueDialogsService dialogueDialogs,
+			IProblemService? problems = null,
+			IOperationTracker? operations = null)
 		{
-			DocumentFileService files = new DocumentFileService(settings, dialogs, NullLogger<DocumentFileService>.Instance);
+			DocumentFileService files = new DocumentFileService(settings, dialogs, NullLogger<DocumentFileService>.Instance, null, problems);
 			return new WorkspaceService(
 				settings,
 				parser,
@@ -34,13 +37,15 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				output,
 				new SymbolRenameService(new RefactoringService(), dialogs, scriptTools, dialogueDialogs, settings),
 				files,
-				new ScriptDecompilationService(settings, compiler, dialogs, output, files),
-				new ArchiveScriptExtractor(settings, archives, dialogs),
+				new ScriptDecompilationService(settings, compiler, dialogs, output, files, operations, problems),
+				new ArchiveScriptExtractor(settings, archives, dialogs, problems),
 				new ExternalChangeDetector(dialogs),
-				new MessageAssociationService(settings, new MessageFileService(NullLogger<MessageFileService>.Instance), dialogs, messageEditor, NullLogger<MessageAssociationService>.Instance),
+				new MessageAssociationService(settings, new MessageFileService(NullLogger<MessageFileService>.Instance), dialogs, messageEditor, NullLogger<MessageAssociationService>.Instance, problems),
 				new ProcedureOperations(settings, parser, dialogs, new ProcedureTextService(), scriptTools),
 				new ReferenceResultsPresenter(dialogs, output, settings),
-				scriptTools);
+				scriptTools,
+				null,
+				problems);
 		}
 	}
 }

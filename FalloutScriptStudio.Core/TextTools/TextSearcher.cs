@@ -64,6 +64,31 @@ namespace FalloutScriptStudio.Core.TextTools
 		}
 
 		/// <inheritdoc />
+		public IReadOnlyList<TextSpan> FindAll(String text, SearchQuery query, Int32 maxCount)
+		{
+			ArgumentNullException.ThrowIfNull(text);
+			ArgumentNullException.ThrowIfNull(query);
+			ArgumentOutOfRangeException.ThrowIfNegative(maxCount);
+
+			var result = new List<TextSpan>();
+			if (maxCount == 0)
+			{
+				return result;
+			}
+
+			foreach (Found found in Enumerate(text, query, query.CreateRegex()))
+			{
+				result.Add(found.Span);
+				if (result.Count >= maxCount)
+				{
+					break;
+				}
+			}
+
+			return result;
+		}
+
+		/// <inheritdoc />
 		public Boolean IsMatch(String text, SearchQuery query)
 		{
 			ArgumentNullException.ThrowIfNull(text);

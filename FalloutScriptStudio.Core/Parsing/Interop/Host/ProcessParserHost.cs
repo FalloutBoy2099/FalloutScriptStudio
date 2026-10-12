@@ -7,6 +7,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// <see cref="IParserHostProcess"/> over a real operating system process.
@@ -92,7 +93,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 		/// <summary>Starts the host executable with redirected standard streams and no window.</summary>
 		/// <exception cref="Win32Exception">The process could not be started.</exception>
-		internal static ProcessParserHost Start(String hostPath, String workingDirectory)
+		internal static ProcessParserHost Start(String hostPath, String workingDirectory, ILogger logger)
 		{
 			var startInfo = new ProcessStartInfo(hostPath)
 			{
@@ -128,7 +129,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 			process.BeginErrorReadLine();
 			host.ProcessId = process.Id;
-			host._job = HostJob.TryCreate(process);
+			host._job = HostJob.TryCreate(process, logger);
 			return host;
 		}
 

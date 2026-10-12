@@ -25,6 +25,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private MessageIssueSeverity _severity;
 		private String _issueText = String.Empty;
 		private Boolean _isSearchMatch;
+		private RowState? _capturedState;
 
 		internal MessageRowViewModel(MessageEntry entry, IMessageRowOwner owner)
 		{
@@ -243,9 +244,21 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			};
 		}
 
+		/// <summary>
+		/// Captures the row for the undo history. A row that did not change since it was captured last returns the same state, so the
+		/// snapshots of a big file share the states of the rows that were not edited instead of copying every row at every edit.
+		/// </summary>
 		internal RowState CaptureState()
 		{
-			return new RowState(CloneEntry(this.Entry), this._isLineChanged, this._isTextChanged, this._isCommentChanged, this._isSoundChanged);
+			RowState? cached = this._capturedState;
+			if (cached is not null && cached.Describes(this.Entry, this._isLineChanged, this._isTextChanged, this._isCommentChanged, this._isSoundChanged))
+			{
+				return cached;
+			}
+
+			RowState state = new RowState(CloneEntry(this.Entry), this._isLineChanged, this._isTextChanged, this._isCommentChanged, this._isSoundChanged);
+			this._capturedState = state;
+			return state;
 		}
 
 		internal static MessageRowViewModel FromState(RowState state, IMessageRowOwner owner)
@@ -256,6 +269,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 				_isTextChanged = state.TextChanged,
 				_isCommentChanged = state.CommentChanged,
 				_isSoundChanged = state.SoundChanged,
+				_capturedState = state,
 			};
 		}
 

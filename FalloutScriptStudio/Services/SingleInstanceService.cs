@@ -9,12 +9,13 @@ namespace FalloutScriptStudio.Services
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
+	using FalloutScriptStudio.Startup;
 
 	/// <summary>
 	/// Makes the application single-instance per installation folder. A second instance forwards its
 	/// command-line arguments to the first one through a named pipe and exits.
 	/// </summary>
-	public sealed class SingleInstanceService : IDisposable
+	public sealed class SingleInstanceService : ISingleInstance
 	{
 		/// <summary>How long a start-up of the first instance is waited for before the arguments are given up.</summary>
 		public static readonly TimeSpan DefaultSendTimeout = TimeSpan.FromSeconds(30);

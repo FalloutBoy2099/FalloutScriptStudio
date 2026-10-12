@@ -12,6 +12,8 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="Height"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
     <Window.Resources>

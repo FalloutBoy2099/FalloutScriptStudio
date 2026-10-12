@@ -11,6 +11,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private String _searchText = String.Empty;
 		private Boolean _isFilterActive;
 		private Int32 _matchCount;
+		private Boolean _anyRowMarkedAsMatch;
 		private String _searchStatus = String.Empty;
 
 		/// <summary>Gets or sets the text to search for; matching ignores the letter case and looks at every shown column.</summary>
@@ -98,14 +99,21 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		{
 			String needle = this._searchText.Trim();
 			Int32 count = 0;
-			foreach (MessageRowViewModel row in this._rows)
+
+			// Without a search text no row matches; when no row is marked either, there is nothing to walk (every edit comes through here).
+			if (needle.Length > 0 || this._anyRowMarkedAsMatch)
 			{
-				Boolean match = row.Matches(needle, this._showLipColumn);
-				row.IsSearchMatch = match;
-				if (match)
+				foreach (MessageRowViewModel row in this._rows)
 				{
-					count++;
+					Boolean match = row.Matches(needle, this._showLipColumn);
+					row.IsSearchMatch = match;
+					if (match)
+					{
+						count++;
+					}
 				}
+
+				this._anyRowMarkedAsMatch = count > 0;
 			}
 
 			this.MatchCount = count;
@@ -187,6 +195,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 
 		private void GoToIssue(Boolean forward)
 		{
+			this.FlushStructureCheck();
 			Int32 count = this._rows.Count;
 			Int32 start = this.GetCurrentIndex();
 			for (Int32 step = 1; step <= count; step++)

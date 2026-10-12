@@ -31,6 +31,20 @@ namespace FalloutScriptStudio.Core.Decompilation
 			}
 		}
 
+		/// <summary>Deletes the work file of a run that was cancelled. A file that cannot be deleted is left; the next run removes it first.</summary>
+		/// <param name="paths">The paths of the run.</param>
+		public static void Discard(CompilerPaths paths)
+		{
+			try
+			{
+				File.Delete(paths.DecompilationFile);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				// Nothing to do: Prepare deletes it again before the next run.
+			}
+		}
+
 		/// <summary>Moves the work file to its final name.</summary>
 		/// <param name="paths">The paths of the run.</param>
 		/// <param name="request">The request that was run.</param>

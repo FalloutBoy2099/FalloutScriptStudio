@@ -7,17 +7,32 @@ namespace FalloutScriptStudio.ViewModels.Panels
 	/// <summary>A procedure in the procedures tree.</summary>
 	public sealed partial class ProcedureNodeViewModel : TreeNodeViewModel
 	{
+		private ScriptProcedure _procedure;
+
 		/// <summary>Initializes a node.</summary>
 		public ProcedureNodeViewModel(ScriptProcedure procedure, String title, String key, Boolean isLocal)
 			: base(title, key)
 		{
 			ArgumentNullException.ThrowIfNull(procedure);
-			this.Procedure = procedure;
+			this._procedure = procedure;
 			this.IsLocal = isLocal;
 		}
 
-		/// <summary>Gets the procedure.</summary>
-		public ScriptProcedure Procedure { get; }
+		/// <summary>Gets the procedure; the node keeps showing the same procedure when the script is parsed again, with the new data.</summary>
+		public ScriptProcedure Procedure
+		{
+			get => this._procedure;
+			internal set
+			{
+				if (!ReferenceEquals(this._procedure, value))
+				{
+					this._procedure = value;
+					this.OnPropertyChanged();
+					this.OnPropertyChanged(nameof(this.CanEditNodeCode));
+					this.OnPropertyChanged(nameof(this.IsStandard));
+				}
+			}
+		}
 
 		/// <summary>Gets a value indicating whether the procedure is defined in the current script.</summary>
 		public Boolean IsLocal { get; }

@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	/// The WPF-visual-free state of a diagram: ordered items, selection, hover, computed node layouts, resolved links and
 	/// their routes. The scene listens to its items and reports what changed so that the surface can redraw selectively.
 	/// </summary>
-	internal sealed class DiagramScene
+	internal sealed partial class DiagramScene
 	{
 		private readonly List<DiagramItem> _items = new List<DiagramItem>();
 		private readonly HashSet<DiagramItem> _itemSet = new HashSet<DiagramItem>();
@@ -218,7 +218,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 			{
 				foreach (DiagramNode node in dirty)
 				{
-					NodeLayout layout = NodeLayoutBuilder.Build(node, node.Width, this._context);
+					NaturalTextCache? known = this._layouts.TryGetValue(node, out NodeLayout? old) && ReferenceEquals(old.Context, this._context) ? old.Natural : null;
+					NodeLayout layout = NodeLayoutBuilder.Build(node, node.Width, this._context, known);
 					this._layouts[node] = layout;
 					if (node.Width <= 0.0)
 					{
@@ -275,103 +276,6 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 			}
 
 			return this._bounds;
-		}
-
-		public DiagramHitTestResult HitTest(Point world, Boolean includeGrips)
-		{
-			this.EnsureLayouts();
-			if (includeGrips)
-			{
-				for (Int32 i = this._items.Count - 1; i >= 0; i--)
-				{
-					DiagramItem item = this._items[i];
-					if (!item.IsSelected || item.IsHidden)
-					{
-						continue;
-					}
-
-					Rect bounds = this.GetItemBounds(item);
-					for (DiagramHitPart part = DiagramHitPart.ResizeWest; part <= DiagramHitPart.ResizeSouth; part++)
-					{
-						if (GripGeometry.Has(item, part) && GripGeometry.GetHitRect(bounds, part, this.Zoom).Contains(world))
-						{
-							return new DiagramHitTestResult(item, null, part);
-						}
-					}
-				}
-			}
-
-			for (Int32 i = this._items.Count - 1; i >= 0; i--)
-			{
-				DiagramItem item = this._items[i];
-				if (item.IsHidden)
-				{
-					continue;
-				}
-
-				Rect bounds = this.GetItemBounds(item);
-				if (!bounds.Contains(world))
-				{
-					continue;
-				}
-
-				if (item is DiagramNode node)
-				{
-					(DiagramHitPart part, DiagramRow? row) = this._layouts[node].HitTest(new Point(world.X - bounds.X, world.Y - bounds.Y));
-					return new DiagramHitTestResult(node, row, part);
-				}
-
-				return new DiagramHitTestResult(item, null, DiagramHitPart.Body);
-			}
-
-			return DiagramHitTestResult.Nothing;
-		}
-
-		/// <summary>
-		/// Changes the selection state of one item.
-		/// </summary>
-		/// <returns><c>true</c> when the state changed.</returns>
-		public Boolean SetSelected(DiagramItem item, Boolean selected)
-		{
-			if (!this._itemSet.Contains(item) || item.IsSelected == selected)
-			{
-				return false;
-			}
-
-			if (selected)
-			{
-				this._selection.Add(item);
-			}
-			else
-			{
-				this._selection.Remove(item);
-			}
-
-			item.SetSelected(selected);
-			this.Raise(SceneChange.Selection, item);
-			return true;
-		}
-
-		public Boolean SetHover(DiagramHitTestResult hit)
-		{
-			if (hit == this._hover)
-			{
-				return false;
-			}
-
-			DiagramItem? previous = this._hover.Item;
-			this._hover = hit;
-			if (previous != null)
-			{
-				this.Raise(SceneChange.Hover, previous);
-			}
-
-			if (hit.Item != null && !ReferenceEquals(previous, hit.Item))
-			{
-				this.Raise(SceneChange.Hover, hit.Item);
-			}
-
-			return true;
 		}
 
 		private void Attach(DiagramItem item)
@@ -475,86 +379,6 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 
 			this._routesDirty = true;
 			this._boundsDirty = true;
-		}
-
-		private void EnsureNames()
-		{
-			if (!this._namesDirty)
-			{
-				return;
-			}
-
-			this._byName.Clear();
-			foreach (DiagramItem item in this._items)
-			{
-				if (item is DiagramNode node)
-				{
-					this._byName.TryAdd(node.Name, node);
-				}
-			}
-
-			this._namesDirty = false;
-		}
-
-		private void EnsureLinks()
-		{
-			if (!this._linksDirty)
-			{
-				return;
-			}
-
-			this._links.Clear();
-			this.EnsureNames();
-			foreach (DiagramItem item in this._items)
-			{
-				if (item is not DiagramNode source)
-				{
-					continue;
-				}
-
-				foreach (DiagramRow row in source.Rows)
-				{
-					if (!String.IsNullOrEmpty(row.LinkTargetName) && this._byName.TryGetValue(row.LinkTargetName, out DiagramNode? target))
-					{
-						this._links.Add(new DiagramLink(source, row, target));
-					}
-				}
-			}
-
-			this._linksDirty = false;
-			this._routesDirty = true;
-		}
-
-		private void EnsureRoutes()
-		{
-			this.EnsureLayouts();
-			this.EnsureLinks();
-			if (!this._routesDirty)
-			{
-				return;
-			}
-
-			this._routes.Clear();
-			foreach (DiagramLink link in this._links)
-			{
-				if (link.Source.IsHidden || link.Target.IsHidden)
-				{
-					continue;
-				}
-
-				NodeLayout sourceLayout = this._layouts[link.Source];
-				NodeLayout targetLayout = this._layouts[link.Target];
-				Rect sourceRect = new Rect(link.Source.X, link.Source.Y, sourceLayout.Width, sourceLayout.Height);
-				Rect targetRect = new Rect(link.Target.X, link.Target.Y, targetLayout.Width, targetLayout.Height);
-
-				RowLayout? rowLayout = link.Source.IsCollapsed ? null : sourceLayout.FindRow(link.SourceRow);
-				Double anchor = rowLayout?.AnchorY ?? sourceLayout.DefaultSourceAnchorOffset;
-				Point start = new Point(sourceRect.Right, sourceRect.Top + anchor);
-				ConnectorRoute route = this._router.Route(start, sourceRect, targetRect, targetLayout.TargetAnchorOffset);
-				this._routes.Add(new RoutedLink(link, route, rowLayout != null));
-			}
-
-			this._routesDirty = false;
 		}
 
 		private void Raise(SceneChange change, DiagramItem? item)

@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Go to definition</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Find references</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Rename</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Open include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Open include file</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Show completion list</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Go to the declarations</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Delete line</sys:String>
@@ -52,4 +52,6 @@
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">File not found: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Press the TAB key to insert the autocode.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">No references found for '{0}'.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Script editor</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Script editor, second view</sys:String>
 </ResourceDictionary>

@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">将流程图保存为图像</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">对话节点</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">注释</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">函数配置</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">对话函数</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">编辑规则，告诉流程图哪些函数和宏会显示消息并跳转到节点。</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">不创建退出节点</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">不在流程图中创建对话退出节点（通常为 Node999）。</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">消息文件中的行号。单击可打开消息编辑器。</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">在此消息处打开消息编辑器</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">消息文本</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">msg 文件</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">消息文件</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">节点：</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">要显示的对话节点</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">对话节点</sys:String>
@@ -141,7 +141,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.PreviewUpdate">重新读取脚本和消息文件</sys:String>
     <sys:String x:Key="Str.Flowchart.PlayerFemale">女性玩家</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PlayerFemale">显示女性玩家的台词：消息编号会加上右侧的数值。</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.FemaleOffset">msg 行号加上此数值，即可定位女性台词。</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.FemaleOffset">消息行号加上此数值，即可定位女性台词。</sys:String>
     <sys:String x:Key="Str.Flowchart.FemaleOffsetName">女性消息偏移量</sys:String>
     <sys:String x:Key="Str.Flowchart.AutoJump">自动跳转</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.AutoJump">玩家作出回答后，自动跳转到脚本中的对应过程。</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">单击此处输入文本...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">文件缺失</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">未找到该对话的消息文件。&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">对话流程图</sys:String>
 </ResourceDictionary>

@@ -1,0 +1,4 @@
+{
+  "about": "Texts in which a translation legitimately does not use the glossary term of its English text (idiomatic phrase, term not translated there, grammatical restructuring). Fix the translation first: this list must stay tiny. Each entry: the key (Str.Area.Key), the language code or *, the glossary term id or *, and a one-line justification. An entry that silences nothing makes GlossaryTests fail.",
+  "exceptions": []
+}

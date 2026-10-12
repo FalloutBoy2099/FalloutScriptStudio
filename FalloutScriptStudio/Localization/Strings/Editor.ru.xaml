@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Перейти к определению</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Найти ссылки</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Переименовать</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Открыть include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Открыть подключаемый файл</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Показать список автодополнения</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Перейти к объявлениям</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Удалить строку</sys:String>
@@ -52,4 +52,6 @@
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Файл не найден: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Нажмите TAB, чтобы вставить готовый блок кода.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Ссылки на «{0}» не найдены.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Редактор скриптов</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Редактор скриптов, второе представление</sys:String>
 </ResourceDictionary>

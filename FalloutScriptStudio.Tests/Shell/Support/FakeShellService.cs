@@ -19,6 +19,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		/// <summary>Gets or sets the answer of <see cref="OpenWithShell"/>.</summary>
 		public Boolean OpenWithShellResult { get; set; } = true;
 
+		/// <summary>Gets or sets the answer of <see cref="StartProgram"/>.</summary>
+		public Boolean StartProgramResult { get; set; } = true;
+
 		public String Clipboard { get; set; } = String.Empty;
 
 		public void RevealInExplorer(String path)
@@ -34,7 +37,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		public Boolean StartProgram(String programPath, String arguments)
 		{
 			this.Programs.Add(programPath + " " + arguments);
-			return true;
+			return this.StartProgramResult;
 		}
 
 		public Boolean OpenWithShell(String path)

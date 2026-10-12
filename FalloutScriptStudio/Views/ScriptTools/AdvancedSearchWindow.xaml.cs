@@ -25,6 +25,15 @@ namespace FalloutScriptStudio.Views.ScriptTools
 			this.InitializeComponent();
 			ScriptToolWindowHelper.CloseWhenRequested(this, viewModel);
 			this.Activated += (_, _) => this.ViewModel.RefreshHistory();
+
+			// Closing the window (Esc closes it) stops a search that is still running instead of letting it finish unseen.
+			this.Closed += (_, _) =>
+			{
+				if (this.ViewModel.FindAllCancelCommand.CanExecute(null))
+				{
+					this.ViewModel.FindAllCancelCommand.Execute(null);
+				}
+			};
 		}
 
 		/// <summary>Gets the view model.</summary>
@@ -51,6 +60,21 @@ namespace FalloutScriptStudio.Views.ScriptTools
 		}
 
 		private void OnResultDoubleClick(Object sender, MouseButtonEventArgs e)
+		{
+			this.GoToSelectedResult();
+		}
+
+		private void OnResultKeyDown(Object sender, KeyEventArgs e)
+		{
+			// Enter does what a double click does: goes to the match.
+			if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None)
+			{
+				this.GoToSelectedResult();
+				e.Handled = true;
+			}
+		}
+
+		private void GoToSelectedResult()
 		{
 			if (this.ResultsGrid.SelectedItem is SearchResultItem item && this.ViewModel.GoToResultCommand.CanExecute(item))
 			{

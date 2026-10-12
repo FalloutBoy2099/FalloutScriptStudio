@@ -100,7 +100,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 			ArgumentException.ThrowIfNullOrEmpty(scriptPath);
 			ArgumentNullException.ThrowIfNull(target);
 
-			MessageFileLocation location = this._files.LocateForScript(scriptPath, scriptNameId, this._settings.Settings.ToMessageFileOptions());
+			MessageFileLocation location = this._files.LocateForScript(scriptPath, scriptNameId, this._settings.Effective.ToMessageFileOptions());
 			if (!await this.ReportLookupIssuesAsync(location))
 			{
 				return false;
@@ -132,7 +132,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{
-					this._logger.LogError(ex, "The message file {Path} could not be created", location.DefaultPath);
+					this._logger.FileNotCreated(ex, location.DefaultPath);
 					await this._dialogs.ShowErrorAsync(Title, Loc.Get("Str.MessageEditor.Msg.CreateFailed") + Environment.NewLine + ex.Message);
 					return false;
 				}

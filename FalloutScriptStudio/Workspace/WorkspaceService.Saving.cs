@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Workspace
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 
 	/// <summary>Saving, reloading and external change detection.</summary>
 	public sealed partial class WorkspaceService
@@ -81,6 +82,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
+				this._problems.Report(ProblemFactory.OpenFailed(document.FilePath, ex) with { Owner = document });
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotReloadTitle"), ex.Message);
 				return false;
 			}
@@ -90,6 +92,7 @@ namespace FalloutScriptStudio.Workspace
 			document.TextDocument.UndoStack.ClearAll();
 			document.TextDocument.UndoStack.MarkAsOriginalFile();
 			document.Encoding = decoded.Encoding;
+			this.ReportEncoding(document, decoded);
 			document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(document.FilePath);
 			document.IsModified = false;
 			if (caretLine > 1)

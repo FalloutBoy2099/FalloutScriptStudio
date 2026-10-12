@@ -22,17 +22,19 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		{
 			ArgumentNullException.ThrowIfNull(services);
 
-			services.TryAddSingleton<FileAssociationService>();
+			services.TryAddSingleton<IFileAssociationService, FileAssociationService>();
 			services.TryAddSingleton<IEditorFontCatalog, EditorFontCatalog>();
 			services.TryAddSingleton<IToolWindowService, ToolWindowService>();
 
 			services.AddTransient<SettingsViewModel>();
+			services.AddTransient<ProjectSettingsViewModel>();
 			services.AddTransient<AboutViewModel>();
 			services.AddTransient<GoToLineViewModel>();
 			services.AddTransient<BatchCompileViewModel>();
 			services.AddTransient<HeadersViewModel>();
 
 			services.AddTransient<SettingsWindow>();
+			services.AddTransient<ProjectSettingsWindow>();
 			services.AddTransient<AboutWindow>();
 			services.AddTransient<GoToLineWindow>();
 			services.AddTransient<BatchCompileWindow>();

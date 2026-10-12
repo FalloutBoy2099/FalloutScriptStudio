@@ -17,7 +17,7 @@
     <sys:String x:Key="Str.Panels.TipToggleOutline">折叠或展开脚本的过程</sys:String>
     <sys:String x:Key="Str.Panels.TipRefreshParser">更新解析器数据</sys:String>
     <sys:String x:Key="Str.Panels.EmptyProcedures">没有解析数据。打开脚本即可查看其过程。</sys:String>
-    <sys:String x:Key="Str.Panels.EmptyVariables">没有变量数据。脚本的变量由本机解析器 (parser.dll) 提供。</sys:String>
+    <sys:String x:Key="Str.Panels.EmptyVariables">没有变量数据。脚本的变量由原生解析器 (parser.dll) 提供。</sys:String>
     <sys:String x:Key="Str.Panels.EmptyProject">尚未设置项目文件夹。</sys:String>
     <sys:String x:Key="Str.Panels.MenuGoTo">转到</sys:String>
     <sys:String x:Key="Str.Panels.MenuGoToDeclaration">转到声明</sys:String>

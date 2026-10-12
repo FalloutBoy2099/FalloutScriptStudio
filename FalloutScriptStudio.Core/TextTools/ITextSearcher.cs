@@ -35,6 +35,13 @@ namespace FalloutScriptStudio.Core.TextTools
 		/// <returns>The matches in order.</returns>
 		IReadOnlyList<TextSpan> FindAll(String text, SearchQuery query);
 
+		/// <summary>Finds the first matches of a text: the search stops as soon as enough matches are found.</summary>
+		/// <param name="text">The text to search.</param>
+		/// <param name="query">What to find.</param>
+		/// <param name="maxCount">The most matches to return.</param>
+		/// <returns>The first matches in order, at most <paramref name="maxCount"/>.</returns>
+		IReadOnlyList<TextSpan> FindAll(String text, SearchQuery query, Int32 maxCount);
+
 		/// <summary>Determines whether the text contains a match.</summary>
 		/// <param name="text">The text to search.</param>
 		/// <param name="query">What to find.</param>

@@ -2,6 +2,7 @@
     x:Class="FalloutScriptStudio.Views.MessageEditor.MessageEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -12,10 +13,13 @@
     Height="640"
     MinWidth="620"
     MinHeight="340"
+    a11y:WindowFit.FitToWorkArea="True"
     d:DataContext="{d:DesignInstance Type=vm:MessageEditorViewModel}"
     ExtendsContentIntoTitleBar="True"
     FontSize="12"
     Icon="/FalloutScriptStudio;component/Assets/Icons/icon_msg.ico"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -48,10 +52,10 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
         <!--  These brushes are replaced from code when the theme or the comment color option changes.  -->
-        <SolidColorBrush x:Key="MessageCommentRowBrush" Color="#FFFFC8" />
-        <SolidColorBrush x:Key="MessageLineColumnBrush" Color="#FFFFE0" />
-        <SolidColorBrush x:Key="MessageLineForegroundBrush" Color="#D2691E" />
-        <SolidColorBrush x:Key="MessageSearchMatchBrush" Color="#66FFD54F" />
+        <SolidColorBrush x:Key="MessageCommentRowBrush" Color="{DynamicResource SystemFillColorCautionBackground}" />
+        <SolidColorBrush x:Key="MessageLineColumnBrush" Color="{DynamicResource SubtleFillColorSecondary}" />
+        <SolidColorBrush x:Key="MessageLineForegroundBrush" Color="{DynamicResource SystemFillColorCaution}" />
+        <SolidColorBrush x:Key="MessageSearchMatchBrush" Color="{DynamicResource SystemFillColorCautionBackground}" />
 
         <Style
             x:Key="ToolButton"
@@ -440,11 +444,13 @@
             BorderThickness="0,0,0,1">
             <WrapPanel Orientation="Horizontal">
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.New}"
                     Command="{Binding NewCommand}"
                     Icon="{ui:SymbolIcon DocumentAdd24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.New}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Open}"
                     Command="{Binding OpenCommand}"
                     Icon="{ui:SymbolIcon FolderOpen24}"
                     Style="{StaticResource ToolButton}"
@@ -453,79 +459,94 @@
                     x:Name="RecentButton"
                     MinWidth="24"
                     Padding="4,0"
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Recent}"
                     Icon="{ui:SymbolIcon ChevronDown24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Recent}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Save}"
                     Command="{Binding SaveCommand}"
                     Icon="{ui:SymbolIcon Save24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Save}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.SaveAs}"
                     Command="{Binding SaveAsCommand}"
                     Icon="{ui:SymbolIcon SaveCopy24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.SaveAs}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Reload}"
                     Command="{Binding ReloadCommand}"
                     Icon="{ui:SymbolIcon ArrowSync24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Reload}" />
                 <Border Style="{StaticResource ToolDivider}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Undo}"
                     Command="{Binding UndoCommand}"
                     Icon="{ui:SymbolIcon ArrowUndo24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Undo}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Redo}"
                     Command="{Binding RedoCommand}"
                     Icon="{ui:SymbolIcon ArrowRedo24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Redo}" />
                 <Border Style="{StaticResource ToolDivider}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.AddNext}"
                     Command="{Binding AddNextLineCommand}"
                     Icon="{ui:SymbolIcon Add24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.AddNext}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.InsertBlank}"
                     Command="{Binding InsertBlankBelowCommand}"
                     Icon="{ui:SymbolIcon TextAddSpaceAfter24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.InsertBlank}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.InsertComment}"
                     Command="{Binding InsertCommentCommand}"
                     Icon="{ui:SymbolIcon CommentAdd24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.InsertComment}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Duplicate}"
                     Command="{Binding DuplicateRowsCommand}"
                     Icon="{ui:SymbolIcon CopyAdd24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Duplicate}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Delete}"
                     Command="{Binding DeleteRowsCommand}"
                     Icon="{ui:SymbolIcon Delete24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Delete}" />
                 <Border Style="{StaticResource ToolDivider}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.MoveUp}"
                     Command="{Binding MoveUpCommand}"
                     Icon="{ui:SymbolIcon ArrowUp24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.MoveUp}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.MoveDown}"
                     Command="{Binding MoveDownCommand}"
                     Icon="{ui:SymbolIcon ArrowDown24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.MoveDown}" />
                 <Border Style="{StaticResource ToolDivider}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.PlayerMarker}"
                     Command="{Binding TogglePlayerLineCommand}"
                     Icon="{ui:SymbolIcon PersonChat24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.PlayerMarker}" />
                 <ui:Button
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Send}"
                     Command="{Binding SendLineCommand}"
                     Icon="{ui:SymbolIcon Send24}"
                     Style="{StaticResource ToolButton}"
@@ -542,17 +563,20 @@
                     Width="68"
                     Height="34"
                     VerticalAlignment="Center"
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Step}"
                     ItemsSource="{Binding CommentSteps}"
                     SelectedItem="{Binding CommentStep, Mode=TwoWay}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Step}" />
                 <Border Style="{StaticResource ToolDivider}" />
                 <ui:Button
                     x:Name="OpenWithButton"
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.OpenWith}"
                     Icon="{ui:SymbolIcon DocumentText24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.OpenWith}" />
                 <ui:Button
                     x:Name="OptionsButton"
+                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Options}"
                     Icon="{ui:SymbolIcon Settings24}"
                     Style="{StaticResource ToolButton}"
                     ToolTip="{DynamicResource Str.MessageEditor.Tip.Options}" />
@@ -645,6 +669,7 @@
                         x:Name="SearchBox"
                         Width="220"
                         Height="34"
+                        AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Search}"
                         ClearButtonEnabled="True"
                         PlaceholderText="{DynamicResource Str.MessageEditor.Search.Placeholder}"
                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
@@ -661,11 +686,13 @@
                         </ui:TextBox.InputBindings>
                     </ui:TextBox>
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.FindPrevious}"
                         Command="{Binding FindPreviousCommand}"
                         Icon="{ui:SymbolIcon ArrowUp24}"
                         Style="{StaticResource ToolButton}"
                         ToolTip="{DynamicResource Str.MessageEditor.Tip.FindPrevious}" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.FindNext}"
                         Command="{Binding FindNextCommand}"
                         Icon="{ui:SymbolIcon ArrowDown24}"
                         Style="{StaticResource ToolButton}"
@@ -677,6 +704,7 @@
                         Margin="1,0"
                         Padding="0"
                         VerticalAlignment="Center"
+                        AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.Filter}"
                         IsChecked="{Binding IsFilterActive}"
                         ToolTip="{DynamicResource Str.MessageEditor.Tip.Filter}">
                         <ui:SymbolIcon Symbol="Filter24" />
@@ -700,6 +728,7 @@
                 x:Name="MessageGrid"
                 Grid.Row="1"
                 AutoGenerateColumns="False"
+                AutomationProperties.Name="{DynamicResource Str.MessageEditor.A11y.Grid}"
                 CanUserAddRows="False"
                 CanUserDeleteRows="False"
                 CanUserReorderColumns="True"
@@ -753,6 +782,7 @@
                                     Padding="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
+                                    AutomationProperties.Name="{DynamicResource Str.MessageEditor.Tip.PlayerCheck}"
                                     IsChecked="{Binding IsPlayerLine}"
                                     ToolTip="{DynamicResource Str.MessageEditor.Tip.PlayerCheck}"
                                     Visibility="{Binding IsMessage, Converter={StaticResource BoolToVisibility}}" />
@@ -802,6 +832,7 @@
                     <ae:TextEditor
                         x:Name="DetailsEditor"
                         Padding="6,2"
+                        a11y:EditorAutomation.NameResource="Str.MessageEditor.Details.Caption"
                         HorizontalScrollBarVisibility="Disabled"
                         ShowLineNumbers="False"
                         VerticalScrollBarVisibility="Auto"

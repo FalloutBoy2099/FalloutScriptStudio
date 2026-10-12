@@ -38,7 +38,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 				return new DialogueMessageSource(null, null);
 			}
 
-			MessageFileOptions options = this._settings.Settings.ToMessageFileOptions();
+			MessageFileOptions options = this._settings.Effective.ToMessageFileOptions();
 			try
 			{
 				return await DialogueMessageSource.CreateAsync(this._files, script.FilePath, script.ProgramInfo?.ScriptNameId, options, cancellationToken);
@@ -57,7 +57,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 
 			try
 			{
-				return await this._files.UpdateMessageTextAsync(messageFilePath, messageId, text, this._settings.Settings.ToMessageFileOptions().Encoding, cancellationToken);
+				return await this._files.UpdateMessageTextAsync(messageFilePath, messageId, text, this._settings.Effective.ToMessageFileOptions().Encoding, cancellationToken);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{

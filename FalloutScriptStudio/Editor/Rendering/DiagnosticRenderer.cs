@@ -43,10 +43,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 		/// <summary>Removes all marks.</summary>
 		public void Clear()
 		{
-			foreach (DiagnosticMarker marker in this._markers.ToArray())
-			{
-				this._markers.Remove(marker);
-			}
+			this._markers.Clear();
 		}
 
 		/// <summary>Determines whether any mark touches a line.</summary>
@@ -54,7 +51,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 		/// <returns><see langword="true"/> when a mark overlaps the line.</returns>
 		public Boolean HasMarkerOnLine(DocumentLine line)
 		{
-			return this._markers.FindOverlappingSegments(line.Offset, line.Length + 1).Any();
+			return this._markers.FindOverlappingSegments(line.Offset, line.Length + 1).Count > 0;
 		}
 
 		/// <summary>Gets the marks that cover a character.</summary>

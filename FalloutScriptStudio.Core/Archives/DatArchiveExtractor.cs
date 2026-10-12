@@ -61,12 +61,12 @@ namespace FalloutScriptStudio.Core.Archives
 			}
 			catch (DatException exception)
 			{
-				this._logger.LogWarning(exception, "The script {Script} could not be read from {Archive}", scriptName, request.DatFilePath);
+				this._logger.ScriptNotReadable(exception, scriptName, request.DatFilePath);
 				return new DatExtractionResult(false, null, "The archive could not be read: " + exception.Message);
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogError(exception, "The script {Script} could not be extracted from {Archive}", scriptName, request.DatFilePath);
+				this._logger.ScriptNotExtracted(exception, scriptName, request.DatFilePath);
 				return new DatExtractionResult(false, null, "The script could not be extracted: " + exception.Message);
 			}
 		}

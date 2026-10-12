@@ -2,6 +2,7 @@
     x:Class="FalloutScriptStudio.Views.Shell.SearchBarView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
     <Border
         Margin="8,4,8,6"
@@ -29,6 +30,7 @@
                 Height="32"
                 Margin="0,0,6,0"
                 Padding="0"
+                AutomationProperties.Name="{DynamicResource Str.Shell.Search.TipToggleReplace}"
                 Background="Transparent"
                 BorderThickness="0"
                 ToolTip="{DynamicResource Str.Shell.Search.TipToggleReplace}">
@@ -39,6 +41,7 @@
                 x:Name="SearchBox"
                 Grid.Row="0"
                 Grid.Column="1"
+                AutomationProperties.Name="{DynamicResource Str.Shell.Search.TipText}"
                 IsEditable="True"
                 ItemsSource="{Binding History}"
                 PreviewKeyDown="OnSearchBoxPreviewKeyDown"
@@ -55,6 +58,7 @@
                     Height="32"
                     Margin="0,0,2,0"
                     Padding="0"
+                    AutomationProperties.Name="{DynamicResource Str.Shell.Search.TipMatchCase}"
                     Content="Aa"
                     FontWeight="SemiBold"
                     IsChecked="{Binding MatchCase, Mode=TwoWay}"
@@ -64,6 +68,7 @@
                     Height="32"
                     Margin="0,0,2,0"
                     Padding="0"
+                    AutomationProperties.Name="{DynamicResource Str.Shell.Search.TipWholeWord}"
                     Content="W"
                     FontWeight="SemiBold"
                     IsChecked="{Binding WholeWord, Mode=TwoWay}"
@@ -73,6 +78,7 @@
                     Height="32"
                     Margin="0,0,6,0"
                     Padding="0"
+                    AutomationProperties.Name="{DynamicResource Str.Shell.Search.TipRegex}"
                     Content=".*"
                     FontWeight="SemiBold"
                     IsChecked="{Binding UseRegex, Mode=TwoWay}"
@@ -100,6 +106,7 @@
                 <TextBlock
                     MinWidth="70"
                     Margin="8,0"
+                    a11y:LiveRegion.Text="{Binding StatusText}"
                     Style="{StaticResource ShellCaptionTextStyle}"
                     Text="{Binding StatusText}"
                     Visibility="{Binding StatusText, Converter={StaticResource EmptyToCollapsed}}" />
@@ -122,6 +129,7 @@
                 </Grid.ColumnDefinitions>
                 <ui:TextBox
                     x:Name="ReplaceBox"
+                    AutomationProperties.Name="{DynamicResource Str.Shell.Search.ReplaceWith}"
                     PlaceholderText="{DynamicResource Str.Shell.Search.ReplaceWith}"
                     PreviewKeyDown="OnReplaceBoxPreviewKeyDown"
                     Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}"

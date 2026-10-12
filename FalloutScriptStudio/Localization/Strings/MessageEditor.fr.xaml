@@ -112,8 +112,8 @@
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFileQuestion">Créer le fichier de messages {0} ?</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreatedIn">Le fichier sera créé dans : {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFailed">Le fichier de messages n'a pas pu être créé :</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">Scripts.lst n'existe pas dans le dossier des scripts compilés.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Le nom associé n'a pas pu être lu dans Scripts.lst.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">scripts.lst n'existe pas dans le dossier des scripts compilés.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Le nom associé n'a pas pu être lu dans scripts.lst.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.NameMacroMissing">La macro NAME est introuvable dans ce script ou n'a pas de numéro de script.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Le fichier de messages est associé par le nom du script à la place.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Deleted">Le fichier n'existe plus sur le disque. L'enregistrement le recréera.</sys:String>
@@ -150,4 +150,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.MissingNumber">Numéro de ligne du message manquant.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Numéro de ligne du message non valide.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Numéro de ligne de message en double : {0}</sys:String>
+    <sys:String x:Key="Str.MessageEditor.A11y.Grid">Messages</sys:String>
 </ResourceDictionary>

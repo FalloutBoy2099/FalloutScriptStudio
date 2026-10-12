@@ -26,6 +26,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 				{
 					node.IsFilterVisible = true;
 					Apply(node.FilterChildren, text, false);
+					node.OnFilterApplied();
 					any = true;
 					continue;
 				}
@@ -38,6 +39,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 				Boolean selfMatches = node.FilterText.Contains(text, StringComparison.OrdinalIgnoreCase);
 				Boolean childMatches = Apply(node.FilterChildren, text, ancestorMatched || selfMatches);
+				node.OnFilterApplied();
 				Boolean visible = ancestorMatched || selfMatches || childMatches;
 				node.IsFilterVisible = visible;
 				if (childMatches && !selfMatches)

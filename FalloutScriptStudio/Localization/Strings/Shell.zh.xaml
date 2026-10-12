@@ -7,7 +7,7 @@
     <sys:String x:Key="Str.Shell.App.StartFailed" xml:space="preserve">无法启动程序：&#10;&#10;{0}&#10;&#10;详细信息已写入 sse.log。</sys:String>
     <sys:String x:Key="Str.Shell.App.UnexpectedError" xml:space="preserve">发生意外错误：&#10;&#10;{0}&#10;&#10;详细信息已写入 sse.log。</sys:String>
     <sys:String x:Key="Str.Shell.Build.AllCompiled">全部 {0} 个脚本均已成功编译</sys:String>
-    <sys:String x:Key="Str.Shell.Build.CompileFailed">编译失败：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileFailed">无法编译 {0}：请查看“错误”选项卡。</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompileTitle">编译</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledAll">已编译 {0}/{1} 个打开的脚本。</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledOk">{0} 编译成功</sys:String>
@@ -19,11 +19,11 @@
     <sys:String x:Key="Str.Shell.Build.MassCompileTitle">批量编译</sys:String>
     <sys:String x:Key="Str.Shell.Build.NoScripts">在 {0} 中未找到脚本 (*.ssl)。</sys:String>
     <sys:String x:Key="Str.Shell.Build.NotSsl">此文件不是 SSL 脚本。</sys:String>
-    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">尚未设置已编译脚本的文件夹。&#10;编译前请先在设置中指定输出文件夹。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">尚未设置已编译脚本的文件夹。&#10;请在设置中选择输出文件夹（或启用“编译到源脚本所在位置”），然后重新编译。</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessFailed">预处理失败！详情请查看“生成”选项卡。</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessedMissing">找不到预处理后的文件。</sys:String>
     <sys:String x:Key="Str.Shell.Build.RoundtripUserCommand">请先关闭通过用户批处理文件进行编译的选项。</sys:String>
-    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">尚未设置脚本输出文件夹。&#10;请先在设置中选择脚本文件夹。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">尚未设置脚本输出文件夹。&#10;批量编译会把已编译的脚本写入该文件夹：请先在设置中选择它。</sys:String>
     <sys:String x:Key="Str.Shell.Build.SelectMassFolder">选择包含要编译脚本的文件夹</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchivePrompt">档案脚本文件夹中的脚本名称（例如 klamath.int）：</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchiveTitle">从游戏档案打开</sys:String>
@@ -40,9 +40,9 @@
     <sys:String x:Key="Str.Shell.Dlg.ClearRecentPrompt">是否清除最近文件列表？</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.CreateProcedureTitle">创建过程</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileErrorTitle">反编译错误</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">反编译脚本“{0}”失败。详情请查看“生成”选项卡。</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">反编译脚本“{0}”失败。请在“生成”选项卡中查看反编译器的输出；换用另一个反编译器（见编译器设置）可能会成功。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DocsNotFound" xml:space="preserve">无法在浏览器中打开文档。可在线访问：&#10;{0}</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">无法启动程序：&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">无法启动该程序：&#10;{0}&#10;请在设置中重新选择外部编辑器。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExternalEditorTitle">外部编辑器</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExtractionFailedTitle">提取失败</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileAlreadyOpen" xml:space="preserve">此文件已打开。&#10;&#10;是否打开该文件的副本？</sys:String>
@@ -52,14 +52,14 @@
     <sys:String x:Key="Str.Shell.Dlg.FileChangedTitle">文件已更改</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowed">无法在编辑器中打开此类型的文件。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowedTitle">不允许的文件</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">找不到文件：&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">找不到文件：&#10;{0}&#10;它可能已被移动或删除。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FlowchartScriptMissing">找不到此流程图对应的脚本文件。</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">节点流程图</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">找不到头文件：&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">对话流程图</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">找不到头文件：&#10;{0}&#10;请检查 #include 路径以及设置中的头文件夹。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ImportedRename">暂不支持重命名导入的符号。</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">无法从尚未保存的脚本中打开使用相对路径的包含文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">无法从未保存的脚本打开使用相对路径的包含文件。请先保存脚本。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileCreate" xml:space="preserve">找不到此脚本的消息文件。&#10;&#10;是否在 {1} 中创建 {0}？</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">找不到与此脚本关联的消息文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">找不到与此脚本关联的消息文件。请检查设置中的消息文件夹和语言，或使用消息编辑器创建该文件。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileTitle">消息文件</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameHasSpaces">无法注册包含空格的脚本名称。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameMacroNotFound" xml:space="preserve">此脚本中未找到 NAME 宏，或该宏没有脚本编号。&#10;将改为按脚本名称关联消息文件。</sys:String>
@@ -96,7 +96,7 @@
     <sys:String x:Key="Str.Shell.Dlg.ScriptMissingTitle">未找到脚本文件</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsListTitle">脚本列表</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsLstInvalid">无法从 scripts.lst 读取关联的名称。</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">脚本输出文件夹中不存在 scripts.lst。</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">脚本输出文件夹中不存在 scripts.lst。请检查设置中的输出文件夹。</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectArchiveTitle">选择 Fallout 游戏档案</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectEditorTitle">选择外部编辑器</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectHeadersTitle">选择头文件</sys:String>
@@ -122,10 +122,8 @@
     <sys:String x:Key="Str.Shell.Menu.CheckMessageStructure">检查消息文本结构</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ClearRecent">清除最近的文件</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CloseAll">全部关闭</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Code">代码</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CollapseAll">全部折叠</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CommentText">注释文本</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Compile">编译</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileAllOpen">编译所有已打开的</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileScript">编译脚本</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ConvertAllTabsToSpaces">将所有制表符转换为空格</sys:String>
@@ -134,11 +132,10 @@
     <sys:String x:Key="Str.Shell.Menu.ConvertLeadingTabsToSpaces">将行首制表符转换为空格</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecompileFallout1">按 Fallout 1 反编译</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecreaseIndent">减少缩进</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">在 Scripts.h 中添加 define</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Dialog">对话</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">在 scripts.h 中添加 define</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DialoguePreview">预览与测试</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Documentation">文档</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Edit">编辑</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.AssociateFiles">关联文件类型…</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Empty">（空）</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingOem">OEM-866（DOS / 俄文）</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingWindows">Windows 默认</sys:String>
@@ -153,46 +150,42 @@
     <sys:String x:Key="Str.Shell.Menu.FormatSelection">格式化所选内容</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Forward">前进</sys:String>
     <sys:String x:Key="Str.Shell.Menu.FunctionTree">函数树</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">函数配置</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">对话函数</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDeclaration">转到声明</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDefinition">转到定义</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToLine">转到行...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToProcedure">转到过程...</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Headers">头文件</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightParseErrors">高亮解析错误</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightWord">高亮单词</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncludeFile">将文件包含到代码...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncreaseIndent">增加缩进</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LineNumbers">行号</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.LogWindow">日志窗口</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.LogWindow">日志面板</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LowerCase">小写</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MassCompile">批量编译</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.MessageEditor">消息文件编辑器</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.MessageEditor">消息编辑器</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MessageEncoding">消息文件编码</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewFromTemplate">从模板新建</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewScript">新建脚本</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NoTemplates">（无模板）</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">节点流程图</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">对话流程图</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Open">打开...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenAllIncludes">打开所有包含文件</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenFromArchive">从游戏档案打开脚本...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenHeader">打开头文件...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenInclude">打开包含文件</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenRecent">打开最近的文件</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Options">选项</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Preprocess">预处理</sys:String>
     <sys:String x:Key="Str.Shell.Menu.QuickFind">快速查找</sys:String>
     <sys:String x:Key="Str.Shell.Menu.RegisterScript">注册当前脚本...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ResetZoom">重置缩放</sys:String>
     <sys:String x:Key="Str.Shell.Menu.RightBrowser">右侧浏览器</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Roundtrip">往返测试</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.Roundtrip">往返检查</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAll">全部保存</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAs">另存为...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAsTemplate">另存为模板...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveUtf8">以 UTF-8 保存</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Script">脚本</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ScriptsListEditor">脚本列表编辑器</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.SetProjectFolder">设置项目文件夹...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Settings">设置...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowIndentLine">显示缩进线</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowWhitespace">显示制表符和空格</sys:String>
@@ -205,7 +198,6 @@
     <sys:String x:Key="Str.Shell.Menu.UpperCase">大写</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompiler">使用旧版反编译器</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompilerTip">仅供外部 int2ssl 反编译器使用。请在“设置 &gt; 编译器”中选择它以启用此选项。</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.View">视图</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomIn">放大</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomOut">缩小</sys:String>
     <sys:String x:Key="Str.Shell.Output.AutoRefresh">自动刷新</sys:String>
@@ -225,10 +217,10 @@
     <sys:String x:Key="Str.Shell.Output.TabErrors">错误</sys:String>
     <sys:String x:Key="Str.Shell.Output.TabParser">解析器</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipBuild">编译器的输出。</sys:String>
-    <sys:String x:Key="Str.Shell.Output.TipErrors">错误、警告和搜索结果。双击条目可跳转到对应位置。</sys:String>
+    <sys:String x:Key="Str.Shell.Output.TipErrors">脚本和工具的错误、警告及其他问题。双击某一项或按 Enter 键即可跳转到该处。</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipParser">脚本解析器的输出。</sys:String>
     <sys:String x:Key="Str.Shell.Output.UnresolvedReferences">有 {0} 个引用无法定位。</sys:String>
-    <sys:String x:Key="Str.Shell.Parser.Builtin">解析器：内置解析器（本机解析器不可用）</sys:String>
+    <sys:String x:Key="Str.Shell.Parser.Builtin">解析器：内置解析器（原生解析器不可用）</sys:String>
     <sys:String x:Key="Str.Shell.Parser.Done">解析器：完成</sys:String>
     <sys:String x:Key="Str.Shell.Parser.FailedLog">解析器：失败（请查看日志文件）</sys:String>
     <sys:String x:Key="Str.Shell.Parser.FailedParserLog">解析器：失败（请查看解析器日志）</sys:String>
@@ -282,17 +274,17 @@
     <sys:String x:Key="Str.Shell.Tip.DecreaseIndent">减少缩进 (Alt+Q)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.DefineToScriptsHeader">注册脚本时在 scripts.h 中为其添加 define。</sys:String>
     <sys:String x:Key="Str.Shell.Tip.FindReplaceBar">查找和替换栏 (Ctrl+H)</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Flowchart">对话节点流程图</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Flowchart">对话流程图</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Forward">前进到下一个位置</sys:String>
     <sys:String x:Key="Str.Shell.Tip.GoToProcedure">转到过程 (Alt+P)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.MassCompile">批量编译项目</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.MessageEditor">消息文件编辑器</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.MessageEditor">消息编辑器</sys:String>
     <sys:String x:Key="Str.Shell.Tip.NewScript">新建脚本 (Ctrl+N)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Open">打开文件 (Ctrl+O)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.ParserStatus">单击以更新解析器数据。</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Preprocess">打开预处理后的脚本。</sys:String>
     <sys:String x:Key="Str.Shell.Tip.PreprocessorDefine">编译和解析脚本时使用的预处理器定义（用于 #if 指令）。</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Project">项目文件夹。单击可在资源管理器中打开。</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Project">未打开任何项目。单击以打开项目文件夹。</sys:String>
     <sys:String x:Key="Str.Shell.Tip.QuickFind">查找光标处单词的下一个出现位置。</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Redo">重做 (Ctrl+Y)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.RegisterScript">将脚本添加到 scripts.lst。</sys:String>
@@ -323,4 +315,110 @@
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpenTitle">反编译</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpen">文件 {0} 已在某个标签页中打开。是否用反编译后的源代码覆盖它并重新加载该标签页？标签页中未保存的更改将丢失。</sys:String>
     <sys:String x:Key="Str.Shell.Output.OperationFailed">操作失败：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupTools">工具</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupFiles">文件</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupSettings">设置</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupMessages">消息文件</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowErrors">显示或隐藏错误</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowWarnings">显示或隐藏警告</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowInfo">显示或隐藏信息</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.FilterSources">选择要列出的来源</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.CopyAll">全部复制</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Next">下一个问题</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Previous">上一个问题</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.NoProblems">没有问题。</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.StatusTip">{0} 个错误，{1} 个警告。单击以显示问题列表。</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Show">显示问题</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Compile">正在编译 {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CompileCounted">正在编译 {0} ({1}/{2})</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Preprocess">正在预处理 {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.RoundTrip">往返检查 {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompile">批量编译</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompileCounted">批量编译 ({1}/{2})：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Decompile">正在反编译 {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancelling">正在取消：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancel">取消正在运行的操作</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CancelTip">取消（日志面板中按 Esc，或 Ctrl+Break）</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.DecompileCancelled">已取消反编译 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.AlreadyRunning">另一个生成操作仍在运行。请等待其完成，或先取消它（在日志面板中按 Esc）。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileCancelled">已取消编译 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.PreprocessCancelled">已取消预处理 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.RoundTripCancelled">已取消往返检查 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileAllCancelled">编译已取消：已编译 {1} 个打开的脚本中的 {0} 个。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.MassCompileCancelled">批量编译已取消：已编译 {1} 个中的 {0} 个，{2} 个失败。</sys:String>
+    <sys:String x:Key="Str.Shell.Build.LogCancelled">编译已被用户取消。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFound">找不到 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFoundHint">请将 {0} 放入文件夹 {1}（或修正编译器设置），然后重新生成。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailed">无法启动 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailedHint">请确认 {0} 是适用于此系统的有效程序，且未被 Windows 或杀毒软件阻止（文件属性中的“解除锁定”）。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.CompileFailedNoDetails">{0} 编译失败，但工具没有报告错误位置。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.PreprocessFailed">预处理 {0} 失败。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SeeBuildLogHint">请在“生成”选项卡中查看该工具的完整输出。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSet">尚未设置已编译脚本的文件夹。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSetHint">请在设置中选择该文件夹，或启用“编译到源脚本所在位置”。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScript">{0} 不是 SSL 脚本，无法编译。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScriptHint">只能编译 .ssl 文件。请先将文本保存为 .ssl 文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailed">无法保存 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedHint">请确认该文件没有在其他程序中打开，且你有权写入其文件夹；也可以使用“另存为”保存到其他位置。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedReadOnlyHint">该文件是只读的。请在资源管理器中清除只读属性，或使用“另存为”。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailed">无法打开 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailedHint">请确认文件存在、你有权读取它，且没有被其他程序锁定。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFound">文件 {0} 不存在。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFoundHint">它可能已被移动或删除。请通过“文件”、“打开”重新打开。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallback">{0} 不是有效的 UTF-8，已按 {1} 读取。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallbackHint">如果带重音的字母显示不正确，请在设置中更改文件编码（或将文件转换为 UTF-8），然后重新打开。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailed">无法反编译 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailedHint">请在“生成”选项卡中查看反编译器的输出。换用另一个反编译器可能会成功（见编译器设置）。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailed">无法从档案中提取 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailedHint">请选择包含此脚本的游戏的 .dat 档案（或文件夹）。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFound">找不到包含的文件 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFoundHint">请检查 #include 路径以及设置中的头文件夹。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissing">找不到 {0} 的消息文件（.msg）。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissingHint">请检查设置中的消息文件夹和语言，或使用消息编辑器创建该文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailable">原生解析器（parser.dll）不可用，正在使用内置解析器。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailableHint">将 parser.dll 复制到 resources 文件夹可获得准确的过程和变量数据，或在设置中关闭原生解析器。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBroken">原生解析器已停止工作：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBrokenHint">已由内置解析器接管。如果问题反复出现，请更换 parser.dll，或在设置中关闭原生解析器。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailed">无法分析 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailedHint">请修改文本或重新保存文件；详细信息见日志文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamaged">设置文件 {0} 已损坏，将使用默认值。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamagedHint">已在其旁边保留了损坏文件的副本（.corrupt）。请检查设置并重新保存。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadable">无法读取设置文件 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadableHint">该文件保持不变。请关闭占用它的程序，然后重新启动编辑器。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailed">无法保存设置文件 {0}：{1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailedHint">请确认你有权写入设置文件夹，并且磁盘未满。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailed">无法启动外部编辑器 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailedHint">请在设置中重新选择该程序。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailed">操作失败：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailedHint">请重试；详细信息见日志文件。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSettings">打开设置：{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionFolder">打开文件夹</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.OpenProject">打开项目...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.RecentProjects">最近的项目</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ClearRecentProjects">清除最近的项目</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ProjectSettings">项目设置...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CreateProjectSettings">创建项目设置</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CloseProject">关闭项目</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.ProjectOpen">项目：{0}。单击以打开项目设置。</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.RecentProjectsTitle">最近的项目</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ClearRecentProjectsPrompt">要清除最近项目列表吗？</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ProjectFolderNotFound">项目文件夹 {0} 不存在。</sys:String>
+    <sys:String x:Key="Str.Shell.Project.SettingsCreated">已为项目 {1} 创建 {0}。</sys:String>
+    <sys:String x:Key="Str.Shell.Project.Detected">在 {0} 中找到了此脚本的项目文件。请在“错误”选项卡中切换到该项目。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetected">此脚本属于位于 {0} 的项目。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetectedHint">切换到该项目即可使用其编译器、头文件和文件夹设置。</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSwitchProject">切换到此项目</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ShowProjectFolder">在资源管理器中显示项目文件夹</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.Progress">进度</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.DocumentTabs">已打开的文档</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.File">文件(_I)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Edit">编辑(_D)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Code">代码(_O)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Script">脚本(_T)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Headers">头文件(_H)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Dialog">对话(_B)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Compile">编译(_K)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.View">视图(_V)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Options">选项(_N)</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Help">帮助(_U)</sys:String>
 </ResourceDictionary>

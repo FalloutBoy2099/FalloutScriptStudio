@@ -41,7 +41,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 			Assert.True(viewModel.IsRunning);
 			Assert.False(viewModel.IsFinished);
 			Assert.Equal(3, viewModel.Total);
-			Assert.Equal("Batch compiler", viewModel.Title);
+			Assert.Equal("Batch compilation", viewModel.Title);
 			Assert.Contains("3 scripts found.", viewModel.LogText, StringComparison.Ordinal);
 
 			viewModel.ReportProgress(new BatchCompileProgress(@"C:\s\a.ssl", true, 1, 0, 3));
@@ -116,7 +116,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 			BatchCompileViewModel viewModel = new BatchCompileViewModel(service);
 
 			Task<BatchCompileResult> run = viewModel.RunAsync(_scripts, CreateOptions(), new BatchCompileOptions { MultiThreaded = true, MaxDegreeOfParallelism = 2 });
-			Assert.Equal("Batch compiler [Threads: 2]", viewModel.Title);
+			Assert.Equal("Batch compilation [Threads: 2]", viewModel.Title);
 
 			service.Release();
 			await run;

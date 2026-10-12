@@ -8,6 +8,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.TextTools;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 
 	/// <summary>Opening and creating documents.</summary>
@@ -73,6 +74,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
+				this._problems.Report(ProblemFactory.OpenFailed(path, ex));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotOpenTitle"), ex.Message);
 				return null;
 			}
@@ -94,6 +96,7 @@ namespace FalloutScriptStudio.Workspace
 			DocumentViewModel document = DocumentFactory.Create(path, this.FormatOnOpen(path, decoded.Text), decoded.Encoding);
 			document.LastWriteTimeUtc = File.GetLastWriteTimeUtc(path);
 			this.AddDocument(document, options.Activate);
+			this.ReportEncoding(document, decoded);
 			this.FinishOpen(document, options);
 			return document;
 		}
@@ -123,6 +126,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
+				this._problems.Report(ProblemFactory.OpenFailed(templatePath, ex));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotOpenTemplateTitle"), ex.Message);
 				return null;
 			}
@@ -154,6 +158,16 @@ namespace FalloutScriptStudio.Workspace
 			return new CodeFormatter().Format(text);
 		}
 
+		/// <summary>Tells the user (as a note in the Errors tab) that a file was not UTF-8 and was read with the code page of the settings.</summary>
+		private void ReportEncoding(DocumentViewModel document, DecodedText decoded)
+		{
+			_ = this._problems.Remove(problem => ReferenceEquals(problem.Owner, document) && problem.Origin == ProblemOrigins.Encoding);
+			if (decoded.UsedFallback && document.FilePath is not null)
+			{
+				this._problems.Report(ProblemFactory.EncodingFallback(document.FilePath, decoded.Encoding.EncodingName, document));
+			}
+		}
+
 		private void AddToRecent(String path)
 		{
 			if (String.Equals(Path.GetExtension(path), ".msg", StringComparison.OrdinalIgnoreCase))
@@ -178,6 +192,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 			else
 			{
+				this._problems.Report(ProblemFactory.FileNotFound(path));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.OpenFileTitle"), Loc.Format("Str.Shell.Dlg.FileNotFound", path));
 			}
 		}
@@ -229,6 +244,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
+				this._problems.Report(ProblemFactory.OpenFailed(path, ex));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.CannotOpenTitle"), ex.Message);
 				return null;
 			}

@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Salvar fluxograma como imagem</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Nó de diálogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Nota</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Configuração de funções</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funções de diálogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Edita as regras que indicam ao fluxograma quais funções e macros mostram mensagens e saltam para nós.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Não criar nó de saída</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Não cria um nó de saída do diálogo (normalmente Node999) no fluxograma.</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Número da linha no arquivo de mensagens. Clique para abrir o editor de mensagens.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Abrir o editor de mensagens nesta mensagem</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Texto da mensagem</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Arquivo msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Arquivo de mensagens</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Nós:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">O nó de diálogo a mostrar</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Nó de diálogo</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Clique aqui para digitar o texto...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Arquivo ausente</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">O arquivo de mensagens do diálogo não foi encontrado.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Fluxograma do diálogo</sys:String>
 </ResourceDictionary>

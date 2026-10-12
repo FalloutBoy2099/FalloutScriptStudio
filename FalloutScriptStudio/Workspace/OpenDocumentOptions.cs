@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
+	using System.Threading;
 
 	/// <summary>How a file is opened by <see cref="IWorkspaceManager.OpenAsync(String, OpenDocumentOptions)"/>.</summary>
 	public sealed record OpenDocumentOptions
@@ -31,5 +32,8 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>Gets a value indicating whether the output (Build tab) is cleared before a decompilation.</summary>
 		public Boolean ClearBuildLog { get; init; } = true;
+
+		/// <summary>Gets the token that cancels the decompilation of a compiled script (a round trip passes the token of its own operation); when none is given the decompilation is a cancellable operation of its own.</summary>
+		public CancellationToken CancellationToken { get; init; }
 	}
 }

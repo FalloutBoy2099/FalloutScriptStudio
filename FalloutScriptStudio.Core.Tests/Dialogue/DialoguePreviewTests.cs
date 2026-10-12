@@ -127,7 +127,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 			DialoguePreviewRow reply = preview.Rows.First();
 			Assert.True(reply.IsError);
 			Assert.Equal(DialogueMessageStatus.FileNotFound, reply.Status);
-			Assert.Equal(String.Format(MessageFileTexts.FileNotFoundFormat, 123), reply.MessageText);
+			Assert.Equal(String.Format(System.Globalization.CultureInfo.InvariantCulture, MessageFileTexts.FileNotFoundFormat, 123), reply.MessageText);
 		}
 
 		[Fact]

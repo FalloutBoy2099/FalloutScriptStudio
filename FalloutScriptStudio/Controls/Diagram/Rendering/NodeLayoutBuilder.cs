@@ -20,17 +20,26 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 		/// <param name="node">The node.</param>
 		/// <param name="width">Outer width; zero or less selects the automatic width (content width limited to <see cref="DiagramMetrics.AutoWidthLimit"/>).</param>
 		/// <param name="context">Palette and fonts.</param>
-		public static NodeLayout Build(DiagramNode node, Double width, DiagramRenderContext context)
+		/// <param name="previous">The text measurements of the previous layout of the node made with the same <paramref name="context"/>, or <see langword="null"/>.</param>
+		public static NodeLayout Build(DiagramNode node, Double width, DiagramRenderContext context, NaturalTextCache? previous = null)
 		{
-			NaturalTextCache cache = new NaturalTextCache(context.Styles);
+			NaturalTextCache cache = new NaturalTextCache(context.Styles, previous);
+			NodeLayout layout;
 			if (width > 0.0)
 			{
-				return BuildAtWidth(node, Math.Max(width, node.MinimumWidth), context, cache);
+				layout = BuildAtWidth(node, Math.Max(width, node.MinimumWidth), context, cache);
+			}
+			else
+			{
+				NodeLayout natural = BuildAtWidth(node, Unconstrained, context, cache);
+				Double autoWidth = Math.Max(node.MinimumWidth, Math.Min(natural.ContentWidth, DiagramMetrics.AutoWidthLimit));
+				layout = BuildAtWidth(node, autoWidth, context, cache);
 			}
 
-			NodeLayout natural = BuildAtWidth(node, Unconstrained, context, cache);
-			Double autoWidth = Math.Max(node.MinimumWidth, Math.Min(natural.ContentWidth, DiagramMetrics.AutoWidthLimit));
-			return BuildAtWidth(node, autoWidth, context, cache);
+			cache.Seal();
+			layout.Context = context;
+			layout.Natural = cache;
+			return layout;
 		}
 
 		private static NodeLayout BuildAtWidth(DiagramNode node, Double w, DiagramRenderContext context, NaturalTextCache cache)
@@ -242,30 +251,6 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			FormattedText natural = cache.Get(text, face, size, brush);
 			naturalWidth = natural.Width;
 			return natural.Width <= avail ? natural : styles.Create(text, face, size, brush, avail);
-		}
-
-		// Shares the unconstrained (single line) text measurements between the passes of one layout.
-		private sealed class NaturalTextCache
-		{
-			private readonly DiagramTextStyles _styles;
-			private readonly Dictionary<(String Text, Typeface Face, Double Size, Brush Brush), FormattedText> _items = new Dictionary<(String, Typeface, Double, Brush), FormattedText>();
-
-			public NaturalTextCache(DiagramTextStyles styles)
-			{
-				this._styles = styles;
-			}
-
-			public FormattedText Get(String text, Typeface face, Double size, Brush brush)
-			{
-				(String, Typeface, Double, Brush) key = (text, face, size, brush);
-				if (!this._items.TryGetValue(key, out FormattedText? formatted))
-				{
-					formatted = this._styles.Create(text, face, size, brush);
-					this._items[key] = formatted;
-				}
-
-				return formatted;
-			}
 		}
 	}
 }

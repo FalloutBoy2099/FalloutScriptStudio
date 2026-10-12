@@ -118,7 +118,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			catch (Exception ex) when (ex is EndOfStreamException or IOException or FormatException or ArgumentException or OverflowException)
 			{
 				problems.Add("settings.dat is damaged or has an unexpected format: " + ex.Message);
-				this._logger.LogWarning(ex, "The legacy settings file could not be read completely");
+				this._logger.LegacySettingsUnreadable(ex);
 			}
 
 			settings.Normalize();
@@ -163,7 +163,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			catch (Exception ex) when (ex is EndOfStreamException or IOException or FormatException or ArgumentException)
 			{
 				problems.Add("recent.dat is damaged or has an unexpected format: " + ex.Message);
-				this._logger.LogWarning(ex, "The legacy recent files list could not be read completely");
+				this._logger.LegacyRecentFilesUnreadable(ex);
 			}
 
 			return (recent, positions);
@@ -203,7 +203,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			catch (Exception ex) when (ex is EndOfStreamException or IOException or FormatException or ArgumentException or OverflowException)
 			{
 				problems.Add("folding.dat is damaged or has an unexpected format: " + ex.Message);
-				this._logger.LogWarning(ex, "The legacy folding file could not be read completely");
+				this._logger.LegacyFoldingUnreadable(ex);
 			}
 
 			return folding;
@@ -345,7 +345,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
 				problems.Add(Path.GetFileName(path) + " could not be opened: " + ex.Message);
-				this._logger.LogWarning(ex, "The legacy file {Path} could not be opened", path);
+				this._logger.LegacyFileNotOpened(ex, path);
 				return false;
 			}
 		}
@@ -373,7 +373,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
 				problems.Add(Path.GetFileName(path) + " could not be read: " + ex.Message);
-				this._logger.LogWarning(ex, "The legacy file {Path} could not be read", path);
+				this._logger.LegacyFileNotRead(ex, path);
 				return null;
 			}
 		}

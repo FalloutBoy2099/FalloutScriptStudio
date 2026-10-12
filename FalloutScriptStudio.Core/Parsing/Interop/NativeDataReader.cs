@@ -197,7 +197,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop
 			};
 		}
 
-		private static IReadOnlyList<SourceReference> ReadReferences(Int32 count, Action<Int32[]> fill)
+		private static SourceReference[] ReadReferences(Int32 count, Action<Int32[]> fill)
 		{
 			if (count <= 0)
 			{

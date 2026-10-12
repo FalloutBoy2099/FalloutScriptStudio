@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Aller à la définition</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Rechercher les références</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Renommer</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Ouvrir l'include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Ouvrir le fichier inclus</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Afficher la liste de complétion</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Aller aux déclarations</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Supprimer la ligne</sys:String>
@@ -52,4 +52,6 @@
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Fichier introuvable : {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Appuyez sur la touche TAB pour insérer le code automatique.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Aucune référence trouvée pour « {0} ».</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Éditeur de scripts</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Éditeur de scripts, seconde vue</sys:String>
 </ResourceDictionary>

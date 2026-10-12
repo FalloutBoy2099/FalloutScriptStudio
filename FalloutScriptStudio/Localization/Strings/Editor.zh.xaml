@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">转到定义</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">查找引用</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">重命名</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">打开 include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">打开包含文件</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">显示补全列表</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">转到声明区</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">删除行</sys:String>
@@ -52,4 +52,6 @@
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">未找到文件：{0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">按 TAB 键插入自动代码。</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">未找到“{0}”的引用。</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">脚本编辑器</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">脚本编辑器（第二视图）</sys:String>
 </ResourceDictionary>

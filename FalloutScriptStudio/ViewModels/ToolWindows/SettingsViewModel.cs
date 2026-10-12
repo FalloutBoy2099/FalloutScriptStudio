@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		private readonly ISettingsService _settingsService;
 		private readonly IThemeService _themeService;
 		private readonly IDialogService _dialogService;
-		private readonly FileAssociationService _fileAssociation;
+		private readonly IFileAssociationService _fileAssociation;
 		private readonly AppTheme _initialTheme;
 
 		[ObservableProperty]
@@ -40,7 +40,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			ISettingsService settingsService,
 			IThemeService themeService,
 			IDialogService dialogService,
-			FileAssociationService fileAssociation,
+			IFileAssociationService fileAssociation,
 			IEditorFontCatalog fontCatalog)
 		{
 			ArgumentNullException.ThrowIfNull(settingsService);
@@ -93,6 +93,13 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		/// <summary>Gets the page that is currently shown.</summary>
 		public SettingsPage SelectedPage => this.SelectedPageItem?.Page ?? SettingsPage.Appearance;
+
+		/// <summary>Shows a page, for example the one a problem offers to fix.</summary>
+		/// <param name="page">The page.</param>
+		public void SelectPage(SettingsPage page)
+		{
+			this.SelectedPageItem = this.Pages.FirstOrDefault(item => item.Page == page) ?? this.SelectedPageItem;
+		}
 
 		/// <summary>Gets a value indicating whether the Appearance page is shown.</summary>
 		public Boolean IsAppearancePage => this.SelectedPage == SettingsPage.Appearance;

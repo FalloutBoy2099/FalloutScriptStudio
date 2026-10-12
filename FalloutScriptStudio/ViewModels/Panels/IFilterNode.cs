@@ -20,5 +20,10 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 		/// <summary>Gets the child nodes.</summary>
 		IEnumerable<IFilterNode> FilterChildren { get; }
+
+		/// <summary>Called by <see cref="TreeFilter"/> when the visibility of the children of the node was set (a node that lists only its visible children updates the list here).</summary>
+		void OnFilterApplied()
+		{
+		}
 	}
 }

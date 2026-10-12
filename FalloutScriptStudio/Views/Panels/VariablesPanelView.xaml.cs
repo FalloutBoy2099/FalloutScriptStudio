@@ -21,6 +21,40 @@ namespace FalloutScriptStudio.Views.Panels
 			TreeViewHelper.SelectItemUnderMouse(e.OriginalSource as DependencyObject);
 		}
 
+		/// <summary>The keyboard equivalents of the mouse and of the context menu: Enter, Ctrl+Enter and F2.</summary>
+		private void OnTreeKeyDown(Object sender, KeyEventArgs e)
+		{
+			if (this.ViewModel is not { } viewModel || (sender as TreeView)?.SelectedItem is not TreeNodeViewModel node)
+			{
+				return;
+			}
+
+			ModifierKeys modifiers = Keyboard.Modifiers;
+			if (e.Key == Key.Enter && modifiers == ModifierKeys.None)
+			{
+				if (node.IsSymbol)
+				{
+					viewModel.NavigateCommand.Execute(node);
+				}
+				else
+				{
+					node.IsExpanded = !node.IsExpanded;
+				}
+
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Enter && modifiers == ModifierKeys.Control && node.IsSymbol)
+			{
+				viewModel.InsertNameCommand.Execute(node);
+				e.Handled = true;
+			}
+			else if (e.Key == Key.F2 && modifiers == ModifierKeys.None && node.IsSymbol)
+			{
+				viewModel.RenameCommand.Execute(node);
+				e.Handled = true;
+			}
+		}
+
 		private void OnItemMouseDoubleClick(Object sender, MouseButtonEventArgs e)
 		{
 			if (sender is TreeViewItem { DataContext: TreeNodeViewModel node } item && item.IsSelected && node.IsSymbol && this.ViewModel is { } viewModel)

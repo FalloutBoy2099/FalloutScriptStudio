@@ -112,8 +112,8 @@
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFileQuestion">Nachrichtendatei {0} erstellen?</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreatedIn">Die Datei wird erstellt in: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFailed">Die Nachrichtendatei konnte nicht erstellt werden:</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">Scripts.lst existiert nicht im Ordner für kompilierte Skripte.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Der zugehörige Name konnte aus Scripts.lst nicht gelesen werden.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">scripts.lst existiert nicht im Ordner für kompilierte Skripte.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Der zugehörige Name konnte aus scripts.lst nicht gelesen werden.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.NameMacroMissing">Das NAME-Makro wurde in diesem Skript nicht gefunden oder hat keine Skriptnummer.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Die Nachrichtendatei wird stattdessen über den Skriptnamen zugeordnet.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Deleted">Die Datei existiert nicht mehr auf dem Datenträger. Beim Speichern wird sie neu erstellt.</sys:String>
@@ -150,4 +150,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.MissingNumber">Zeilennummer der Nachricht fehlt.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Ungültige Zeilennummer der Nachricht.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Doppelte Zeilennummer der Nachricht: {0}</sys:String>
+    <sys:String x:Key="Str.MessageEditor.A11y.Grid">Nachrichten</sys:String>
 </ResourceDictionary>

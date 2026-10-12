@@ -34,6 +34,60 @@ namespace FalloutScriptStudio.Views.Panels
 			TreeViewHelper.SelectItemUnderMouse(e.OriginalSource as DependencyObject);
 		}
 
+		/// <summary>The keyboard equivalents of the mouse and of the context menu: Enter, Ctrl+Enter, F2, Delete, Alt+Up and Alt+Down.</summary>
+		private void OnTreeKeyDown(Object sender, KeyEventArgs e)
+		{
+			if (this.ViewModel is not { } viewModel || (sender as TreeView)?.SelectedItem is not TreeNodeViewModel node)
+			{
+				return;
+			}
+
+			ModifierKeys modifiers = Keyboard.Modifiers;
+			Key key = e.Key == Key.System ? e.SystemKey : e.Key;
+			if (key == Key.Enter && modifiers == ModifierKeys.None)
+			{
+				if (node.IsSymbol)
+				{
+					viewModel.NavigateCommand.Execute(node);
+				}
+				else
+				{
+					node.IsExpanded = !node.IsExpanded;
+				}
+
+				e.Handled = true;
+			}
+			else if (key == Key.Enter && modifiers == ModifierKeys.Control && node.IsSymbol)
+			{
+				viewModel.InsertNameCommand.Execute(node);
+				e.Handled = true;
+			}
+			else if (node is ProcedureNodeViewModel { CanModify: true } procedure)
+			{
+				switch (key)
+				{
+					case Key.F2 when modifiers == ModifierKeys.None:
+						viewModel.RenameCommand.Execute(procedure);
+						e.Handled = true;
+						break;
+					case Key.Delete when modifiers == ModifierKeys.None:
+						viewModel.DeleteCommand.Execute(procedure);
+						e.Handled = true;
+						break;
+					case Key.Up when modifiers == ModifierKeys.Alt:
+						viewModel.MoveUpCommand.Execute(procedure);
+						e.Handled = true;
+						break;
+					case Key.Down when modifiers == ModifierKeys.Alt:
+						viewModel.MoveDownCommand.Execute(procedure);
+						e.Handled = true;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
 		private void OnItemMouseDoubleClick(Object sender, MouseButtonEventArgs e)
 		{
 			if (sender is TreeViewItem { DataContext: TreeNodeViewModel node } item && item.IsSelected && node.IsSymbol && this.ViewModel is { } viewModel)

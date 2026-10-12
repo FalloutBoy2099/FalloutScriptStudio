@@ -10,6 +10,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.Messages;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.MessageEditor;
 	using Microsoft.Extensions.Logging;
@@ -23,6 +24,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IDialogService _dialogs;
 		private readonly IMessageEditorService _messageEditor;
 		private readonly ILogger _logger;
+		private readonly IProblemService _problems;
 		private readonly Dictionary<DocumentViewModel, Dictionary<Int32, String>> _messageTexts = new Dictionary<DocumentViewModel, Dictionary<Int32, String>>();
 		private readonly ConditionalWeakTable<DocumentViewModel, Object> _forgotten = new ConditionalWeakTable<DocumentViewModel, Object>();
 
@@ -32,7 +34,8 @@ namespace FalloutScriptStudio.Workspace
 			IMessageFileService messageFiles,
 			IDialogService dialogs,
 			IMessageEditorService messageEditor,
-			ILogger<MessageAssociationService>? logger = null)
+			ILogger<MessageAssociationService>? logger = null,
+			IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(messageFiles);
@@ -43,6 +46,7 @@ namespace FalloutScriptStudio.Workspace
 			this._dialogs = dialogs;
 			this._messageEditor = messageEditor;
 			this._logger = logger ?? NullLogger<MessageAssociationService>.Instance;
+			this._problems = problems ?? new ProblemService();
 		}
 
 		/// <summary>Returns the text of a message of the message file associated with a script, or <see langword="null"/>.</summary>
@@ -87,12 +91,14 @@ namespace FalloutScriptStudio.Workspace
 			{
 				MessageDocument messages = text is not null
 					? MessageDocument.Parse(text.Split('\n').Select(line => line.TrimEnd('\r')).ToList())
-					: await this._messageFiles.ReadAsync(path, this._settings.Settings.ToMessageFileOptions().Encoding);
+					: await this._messageFiles.ReadAsync(path, this._settings.Effective.ToMessageFileOptions().Encoding);
 				this.Store(document, messages);
+				this._problems.ClearOwner(document, ProblemSource.Message);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "Cannot read the message file {Path}", path);
+				this._logger.MessageFileNotRead(ex, path);
+				this._problems.Report(ProblemFactory.OpenFailed(path, ex) with { Source = ProblemSource.Message, Owner = document });
 			}
 		}
 
@@ -154,7 +160,7 @@ namespace FalloutScriptStudio.Workspace
 				return null;
 			}
 
-			MessageFileOptions options = this._settings.Settings.ToMessageFileOptions();
+			MessageFileOptions options = this._settings.Effective.ToMessageFileOptions();
 			MessageFileLocation location = this._messageFiles.LocateForScript(document.FilePath, document.ProgramInfo?.ScriptNameId, options);
 			if (reportProblems)
 			{
@@ -175,7 +181,8 @@ namespace FalloutScriptStudio.Workspace
 					}
 					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 					{
-						this._logger.LogError(ex, "The message file {Path} could not be created", location.DefaultPath);
+						this._logger.MessageFileNotCreated(ex, location.DefaultPath);
+						this._problems.Report(ProblemFactory.SaveFailed(location.DefaultPath, ex, document) with { Source = ProblemSource.Message });
 						await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.MessageFileTitle"), Loc.Get("Str.MessageEditor.Msg.CreateFailed") + Environment.NewLine + ex.Message);
 					}
 				}
@@ -183,9 +190,15 @@ namespace FalloutScriptStudio.Workspace
 
 			if (path is null)
 			{
+				if (reportProblems)
+				{
+					this._problems.Report(ProblemFactory.MessageFileMissing(document.FilePath, document));
+				}
+
 				return null;
 			}
 
+			this._problems.ClearOwner(document, ProblemSource.Message);
 			document.MessageFilePath = path;
 			try
 			{
@@ -194,7 +207,8 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "Cannot read the message file {Path}", path);
+				this._logger.MessageFileNotRead(ex, path);
+				this._problems.Report(ProblemFactory.OpenFailed(path, ex) with { Source = ProblemSource.Message, Owner = document });
 			}
 
 			return path;

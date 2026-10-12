@@ -1,0 +1,491 @@
+<ui:FluentWindow
+    x:Class="FalloutScriptStudio.Views.ToolWindows.ProjectSettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
+    xmlns:comp="clr-namespace:FalloutScriptStudio.Core.Compilation;assembly=FalloutScriptStudio.Core"
+    xmlns:local="clr-namespace:FalloutScriptStudio.Views.ToolWindows"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="{DynamicResource Str.ToolWindows.Project.Title}"
+    Width="860"
+    Height="720"
+    MinWidth="680"
+    MinHeight="480"
+    a11y:WindowFit.FitToWorkArea="True"
+    Background="{DynamicResource ApplicationBackgroundBrush}"
+    ExtendsContentIntoTitleBar="True"
+    FocusManager.FocusedElement="{Binding ElementName=ProjectNameBox}"
+    FontSize="12"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    ShowInTaskbar="False"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
+    WindowBackdropType="Mica"
+    WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style TargetType="local:SettingCard">
+            <Setter Property="Margin" Value="0,0,0,6" />
+            <Setter Property="Padding" Value="16,12" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:SettingCard">
+                        <Border
+                            Padding="{TemplateBinding Padding}"
+                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock
+                                        x:Name="PART_Title"
+                                        Text="{TemplateBinding Title}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        x:Name="DescriptionText"
+                                        Margin="0,2,0,0"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                        Text="{TemplateBinding Description}"
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    Margin="16,0,0,0"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Description" Value="">
+                                <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,12,0,8" />
+        </Style>
+
+        <Style x:Key="HelpText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+
+        <!--  Every control of a row is named after the title of its card, so a screen reader announces "Output folder" and not the type of the control.  -->
+        <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="local:OverrideModeBox">
+            <Setter Property="AutomationProperties.HelpText" Value="{DynamicResource Str.ToolWindows.Project.ModeHelp}" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=local:SettingCard}}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style
+            x:Key="OptionTextBox"
+            BasedOn="{StaticResource {x:Type ui:TextBox}}"
+            TargetType="ui:TextBox">
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=local:SettingCard}}" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="PlaceholderText" Value="{DynamicResource Str.ToolWindows.Placeholder.NotSet}" />
+            <Setter Property="Width" Value="260" />
+        </Style>
+
+        <Style
+            x:Key="OptionToggle"
+            BasedOn="{StaticResource {x:Type ui:ToggleSwitch}}"
+            TargetType="ui:ToggleSwitch">
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=local:SettingCard}}" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+        </Style>
+
+        <Style
+            x:Key="OptionComboBox"
+            BasedOn="{StaticResource {x:Type ComboBox}}"
+            TargetType="ComboBox">
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title, RelativeSource={RelativeSource AncestorType=local:SettingCard}}" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+            <Setter Property="MinWidth" Value="260" />
+        </Style>
+
+        <Style
+            x:Key="BrowseButton"
+            BasedOn="{StaticResource {x:Type ui:Button}}"
+            TargetType="ui:Button">
+            <Setter Property="Margin" Value="6,0,0,0" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar
+            Title="{DynamicResource Str.ToolWindows.Project.Title}"
+            Grid.Row="0"
+            ShowMaximize="False"
+            ShowMinimize="False">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/FalloutScriptStudio;component/Assets/Icons/app.ico" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="20,0,24,16">
+                <TextBlock Style="{StaticResource PageTitle}" Text="{DynamicResource Str.ToolWindows.Project.Title}" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Style="{StaticResource HelpText}"
+                    Text="{DynamicResource Str.ToolWindows.Project.Help}" />
+
+                <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Name.Title}" Description="{DynamicResource Str.ToolWindows.Project.Name.Desc}">
+                    <ui:TextBox
+                        x:Name="ProjectNameBox"
+                        Width="260"
+                        AutomationProperties.Name="{DynamicResource Str.ToolWindows.Project.Name.Title}"
+                        IsEnabled="{Binding IsEditable}"
+                        PlaceholderText="{Binding DefaultName}"
+                        Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
+                </local:SettingCard>
+                <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Folder.Title}" Description="{Binding ProjectFolder}" />
+                <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.File.Title}" Description="{Binding ProjectFilePath}" />
+
+                <Border
+                    Margin="0,0,0,6"
+                    Padding="16,12"
+                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Visibility="{Binding CanCreate, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <TextBlock
+                            Style="{StaticResource HelpText}"
+                            Text="{DynamicResource Str.ToolWindows.Project.Missing}"
+                            Visibility="{Binding IsMissing, Converter={StaticResource BoolToVisibility}}" />
+                        <TextBlock
+                            Style="{StaticResource HelpText}"
+                            Text="{DynamicResource Str.ToolWindows.Project.Damaged}"
+                            Visibility="{Binding IsDamaged, Converter={StaticResource BoolToVisibility}}" />
+                        <ui:Button
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Left"
+                            Appearance="Primary"
+                            Command="{Binding CreateSettingsCommand}"
+                            Content="{DynamicResource Str.ToolWindows.Project.Create}" />
+                    </StackPanel>
+                </Border>
+                <TextBlock
+                    Margin="0,0,0,6"
+                    Style="{StaticResource HelpText}"
+                    Text="{DynamicResource Str.ToolWindows.Project.Unreadable}"
+                    Visibility="{Binding IsUnreadable, Converter={StaticResource BoolToVisibility}}" />
+
+                <StackPanel IsEnabled="{Binding IsEditable}">
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Page.Paths}" />
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding HeadersDirectory.ModeIndex}" />
+                            <ui:TextBox
+                                IsEnabled="{Binding HeadersDirectory.IsOverridden}"
+                                Style="{StaticResource OptionTextBox}"
+                                Text="{Binding HeadersDirectory.Value, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:Button
+                                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}"
+                                Command="{Binding BrowseHeadersDirectoryCommand}"
+                                Icon="{ui:SymbolIcon Folder24}"
+                                IsEnabled="{Binding HeadersDirectory.IsOverridden}"
+                                Style="{StaticResource BrowseButton}"
+                                ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding ScriptsHeaderFile.ModeIndex}" />
+                            <ui:TextBox
+                                IsEnabled="{Binding ScriptsHeaderFile.IsOverridden}"
+                                Style="{StaticResource OptionTextBox}"
+                                Text="{Binding ScriptsHeaderFile.Value, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:Button
+                                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Tip.SelectFile}"
+                                Command="{Binding BrowseScriptsHeaderFileCommand}"
+                                Icon="{ui:SymbolIcon Document24}"
+                                IsEnabled="{Binding ScriptsHeaderFile.IsOverridden}"
+                                Style="{StaticResource BrowseButton}"
+                                ToolTip="{DynamicResource Str.ToolWindows.Tip.SelectFile}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OutputDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OutputDir.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding OutputDirectory.ModeIndex}" />
+                            <ui:TextBox
+                                IsEnabled="{Binding OutputDirectory.IsOverridden}"
+                                Style="{StaticResource OptionTextBox}"
+                                Text="{Binding OutputDirectory.Value, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:Button
+                                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}"
+                                Command="{Binding BrowseOutputDirectoryCommand}"
+                                Icon="{ui:SymbolIcon Folder24}"
+                                IsEnabled="{Binding OutputDirectory.IsOverridden}"
+                                Style="{StaticResource BrowseButton}"
+                                ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Title}" Description="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding ScriptsListFile.ModeIndex}" />
+                            <ui:TextBox
+                                IsEnabled="{Binding ScriptsListFile.IsOverridden}"
+                                Style="{StaticResource OptionTextBox}"
+                                Text="{Binding ScriptsListFile.Value, UpdateSourceTrigger=PropertyChanged}" />
+                            <ui:Button
+                                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Tip.SelectFile}"
+                                Command="{Binding BrowseScriptsListFileCommand}"
+                                Icon="{ui:SymbolIcon Document24}"
+                                IsEnabled="{Binding ScriptsListFile.IsOverridden}"
+                                Style="{StaticResource BrowseButton}"
+                                ToolTip="{DynamicResource Str.ToolWindows.Tip.SelectFile}" />
+                        </StackPanel>
+                    </local:SettingCard>
+
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Page.Compiler}" />
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding Preprocessor.ModeIndex}" />
+                            <ComboBox
+                                IsEnabled="{Binding Preprocessor.IsOverridden}"
+                                SelectedValue="{Binding Preprocessor.Value, Mode=TwoWay}"
+                                SelectedValuePath="Tag"
+                                Style="{StaticResource OptionComboBox}">
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Preprocessor.Builtin}" Tag="{x:Static comp:PreprocessorKind.Builtin}" />
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Preprocessor.Mcpp}" Tag="{x:Static comp:PreprocessorKind.Mcpp}" />
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Preprocessor.Watcom}" Tag="{x:Static comp:PreprocessorKind.Watcom}" />
+                            </ComboBox>
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding Optimization.ModeIndex}" />
+                            <ComboBox
+                                IsEnabled="{Binding Optimization.IsOverridden}"
+                                SelectedValue="{Binding Optimization.Value, Mode=TwoWay}"
+                                SelectedValuePath="Tag"
+                                Style="{StaticResource OptionComboBox}">
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Optimization.None}" Tag="{x:Static comp:OptimizationLevel.None}" />
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Optimization.Basic}" Tag="{x:Static comp:OptimizationLevel.Basic}" />
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Optimization.Full}" Tag="{x:Static comp:OptimizationLevel.Full}" />
+                                <ComboBoxItem Content="{DynamicResource Str.ToolWindows.Choice.Optimization.Experimental}" Tag="{x:Static comp:OptimizationLevel.Experimental}" />
+                            </ComboBox>
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding ShowWarnings.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding ShowWarnings.Value}"
+                                IsEnabled="{Binding ShowWarnings.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding DebugInfo.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding DebugInfo.Value}"
+                                IsEnabled="{Binding DebugInfo.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding ShortCircuit.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding ShortCircuit.Value}"
+                                IsEnabled="{Binding ShortCircuit.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding BackwardCompatibility.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding BackwardCompatibility.Value}"
+                                IsEnabled="{Binding BackwardCompatibility.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding SearchIncludePath.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding SearchIncludePath.Value}"
+                                IsEnabled="{Binding SearchIncludePath.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding CompileToSourceDirectory.ModeIndex}" />
+                            <ui:ToggleSwitch
+                                IsChecked="{Binding CompileToSourceDirectory.Value}"
+                                IsEnabled="{Binding CompileToSourceDirectory.IsOverridden}"
+                                Style="{StaticResource OptionToggle}" />
+                        </StackPanel>
+                    </local:SettingCard>
+
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.PreprocessorDefines}" />
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Opt.Define.Title}" Description="{DynamicResource Str.ToolWindows.Project.Opt.Define.Desc}">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding SelectedDefine.ModeIndex}" />
+                            <ComboBox
+                                IsEnabled="{Binding SelectedDefine.IsOverridden}"
+                                ItemsSource="{Binding DefineChoices}"
+                                SelectedValue="{Binding SelectedDefine.Value, Mode=TwoWay}"
+                                SelectedValuePath="Value"
+                                Style="{StaticResource OptionComboBox}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Caption}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </local:SettingCard>
+                    <Border
+                        Padding="16,12"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource HelpText}" Text="{DynamicResource Str.ToolWindows.Project.Defines.Help}" />
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ListBox
+                                    Height="110"
+                                    AutomationProperties.Name="{DynamicResource Str.ToolWindows.Section.PreprocessorDefines}"
+                                    ItemsSource="{Binding ProjectDefines}"
+                                    SelectedItem="{Binding SelectedProjectDefine, Mode=TwoWay}" />
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Width="150"
+                                    Margin="10,0,0,0">
+                                    <ui:TextBox
+                                        AutomationProperties.Name="{DynamicResource Str.ToolWindows.Placeholder.NewDefine}"
+                                        PlaceholderText="{DynamicResource Str.ToolWindows.Placeholder.NewDefine}"
+                                        Text="{Binding NewProjectDefine, UpdateSourceTrigger=PropertyChanged}">
+                                        <ui:TextBox.InputBindings>
+                                            <KeyBinding Key="Return" Command="{Binding AddProjectDefineCommand}" />
+                                        </ui:TextBox.InputBindings>
+                                    </ui:TextBox>
+                                    <ui:Button
+                                        Margin="0,6,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding AddProjectDefineCommand}"
+                                        Content="{DynamicResource Str.ToolWindows.Btn.AddDefine}" />
+                                    <ui:Button
+                                        Margin="0,6,0,0"
+                                        HorizontalAlignment="Stretch"
+                                        Command="{Binding RemoveProjectDefineCommand}"
+                                        Content="{DynamicResource Str.ToolWindows.Btn.DeleteDefine}" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.MessagePaths}" />
+                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Section.MessagePaths}" Description="{DynamicResource Str.ToolWindows.Project.MessagePaths.Help}">
+                        <local:OverrideModeBox SelectedIndex="{Binding MessagePathsMode.ModeIndex}" />
+                    </local:SettingCard>
+                    <Border
+                        Padding="16,12"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        IsEnabled="{Binding MessagePathsMode.IsOverridden}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ListBox
+                                Height="130"
+                                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Section.MessagePaths}"
+                                ItemsSource="{Binding MessagePaths}"
+                                SelectedItem="{Binding SelectedMessagePath, Mode=TwoWay}" />
+                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                <ui:Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding AddMessagePathCommand}"
+                                    Content="{DynamicResource Str.ToolWindows.Btn.AddPath}" />
+                                <ui:Button
+                                    Margin="0,6,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding RemoveMessagePathCommand}"
+                                    Content="{DynamicResource Str.ToolWindows.Btn.DeletePath}" />
+                                <ui:Button
+                                    Margin="0,6,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding MoveMessagePathUpCommand}"
+                                    Content="{DynamicResource Str.ToolWindows.Btn.MoveUp}" />
+                                <ui:Button
+                                    Margin="0,6,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding MoveMessagePathDownCommand}"
+                                    Content="{DynamicResource Str.ToolWindows.Btn.MoveDown}" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel
+            Grid.Row="2"
+            Margin="20,8,24,16"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <ui:Button
+                MinWidth="96"
+                Appearance="Primary"
+                Command="{Binding SaveCommand}"
+                Content="{DynamicResource Str.ToolWindows.Project.Save}"
+                IsDefault="True" />
+            <ui:Button
+                MinWidth="96"
+                Margin="8,0,0,0"
+                AutomationProperties.Name="{DynamicResource Str.Common.Cancel}"
+                Command="{Binding CancelCommand}"
+                Content="{DynamicResource Str.Common.Cancel}"
+                IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</ui:FluentWindow>

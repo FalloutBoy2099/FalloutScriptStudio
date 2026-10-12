@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Uložit diagram jako obrázek</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Uzel dialogu</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Poznámka</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Konfigurace funkcí</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funkce dialogů</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Upravuje pravidla, podle kterých diagram pozná, které funkce a makra zobrazují zprávy a skáčou na uzly.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Nevytvářet výstupní uzel</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Nevytváří v diagramu výstupní uzel dialogu (obvykle Node999).</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Číslo řádku v souboru zpráv. Kliknutím otevřete editor zpráv.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Otevřít editor zpráv na této zprávě</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Text zprávy</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Soubor msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Soubor zpráv</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Uzly:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Zobrazený uzel dialogu</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Uzel dialogu</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Kliknutím zde zadáte text...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Soubor chybí</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Soubor zpráv pro dialog nebyl nalezen.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Vývojový diagram dialogu</sys:String>
 </ResourceDictionary>

@@ -15,13 +15,14 @@ namespace FalloutScriptStudio.Workspace
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 
-			AppSettings current = settings.Settings;
+			EffectiveSettings effective = settings.Effective;
+			AppSettings current = effective.Settings;
 			AppPaths paths = settings.Paths;
 			return new ParserOptions
 			{
 				EnableNativeParser = current.Editor.EnableParser,
 				PreprocessorDefinitions = current.Compiler.PreprocessorDefine,
-				HeadersDirectory = current.GetIncludeHeadersDirectory(),
+				HeadersDirectory = effective.GetIncludeHeadersDirectory(),
 				GlobalMacroDirectory = current.Paths.HeadersDirectory,
 				BackwardCompatibilityMode = current.Compiler.BackwardCompatibility ? 1 : 0,
 				ProgramDirectory = paths.ProgramDirectory,

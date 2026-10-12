@@ -169,7 +169,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 
 			if (!this._files.TryGetValue(key, out (MessageDocument Document, String Path) file))
 			{
-				return new DialogueMessageLookup(DialogueMessageStatus.FileNotFound, String.Format(MessageFileTexts.FileNotFoundFormat, messageFileNumber), null);
+				return new DialogueMessageLookup(DialogueMessageStatus.FileNotFound, String.Format(System.Globalization.CultureInfo.InvariantCulture, MessageFileTexts.FileNotFoundFormat, messageFileNumber), null);
 			}
 
 			return file.Document.TryGetText(messageNumber, out String text)

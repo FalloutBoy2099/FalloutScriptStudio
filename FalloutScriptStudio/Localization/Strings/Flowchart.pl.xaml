@@ -25,8 +25,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Zapisz schemat jako obraz</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Węzeł dialogu</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Notatka</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Konfiguracja funkcji</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Edytuje reguły określające, które funkcje i makra wyświetlają komunikaty i przechodzą do węzłów.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funkcje dialogów</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Edytuje reguły, które mówią schematowi blokowemu, jakie funkcje i makra wyświetlają komunikaty i przechodzą do węzłów.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Nie twórz węzła wyjścia</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Nie tworzy na schemacie węzła wyjścia z dialogu (zwykle Node999).</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.AutoHide">Automatycznie ukrywaj nieużywane węzły</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Numer wiersza w pliku komunikatów. Kliknij, aby otworzyć edytor komunikatów.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Otwórz edytor komunikatów przy tym komunikacie</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Tekst komunikatu</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Plik msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Plik komunikatów</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Węzły:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Węzeł dialogu do wyświetlenia</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Węzeł dialogu</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Kliknij tutaj, aby wpisać tekst...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Brak pliku</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Nie znaleziono pliku komunikatów dla dialogu.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Schemat blokowy dialogu</sys:String>
 </ResourceDictionary>

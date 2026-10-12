@@ -17,6 +17,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly EditorContext _context;
 		private readonly FoldingGenerator _generator = new FoldingGenerator();
 		private FoldingManager? _manager;
+		private FoldingRedrawGate? _redrawGate;
 		private Boolean _stateRestored;
 
 		public FoldingController(EditorContext context)
@@ -50,6 +51,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			}
 
 			this._manager = FoldingManager.Install(this._context.TextArea);
+			this._redrawGate = FoldingRedrawGate.TryCreate(this._manager, this._context.Document);
 			if (mirror is not null)
 			{
 				// The state of the first pane is the one that counts; this pane never restores or stores it.
@@ -70,6 +72,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 		/// <summary>Detaches the folding manager; the state must have been captured before.</summary>
 		public void Dispose()
 		{
+			this._redrawGate?.Dispose();
+			this._redrawGate = null;
 			if (this._manager is not null)
 			{
 				FoldingManager.Uninstall(this._manager);

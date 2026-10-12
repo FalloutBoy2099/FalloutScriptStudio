@@ -100,7 +100,7 @@
     <sys:String x:Key="Str.MessageEditor.Msg.EditorStartFailed">Den externa redigeraren kunde inte startas:</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CannotOpenAsText">Skriptredigeraren kan inte öppna den här filen som text.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.SaveFailed">Meddelandefilen kunde inte sparas:</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.EncodingReload">Om du ändrar teckenkodningen läses filen om och osparade ändringar går förlorade. Fortsätta?</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.EncodingReload">Om du ändrar teckenkodningen måste filen läsas in igen, och osparade ändringar går förlorade. Fortsätta?</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.OnlyMessagesComment">Endast meddelanden kan ha en avslutande kommentar.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CommentPrompt">Kommentar som följer efter meddelandet i filen:</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.MoveFiltered">Rader kan inte flyttas medan listan är filtrerad.</sys:String>
@@ -112,10 +112,10 @@
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFileQuestion">Skapa meddelandefilen {0}?</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreatedIn">Filen skapas i: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFailed">Meddelandefilen kunde inte skapas:</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">Scripts.lst finns inte i mappen för kompilerade skript.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Det associerade namnet kunde inte läsas från Scripts.lst.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">scripts.lst finns inte i mappen för kompilerade skript.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">Det associerade namnet kunde inte läsas från scripts.lst.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.NameMacroMissing">Makrot NAME hittades inte i det här skriptet eller saknar skriptnummer.</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Meddelandefilen kopplas i stället via skriptets namn.</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">Meddelandefilen associeras i stället via skriptets namn.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Deleted">Filen finns inte längre på disken. Den skapas på nytt när du sparar.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.ChangedUnsaved">Filen ändrades av ett annat program. Om du läser om går dina osparade ändringar förlorade.</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Changed">Filen ändrades av ett annat program.</sys:String>
@@ -150,4 +150,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.MissingNumber">Radnummer för meddelandet saknas.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Ogiltigt radnummer för meddelandet.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Duplicerat radnummer för meddelande: {0}</sys:String>
+    <sys:String x:Key="Str.MessageEditor.A11y.Grid">Meddelanden</sys:String>
 </ResourceDictionary>

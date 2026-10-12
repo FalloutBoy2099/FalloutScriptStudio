@@ -42,6 +42,7 @@ namespace FalloutScriptStudio.Editor
 		/// <param name="userMacros">Optional supplier of the user macro words.</param>
 		/// <param name="viewOptions">The view toggles shared with the main window; a private instance is used when none is registered.</param>
 		/// <param name="logger">Receives the warnings about syntax files of the user that cannot be used.</param>
+		/// <param name="popups">Opens the completion list, the tooltips and the code tips; the real windows are used when none is given.</param>
 		public ScriptEditorServices(
 			ISettingsService settings,
 			IThemeService theme,
@@ -49,7 +50,8 @@ namespace FalloutScriptStudio.Editor
 			ICollapsedProcedureStore collapsedProcedures,
 			IUserMacroSource? userMacros = null,
 			EditorViewOptions? viewOptions = null,
-			ILogger<HighlightingProvider>? logger = null)
+			ILogger<HighlightingProvider>? logger = null,
+			IEditorPopupPresenter? popups = null)
 		{
 			this.Settings = settings;
 			this.Theme = theme;
@@ -57,6 +59,7 @@ namespace FalloutScriptStudio.Editor
 			this.CollapsedProcedures = collapsedProcedures;
 			this.UserMacros = userMacros;
 			this.ViewOptions = viewOptions ?? new EditorViewOptions();
+			this.Popups = popups ?? new EditorPopupPresenter();
 			this.Highlighting = new HighlightingProvider(Path.Combine(settings.Paths.ResourcesDirectory, SyntaxDirectoryName), logger);
 			this.Options = this.CreateOptions();
 			this._zoomPercent = ReadZoom(settings);
@@ -89,6 +92,9 @@ namespace FalloutScriptStudio.Editor
 
 		/// <summary>Gets the optional supplier of user macro words.</summary>
 		public IUserMacroSource? UserMacros { get; }
+
+		/// <summary>Gets the presenter that opens the completion list, the tooltips and the code tips.</summary>
+		public IEditorPopupPresenter Popups { get; }
 
 		/// <summary>Gets the builder of the syntax highlighting definitions.</summary>
 		public HighlightingProvider Highlighting { get; }
@@ -162,7 +168,7 @@ namespace FalloutScriptStudio.Editor
 		/// <returns>The resolver.</returns>
 		public IncludeResolver CreateIncludeResolver()
 		{
-			return this.Settings.Settings.ToIncludeResolver(this.Settings.Paths);
+			return this.Settings.Effective.ToIncludeResolver(this.Settings.Paths);
 		}
 
 		private static Int32 ReadZoom(ISettingsService settings)

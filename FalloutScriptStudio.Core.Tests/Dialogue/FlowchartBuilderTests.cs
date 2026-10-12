@@ -129,7 +129,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 
 			FlowchartModel model = await this.BuildAsync(messages: messages);
 
-			Assert.Equal(String.Format(MessageFileTexts.FileNotFoundFormat, 123), model.FindNode("Node001")!.Content[0].MessageText);
+			Assert.Equal(String.Format(System.Globalization.CultureInfo.InvariantCulture, MessageFileTexts.FileNotFoundFormat, 123), model.FindNode("Node001")!.Content[0].MessageText);
 		}
 
 		[Fact]

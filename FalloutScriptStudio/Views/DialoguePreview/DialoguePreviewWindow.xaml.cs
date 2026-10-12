@@ -60,6 +60,31 @@ namespace FalloutScriptStudio.Views.DialoguePreview
 			}
 		}
 
+		/// <summary>The keyboard equivalents of the double clicks: Enter follows the option, Ctrl+Enter shows its code, F2 edits its message.</summary>
+		private void OnGridKeyDown(Object sender, KeyEventArgs e)
+		{
+			if (((System.Windows.Controls.DataGrid)sender).SelectedItem is not DialoguePreviewRowViewModel row)
+			{
+				return;
+			}
+
+			if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None)
+			{
+				this.ViewModel.FollowCommand.Execute(row);
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.Control)
+			{
+				this.ViewModel.JumpToCodeCommand.Execute(row);
+				e.Handled = true;
+			}
+			else if (e.Key == Key.F2 && Keyboard.Modifiers == ModifierKeys.None)
+			{
+				this.ViewModel.EditMessageCommand.Execute(row);
+				e.Handled = true;
+			}
+		}
+
 		private static DataGridCell? FindCell(DependencyObject? source)
 		{
 			while (source is not null and not DataGridCell)

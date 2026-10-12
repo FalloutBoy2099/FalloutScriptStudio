@@ -22,24 +22,26 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 		/// <param name="outputDirectory">The game scripts folder.</param>
 		/// <param name="scriptsHeaderFile">The configured <c>scripts.h</c>.</param>
 		/// <param name="language">The game language, the folder below <c>text</c>.</param>
+		/// <param name="scriptsListFile">The path of <c>scripts.lst</c> when the project names it; otherwise it is looked for in the output folder.</param>
 		/// <returns>The paths (when the list exists) and the problems.</returns>
-		public static ScriptRegistryPathResult Resolve(String? outputDirectory, String? scriptsHeaderFile, String language)
+		public static ScriptRegistryPathResult Resolve(String? outputDirectory, String? scriptsHeaderFile, String language, String? scriptsListFile = null)
 		{
 			List<ScriptRegistryProblem> problems = new List<ScriptRegistryProblem>();
-			if (String.IsNullOrEmpty(outputDirectory))
+			String? scriptsDirectory = String.IsNullOrWhiteSpace(scriptsListFile) ? outputDirectory : Path.GetDirectoryName(scriptsListFile);
+			if (String.IsNullOrEmpty(scriptsDirectory))
 			{
 				problems.Add(new ScriptRegistryProblem(ScriptRegistryProblemKind.OutputDirectoryNotSet, true, Loc.Get("Str.ScriptTools.RegPathOutputNotSet")));
 				return new ScriptRegistryPathResult(null, problems);
 			}
 
-			String listPath = Path.Combine(outputDirectory, ListFileName);
+			String listPath = String.IsNullOrWhiteSpace(scriptsListFile) ? Path.Combine(scriptsDirectory, ListFileName) : scriptsListFile;
 			if (!File.Exists(listPath))
 			{
 				problems.Add(new ScriptRegistryProblem(ScriptRegistryProblemKind.ScriptsListMissing, true, Loc.Format("Str.ScriptTools.RegPathListMissing", ListFileName)));
 				return new ScriptRegistryPathResult(null, problems);
 			}
 
-			String? messagePath = Path.GetFullPath(Path.Combine(outputDirectory, "..", "text", String.IsNullOrEmpty(language) ? "english" : language, "game", NameMessageFileName));
+			String? messagePath = Path.GetFullPath(Path.Combine(scriptsDirectory, "..", "text", String.IsNullOrEmpty(language) ? "english" : language, "game", NameMessageFileName));
 			if (!File.Exists(messagePath))
 			{
 				problems.Add(new ScriptRegistryProblem(ScriptRegistryProblemKind.NameMessageMissing, false, Loc.Format("Str.ScriptTools.RegPathFileNotFound", NameMessageFileName)));

@@ -18,6 +18,7 @@ namespace FalloutScriptStudio.Core.Tests.Refactoring
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			this._folder.Dispose();
 		}
 

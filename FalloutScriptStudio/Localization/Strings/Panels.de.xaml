@@ -14,7 +14,7 @@
     <sys:String x:Key="Str.Panels.TipGoToBegin">Zum Anfang des Skripts springen</sys:String>
     <sys:String x:Key="Str.Panels.TipCreateProcedure">Neue Prozedur erstellen (Strg+P)</sys:String>
     <sys:String x:Key="Str.Panels.TipShowArguments">Argumente der Prozeduren anzeigen</sys:String>
-    <sys:String x:Key="Str.Panels.TipToggleOutline">Prozeduren des Skripts ein- oder ausklappen</sys:String>
+    <sys:String x:Key="Str.Panels.TipToggleOutline">Prozeduren des Skripts einklappen oder ausklappen</sys:String>
     <sys:String x:Key="Str.Panels.TipRefreshParser">Parser-Daten aktualisieren</sys:String>
     <sys:String x:Key="Str.Panels.EmptyProcedures">Keine Parser-Daten. Öffnen Sie ein Skript, um seine Prozeduren zu sehen.</sys:String>
     <sys:String x:Key="Str.Panels.EmptyVariables">Keine Variablendaten. Der native Parser (parser.dll) liefert die Variablen eines Skripts.</sys:String>

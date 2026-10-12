@@ -178,9 +178,16 @@ namespace FalloutScriptStudio.Services.ScriptTools
 				return;
 			}
 
-			FlowchartWindow window = this._services.GetRequiredService<FlowchartWindow>();
+			// One scope per window: the container keeps a disposable transient (the view model) until its scope ends, so a window
+			// resolved from the root provider would stay in memory for the whole session.
+			IServiceScope scope = this._services.CreateScope();
+			FlowchartWindow window = scope.ServiceProvider.GetRequiredService<FlowchartWindow>();
 			window.Initialize(script);
-			window.Closed += (_, _) => this._flowcharts.Remove(script);
+			window.Closed += (_, _) =>
+			{
+				this._flowcharts.Remove(script);
+				scope.Dispose();
+			};
 			this._flowcharts[script] = window;
 			window.Show();
 		}
@@ -202,23 +209,31 @@ namespace FalloutScriptStudio.Services.ScriptTools
 				return;
 			}
 
+			IServiceScope? pending = null;
 			try
 			{
-				DialoguePreviewWindow window = this._services.GetRequiredService<DialoguePreviewWindow>();
+				IServiceScope windowScope = this._services.CreateScope();
+				pending = windowScope;
+				DialoguePreviewWindow window = windowScope.ServiceProvider.GetRequiredService<DialoguePreviewWindow>();
 				if (!await window.ViewModel.InitializeAsync(script))
 				{
-					window.ViewModel.Dispose();
 					await this._dialogs.ShowInfoAsync(Loc.Get("Str.ScriptTools.ToolsPreviewTitle"), Loc.Get("Str.ScriptTools.ToolsPreviewNoDialogue"));
 					return;
 				}
 
 				window.Owner = ScriptToolWindowHelper.FindOwner(window);
-				window.Closed += (_, _) => this._previews.Remove(script);
+				window.Closed += (_, _) =>
+				{
+					this._previews.Remove(script);
+					windowScope.Dispose();
+				};
 				this._previews[script] = window;
+				pending = null;
 				window.Show();
 			}
 			finally
 			{
+				pending?.Dispose();
 				this._previewsOpening.Remove(script);
 			}
 		}

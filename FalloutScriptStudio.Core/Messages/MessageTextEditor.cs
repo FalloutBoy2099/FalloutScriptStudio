@@ -94,8 +94,8 @@ namespace FalloutScriptStudio.Core.Messages
 
 		private static Boolean TryGetId(String line, Int32 idEnd, out Int32 id)
 		{
-			String idPart = line.Substring(0, idEnd);
-			return Int32.TryParse(idPart.Substring(idPart.IndexOf('{') + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out id);
+			ReadOnlySpan<Char> idPart = line.AsSpan(0, idEnd);
+			return Int32.TryParse(idPart.Slice(idPart.IndexOf('{') + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out id);
 		}
 	}
 }

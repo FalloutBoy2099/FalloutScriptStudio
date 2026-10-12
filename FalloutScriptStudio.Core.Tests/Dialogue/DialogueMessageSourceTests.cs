@@ -18,6 +18,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			this._folder.Dispose();
 		}
 
@@ -78,7 +79,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 			Assert.Equal((DialogueMessageStatus.MessageNotFound, MessageFileTexts.TextNotFound), (noMessage.Status, noMessage.Text));
 			Assert.True(noMessage.IsError);
 			Assert.Equal(DialogueMessageStatus.FileNotFound, noFile.Status);
-			Assert.Equal(String.Format(MessageFileTexts.FileNotFoundFormat, 9), noFile.Text);
+			Assert.Equal(String.Format(System.Globalization.CultureInfo.InvariantCulture, MessageFileTexts.FileNotFoundFormat, 9), noFile.Text);
 			Assert.True(noFile.IsError);
 			Assert.Equal(DialogueMessageStatus.NoMessageNumber, noNumber.Status);
 			Assert.Null(noNumber.Text);

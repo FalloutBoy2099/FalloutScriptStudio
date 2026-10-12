@@ -3,6 +3,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 	using System;
 	using System.Diagnostics;
 	using System.Runtime.InteropServices;
+	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// A Windows job object around the parser host. It makes the operating system kill the host silently when it has an unhandled
@@ -14,19 +15,22 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 		private const UInt32 DieOnUnhandledException = 0x00000400;
 		private const UInt32 KillOnJobClose = 0x00002000;
 
+		private readonly ILogger _logger;
 		private IntPtr _handle;
 
-		private HostJob(IntPtr handle)
+		private HostJob(IntPtr handle, ILogger logger)
 		{
 			this._handle = handle;
+			this._logger = logger;
 		}
 
 		/// <summary>
 		/// Puts a process into a new job. Failures are ignored: the job is an additional safety net, the host works without it.
 		/// </summary>
 		/// <param name="process">The freshly started host.</param>
+		/// <param name="logger">Receives the failures to close the job handle.</param>
 		/// <returns>The job, or <c>null</c> when it could not be created (other platform, restricted environment).</returns>
-		public static HostJob? TryCreate(Process process)
+		public static HostJob? TryCreate(Process process, ILogger logger)
 		{
 			if (!OperatingSystem.IsWindows())
 			{
@@ -48,13 +52,13 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 				if (SetInformationJobObject(handle, ExtendedLimitInformation, buffer, (UInt32)size) == 0
 					|| AssignProcessToJobObject(handle, process.Handle) == 0)
 				{
-					CloseHandle(handle);
+					Close(handle, logger);
 					return null;
 				}
 			}
 			catch (InvalidOperationException)
 			{
-				CloseHandle(handle);
+				Close(handle, logger);
 				return null;
 			}
 			finally
@@ -62,7 +66,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 				Marshal.FreeHGlobal(buffer);
 			}
 
-			return new HostJob(handle);
+			return new HostJob(handle, logger);
 		}
 
 		/// <summary>Closes the job, which kills the host if it is still running.</summary>
@@ -72,7 +76,15 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 			this._handle = IntPtr.Zero;
 			if (handle != IntPtr.Zero)
 			{
-				CloseHandle(handle);
+				Close(handle, this._logger);
+			}
+		}
+
+		private static void Close(IntPtr handle, ILogger logger)
+		{
+			if (CloseHandle(handle) == 0)
+			{
+				logger.JobHandleNotClosed(Marshal.GetLastWin32Error());
 			}
 		}
 
@@ -85,7 +97,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 		[DllImport("kernel32.dll")]
 		private static extern Int32 AssignProcessToJobObject(IntPtr job, IntPtr process);
 
-		[DllImport("kernel32.dll")]
+		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern Int32 CloseHandle(IntPtr handle);
 
 		[StructLayout(LayoutKind.Sequential)]

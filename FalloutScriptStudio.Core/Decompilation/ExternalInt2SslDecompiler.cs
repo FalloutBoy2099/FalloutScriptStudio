@@ -99,12 +99,15 @@ namespace FalloutScriptStudio.Core.Decompilation
 			}
 
 			Boolean succeeded = false;
+			List<ToolFailure> toolFailures = new List<ToolFailure>();
 			foreach (String exePath in GetPrograms(options))
 			{
 				if (!File.Exists(exePath))
 				{
-					this._logger.LogWarning("Decompiler {Tool} was not found", exePath);
-					output.Append("[Error] <none>:0: Required tool not found: ").Append(exePath).Append(LineBreak);
+					this._logger.ToolNotFound(exePath);
+					ToolFailure missing = new ToolFailure(ToolFailureKind.NotFound, exePath);
+					toolFailures.Add(missing);
+					output.Append("[Error] <none>:0: ").Append(missing.LogMessage).Append(LineBreak);
 					continue;
 				}
 
@@ -122,9 +125,17 @@ namespace FalloutScriptStudio.Core.Decompilation
 				}
 				catch (Win32Exception exception)
 				{
-					this._logger.LogError(exception, "Failed to start decompiler {Tool}", exePath);
-					output.Append("[Error] <none>:0: Failed to start ").Append(exePath).Append(": ").Append(exception.Message).Append(LineBreak);
+					this._logger.ToolStartFailed(exception, exePath);
+					ToolFailure notStarted = new ToolFailure(ToolFailureKind.StartFailed, exePath, exception.Message);
+					toolFailures.Add(notStarted);
+					output.Append("[Error] <none>:0: ").Append(notStarted.LogMessage).Append(LineBreak);
 					continue;
+				}
+				catch (OperationCanceledException)
+				{
+					// The decompiler was killed: its half-written work file must not be mistaken for a result by the next run.
+					DecompilationOutputFiles.Discard(paths);
+					throw;
 				}
 
 				output.Append(result.Output);
@@ -135,7 +146,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 				}
 			}
 
-			return DecompilationOutputFiles.Complete(paths, request, output.ToString(), succeeded);
+			return DecompilationOutputFiles.Complete(paths, request, output.ToString(), succeeded) with { ToolFailures = toolFailures };
 		}
 	}
 }

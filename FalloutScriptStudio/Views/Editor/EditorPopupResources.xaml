@@ -26,6 +26,7 @@
         <Setter Property="Padding" Value="8,3" />
         <Setter Property="Margin" Value="3,1" />
         <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">

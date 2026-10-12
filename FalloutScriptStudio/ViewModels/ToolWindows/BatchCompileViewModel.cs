@@ -107,8 +107,9 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <param name="scriptPaths">The scripts to compile.</param>
 		/// <param name="options">The compiler options.</param>
 		/// <param name="batchOptions">Parallelism options; defaults are used when <see langword="null"/>.</param>
+		/// <param name="observer">Also receives the notification of every finished script (the status bar of the main window), or <see langword="null"/>.</param>
 		/// <returns>The summary of the run.</returns>
-		public async Task<BatchCompileResult> RunAsync(IReadOnlyList<String> scriptPaths, CompilerOptions options, BatchCompileOptions? batchOptions = null)
+		public async Task<BatchCompileResult> RunAsync(IReadOnlyList<String> scriptPaths, CompilerOptions options, BatchCompileOptions? batchOptions = null, IProgress<BatchCompileProgress>? observer = null)
 		{
 			ArgumentNullException.ThrowIfNull(scriptPaths);
 			ArgumentNullException.ThrowIfNull(options);
@@ -120,7 +121,11 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 			using CancellationTokenSource cancellation = new CancellationTokenSource();
 			this._cancellation = cancellation;
-			Progress<BatchCompileProgress> progress = new Progress<BatchCompileProgress>(this.ReportProgress);
+			Progress<BatchCompileProgress> progress = new Progress<BatchCompileProgress>(item =>
+			{
+				this.ReportProgress(item);
+				observer?.Report(item);
+			});
 
 			BatchCompileResult result;
 			try

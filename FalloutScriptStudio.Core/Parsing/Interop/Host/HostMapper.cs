@@ -194,7 +194,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 			};
 		}
 
-		private static IReadOnlyList<SourceReference> ToReferences(List<HostReferenceDto>? dtos)
+		private static SourceReference[] ToReferences(List<HostReferenceDto>? dtos)
 		{
 			if (dtos is null || dtos.Count == 0)
 			{

@@ -27,6 +27,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			this._folder.Dispose();
 		}
 

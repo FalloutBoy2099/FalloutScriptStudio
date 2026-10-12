@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Services
 	/// and knows which file types the editor is allowed to open.
 	/// </summary>
 	[SupportedOSPlatform("windows")]
-	public sealed class FileAssociationService
+	public sealed class FileAssociationService : IFileAssociationService
 	{
 		private const Int32 SHCNE_ASSOCCHANGED = 0x8000000;
 		private const UInt32 SHCNF_IDLIST = 0;
@@ -21,7 +21,7 @@ namespace FalloutScriptStudio.Services
 		private static readonly String[] _associatedExtensions = { ".ssl", ".msg", ".int", ".fcd" };
 		private static readonly String[] _openableExtensions = { ".ssl", ".msg", ".int", ".fcd", ".h", ".ini", ".txt", ".cfg", ".xshd" };
 
-		/// <summary>Gets a value indicating whether the editor is already the handler of <c>.ssl</c> files.</summary>
+		/// <inheritdoc />
 		public Boolean IsAssociated
 		{
 			get

@@ -66,7 +66,7 @@ namespace FalloutScriptStudio.Core.Parsing
 			if (globalDirectory is not null
 				&& (request.IsFirstPass || !String.Equals(this.GlobalMacros.SourceDirectory, globalDirectory, StringComparison.OrdinalIgnoreCase)))
 			{
-				await Task.Run(() => this.GlobalMacros.LoadFromDirectory(globalDirectory, diagnostics), cancellationToken).ConfigureAwait(false);
+				await Task.Run(() => this.GlobalMacros.LoadFromDirectory(globalDirectory, diagnostics, true), cancellationToken).ConfigureAwait(false);
 			}
 
 			NativeParseResult? native = null;
@@ -78,10 +78,7 @@ namespace FalloutScriptStudio.Core.Parsing
 			ParseOutcome outcome = GetOutcome(native);
 			ProgramInfo info = await Task.Run(() => this.BuildProgramInfo(request, options, native, outcome, diagnostics), cancellationToken).ConfigureAwait(false);
 
-			if (this._logger.IsEnabled(LogLevel.Debug))
-			{
-				this._logger.LogDebug("Parsed '{File}': {Outcome}, native status {Status}", request.FilePath ?? "<unsaved>", outcome, native?.ExitCode ?? -1);
-			}
+			this._logger.Parsed(request.FilePath ?? "<unsaved>", outcome, native?.ExitCode ?? -1);
 
 			return new ParseResult(info, outcome)
 			{

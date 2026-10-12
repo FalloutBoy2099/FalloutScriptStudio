@@ -4,8 +4,8 @@
     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
     <sys:String x:Key="Str.ScriptTools.ProcTitleCreate">Crear procedimiento</sys:String>
-    <sys:String x:Key="Str.ScriptTools.ProcTitleRename">Renombrar</sys:String>
-    <sys:String x:Key="Str.ScriptTools.ProcTitleRenameSubject">Renombrar {0}</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleRename">Cambiar nombre</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleRenameSubject">Cambiar nombre de {0}</sys:String>
     <sys:String x:Key="Str.ScriptTools.ProcOkCreate">Crear</sys:String>
     <sys:String x:Key="Str.ScriptTools.ProcPlaceholderNewName">Nuevo nombre</sys:String>
     <sys:String x:Key="Str.ScriptTools.ProcHintRename">El nombre puede contener letras, dígitos y el carácter de subrayado.</sys:String>
@@ -45,7 +45,7 @@
     <sys:String x:Key="Str.ScriptTools.RegFindPrevName">Buscar anterior</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegFindNextTip">Busca la siguiente coincidencia.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegFindNextName">Buscar siguiente</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RegDefineLabel">Añadir la definición del script a Scripts.h:</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegDefineLabel">Añadir la definición del script a scripts.h:</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegDefineTip">Añade un #define del script a scripts.h al guardar la lista.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegDefineName">Nombre de la definición</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegAllow">Permitir</sys:String>
@@ -85,22 +85,22 @@
     <sys:String x:Key="Str.ScriptTools.RegPathFileNotFound">No se encontró el archivo {0}.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RegPathHeaderNotSet">No se ha definido la ruta de scripts.h.</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsContinue">Continuar</sys:String>
-    <sys:String x:Key="Str.ScriptTools.ToolsFlowchartTitle">Diagrama de flujo de nodos</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ToolsFlowchartTitle">Diagrama de diálogo</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsFlowchartSaveFirst">Guarde primero el script: el diagrama de flujo se guarda junto al script.</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsPreviewTitle">Vista previa del diálogo</sys:String>
     <sys:String x:Key="Str.ScriptTools.ToolsPreviewNoDialogue">El script no tiene ningún diálogo que previsualizar: coloque el cursor dentro de un nodo de diálogo o añada un procedimiento talk_p_proc.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchTitle">Buscar y reemplazar</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFindText">Texto que buscar</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceText">Reemplazar con</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchMatchCase">Coincidir mayúsculas y minúsculas</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchWholeWord">Solo palabras completas</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchRegex">Expresión regular</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchMatchCase">_Coincidir mayúsculas y minúsculas</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchWholeWord">S_olo palabras completas</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchRegex">_Expresión regular</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchIn">Buscar en</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeCurrent">Script actual</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeCurrent">_Script actual</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeCurrentTip">Busca en el script activo.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeOpen">Todos los scripts abiertos</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeOpen">_Todos los scripts abiertos</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeOpenTip">Busca en todos los scripts abiertos, incluidos sus cambios sin guardar.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchScopeFolder">Archivos de una carpeta</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchScopeFolder">_Archivos de una carpeta</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchScopeFolderTip">Busca en los archivos de una carpeta.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFolderTip">La carpeta donde buscar; la lista contiene las carpetas usadas anteriormente.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFolderName">Carpeta donde buscar</sys:String>
@@ -109,11 +109,11 @@
     <sys:String x:Key="Str.ScriptTools.SearchRemoveFolderName">Quitar carpeta guardada</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFileTypes">Tipos de archivo</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFileTypesTip">Máscaras de archivo separadas por punto y coma.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchIncludeSubfolders">Incluir subcarpetas</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindNext">Buscar siguiente</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchIncludeSubfolders">_Incluir subcarpetas</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindNext">_Buscar siguiente</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchFindNextTip">Busca la siguiente coincidencia en los scripts abiertos; en una búsqueda en carpeta muestra todas las coincidencias.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindAll">Buscar todo</sys:String>
-    <sys:String x:Key="Str.ScriptTools.SearchFindAllTip">Enumera todas las líneas coincidentes y las muestra en el panel de salida.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindAll">B_uscar todo</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchFindAllTip">Enumera todas las líneas coincidentes en la pestaña Errores.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceTip">Reemplaza la coincidencia seleccionada y busca la siguiente.</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceAll">Reemplazar todo</sys:String>
     <sys:String x:Key="Str.ScriptTools.SearchReplaceAllTip">Reemplaza todas las coincidencias en el script actual o en todos los scripts abiertos.</sys:String>
@@ -141,7 +141,7 @@
     <sys:String x:Key="Str.ScriptTools.RulesTitle">Funciones de diálogo</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesIntro">Indique al analizador de diálogos y al diagrama de flujo cuáles de sus propias macros o procedimientos funcionan como las funciones de diálogo del motor. Las reglas se guardan en DialogFunc.cfg y se aplican a todos los scripts.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesBuiltIn">Siempre reconocidas: {0}.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.RulesAdd">Añadir regla</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesAdd">_Añadir regla</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesAddTip">Añade una regla para otra macro o procedimiento.</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesRemoveTip">Quita la regla seleccionada (Supr).</sys:String>
     <sys:String x:Key="Str.ScriptTools.RulesGridName">Reglas de funciones de diálogo</sys:String>
@@ -195,13 +195,13 @@
     <sys:String x:Key="Str.ScriptTools.UfInvalid">Función no válida</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfErrLineBreakMarker">El código no puede contener {0}, que representa un salto de línea en el archivo de funciones.</sys:String>
     <sys:String x:Key="Str.ScriptTools.UfErrCodeEmpty">El código está vacío.</sys:String>
-    <sys:String x:Key="Str.ScriptTools.MacroTitle">Renombrar macro</sys:String>
-    <sys:String x:Key="Str.ScriptTools.MacroTitleRename">Renombrar la macro {0} a {1}</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroTitle">Cambiar nombre de la macro</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroTitleRename">Cambiar nombre de la macro {0} a {1}</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBefore">Antes</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroAfter">Después</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroDefinedIn">Definida en {0}</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroDeclaredAt">{0}, línea {1}</sys:String>
-    <sys:String x:Key="Str.ScriptTools.MacroDeselectAll">Deseleccionar todo</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroDeselectAll">_Deseleccionar todo</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroTreeName">Apariciones del nombre de la macro</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroRenameTip">Cambia el nombre de las apariciones marcadas (Ctrl+Intro).</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSectionOpen">Scripts abiertos</sys:String>
@@ -213,4 +213,12 @@
     <sys:String x:Key="Str.ScriptTools.MacroSummaryOne">{0} de {1} aparición seleccionada en {2} archivo.</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSummaryOneFile">{0} de {1} apariciones seleccionadas en {2} archivo.</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroSummaryMany">{0} de {1} apariciones seleccionadas en {2} archivos.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnBrowse">E_xaminar...</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnReplace">_Reemplazar</sys:String>
+    <sys:String x:Key="Str.ScriptTools.SearchBtnReplaceAll">Ree_mplazar todo</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesBtnRemove">_Quitar</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RulesBtnSave">_Guardar</sys:String>
+    <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Guardar</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Seleccionar todo</sys:String>
+    <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Cambiar nombre</sys:String>
 </ResourceDictionary>

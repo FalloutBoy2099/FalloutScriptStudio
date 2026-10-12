@@ -111,7 +111,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 				Boolean opened = await service.OpenForScriptAsync(Path.Combine(harness.Folder, "hakunin.ssl"), 5, new FakeLineTarget(), createIfMissing: false);
 
 				Assert.False(opened);
-				Assert.Contains(harness.Dialogs.Messages, message => message.Contains("Scripts.lst", StringComparison.Ordinal));
+				Assert.Contains(harness.Dialogs.Messages, message => message.Contains("scripts.lst", StringComparison.Ordinal));
 			});
 		}
 

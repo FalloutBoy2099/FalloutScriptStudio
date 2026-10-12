@@ -14,10 +14,9 @@
     <sys:String x:Key="Str.Common.No">Ne</sys:String>
     <sys:String x:Key="Str.Common.Close">Zavřít</sys:String>
     <sys:String x:Key="Str.Common.Save">Uložit</sys:String>
-    <sys:String x:Key="Str.Common.Browse">Procházet...</sys:String>
     <sys:String x:Key="Str.Common.Add">Přidat</sys:String>
     <sys:String x:Key="Str.Common.Remove">Odebrat</sys:String>
-    <sys:String x:Key="Str.Common.Delete">Smazat</sys:String>
+    <sys:String x:Key="Str.Common.Delete">Odstranit</sys:String>
     <sys:String x:Key="Str.Common.Clear">Vymazat</sys:String>
     <sys:String x:Key="Str.Common.Rename">Přejmenovat</sys:String>
     <sys:String x:Key="Str.Common.Copy">Kopírovat</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">Nápověda</sys:String>
     <sys:String x:Key="Str.Common.About">O programu</sys:String>
     <sys:String x:Key="Str.Common.Loading">Načítání...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">Minimalizovat</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">Maximalizovat</sys:String>
+    <sys:String x:Key="Str.Common.Restore">Obnovit</sys:String>
 </ResourceDictionary>

@@ -20,5 +20,11 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 		/// <summary>Gets a value indicating whether the group has no items (it is shown dimmed).</summary>
 		public Boolean IsEmpty => this.Children.Count == 0;
+
+		/// <summary>Tells the view that the children were changed in place.</summary>
+		internal void NotifyChildrenChanged()
+		{
+			this.OnPropertyChanged(nameof(this.IsEmpty));
+		}
 	}
 }

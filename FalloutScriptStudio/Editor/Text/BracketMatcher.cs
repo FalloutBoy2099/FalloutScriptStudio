@@ -9,6 +9,9 @@ namespace FalloutScriptStudio.Editor.Text
 		private const String Openers = "([{";
 		private const String Closers = ")]}";
 
+		/// <summary>The number of characters copied out of the text at once while searching (a character by character read of a big document is slow).</summary>
+		private const Int32 ChunkLength = 4096;
+
 		/// <summary>
 		/// Finds the pair for the bracket next to the caret: the character before the caret is examined first, then the
 		/// one after it.
@@ -68,16 +71,20 @@ namespace FalloutScriptStudio.Editor.Text
 			{
 				Char close = Closers[opener];
 				Int32 depth = 0;
-				for (Int32 i = offset; i < text.TextLength; i++)
+				for (Int32 chunkStart = offset; chunkStart < text.TextLength; chunkStart += ChunkLength)
 				{
-					Char ch = text.GetCharAt(i);
-					if (ch == c && IsBracketPosition(map, i))
+					String chunk = text.GetText(chunkStart, Math.Min(ChunkLength, text.TextLength - chunkStart));
+					for (Int32 k = 0; k < chunk.Length; k++)
 					{
-						depth++;
-					}
-					else if (ch == close && IsBracketPosition(map, i) && --depth == 0)
-					{
-						return new BracketPair(offset, i);
+						Char ch = chunk[k];
+						if (ch == c && IsBracketPosition(map, chunkStart + k))
+						{
+							depth++;
+						}
+						else if (ch == close && IsBracketPosition(map, chunkStart + k) && --depth == 0)
+						{
+							return new BracketPair(offset, chunkStart + k);
+						}
 					}
 				}
 
@@ -86,16 +93,21 @@ namespace FalloutScriptStudio.Editor.Text
 
 			Char open = Openers[closer];
 			Int32 level = 0;
-			for (Int32 i = offset; i >= 0; i--)
+			for (Int32 chunkEnd = offset + 1; chunkEnd > 0; chunkEnd -= ChunkLength)
 			{
-				Char ch = text.GetCharAt(i);
-				if (ch == c && IsBracketPosition(map, i))
+				Int32 chunkStart = Math.Max(0, chunkEnd - ChunkLength);
+				String chunk = text.GetText(chunkStart, chunkEnd - chunkStart);
+				for (Int32 k = chunk.Length - 1; k >= 0; k--)
 				{
-					level++;
-				}
-				else if (ch == open && IsBracketPosition(map, i) && --level == 0)
-				{
-					return new BracketPair(i, offset);
+					Char ch = chunk[k];
+					if (ch == c && IsBracketPosition(map, chunkStart + k))
+					{
+						level++;
+					}
+					else if (ch == open && IsBracketPosition(map, chunkStart + k) && --level == 0)
+					{
+						return new BracketPair(chunkStart + k, offset);
+					}
 				}
 			}
 

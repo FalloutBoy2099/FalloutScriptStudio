@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
 	using FalloutScriptStudio.Core.Compilation;
@@ -39,8 +40,33 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		/// <inheritdoc />
 		public Task<Boolean> ShowSettingsAsync()
 		{
+			return this.ShowSettingsCoreAsync(null);
+		}
+
+		/// <inheritdoc />
+		public Task<Boolean> ShowSettingsAsync(SettingsPage page)
+		{
+			return this.ShowSettingsCoreAsync(page);
+		}
+
+		private Task<Boolean> ShowSettingsCoreAsync(SettingsPage? page)
+		{
 			SettingsViewModel viewModel = this._services.GetRequiredService<SettingsViewModel>();
+			if (page is { } selected)
+			{
+				viewModel.SelectPage(selected);
+			}
+
 			SettingsWindow window = ActivatorUtilities.CreateInstance<SettingsWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.FromResult(viewModel.Applied);
+		}
+
+		/// <inheritdoc />
+		public Task<Boolean> ShowProjectSettingsAsync()
+		{
+			ProjectSettingsViewModel viewModel = this._services.GetRequiredService<ProjectSettingsViewModel>();
+			ProjectSettingsWindow window = ActivatorUtilities.CreateInstance<ProjectSettingsWindow>(this._services, viewModel);
 			ShowModal(window);
 			return Task.FromResult(viewModel.Applied);
 		}
@@ -64,7 +90,13 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <inheritdoc />
-		public async Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths)
+		public Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths)
+		{
+			return this.RunBatchCompileAsync(scriptPaths, null, CancellationToken.None);
+		}
+
+		/// <inheritdoc />
+		public async Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(scriptPaths);
 
@@ -75,7 +107,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 				return nothingDone;
 			}
 
-			AppSettings settings = this._settingsService.Settings;
+			AppSettings settings = this._settingsService.Effective.Settings;
 			if (String.IsNullOrWhiteSpace(settings.Paths.OutputDirectory))
 			{
 				await this._dialogService.ShowErrorAsync(
@@ -96,13 +128,16 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			}
 
 			window.Show();
-			return await viewModel.RunAsync(scriptPaths, options, batchOptions).ConfigureAwait(true);
+
+			// The global Cancel command and the Cancel button of the window stop the same run.
+			using CancellationTokenRegistration registration = cancellationToken.Register(viewModel.RequestCancel);
+			return await viewModel.RunAsync(scriptPaths, options, batchOptions, progress).ConfigureAwait(true);
 		}
 
 		/// <inheritdoc />
 		public async Task<String?> PickHeaderAsync(Func<String, Task>? chooseAndKeepOpen = null)
 		{
-			String? directory = this._settingsService.Settings.Paths.HeadersDirectory;
+			String? directory = this._settingsService.Effective.Settings.Paths.HeadersDirectory;
 			if (String.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
 			{
 				await this._dialogService.ShowErrorAsync(

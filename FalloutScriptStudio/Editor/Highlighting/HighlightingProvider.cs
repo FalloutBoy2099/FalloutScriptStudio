@@ -69,7 +69,7 @@ namespace FalloutScriptStudio.Editor.Highlighting
 				}
 				catch (Exception ex) when (ex is XmlException or HighlightingDefinitionInvalidException or InvalidOperationException or ArgumentException)
 				{
-					this._logger?.LogWarning(ex, "The syntax file {File} cannot be used; the built-in definition is used instead", GetFileName(kind));
+					this._logger?.SyntaxFileUnusable(ex, GetFileName(kind));
 				}
 			}
 
@@ -171,7 +171,7 @@ namespace FalloutScriptStudio.Editor.Highlighting
 			}
 			catch (Exception ex) when (ex is XmlException or HighlightingDefinitionInvalidException or IOException or UnauthorizedAccessException)
 			{
-				this._logger?.LogWarning(ex, "The syntax file {Path} cannot be read; the built-in definition is used instead", path);
+				this._logger?.SyntaxFileUnreadable(ex, path);
 				return null;
 			}
 		}

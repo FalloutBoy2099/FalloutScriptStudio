@@ -10,6 +10,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 	using FalloutScriptStudio.Core.IO;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Workspace;
 
 	/// <summary>File menu commands: new, open, recent, save, close.</summary>
@@ -223,6 +224,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 			if (!this._shell.StartProgram(editor, "\"" + path + "\""))
 			{
+				this.Output.Problems.Report(ProblemFactory.ExternalEditorFailed(editor));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.ExternalEditorTitle"), Loc.Format("Str.Shell.Dlg.ExternalEditorFailed", editor));
 			}
 		}

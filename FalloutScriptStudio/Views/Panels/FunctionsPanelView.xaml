@@ -5,7 +5,7 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
     <UserControl.Resources>
-        <HierarchicalDataTemplate DataType="{x:Type vm:FunctionNodeViewModel}" ItemsSource="{Binding Children}">
+        <HierarchicalDataTemplate DataType="{x:Type vm:FunctionNodeViewModel}" ItemsSource="{Binding VisibleChildren}">
             <Grid>
                 <StackPanel x:Name="Item" Orientation="Horizontal">
                     <ui:SymbolIcon
@@ -51,6 +51,7 @@
             <Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
             <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
             <Setter Property="ToolTip" Value="{Binding Description}" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding Name}" />
             <Setter Property="ToolTipService.IsEnabled" Value="{Binding IsFunction}" />
             <Setter Property="ContextMenu">
                 <Setter.Value>
@@ -110,16 +111,19 @@
         <ui:TextBox
             Grid.Row="0"
             Margin="6,4"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
             ClearButtonEnabled="True"
             PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
-            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
 
         <TreeView
             Grid.Row="1"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TabFunctions}"
             Background="Transparent"
             BorderThickness="0"
             ItemContainerStyle="{StaticResource FunctionItemStyle}"
-            ItemsSource="{Binding Roots}"
+            ItemsSource="{Binding VisibleRoots}"
+            KeyDown="OnTreeKeyDown"
             PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown"
             SelectedItemChanged="OnSelectedItemChanged" />
     </Grid>

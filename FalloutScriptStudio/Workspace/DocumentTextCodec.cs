@@ -44,7 +44,7 @@ namespace FalloutScriptStudio.Workspace
 				}
 			}
 
-			return new DecodedText(fallback.GetString(bytes), fallback);
+			return new DecodedText(fallback.GetString(bytes), fallback) { UsedFallback = HasNonAscii(bytes) };
 		}
 
 		/// <summary>Encodes a text the way it is written to a file: the byte order mark of the encoding (if any) followed by the text.</summary>

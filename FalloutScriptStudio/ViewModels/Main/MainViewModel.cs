@@ -15,6 +15,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 	using FalloutScriptStudio.Core.TextTools;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.MessageEditor;
 	using FalloutScriptStudio.Services.ScriptTools;
@@ -40,13 +41,14 @@ namespace FalloutScriptStudio.ViewModels.Main
 		private readonly IMessageEditorService _messageEditor;
 		private readonly BuildCoordinator _build;
 		private readonly IShellService _shell;
-		private readonly FileAssociationService _association;
+		private readonly IFileAssociationService _association;
 		private readonly IMessageStructureChecker _messageChecker;
 		private readonly IncludeInserter _includeInserter;
 		private readonly ShellLayoutStore _layoutStore;
 		private readonly ShellLayout _layout;
 		private readonly EditorViewOptions _viewOptions;
 		private readonly ActiveEditorTracker _tracker;
+		private readonly IProjectService _projects;
 		private DocumentViewModel? _observedDocument;
 		private Boolean _loadingLayout;
 		private Boolean _loadingDefines;
@@ -63,7 +65,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			IMessageEditorService messageEditor,
 			BuildCoordinator build,
 			IShellService shell,
-			FileAssociationService association,
+			IFileAssociationService association,
 			IMessageStructureChecker messageChecker,
 			IncludeInserter includeInserter,
 			ShellLayoutStore layoutStore,
@@ -74,7 +76,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 			ProceduresPanelViewModel procedures,
 			VariablesPanelViewModel variables,
 			FunctionsPanelViewModel functions,
-			ProjectExplorerViewModel project)
+			ProjectExplorerViewModel project,
+			IProjectService projects)
 		{
 			this._workspace = workspace;
 			this._settings = settings;
@@ -98,6 +101,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.Variables = variables;
 			this.Functions = functions;
 			this.Project = project;
+			this._projects = projects;
 
 			this._layout = layoutStore.Load();
 			this._loadingLayout = true;
@@ -114,6 +118,9 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this._workspace.DocumentOpened += (_, _) => this.RefreshRecentFiles();
 			this._workspace.DocumentClosed += (_, _) => this.RefreshRecentFiles();
 			this._settings.SettingsChanged += (_, _) => this.RefreshSettingsProperties();
+			this._projects.ProjectChanged += (_, _) => this.OnProjectChanged();
+			this._projects.ProblemRaised += (_, problem) => this.Output.Problems.Report(ProblemFactory.FromSettings(problem));
+			this._workspace.DocumentOpened += (_, document) => this.OfferProjectOf(document);
 			this._tracker.EditorChanged += (_, _) => this.RefreshEditorState();
 			this._tracker.CaretMoved += (_, _) => this.RefreshCaretState();
 			this._tracker.ZoomChanged += (_, _) => this.OnPropertyChanged(nameof(this.ZoomText));
@@ -127,9 +134,11 @@ namespace FalloutScriptStudio.ViewModels.Main
 				}
 			};
 
+			this.InitializeProblems();
 			this.LoadTemplates();
 			this.LoadPreprocessorDefines();
 			this.RefreshRecentFiles();
+			this.RefreshRecentProjects();
 			this.OnActiveDocumentChanged();
 		}
 
@@ -208,54 +217,17 @@ namespace FalloutScriptStudio.ViewModels.Main
 		{
 			get
 			{
+				String application = this._projects.IsOpen ? ApplicationTitle + " (" + this._projects.DisplayName + ")" : ApplicationTitle;
 				DocumentViewModel? document = this._workspace.ActiveDocument;
 				if (document is null)
 				{
-					return ApplicationTitle;
+					return application;
 				}
 
-				String define = this._settings.Settings.Compiler.PreprocessorDefine is { Length: > 0 } value ? " [" + value + "]" : String.Empty;
-				return ApplicationTitle + " - " + (document.FilePath ?? document.FileName) + define;
+				String define = this._settings.Effective.Settings.Compiler.PreprocessorDefine is { Length: > 0 } value ? " [" + value + "]" : String.Empty;
+				return application + " - " + (document.FilePath ?? document.FileName) + define;
 			}
 		}
-
-		/// <summary>Gets the line of the caret as text for the status bar.</summary>
-		public String LineText => Loc.Format("Str.Shell.Status.Line", this._tracker.Editor?.CaretLine ?? 1);
-
-		/// <summary>Gets the column of the caret as text for the status bar.</summary>
-		public String ColumnText => Loc.Format("Str.Shell.Status.Column", this._tracker.Editor?.CaretColumn ?? 1);
-
-		/// <summary>Gets the zoom of the active editor as text for the status bar.</summary>
-		public String ZoomText => (this._tracker.Editor?.ZoomPercent ?? 100) + "%";
-
-		/// <summary>Gets the parser state of the active document for the status bar.</summary>
-		public String ParserStatusText
-		{
-			get
-			{
-				DocumentViewModel? document = this._workspace.ActiveDocument;
-				if (document is null)
-				{
-					return Loc.Get(this._settings.Settings.Editor.EnableParser ? "Str.Shell.Parser.NoFile" : "Str.Shell.Parser.OffMacros");
-				}
-
-				if (!document.IsParsable)
-				{
-					return Loc.Get(this._settings.Settings.Editor.EnableParser ? "Str.Shell.Parser.NotSsl" : "Str.Shell.Parser.OffMacros");
-				}
-
-				return document.ParserStatus.Kind != ParserStatusKind.None ? document.ParserStatus.ToText() : Loc.Get("Str.Shell.Parser.Idle");
-			}
-		}
-
-		/// <summary>Gets the last short status message.</summary>
-		public String StatusMessage => this.Output.StatusMessage;
-
-		/// <summary>Gets the project folder text for the status bar.</summary>
-		public String ProjectText => Loc.Format("Str.Shell.Status.Project", this._settings.Settings.Paths.SolutionFolder ?? Loc.Get("Str.Shell.Status.Unset"));
-
-		/// <summary>Gets a value indicating whether a build command is running.</summary>
-		public Boolean IsBuildRunning => this._build.IsBusy;
 
 		/// <summary>True when the output panel is shown.</summary>
 		public Boolean ShowLog
@@ -310,31 +282,6 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 		}
 
-		/// <summary>Gets or sets the selected preprocessor definition of the toolbar.</summary>
-		public String SelectedPreprocessorDefine
-		{
-			get => this._settings.Settings.Compiler.PreprocessorDefine is { Length: > 0 } value ? value : this._noPreprocessorDefine;
-			set
-			{
-				if (this._loadingDefines)
-				{
-					return;
-				}
-
-				String? define = value is null || value.Length == 0 || String.Equals(value, this._noPreprocessorDefine, StringComparison.Ordinal) ? null : value;
-				if (!String.Equals(define, this._settings.Settings.Compiler.PreprocessorDefine, StringComparison.Ordinal))
-				{
-					this._settings.Update(settings => settings.Compiler.PreprocessorDefine = define);
-					this.OnPropertyChanged();
-					this.OnPropertyChanged(nameof(this.Title));
-					foreach (DocumentViewModel document in this._workspace.Documents.Where(d => d.IsParsable))
-					{
-						_ = this._workspace.RequestParseAsync(document, false);
-					}
-				}
-			}
-		}
-
 		/// <summary>Gets the current theme mode.</summary>
 		public AppTheme CurrentTheme => this._theme.Current;
 
@@ -344,85 +291,6 @@ namespace FalloutScriptStudio.ViewModels.Main
 		{
 			// The Message Editor windows close between the questions and the saving, so a "Cancel" in either place changes nothing.
 			return await this._workspace.CloseAllAsync(null, this._messageEditor.CloseAllAsync);
-		}
-
-		/// <summary>Stores the view state of the window.</summary>
-		public void SaveLayout()
-		{
-			if (this._loadingLayout)
-			{
-				return;
-			}
-
-			this._layout.ShowRightBrowser = this.ShowRightBrowser;
-			this._layout.ShowFunctionTree = this.ShowFunctionTree;
-			this._layout.RightTabIndex = this.RightTabIndex;
-			this._layout.LogMinimized = this.IsOutputMinimized;
-			this._layout.ShowLineNumbers = this._viewOptions.ShowLineNumbers;
-			this._layout.HighlightParseErrors = this._viewOptions.HighlightParseErrors;
-			this._layout.Theme = this._theme.Current;
-			this._layoutStore.Save(this._layout);
-		}
-
-		/// <summary>Gets the saved width of the left function tree.</summary>
-		public Double FunctionTreeWidth
-		{
-			get => this._layout.FunctionTreeWidth;
-			set => this._layout.FunctionTreeWidth = value;
-		}
-
-		/// <summary>Gets the theme stored in the layout file.</summary>
-		public AppTheme StoredTheme => this._layout.Theme;
-
-		/// <summary>Gets the interface language stored in the layout file (<see langword="null"/> when none was chosen).</summary>
-		public String? StoredLanguage => this._layout.Language;
-
-		/// <summary>Changes the language of the interface and remembers it.</summary>
-		/// <param name="code">The two-letter language code.</param>
-		public void ChangeLanguage(String code)
-		{
-			Loc.SetLanguage(code);
-			this._layout.Language = Loc.Language;
-			this.SaveLayout();
-		}
-
-		/// <summary>Runs the first-run flow: the settings dialog and the offer to associate the file types.</summary>
-		public async Task RunFirstRunAsync()
-		{
-			if (this._settings.Settings.IsFirstRunCompleted)
-			{
-				return;
-			}
-
-			await this._toolWindows.ShowSettingsAsync();
-			if (!this._association.IsAssociated
-				&& await this._dialogs.ConfirmAsync(Loc.Get("Str.Shell.Dlg.AssociateTitle"), Loc.Get("Str.Shell.Dlg.AssociateText")))
-			{
-				this._association.Associate(Environment.ProcessPath ?? Path.Combine(this._settings.Paths.ProgramDirectory, "FalloutScriptStudio.exe"), this._settings.Paths.ResourcesDirectory);
-			}
-
-			this._settings.Update(settings => settings.IsFirstRunCompleted = true);
-			await this.AfterSettingsChangedAsync();
-		}
-
-		partial void OnShowRightBrowserChanged(Boolean value)
-		{
-			this.SaveLayout();
-		}
-
-		partial void OnShowFunctionTreeChanged(Boolean value)
-		{
-			this.SaveLayout();
-		}
-
-		partial void OnRightTabIndexChanged(Int32 value)
-		{
-			this.SaveLayout();
-		}
-
-		partial void OnIsOutputMinimizedChanged(Boolean value)
-		{
-			this.SaveLayout();
 		}
 
 		private void OnLanguageChanged()
@@ -473,29 +341,6 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.OnPropertyChanged(nameof(this.CanRedo));
 		}
 
-		private void RefreshEditorState()
-		{
-			this.OnPropertyChanged(nameof(this.HasDocument));
-			this.OnPropertyChanged(nameof(this.IsScript));
-			this.OnPropertyChanged(nameof(this.IsParsable));
-			this.OnPropertyChanged(nameof(this.IsMessage));
-			this.OnPropertyChanged(nameof(this.IsRightBrowserVisible));
-			this.OnPropertyChanged(nameof(this.CanUndo));
-			this.OnPropertyChanged(nameof(this.CanRedo));
-			this.OnPropertyChanged(nameof(this.Title));
-			this.OnPropertyChanged(nameof(this.ParserStatusText));
-			this.OnPropertyChanged(nameof(this.ZoomText));
-			this.RefreshCaretState();
-		}
-
-		private void RefreshCaretState()
-		{
-			this.OnPropertyChanged(nameof(this.LineText));
-			this.OnPropertyChanged(nameof(this.ColumnText));
-			this.OnPropertyChanged(nameof(this.CanGoBack));
-			this.OnPropertyChanged(nameof(this.CanGoForward));
-		}
-
 		private void ShowOutputPanel()
 		{
 			if (!this.ShowLog)
@@ -539,32 +384,6 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 		}
 
-		private void LoadPreprocessorDefines()
-		{
-			this._loadingDefines = true;
-			try
-			{
-				this.PreprocessorDefineOptions.Clear();
-				this.PreprocessorDefineOptions.Add(new PreprocessorDefineOption(this._noPreprocessorDefine));
-				foreach (String define in this._settings.PreprocessorDefines.GetChoices())
-				{
-					this.PreprocessorDefineOptions.Add(new PreprocessorDefineOption(define));
-				}
-
-				String? current = this._settings.Settings.Compiler.PreprocessorDefine;
-				if (!String.IsNullOrEmpty(current) && !this.PreprocessorDefineItems.Contains(current))
-				{
-					this.PreprocessorDefineOptions.Add(new PreprocessorDefineOption(current));
-				}
-			}
-			finally
-			{
-				this._loadingDefines = false;
-			}
-
-			this.OnPropertyChanged(nameof(this.SelectedPreprocessorDefine));
-		}
-
 		private void RefreshSettingsProperties()
 		{
 			foreach (String name in new[]
@@ -583,6 +402,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 				nameof(this.UseWindowsMessageEncoding),
 				nameof(this.ShowLog),
 				nameof(this.ProjectText),
+				nameof(this.ProjectTip),
 				nameof(this.SelectedPreprocessorDefine),
 				nameof(this.Title),
 				nameof(this.ParserStatusText),

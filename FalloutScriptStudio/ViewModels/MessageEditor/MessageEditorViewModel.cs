@@ -31,12 +31,6 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		/// <summary>The file dialog filter for message files.</summary>
 		public static String FileFilter => Loc.Get("Str.MessageEditor.Filter.MessageFiles") + "|*.msg|" + Loc.Get("Str.MessageEditor.Filter.AllFiles") + "|*.*";
 
-		/// <summary>The most undo steps that are kept.</summary>
-		private const Int32 UndoLimit = 200;
-
-		/// <summary>The budget of remembered rows over all undo steps; big files get fewer steps.</summary>
-		private const Int32 UndoRowBudget = 250000;
-
 		private readonly IMessageFileService _files;
 		private readonly IMessageStructureChecker _checker;
 		private readonly ISettingsService _settings;
@@ -57,6 +51,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private Boolean _isNewDocument;
 		private FileStamp? _stamp;
 		private readonly LanguageChangedSubscription _languageSubscription;
+		private System.Windows.Threading.DispatcherTimer? _structureCheckTimer;
 		private Boolean _disposed;
 
 		/// <summary>
@@ -293,6 +288,8 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			}
 
 			this._disposed = true;
+			this._structureCheckTimer?.Stop();
+			this._structureCheckTimer = null;
 			this._languageSubscription.Dispose();
 			this._settings.SettingsChanged -= this.OnSettingsChanged;
 		}
@@ -348,70 +345,6 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			return ex is IOException or UnauthorizedAccessException or NotSupportedException or System.Security.SecurityException;
 		}
 
-		private EditorSnapshot CaptureSnapshot()
-		{
-			List<RowState> states = new List<RowState>(this._rows.Count);
-			foreach (MessageRowViewModel row in this._rows)
-			{
-				states.Add(row.CaptureState());
-			}
-
-			Int32 selected = this.SelectedRow is null ? -1 : this._rows.IndexOf(this.SelectedRow);
-			return new EditorSnapshot(states, selected, this._revision);
-		}
-
-		private void RecordUndo()
-		{
-			Int32 limit = Math.Clamp(UndoRowBudget / Math.Max(1, this._rows.Count), 20, UndoLimit);
-			this._history.Record(this.CaptureSnapshot(), limit);
-			this.UndoCommand.NotifyCanExecuteChanged();
-			this.RedoCommand.NotifyCanExecuteChanged();
-		}
-
-		/// <summary>
-		/// Runs a change of the rows as one undoable step.
-		/// </summary>
-		/// <param name="change">The change.</param>
-		private void Mutate(Action change)
-		{
-			this.EndEdit();
-			this.RecordUndo();
-			this._suspendUndo++;
-			try
-			{
-				change();
-			}
-			finally
-			{
-				this._suspendUndo--;
-			}
-
-			this.NotifyDocumentChanged();
-			this.NotificationMessage = String.Empty;
-		}
-
-		private void EndEdit()
-		{
-			this.EditCommitRequested?.Invoke(this, EventArgs.Empty);
-		}
-
-		private void NotifyDocumentChanged()
-		{
-			this._revision = ++this._revisionCounter;
-			this.IsModified = this._revision != this._savedRevision;
-			this.AfterRowsChanged();
-		}
-
-		private void AfterRowsChanged()
-		{
-			this.RunStructureCheck();
-			this.UpdateSearchMatches();
-			this.OnPropertyChanged(nameof(this.MessageCount));
-			this.OnPropertyChanged(nameof(this.MessageCountCaption));
-			this.UndoCommand.NotifyCanExecuteChanged();
-			this.RedoCommand.NotifyCanExecuteChanged();
-		}
-
 		/// <summary>
 		/// Replaces all rows of the grid and forgets the undo history.
 		/// </summary>
@@ -443,19 +376,6 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private MessageRowViewModel CreateRow(MessageEntry entry)
 		{
 			return new MessageRowViewModel(entry, this) { IsPinnedVisible = true };
-		}
-
-		private void RestoreSnapshot(EditorSnapshot snapshot)
-		{
-			List<MessageRowViewModel> rows = snapshot.Rows.Select(state => MessageRowViewModel.FromState(state, this)).ToList();
-			this._rows.ReplaceAll(rows);
-			this._revision = snapshot.Revision;
-			this.IsModified = this._revision != this._savedRevision;
-			this.AfterRowsChanged();
-			if (rows.Count > 0)
-			{
-				this.RequestFocus(rows[Math.Clamp(snapshot.SelectedIndex, 0, rows.Count - 1)], this.CurrentColumn, false);
-			}
 		}
 
 		private void RequestFocus(MessageRowViewModel row, MessageGridColumn column, Boolean beginEdit)
@@ -495,159 +415,6 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			}
 
 			return document;
-		}
-
-		/// <summary>
-		/// Re-runs the structure check on the current content and updates the markers of the rows.
-		/// </summary>
-		public void RunStructureCheck()
-		{
-			Int32 count = this._rows.Count;
-			Int32[] firstLine = new Int32[count];
-			StringBuilder text = new StringBuilder();
-			Int32 line = 1;
-			for (Int32 i = 0; i < count; i++)
-			{
-				String formatted = this._rows[i].Entry.Format();
-				firstLine[i] = line;
-				if (i > 0)
-				{
-					text.Append(MessageEntry.LineBreak);
-				}
-
-				text.Append(formatted);
-				line++;
-				for (Int32 c = 0; c < formatted.Length; c++)
-				{
-					if (formatted[c] == '\n')
-					{
-						line++;
-					}
-				}
-			}
-
-			MessageStructureReport report = this._checker.Check(text.ToString());
-			MessageIssueSeverity[] severities = new MessageIssueSeverity[count];
-			List<String>?[] messages = new List<String>?[count];
-			Int32 errors = 0;
-			Int32 warnings = 0;
-			Int32 hints = 0;
-
-			foreach (MessageStructureIssue issue in report.Issues)
-			{
-				Int32 index = Array.BinarySearch(firstLine, issue.Line);
-				if (index < 0)
-				{
-					index = ~index - 1;
-				}
-
-				if (index < 0 || index >= count)
-				{
-					continue;
-				}
-
-				MessageIssueSeverity severity = issue.Type switch
-				{
-					BuildErrorType.Error => MessageIssueSeverity.Error,
-					BuildErrorType.Warning => MessageIssueSeverity.Warning,
-					_ => MessageIssueSeverity.Hint,
-				};
-				switch (severity)
-				{
-					case MessageIssueSeverity.Error:
-						errors++;
-						break;
-					case MessageIssueSeverity.Warning:
-						warnings++;
-						break;
-					default:
-						hints++;
-						break;
-				}
-
-				AddIssue(severities, messages, index, severity, LocalizeIssue(issue.Message));
-			}
-
-			for (Int32 i = 0; i < count; i++)
-			{
-				if (this._rows[i].Kind == MessageLineKind.Raw)
-				{
-					warnings++;
-					AddIssue(severities, messages, i, MessageIssueSeverity.Warning, Loc.Get("Str.MessageEditor.Issue.Unrecognized"));
-				}
-			}
-
-			for (Int32 i = 0; i < count; i++)
-			{
-				this._rows[i].Severity = severities[i];
-				this._rows[i].IssueText = messages[i] is null ? String.Empty : String.Join(Environment.NewLine, messages[i]!);
-			}
-
-			this.ErrorCount = errors;
-			this.WarningCount = warnings;
-			this.HintCount = hints;
-			this.IssueSummary = DescribeIssueCounts(errors, warnings, hints);
-		}
-
-		/// <summary>The messages of the structure checker (English, from Core) and the keys of their translations.</summary>
-		private static readonly Dictionary<String, String> _issueKeys = new Dictionary<String, String>(StringComparer.Ordinal)
-		{
-			["Wrong structure of the paired curves brackets."] = "Str.MessageEditor.Issue.Brackets",
-			["A new line without a white space character."] = "Str.MessageEditor.Issue.NewLineSpace",
-			["The white space character is missing."] = "Str.MessageEditor.Issue.MissingSpace",
-			["The sentence begins with a small letter instead of the capital letter."] = "Str.MessageEditor.Issue.SmallLetter",
-			["Missing '#' character of comment?"] = "Str.MessageEditor.Issue.MissingHash",
-			["Missing line number of the message."] = "Str.MessageEditor.Issue.MissingNumber",
-			["Invalid line number of the message."] = "Str.MessageEditor.Issue.InvalidNumber",
-		};
-
-		private const String DuplicateNumberPrefix = "Duplicate message line number: ";
-
-		private static String LocalizeIssue(String message)
-		{
-			if (_issueKeys.TryGetValue(message, out String? key))
-			{
-				return Loc.Get(key);
-			}
-
-			return message.StartsWith(DuplicateNumberPrefix, StringComparison.Ordinal)
-				? Loc.Format("Str.MessageEditor.Issue.DuplicateNumber", message.Substring(DuplicateNumberPrefix.Length))
-				: message;
-		}
-
-		private static String DescribeIssueCounts(Int32 errors, Int32 warnings, Int32 hints)
-		{
-			List<String> parts = new List<String>();
-			if (errors > 0)
-			{
-				parts.Add(Loc.Format(errors == 1 ? "Str.MessageEditor.Issue.ErrorOne" : "Str.MessageEditor.Issue.ErrorMany", errors));
-			}
-
-			if (warnings > 0)
-			{
-				parts.Add(Loc.Format(warnings == 1 ? "Str.MessageEditor.Issue.WarningOne" : "Str.MessageEditor.Issue.WarningMany", warnings));
-			}
-
-			if (hints > 0)
-			{
-				parts.Add(Loc.Format(hints == 1 ? "Str.MessageEditor.Issue.HintOne" : "Str.MessageEditor.Issue.HintMany", hints));
-			}
-
-			return parts.Count == 0 ? Loc.Get("Str.MessageEditor.Issue.None") : String.Join(Loc.Get("Str.MessageEditor.Issue.Separator"), parts);
-		}
-
-		private static void AddIssue(MessageIssueSeverity[] severities, List<String>?[] messages, Int32 index, MessageIssueSeverity severity, String message)
-		{
-			if (severity > severities[index])
-			{
-				severities[index] = severity;
-			}
-
-			messages[index] ??= new List<String>();
-			if (!messages[index]!.Contains(message))
-			{
-				messages[index]!.Add(message);
-			}
 		}
 	}
 }

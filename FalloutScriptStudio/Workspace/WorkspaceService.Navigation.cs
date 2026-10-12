@@ -9,6 +9,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 
 	/// <summary>Going to positions, opening includes and showing references and search results.</summary>
 	public sealed partial class WorkspaceService
@@ -50,16 +51,17 @@ namespace FalloutScriptStudio.Workspace
 				return;
 			}
 
-			if (from.FilePath is null && !Path.IsPathRooted(includePath) && this._settings.Settings.GetIncludeHeadersDirectory() is null)
+			if (from.FilePath is null && !Path.IsPathRooted(includePath) && this._settings.Effective.GetIncludeHeadersDirectory() is null)
 			{
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.OpenIncludeTitle"), Loc.Get("Str.Shell.Dlg.IncludeRelativeUnsaved"));
 				return;
 			}
 
-			IncludeResolver resolver = this._settings.Settings.ToIncludeResolver(this._settings.Paths);
+			IncludeResolver resolver = this._settings.Effective.ToIncludeResolver(this._settings.Paths);
 			String resolved = resolver.Resolve(includePath, from.FilePath is null ? null : Path.GetDirectoryName(from.FilePath));
 			if (!File.Exists(resolved))
 			{
+				this._problems.Report(ProblemFactory.IncludeNotFound(resolved, from.FilePath, from));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.OpenIncludeTitle"), Loc.Format("Str.Shell.Dlg.HeaderNotFound", resolved));
 				return;
 			}

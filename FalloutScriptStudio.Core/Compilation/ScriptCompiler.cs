@@ -79,6 +79,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			String sourceFile = Path.GetFullPath(request.ScriptPath);
 			String sourceDirectory = Path.GetDirectoryName(sourceFile) ?? String.Empty;
 			StringBuilder output = new StringBuilder();
+			List<ToolFailure> toolFailures = new List<ToolFailure>();
 
 			if (!request.Batch)
 			{
@@ -94,7 +95,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogError(ex, "The scratch folder {Folder} could not be created", options.ScratchDirectory);
+				this._logger.ScratchFolderNotCreated(ex, options.ScratchDirectory);
 				output.Append(LineBreak).Append("[Error] <none>:0: The scratch folder could not be created: ").Append(ex.Message);
 				return new CompilationResult { Success = false, Output = output.ToString() };
 			}
@@ -109,12 +110,13 @@ namespace FalloutScriptStudio.Core.Compilation
 					options.ResourcesDirectory,
 					TextEncodings.Oem,
 					output,
+					toolFailures,
 					request,
 					cancellationToken).ConfigureAwait(false);
 			}
 			else
 			{
-				success = await this.RunCompilationChainAsync(request, sourceFile, sourceDirectory, paths, commandLines, output, cancellationToken).ConfigureAwait(false);
+				success = await this.RunCompilationChainAsync(request, sourceFile, sourceDirectory, paths, commandLines, output, toolFailures, cancellationToken).ConfigureAwait(false);
 			}
 
 			String? preprocessedCopy = null;
@@ -133,15 +135,7 @@ namespace FalloutScriptStudio.Core.Compilation
 				? Array.Empty<BuildError>()
 				: this._buildLogParser.Parse(output.ToString(), sourceFile, options.Preprocessor);
 
-			if (this._logger.IsEnabled(LogLevel.Information))
-			{
-				this._logger.LogInformation(
-					"{Operation} of {Script} {Outcome} ({ErrorCount} log entries)",
-					request.PreprocessOnly ? "Preprocessing" : "Compilation",
-					sourceFile,
-					success ? "succeeded" : "failed",
-					errors.Count);
-			}
+			this._logger.Finished(request.PreprocessOnly ? "Preprocessing" : "Compilation", sourceFile, success ? "succeeded" : "failed", errors.Count);
 
 			return new CompilationResult
 			{
@@ -150,6 +144,7 @@ namespace FalloutScriptStudio.Core.Compilation
 				Errors = errors,
 				OutputFilePath = producedFile,
 				PreprocessedFilePath = preprocessedCopy,
+				ToolFailures = toolFailures,
 			};
 		}
 
@@ -183,40 +178,60 @@ namespace FalloutScriptStudio.Core.Compilation
 			CompilerPaths paths,
 			CompilerCommandLineBuilder commandLines,
 			StringBuilder output,
+			List<ToolFailure> toolFailures,
 			CancellationToken cancellationToken)
 		{
 			CompilerOptions options = request.Options;
 			String inputFile = sourceFile;
 			Boolean external = options.Preprocessor != PreprocessorKind.Builtin;
+			String? preprocessed = null;
 
-			if (external)
+			try
 			{
-				// A common preprocess file is used for interactive runs, a random one for parallel batch runs.
-				String outputName = request.Batch ? Path.GetRandomFileName() : Path.GetFileName(paths.PreprocessFile);
-				String preprocessed = Path.Combine(options.ScratchDirectory, outputName);
+				if (external)
+				{
+					// A common preprocess file is used for interactive runs, a random one for parallel batch runs.
+					String outputName = request.Batch ? Path.GetRandomFileName() : Path.GetFileName(paths.PreprocessFile);
+					preprocessed = Path.Combine(options.ScratchDirectory, outputName);
 
-				Boolean preprocessSucceeded = await this.RunExternalPreprocessorAsync(request, sourceFile, outputName, commandLines, output, cancellationToken).ConfigureAwait(false);
-				if (!preprocessSucceeded || request.PreprocessOnly)
-				{
-					return preprocessSucceeded;
+					Boolean preprocessSucceeded = await this.RunExternalPreprocessorAsync(request, sourceFile, outputName, commandLines, output, toolFailures, cancellationToken).ConfigureAwait(false);
+					if (!preprocessSucceeded || request.PreprocessOnly)
+					{
+						return preprocessSucceeded;
+					}
+
+					// Rename preprocess.ssl to <scriptname>_[pre]~<hash of the full path>.ssl (two scripts of the same name must not share the file)
+					inputFile = paths.GetIntermediatePreprocessedPath(sourceFile);
+					try
+					{
+						File.Delete(inputFile);
+						File.Move(preprocessed, inputFile);
+					}
+					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+					{
+						this._logger.PreprocessedNotMoved(ex, preprocessed);
+						output.Append(LineBreak).Append("[Error] <none>:0: The preprocessed file is missing: ").Append(ex.Message);
+						return false;
+					}
 				}
 
-				// Rename preprocess.ssl to <scriptname>_[pre]~<hash of the full path>.ssl (two scripts of the same name must not share the file)
-				inputFile = paths.GetIntermediatePreprocessedPath(sourceFile);
-				try
-				{
-					File.Delete(inputFile);
-					File.Move(preprocessed, inputFile);
-				}
-				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-				{
-					this._logger.LogError(ex, "The preprocessed file {File} could not be moved", preprocessed);
-					output.Append(LineBreak).Append("[Error] <none>:0: The preprocessed file is missing: ").Append(ex.Message);
-					return false;
-				}
+				return await this.RunSslcAsync(request, inputFile, sourceDirectory, paths, commandLines, output, toolFailures, cancellationToken).ConfigureAwait(false);
 			}
+			catch (OperationCanceledException)
+			{
+				// A cancelled run must not leave half-written intermediate files in the scratch folder.
+				if (external)
+				{
+					this.TryDelete(preprocessed);
+					this.TryDelete(paths.GetIntermediatePreprocessedPath(sourceFile));
+					if (!request.Batch)
+					{
+						this.TryDelete(Path.Combine(options.ResourcesDirectory, GetErrorLogName(options)));
+					}
+				}
 
-			return await this.RunSslcAsync(request, inputFile, sourceDirectory, paths, commandLines, output, cancellationToken).ConfigureAwait(false);
+				throw;
+			}
 		}
 
 		private async Task<Boolean> RunExternalPreprocessorAsync(
@@ -225,6 +240,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			String outputName,
 			CompilerCommandLineBuilder commandLines,
 			StringBuilder output,
+			List<ToolFailure> toolFailures,
 			CancellationToken cancellationToken)
 		{
 			CompilerOptions options = request.Options;
@@ -245,7 +261,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogError(ex, "The previous preprocessed file {File} could not be deleted", outputName);
+				this._logger.PreviousPreprocessedNotDeleted(ex, outputName);
 				output.Append(LineBreak).Append("[Error] <none>:0: The previous preprocessed file could not be deleted: ").Append(ex.Message);
 				return false;
 			}
@@ -256,6 +272,7 @@ namespace FalloutScriptStudio.Core.Compilation
 				options.ResourcesDirectory,
 				null,
 				output,
+				toolFailures,
 				request,
 				cancellationToken).ConfigureAwait(false);
 
@@ -283,6 +300,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			CompilerPaths paths,
 			CompilerCommandLineBuilder commandLines,
 			StringBuilder output,
+			List<ToolFailure> toolFailures,
 			CancellationToken cancellationToken)
 		{
 			CompilerOptions options = request.Options;
@@ -299,9 +317,11 @@ namespace FalloutScriptStudio.Core.Compilation
 				return false;
 			}
 
+			Boolean existedBefore = File.Exists(outputFile);
 			String? backupFile = request.PreprocessOnly || request.TemporaryOutput ? null : this.CreateBackup(outputFile, options);
 
 			Boolean success = false;
+			Boolean cancelled = false;
 			try
 			{
 				success = await this.RunToolAsync(
@@ -310,15 +330,45 @@ namespace FalloutScriptStudio.Core.Compilation
 					Path.GetDirectoryName(inputFile) ?? String.Empty,
 					null,
 					output,
+					toolFailures,
 					request,
 					cancellationToken).ConfigureAwait(false);
+			}
+			catch (OperationCanceledException)
+			{
+				cancelled = true;
+				throw;
 			}
 			finally
 			{
 				this.FinishBackup(backupFile, outputFile, success);
+
+				// The previous compiled script came back above. When there was none (or the output is a scratch file) the half-written
+				// result of the killed compiler is deleted, otherwise it would look like a compiled script.
+				if (cancelled && (request.PreprocessOnly || request.TemporaryOutput || (backupFile is null && !existedBefore)))
+				{
+					this.TryDelete(outputFile);
+				}
 			}
 
 			return success;
+		}
+
+		private void TryDelete(String? file)
+		{
+			if (file is null)
+			{
+				return;
+			}
+
+			try
+			{
+				File.Delete(file);
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				this._logger.LeftoverNotDeleted(ex, file);
+			}
 		}
 
 		private String? CreateBackup(String outputFile, CompilerOptions options)
@@ -339,7 +389,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "The previous {File} could not be backed up", outputFile);
+				this._logger.BackupFailed(ex, outputFile);
 				return null;
 			}
 		}
@@ -366,7 +416,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "The previous {File} could not be restored from {Backup}", outputFile, backupFile);
+				this._logger.RestoreFailed(ex, outputFile, backupFile);
 			}
 		}
 
@@ -376,13 +426,16 @@ namespace FalloutScriptStudio.Core.Compilation
 			String workingDirectory,
 			Encoding? outputEncoding,
 			StringBuilder output,
+			List<ToolFailure> toolFailures,
 			CompilationRequest request,
 			CancellationToken cancellationToken)
 		{
 			if (!File.Exists(toolPath))
 			{
-				this._logger.LogWarning("Required tool {Tool} was not found", toolPath);
-				output.Append(Environment.NewLine).Append("[Error] <none>:0: Required tool not found: ").Append(toolPath).Append(Environment.NewLine);
+				this._logger.ToolNotFound(toolPath);
+				ToolFailure missing = new ToolFailure(ToolFailureKind.NotFound, toolPath);
+				toolFailures.Add(missing);
+				output.Append(Environment.NewLine).Append("[Error] <none>:0: ").Append(missing.LogMessage).Append(Environment.NewLine);
 				return false;
 			}
 
@@ -391,7 +444,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			{
 				if (this._logger.IsEnabled(LogLevel.Debug))
 				{
-					this._logger.LogDebug("Starting {Tool} {Arguments}", toolPath, arguments);
+					this._logger.ToolStarting(toolPath, arguments);
 				}
 
 				result = await this._processRunner.RunAsync(
@@ -410,8 +463,10 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Win32Exception ex)
 			{
-				this._logger.LogError(ex, "Failed to start {Tool}", toolPath);
-				output.Append(Environment.NewLine).Append("[Error] <none>:0: Failed to start ").Append(toolPath).Append(": ").Append(ex.Message).Append(Environment.NewLine);
+				this._logger.ToolStartFailed(ex, toolPath);
+				ToolFailure notStarted = new ToolFailure(ToolFailureKind.StartFailed, toolPath, ex.Message);
+				toolFailures.Add(notStarted);
+				output.Append(Environment.NewLine).Append("[Error] <none>:0: ").Append(notStarted.LogMessage).Append(Environment.NewLine);
 				return false;
 			}
 
@@ -424,9 +479,14 @@ namespace FalloutScriptStudio.Core.Compilation
 			return result.ExitCode == 0;
 		}
 
+		private static String GetErrorLogName(CompilerOptions options)
+		{
+			return options.Preprocessor == PreprocessorKind.Mcpp ? "mcpp.err" : "wcc.err";
+		}
+
 		private static async Task<String> ReadErrorLogAsync(CompilerOptions options, CancellationToken cancellationToken)
 		{
-			String file = Path.Combine(options.ResourcesDirectory, options.Preprocessor == PreprocessorKind.Mcpp ? "mcpp.err" : "wcc.err");
+			String file = Path.Combine(options.ResourcesDirectory, GetErrorLogName(options));
 			try
 			{
 				if (!File.Exists(file))
@@ -462,7 +522,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(ex, "The preprocessed script {Script} could not be moved to its final name", sourceFile);
+				this._logger.FinalNameNotApplied(ex, sourceFile);
 				return null;
 			}
 		}

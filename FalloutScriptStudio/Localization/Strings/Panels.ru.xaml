@@ -17,7 +17,7 @@
     <sys:String x:Key="Str.Panels.TipToggleOutline">Свернуть или развернуть процедуры скрипта</sys:String>
     <sys:String x:Key="Str.Panels.TipRefreshParser">Обновить данные парсера</sys:String>
     <sys:String x:Key="Str.Panels.EmptyProcedures">Нет данных разбора. Откройте скрипт, чтобы увидеть его процедуры.</sys:String>
-    <sys:String x:Key="Str.Panels.EmptyVariables">Нет данных о переменных. Переменные скрипта предоставляет встроенный парсер (parser.dll).</sys:String>
+    <sys:String x:Key="Str.Panels.EmptyVariables">Нет данных о переменных. Переменные скрипта предоставляет нативный парсер (parser.dll).</sys:String>
     <sys:String x:Key="Str.Panels.EmptyProject">Папка проекта не задана.</sys:String>
     <sys:String x:Key="Str.Panels.MenuGoTo">Перейти</sys:String>
     <sys:String x:Key="Str.Panels.MenuGoToDeclaration">Перейти к объявлению</sys:String>
@@ -71,6 +71,6 @@
     <sys:String x:Key="Str.Panels.MsgConfirmDeleteProcedure">Вы действительно хотите удалить процедуру «{0}»?</sys:String>
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Выберите папку проекта</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Фильтр...</sys:String>
-    <sys:String x:Key="Str.Panels.MenuEditNodeCode">Редактировать код ноды</sys:String>
+    <sys:String x:Key="Str.Panels.MenuEditNodeCode">Редактировать код узла</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Показывать только выбранную процедуру: при переходе к процедуре остальные сворачиваются</sys:String>
 </ResourceDictionary>

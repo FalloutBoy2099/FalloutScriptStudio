@@ -2,6 +2,7 @@
     x:Class="FalloutScriptStudio.Views.Flowchart.FlowchartWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:diagram="clr-namespace:FalloutScriptStudio.Controls.Diagram"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{Binding Title}"
@@ -9,10 +10,14 @@
     Height="760"
     MinWidth="640"
     MinHeight="360"
+    a11y:WindowFit.FitToWorkArea="True"
+    a11y:WindowKeys.CloseOnEscape="True"
     Background="{DynamicResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
     FontSize="12"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterScreen">
     <ui:FluentWindow.InputBindings>
@@ -250,6 +255,7 @@
                         Text="{Binding ZoomText}"
                         TextAlignment="Right" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.Common.Help}"
                         Click="OnHelpClick"
                         Icon="{ui:SymbolIcon QuestionCircle24}"
                         Style="{StaticResource ToolButton}"
@@ -279,6 +285,7 @@
                         ToolTip="{DynamicResource Str.Flowchart.Tip.Add}" />
                     <Border Style="{StaticResource ToolDivider}" />
                     <ToggleButton
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.ShowAllCode}"
                         IsChecked="{Binding ShowAllCode, Mode=TwoWay}"
                         Style="{StaticResource ToolToggle}"
                         ToolTip="{DynamicResource Str.Flowchart.Tip.ShowAllCode}">
@@ -291,6 +298,7 @@
                         <TextBlock FontWeight="SemiBold" Text="//" />
                     </ToggleButton>
                     <ToggleButton
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.LinksOnlySelection}"
                         IsChecked="{Binding LinksOnlyForSelection, Mode=TwoWay}"
                         Style="{StaticResource ToolToggle}"
                         ToolTip="{DynamicResource Str.Flowchart.Tip.LinksOnlySelection}">
@@ -305,22 +313,26 @@
                         ToolTip="{DynamicResource Str.Flowchart.Tip.UpdateAll}" />
                     <Border Style="{StaticResource ToolDivider}" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.CollapseAll}"
                         Click="OnCollapseClick"
                         Icon="{ui:SymbolIcon ArrowMinimizeVertical24}"
                         Style="{StaticResource ToolButton}"
                         ToolTip="{DynamicResource Str.Flowchart.Tip.CollapseAll}" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.ExpandAll}"
                         Click="OnExpandClick"
                         Icon="{ui:SymbolIcon ArrowMaximizeVertical24}"
                         Style="{StaticResource ToolButton}"
                         ToolTip="{DynamicResource Str.Flowchart.Tip.ExpandAll}" />
                     <Border Style="{StaticResource ToolDivider}" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.ShrinkWidths}"
                         Command="{Binding ShrinkAllWidthsCommand}"
                         Icon="{ui:SymbolIcon ArrowCollapseAll24}"
                         Style="{StaticResource ToolButton}"
                         ToolTip="{DynamicResource Str.Flowchart.Tip.ShrinkWidths}" />
                     <ui:Button
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Tip.MatchWidths}"
                         Command="{Binding MatchAllWidthsCommand}"
                         Icon="{ui:SymbolIcon ArrowAutofitWidth24}"
                         Style="{StaticResource ToolButton}"
@@ -345,7 +357,7 @@
         </Border>
 
         <Grid Grid.Row="2">
-            <diagram:DiagramCanvas x:Name="Canvas" />
+            <diagram:DiagramCanvas x:Name="Canvas" AutomationProperties.Name="{DynamicResource Str.Flowchart.A11y.Diagram}" />
 
             <Border
                 MaxWidth="560"
@@ -364,6 +376,7 @@
                         Padding="4"
                         VerticalAlignment="Top"
                         Appearance="Transparent"
+                        AutomationProperties.Name="{DynamicResource Str.Flowchart.Dismiss}"
                         Command="{Binding DismissHintCommand}"
                         DockPanel.Dock="Right"
                         Icon="{ui:SymbolIcon Dismiss24}"

@@ -94,7 +94,7 @@ namespace FalloutScriptStudio.Workspace
 
 			Boolean isMacro = symbol is ScriptMacro;
 			Boolean isGlobalMacro = symbol is ScriptMacro global && IsGlobalMacro(info, global);
-			List<RefactorDocument> documents = this.CollectDocuments(workspace, document, isGlobalMacro);
+			List<RefactorDocument> documents = await this.CollectDocumentsAsync(workspace, document, symbol is ScriptMacro { } macroToFind && isGlobalMacro ? macroToFind.Token : null);
 
 			String? newName = await this.AskNewNameAsync(symbol, info, document, documents);
 			if (String.IsNullOrEmpty(newName))
@@ -240,7 +240,13 @@ namespace FalloutScriptStudio.Workspace
 			}
 		}
 
-		private List<RefactorDocument> CollectDocuments(IWorkspaceManager workspace, DocumentViewModel current, Boolean includeProject)
+		/// <summary>
+		/// Collects the texts the rename looks at: the open documents and, for a global macro, the scripts and headers of the project.
+		/// </summary>
+		/// <param name="workspace">The workspace.</param>
+		/// <param name="current">The document the rename was started in.</param>
+		/// <param name="projectToken">The name of the global macro: the project files are read for it (on worker threads, and only the files that contain the name are kept, the others cannot change); <see langword="null"/> to leave the project out.</param>
+		private async Task<List<RefactorDocument>> CollectDocumentsAsync(IWorkspaceManager workspace, DocumentViewModel current, String? projectToken)
 		{
 			List<RefactorDocument> documents = new List<RefactorDocument>();
 			HashSet<String> seen = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
@@ -257,7 +263,7 @@ namespace FalloutScriptStudio.Workspace
 				documents.Add(new RefactorDocument(UnsavedPath, current.TextDocument.Text, true));
 			}
 
-			if (!includeProject)
+			if (projectToken is null)
 			{
 				return documents;
 			}
@@ -269,24 +275,38 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			Encoding fallback = this._settings.Settings.Editor.FileEncoding.ToEncoding();
-			foreach (String file in EnumerateProjectFiles(folder))
+			RefactorDocument?[] read = await Task.Run(() =>
 			{
-				String full = GetFullPath(file);
-				if (!seen.Add(full))
+				List<String> files = new List<String>();
+				foreach (String file in EnumerateProjectFiles(folder))
 				{
-					continue;
+					String full = GetFullPath(file);
+					if (seen.Add(full))
+					{
+						files.Add(full);
+					}
 				}
 
-				try
+				RefactorDocument?[] result = new RefactorDocument?[files.Count];
+				Parallel.For(0, files.Count, index =>
 				{
-					documents.Add(new RefactorDocument(full, DocumentTextCodec.Decode(File.ReadAllBytes(full), fallback).Text, false));
-				}
-				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-				{
-					// A file that cannot be read is skipped.
-				}
-			}
+					try
+					{
+						String text = DocumentTextCodec.Decode(File.ReadAllBytes(files[index]), fallback).Text;
+						if (text.Contains(projectToken, StringComparison.Ordinal))
+						{
+							result[index] = new RefactorDocument(files[index], text, false);
+						}
+					}
+					catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+					{
+						// A file that cannot be read is skipped.
+					}
+				});
+				return result;
+			});
 
+			documents.AddRange(read.OfType<RefactorDocument>());
 			return documents;
 		}
 

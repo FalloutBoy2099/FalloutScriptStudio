@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.Archives;
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 
 	/// <summary>Extracts scripts from Fallout game archives (<c>.dat</c>) and remembers the archive that was used last.</summary>
@@ -14,10 +15,11 @@ namespace FalloutScriptStudio.Workspace
 		private readonly ISettingsService _settings;
 		private readonly IDatArchiveExtractor _archives;
 		private readonly IDialogService _dialogs;
+		private readonly IProblemService _problems;
 		private String? _lastArchive;
 
 		/// <summary>Initializes the extractor.</summary>
-		public ArchiveScriptExtractor(ISettingsService settings, IDatArchiveExtractor archives, IDialogService dialogs)
+		public ArchiveScriptExtractor(ISettingsService settings, IDatArchiveExtractor archives, IDialogService dialogs, IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(archives);
@@ -25,6 +27,7 @@ namespace FalloutScriptStudio.Workspace
 			this._settings = settings;
 			this._archives = archives;
 			this._dialogs = dialogs;
+			this._problems = problems ?? new ProblemService();
 		}
 
 		/// <summary>
@@ -55,6 +58,7 @@ namespace FalloutScriptStudio.Workspace
 			if (!result.Success || result.ExtractedFilePath is null)
 			{
 				this._lastArchive = null;
+				this._problems.Report(ProblemFactory.ExtractFailed(scriptFileName, result.Message));
 				await this._dialogs.ShowErrorAsync(Loc.Get("Str.Shell.Dlg.ExtractionFailedTitle"), result.Message);
 				return null;
 			}

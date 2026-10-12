@@ -298,9 +298,9 @@ namespace FalloutScriptStudio.Views.Editor
 			menu.Items.Add(this.CreateItem(EditorCommand.UpperCase, SymbolRegular.TextCaseUppercase24));
 			menu.Items.Add(this.CreateItem(EditorCommand.LowerCase, SymbolRegular.TextCaseLowercase24));
 			menu.Items.Add(new Separator());
-			menu.Items.Add(this.CreateClipboardItem(ApplicationCommands.Cut, SymbolRegular.Cut24, "Str.Common.Cut", owner));
-			menu.Items.Add(this.CreateClipboardItem(ApplicationCommands.Copy, SymbolRegular.Copy24, "Str.Common.Copy", owner));
-			menu.Items.Add(this.CreateClipboardItem(ApplicationCommands.Paste, SymbolRegular.ClipboardPaste24, "Str.Common.Paste", owner));
+			menu.Items.Add(CreateClipboardItem(ApplicationCommands.Cut, SymbolRegular.Cut24, "Str.Common.Cut", owner));
+			menu.Items.Add(CreateClipboardItem(ApplicationCommands.Copy, SymbolRegular.Copy24, "Str.Common.Copy", owner));
+			menu.Items.Add(CreateClipboardItem(ApplicationCommands.Paste, SymbolRegular.ClipboardPaste24, "Str.Common.Paste", owner));
 			menu.Items.Add(new Separator());
 			menu.Items.Add(this.CreateItem(EditorCommand.CommentSelection, SymbolRegular.CommentAdd24));
 			menu.Items.Add(this.CreateItem(EditorCommand.UncommentSelection, SymbolRegular.CommentOff24));
@@ -323,7 +323,7 @@ namespace FalloutScriptStudio.Views.Editor
 			return item;
 		}
 
-		private System.Windows.Controls.MenuItem CreateClipboardItem(RoutedUICommand command, SymbolRegular symbol, String headerKey, TextEditor owner)
+		private static System.Windows.Controls.MenuItem CreateClipboardItem(RoutedUICommand command, SymbolRegular symbol, String headerKey, TextEditor owner)
 		{
 			System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem
 			{

@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Přejít na definici</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Najít odkazy</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Přejmenovat</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Otevřít include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Otevřít vložený soubor</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Zobrazit seznam doplňování</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Přejít na deklarace</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Odstranit řádek</sys:String>
@@ -37,7 +37,7 @@
     <sys:String x:Key="Str.Editor.Cmd.SelectWord">Vybrat slovo</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.NavigateBack">Zpět</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.NavigateForward">Vpřed</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.DeleteToLineEnd">Smazat do konce řádku</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteToLineEnd">Odstranit do konce řádku</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToMatchingBracket">Přejít na odpovídající závorku</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameProcedure">Přejmenovat: procedura</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameArgument">Přejmenovat: proměnná argumentu</sys:String>
@@ -52,4 +52,6 @@
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Soubor nebyl nalezen: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Stisknutím klávesy TAB vložíte automatický kód.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Nebyly nalezeny žádné odkazy na „{0}“.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Editor skriptu</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Editor skriptu, druhé zobrazení</sys:String>
 </ResourceDictionary>

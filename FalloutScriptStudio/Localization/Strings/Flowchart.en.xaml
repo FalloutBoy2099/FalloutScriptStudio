@@ -11,7 +11,7 @@
     <sys:String x:Key="Str.Flowchart.MessageTextTitle">Edit Message</sys:String>
     <sys:String x:Key="Str.Flowchart.MessageTextName">Message text</sys:String>
     <sys:String x:Key="Str.Flowchart.MessageFileCaption">Message file: {0}</sys:String>
-    <sys:String x:Key="Str.Flowchart.NewNodeTitle">New Dialog Node</sys:String>
+    <sys:String x:Key="Str.Flowchart.NewNodeTitle">New Dialogue Node</sys:String>
     <sys:String x:Key="Str.Flowchart.NodeName">Node name</sys:String>
     <sys:String x:Key="Str.Flowchart.NodeCode">Node code</sys:String>
     <sys:String x:Key="Str.Flowchart.Template">Template</sys:String>
@@ -23,18 +23,18 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.Open">Open Flowchart</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.File.Save">Save Flowchart</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Save Flowchart as Image</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Dialog Node</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Dialogue Node</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Note</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Functions Config</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Dialogue Functions</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Edits the rules that tell the flowchart which functions and macros show messages and jump to nodes.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Don't create exit node</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Don't create a dialog exit node (usually Node999) on the flowchart.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Don't create a dialogue exit node (usually Node999) on the flowchart.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.AutoHide">Auto hide unused nodes</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.AutoHide">Hides the nodes without any link when a new flowchart is created.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.AutoSave">Auto save on close</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.AutoSave">Automatically save changes to a saved file.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.AutoSync">Auto Synchronization</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.AutoSync">Automatic updating of the information of the dialog nodes from the script, when the window is activated.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.AutoSync">Automatic updating of the information of the dialogue nodes from the script, when the window is activated.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.AutoArrange">Auto arrange nodes</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.AutoArrange">Automatically arrange nodes when a new flowchart is created.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.HighQuality">High Quality</sys:String>
@@ -60,7 +60,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.File">Open, save and export the flowchart</sys:String>
     <sys:String x:Key="Str.Flowchart.New">New</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.New">New flowchart: creates the flowchart again from the script</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.Add">Add a dialog node or a note</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.Add">Add a dialogue node or a note</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.ShowAllCode">Show the code in all nodes.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.ShowCommentCode">Show comment line code</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.LinksOnlySelection">Show wire line only for selected nodes.</sys:String>
@@ -79,7 +79,7 @@
     <sys:String x:Key="Str.Flowchart.Hint.NewFlowchart">NOTE: Save the flowchart file to the folder (or subfolder \fcd) of the source script, so that the editor next time automatically opens the flowchart file.</sys:String>
     <sys:String x:Key="Str.Flowchart.Dlg.OpenTitle">Open flowchart dialogue files</sys:String>
     <sys:String x:Key="Str.Flowchart.Dlg.SaveTitle">Save flowchart dialogue files</sys:String>
-    <sys:String x:Key="Str.Flowchart.Filter.Fcd">Flowchart Dialog (.fcd)</sys:String>
+    <sys:String x:Key="Str.Flowchart.Filter.Fcd">Dialogue Flowchart (.fcd)</sys:String>
     <sys:String x:Key="Str.Flowchart.Filter.Png">PNG Image (.png)</sys:String>
     <sys:String x:Key="Str.Flowchart.Status.Saved">Flowchart saved: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.SaveFailed">The flowchart could not be saved: {0}</sys:String>
@@ -88,7 +88,7 @@
     <sys:String x:Key="Str.Flowchart.Msg.WrongFlowchart.Title">Wrong Flowchart: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.WrongFlowchart.Text">This flowchart file was saved for another script file.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.NodesAdded">Added new nodes from the script: {0}</sys:String>
-    <sys:String x:Key="Str.Flowchart.Msg.NodesRemoved">Deleted existing dialog nodes that do not exist in the script code: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Msg.NodesRemoved">Deleted existing dialogue nodes that do not exist in the script code: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.CreateNew.Title">Create New</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.CreateNew.Text">Do you want to clean up the existing flowchart and create a new one?</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.RenameRejected">The name of the procedure must contain the word 'Node'.</sys:String>
@@ -96,7 +96,7 @@
     <sys:String x:Key="Str.Flowchart.Msg.ConfirmDelete" xml:space="preserve">Are you sure you want to delete all selected nodes/notes?&#10;(When a node is deleted, the corresponding procedure in the script is deleted.)</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.CannotDeleteStart">You cannot delete the procedural handler '{0}' from the flowchart editor.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.CannotDeleteEdited">You cannot delete a node procedure that is being edited at the current time: {0}</sys:String>
-    <sys:String x:Key="Str.Flowchart.Msg.MissingMessagesFile.Title">Missing messages file</sys:String>
+    <sys:String x:Key="Str.Flowchart.Msg.MissingMessagesFile.Title">Missing message file</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingMessagesFile.Text">The requested message file could not be found.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MessageMissing.Title">Message missing</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MessageMissing.Text" xml:space="preserve">The requested message line was not found in the file:&#10;{0}</sys:String>
@@ -106,7 +106,7 @@
     <sys:String x:Key="Str.Flowchart.Msg.NameExists">The procedure/variable or declared macro with this name already exists.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.NameInvalid">An invalid name was specified for the node.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.ApplyError.Title">Apply error</sys:String>
-    <sys:String x:Key="Str.Flowchart.Msg.ApplyError.Text">In the source script, there is no dialog node with this name.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Msg.ApplyError.Text">In the source script, there is no dialogue node with this name.</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.ApplyChanges.Title">Applying changes</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.ApplyChanges.Text">Do you want to apply the changes to the code of this node?</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingMessageFile.Title">Missing message file</sys:String>
@@ -123,8 +123,8 @@
     <sys:String x:Key="Str.Flowchart.Tip.Undo">Undo the changes (Ctrl+Z)</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.Redo">Redo the changes (Ctrl+Y)</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PasteNodeName">Paste the selected node name into the code</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.NodeList">Dialog nodes of the script</sys:String>
-    <sys:String x:Key="Str.Flowchart.NodeListName">Dialog nodes</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.NodeList">Dialogue nodes of the script</sys:String>
+    <sys:String x:Key="Str.Flowchart.NodeListName">Dialogue nodes</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.GoToNode">Go to the selected node</sys:String>
     <sys:String x:Key="Str.Flowchart.Go">Go</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OnTop">Window On Top</sys:String>
@@ -132,16 +132,16 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Line number in the message file. Click to open the message editor.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Open the message editor at this message</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Message Text</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Msg File</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Message File</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Nodes:</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">The dialog node to show</sys:String>
-    <sys:String x:Key="Str.Flowchart.PreviewNodeName">Dialog node</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">The dialogue node to show</sys:String>
+    <sys:String x:Key="Str.Flowchart.PreviewNodeName">Dialogue node</sys:String>
     <sys:String x:Key="Str.Flowchart.Back">Back</sys:String>
     <sys:String x:Key="Str.Flowchart.Forward">Forward</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewUpdate">Read the script and the message files again</sys:String>
     <sys:String x:Key="Str.Flowchart.PlayerFemale">Player Female</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PlayerFemale">Show the lines for a female player: the message numbers are increased by the number on the right.</sys:String>
-    <sys:String x:Key="Str.Flowchart.Tip.FemaleOffset">Number by which the msg-line number will be incremented to address female phrases.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Tip.FemaleOffset">Number by which the message line number will be incremented to address female phrases.</sys:String>
     <sys:String x:Key="Str.Flowchart.FemaleOffsetName">Female message offset</sys:String>
     <sys:String x:Key="Str.Flowchart.AutoJump">Auto Jump</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.AutoJump">Automatically jump to the procedure in the script after the player's answer.</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Click here to enter text...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">File missing</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">The message file for the dialogue was not found.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Dialogue flowchart</sys:String>
 </ResourceDictionary>

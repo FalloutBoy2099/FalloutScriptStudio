@@ -1,5 +1,6 @@
 namespace FalloutScriptStudio.Tests.Editor
 {
+	using FalloutScriptStudio.Tests.Support;
 	using System;
 	using System.Linq;
 	using System.Windows;
@@ -27,17 +28,7 @@ namespace FalloutScriptStudio.Tests.Editor
 		/// <summary>Shows a view in an off-screen window so that it is loaded and laid out.</summary>
 		private static Window Show(FrameworkElement view)
 		{
-			Window window = new Window
-			{
-				Content = view,
-				Width = 800,
-				Height = 500,
-				Left = -20000,
-				Top = -20000,
-				ShowInTaskbar = false,
-				WindowStartupLocation = WindowStartupLocation.Manual,
-			};
-			window.Show();
+			Window window = OffscreenWindow.Show(view, 800, 500);
 			UiThread.Flush();
 			return window;
 		}
@@ -72,10 +63,10 @@ namespace FalloutScriptStudio.Tests.Editor
 				using EditorTestEnvironment env = new EditorTestEnvironment();
 				DocumentViewModel document = env.CreateDocument(Script);
 				ScriptEditorView view = new ScriptEditorView { DataContext = document };
-				Window window = new Window { Content = view, Left = -20000, Top = -20000, Width = 400, Height = 300, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
+				Window window = OffscreenWindow.Create(view, 400, 300);
 				ScriptEditorView.SetServices(window, env.Services);
 
-				window.Show();
+				OffscreenWindow.Show(window);
 				UiThread.Flush();
 
 				Assert.NotNull(view.Surface);
@@ -90,7 +81,7 @@ namespace FalloutScriptStudio.Tests.Editor
 			{
 				using EditorTestEnvironment env = new EditorTestEnvironment();
 				ScriptEditorView view = new ScriptEditorView { DataContext = env.CreateDocument(Script) };
-				Window window = new Window { Content = view, Left = -20000, Top = -20000, Width = 400, Height = 300, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
+				Window window = OffscreenWindow.Create(view, 400, 300);
 
 				Exception? captured = null;
 				System.Windows.Threading.DispatcherUnhandledExceptionEventHandler handler = (_, e) =>
@@ -100,7 +91,7 @@ namespace FalloutScriptStudio.Tests.Editor
 				};
 				window.Dispatcher.UnhandledException += handler;
 
-				window.Show();
+				OffscreenWindow.Show(window);
 				UiThread.Flush();
 				window.Dispatcher.UnhandledException -= handler;
 				window.Close();
@@ -193,13 +184,12 @@ namespace FalloutScriptStudio.Tests.Editor
 				view.Surface!.CaretOffset = document.TextDocument.GetLineByNumber(5).Offset + 5;
 
 				ContextMenu menu = view.Editor.ContextMenu!;
-				menu.IsOpen = true;
+				menu.RaiseEvent(new RoutedEventArgs(ContextMenu.OpenedEvent, menu));
 				UiThread.Flush();
 				MenuItem rename = menu.Items.OfType<MenuItem>().First(item => item.Header?.ToString()?.StartsWith("Rename", StringComparison.Ordinal) == true);
 
 				Assert.Equal("Rename: Procedure", rename.Header);
 				Assert.Equal(Visibility.Visible, rename.Visibility);
-				menu.IsOpen = false;
 				window.Close();
 			});
 		}

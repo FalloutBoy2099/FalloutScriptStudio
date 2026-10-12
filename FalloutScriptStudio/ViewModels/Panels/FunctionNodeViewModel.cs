@@ -22,6 +22,8 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			{
 				this.Children.Add(new FunctionNodeViewModel(child, this));
 			}
+
+			this.VisibleChildren = new ObservableCollection<FunctionNodeViewModel>(this.Children);
 		}
 
 		/// <summary>Gets the catalog node.</summary>
@@ -36,6 +38,12 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		/// <summary>Gets the child nodes.</summary>
 		public ObservableCollection<FunctionNodeViewModel> Children { get; } = new ObservableCollection<FunctionNodeViewModel>();
 
+		/// <summary>
+		/// Gets the child nodes that pass the filter of the panel, in the same order. The tree shows this list: a node that is filtered out
+		/// has no item in the tree at all (the tree creates every item of an expanded category, about a millisecond each, whether it is visible or not).
+		/// </summary>
+		public ObservableCollection<FunctionNodeViewModel> VisibleChildren { get; }
+
 		/// <inheritdoc/>
 		String IFilterNode.FilterText => this.Node.Name;
 
@@ -44,6 +52,42 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 		/// <inheritdoc/>
 		IEnumerable<IFilterNode> IFilterNode.FilterChildren => this.Children;
+
+		/// <inheritdoc/>
+		void IFilterNode.OnFilterApplied()
+		{
+			SyncVisible(this.VisibleChildren, this.Children);
+		}
+
+		/// <summary>
+		/// Makes a list hold the nodes of another list that pass the filter, changing it as little as possible (removing and inserting
+		/// single items rather than replacing the list, so the tree keeps the items of the nodes that stay).
+		/// </summary>
+		/// <param name="visible">The list shown; always a sub sequence of <paramref name="all"/>.</param>
+		/// <param name="all">All the nodes.</param>
+		internal static void SyncVisible(ObservableCollection<FunctionNodeViewModel> visible, IReadOnlyList<FunctionNodeViewModel> all)
+		{
+			Int32 position = 0;
+			foreach (FunctionNodeViewModel node in all)
+			{
+				Boolean shown = position < visible.Count && ReferenceEquals(visible[position], node);
+				if (node.IsFilterVisible)
+				{
+					if (shown)
+					{
+						position++;
+					}
+					else
+					{
+						visible.Insert(position++, node);
+					}
+				}
+				else if (shown)
+				{
+					visible.RemoveAt(position);
+				}
+			}
+		}
 
 		/// <summary>True when the node passes the filter of the panel.</summary>
 		[ObservableProperty]

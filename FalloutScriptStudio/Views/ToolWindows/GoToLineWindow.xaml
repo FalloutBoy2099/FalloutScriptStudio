@@ -13,7 +13,9 @@
     Loaded="OnLoaded"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
+    SnapsToDevicePixels="True"
     Topmost="False"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
     <Grid>
@@ -35,6 +37,7 @@
                 Text="{Binding Prompt}" />
             <ui:TextBox
                 x:Name="LineBox"
+                AutomationProperties.Name="{Binding Prompt}"
                 InputMethod.IsInputMethodEnabled="False"
                 PlaceholderText="{DynamicResource Str.ToolWindows.GoToLine.Placeholder}"
                 Text="{Binding LineText, UpdateSourceTrigger=PropertyChanged}"

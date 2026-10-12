@@ -9,6 +9,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.ScriptTools;
 	using Microsoft.Extensions.Logging;
@@ -36,6 +37,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly ReferenceResultsPresenter _references;
 		private readonly IScriptToolService _scriptTools;
 		private readonly ILogger _logger;
+		private readonly IProblemService _problems;
 
 		private DocumentViewModel? _active;
 		private DocumentViewModel? _previousActive;
@@ -55,7 +57,8 @@ namespace FalloutScriptStudio.Workspace
 			ProcedureOperations procedures,
 			ReferenceResultsPresenter references,
 			IScriptToolService scriptTools,
-			ILogger<WorkspaceService>? logger = null)
+			ILogger<WorkspaceService>? logger = null,
+			IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(parser);
@@ -84,6 +87,7 @@ namespace FalloutScriptStudio.Workspace
 			this._references = references;
 			this._scriptTools = scriptTools;
 			this._logger = logger ?? NullLogger<WorkspaceService>.Instance;
+			this._problems = problems ?? new ProblemService();
 			this._parser.Parsed += (_, document) => this.DocumentParsed?.Invoke(this, document);
 		}
 
@@ -223,8 +227,9 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex)
 			{
-				this._logger.LogError(ex, "A background operation failed");
+				this._logger.BackgroundOperationFailed(ex);
 				this._output.ReportStatus(Loc.Format("Str.Shell.Output.OperationFailed", ex.Message));
+				this._problems.Report(ProblemFactory.OperationFailed(ex.Message));
 			}
 		}
 
@@ -277,6 +282,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			document.IsActive = false;
+			this._problems.ClearOwner(document);
 			this._messages.Forget(document);
 			if (ReferenceEquals(this._previousActive, document))
 			{
@@ -328,6 +334,12 @@ namespace FalloutScriptStudio.Workspace
 		public void ReportStatus(String message)
 		{
 			this._output.ReportStatus(message);
+		}
+
+		public void ReportFailure(String message)
+		{
+			this._output.ReportStatus(message);
+			this._problems.Report(ProblemFactory.OperationFailed(message));
 		}
 
 		private void AddDocument(DocumentViewModel document, Boolean activate)

@@ -4,29 +4,56 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Main"
-    x:Name="Root">
+    x:Name="Root"
+    PreviewKeyDown="OnPreviewKeyDown">
     <UserControl.Resources>
+        <Style
+            x:Key="CompactColumnHeaderStyle"
+            BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
+            TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="Height" Value="22" />
+            <Setter Property="MinHeight" Value="22" />
+            <Setter Property="Padding" Value="6,0" />
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+
         <DataTemplate DataType="{x:Type vm:ParserLogTabViewModel}">
-            <TextBox Style="{StaticResource ShellLogTextBoxStyle}" Text="{Binding Output.ParserText, Mode=OneWay}" />
+            <TextBox
+                AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabParser}"
+                Style="{StaticResource ShellLogTextBoxStyle}"
+                Text="{Binding Output.ParserText, Mode=OneWay}" />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:BuildLogTabViewModel}">
-            <TextBox Style="{StaticResource ShellLogTextBoxStyle}" Text="{Binding Output.BuildText, Mode=OneWay}" />
+            <TextBox
+                AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabBuild}"
+                Style="{StaticResource ShellLogTextBoxStyle}"
+                Text="{Binding Output.BuildText, Mode=OneWay}" />
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ErrorsTabViewModel}">
             <DataGrid
                 AutoGenerateColumns="False"
+                AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabErrors}"
                 Background="Transparent"
                 BorderThickness="0"
                 CanUserAddRows="False"
                 CanUserResizeRows="False"
+                ColumnHeaderHeight="22"
+                ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
+                FontSize="12"
                 GridLinesVisibility="None"
                 HeadersVisibility="Column"
                 IsReadOnly="True"
                 ItemsSource="{Binding Output.Errors}"
+                MinRowHeight="22"
                 MouseDoubleClick="OnErrorsDoubleClick"
+                PreviewKeyDown="OnErrorsKeyDown"
                 RowHeaderWidth="0"
+                RowHeight="22"
                 SelectedItem="{Binding Output.SelectedError, Mode=TwoWay}"
                 SelectionMode="Single">
                 <DataGrid.GroupStyle>
@@ -34,8 +61,9 @@
                         <GroupStyle.HeaderTemplate>
                             <DataTemplate>
                                 <TextBlock
-                                    Margin="8,6,0,2"
-                                    FontWeight="SemiBold"
+                                    Height="20"
+                                    Margin="8,2,0,0"
+                                    FontSize="12"
                                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                     Text="{Binding Name}" />
                             </DataTemplate>
@@ -57,19 +85,28 @@
                     </GroupStyle>
                 </DataGrid.GroupStyle>
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
+                    <DataGridTemplateColumn
+                        Width="30"
+                        MinWidth="30"
+                        SortMemberPath="TypeText">
                         <DataGridTemplateColumn.Header>
-                            <TextBlock Text="{DynamicResource Str.Common.Type}" />
+                            <TextBlock
+                                AutomationProperties.Name="{DynamicResource Str.Common.Type}"
+                                Text=" "
+                                ToolTip="{DynamicResource Str.Common.Type}" />
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-                                <StackPanel Margin="8,0" Orientation="Horizontal">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    Orientation="Horizontal"
+                                    ToolTip="{Binding TypeText}">
                                     <ui:SymbolIcon
                                         x:Name="TypeIcon"
-                                        Margin="0,0,6,0"
-                                        FontSize="14"
+                                        FontSize="12"
                                         Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding TypeText}" />
                                 </StackPanel>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Type}" Value="Error">
@@ -85,21 +122,47 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Width="170" Binding="{Binding FileName}">
+                    <DataGridTextColumn Width="130" Binding="{Binding FileName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.File}" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Width="80" Binding="{Binding LineText}">
+                    <DataGridTextColumn Width="44" Binding="{Binding LineText}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.Line}" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Width="*" Binding="{Binding Message}">
-                        <DataGridTextColumn.Header>
+                    <DataGridTemplateColumn Width="*">
+                        <DataGridTemplateColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.Message}" />
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
+                                <Grid ToolTip="{Binding ClipboardText}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Margin="4,0"
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Message}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <ui:HyperlinkButton
+                                        Grid.Column="1"
+                                        Height="20"
+                                        Margin="0,0,6,0"
+                                        Padding="4,0"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.Output.RunProblemActionCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                        CommandParameter="{Binding}"
+                                        Content="{Binding ActionLabel}"
+                                        FontSize="11"
+                                        Visibility="{Binding HasAction, Converter={StaticResource BoolToVisibility}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
                 <DataGrid.ContextMenu>
                     <ContextMenu>
@@ -108,6 +171,7 @@
                                 <ui:SymbolIcon Symbol="Copy24" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem Command="{Binding Output.CopyAllCommand}" Header="{DynamicResource Str.Shell.Problems.CopyAll}" />
                         <MenuItem Command="{Binding Output.RefreshCommand}" Header="{DynamicResource Str.Shell.Output.Refresh}">
                             <MenuItem.Icon>
                                 <ui:SymbolIcon Symbol="ArrowSync24" />
@@ -131,6 +195,22 @@
                             Header="{DynamicResource Str.Shell.Output.ShowBuildLog}"
                             IsCheckable="True"
                             IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.GroupTools}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowToolEntries, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.GroupFiles}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowFileEntries, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.GroupSettings}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowSettingsEntries, Mode=TwoWay}" />
+                        <MenuItem
+                            Header="{DynamicResource Str.Shell.Output.GroupMessages}"
+                            IsCheckable="True"
+                            IsChecked="{Binding Output.ShowMessageEntries, Mode=TwoWay}" />
                     </ContextMenu>
                 </DataGrid.ContextMenu>
             </DataGrid>
@@ -139,32 +219,48 @@
         <DataTemplate DataType="{x:Type vm:ResultsTabViewModel}">
             <DataGrid
                 AutoGenerateColumns="False"
+                AutomationProperties.Name="{Binding Title}"
                 Background="Transparent"
                 BorderThickness="0"
                 CanUserAddRows="False"
                 CanUserResizeRows="False"
+                ColumnHeaderHeight="22"
+                ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
+                FontSize="12"
                 GridLinesVisibility="None"
                 HeadersVisibility="Column"
                 IsReadOnly="True"
                 ItemsSource="{Binding Results}"
+                MinRowHeight="22"
                 MouseDoubleClick="OnErrorsDoubleClick"
+                PreviewKeyDown="OnErrorsKeyDown"
                 RowHeaderWidth="0"
+                RowHeight="22"
                 SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
                 SelectionMode="Single">
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Width="120" SortMemberPath="TypeText">
+                    <DataGridTemplateColumn
+                        Width="30"
+                        MinWidth="30"
+                        SortMemberPath="TypeText">
                         <DataGridTemplateColumn.Header>
-                            <TextBlock Text="{DynamicResource Str.Common.Type}" />
+                            <TextBlock
+                                AutomationProperties.Name="{DynamicResource Str.Common.Type}"
+                                Text=" "
+                                ToolTip="{DynamicResource Str.Common.Type}" />
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-                                <StackPanel Margin="8,0" Orientation="Horizontal">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Background="Transparent"
+                                    Orientation="Horizontal"
+                                    ToolTip="{Binding TypeText}">
                                     <ui:SymbolIcon
                                         x:Name="TypeIcon"
-                                        Margin="0,0,6,0"
-                                        FontSize="14"
+                                        FontSize="12"
                                         Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding TypeText}" />
                                 </StackPanel>
                                 <DataTemplate.Triggers>
                                     <DataTrigger Binding="{Binding Type}" Value="Error">
@@ -180,12 +276,12 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Width="170" Binding="{Binding FileName}">
+                    <DataGridTextColumn Width="130" Binding="{Binding FileName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.File}" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Width="80" Binding="{Binding LineText}">
+                    <DataGridTextColumn Width="44" Binding="{Binding LineText}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.Line}" />
                         </DataGridTextColumn.Header>
@@ -220,10 +316,11 @@
             <StackPanel Orientation="Horizontal" ToolTip="{DynamicResource Str.Shell.Output.TipErrors}">
                 <TextBlock Text="{DynamicResource Str.Shell.Output.TabErrors}" />
                 <Border
-                    Margin="6,0,0,0"
-                    Padding="6,0"
+                    Margin="4,0,0,0"
+                    Padding="4,0"
+                    VerticalAlignment="Center"
                     Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
-                    CornerRadius="8"
+                    CornerRadius="7"
                     Visibility="{Binding Output.ErrorCount, Converter={StaticResource CountToVisibility}}">
                     <TextBlock
                         FontSize="11"
@@ -240,7 +337,7 @@
                     Margin="6,0,0,0"
                     Command="{Binding CloseCommand}"
                     Icon="{ui:SymbolIcon Dismiss12}"
-                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    Style="{StaticResource ShellCompactIconButtonStyle}"
                     ToolTip="{DynamicResource Str.Common.Close}" />
             </StackPanel>
         </DataTemplate>
@@ -259,6 +356,24 @@
                 ItemsSource="{Binding Output.Tabs}"
                 SelectedIndex="{Binding Output.SelectedTab, Mode=TwoWay}"
                 SelectionChanged="OnOutputTabsSelectionChanged">
+                <TabControl.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type TabItem}}" TargetType="{x:Type TabItem}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Kind}" Value="{x:Null}">
+                                <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Kind}" Value="Parser">
+                                <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Shell.Output.TabParser}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Kind}" Value="Build">
+                                <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Shell.Output.TabBuild}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Kind}" Value="Errors">
+                                <Setter Property="AutomationProperties.Name" Value="{DynamicResource Str.Shell.Output.TabErrors}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.ItemContainerStyle>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <ContentControl Content="{Binding}" Focusable="False">
@@ -289,20 +404,119 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
                 <ui:Button
+                    Command="{Binding CancelOperationCommand}"
+                    Icon="{ui:SymbolIcon Stop24}"
+                    Style="{StaticResource ShellCompactIconButtonStyle}"
+                    ToolTip="{DynamicResource Str.Shell.Operation.CancelTip}"
+                    Visibility="{Binding IsOperationRunning, Converter={StaticResource BoolToVisibility}}" />
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Output.IsErrorsTabSelected, Converter={StaticResource BoolToVisibility}}">
+                    <ToggleButton
+                        IsChecked="{Binding Output.ShowErrors, Mode=TwoWay}"
+                        Style="{StaticResource ShellCounterToggleStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.ShowErrors}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon
+                                FontSize="12"
+                                Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                Symbol="ErrorCircle24" />
+                            <TextBlock
+                                Margin="3,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding Output.ProblemErrorCount}" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        IsChecked="{Binding Output.ShowWarnings, Mode=TwoWay}"
+                        Style="{StaticResource ShellCounterToggleStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.ShowWarnings}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon
+                                FontSize="12"
+                                Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                Symbol="Warning24" />
+                            <TextBlock
+                                Margin="3,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding Output.ProblemWarningCount}" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ToggleButton
+                        IsChecked="{Binding Output.ShowInfos, Mode=TwoWay}"
+                        Style="{StaticResource ShellCounterToggleStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.ShowInfo}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon FontSize="12" Symbol="Info24" />
+                            <TextBlock
+                                Margin="3,0,0,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding Output.ProblemInfoCount}" />
+                        </StackPanel>
+                    </ToggleButton>
+                    <ui:Button
+                        Click="OnSourcesClick"
+                        Icon="{ui:SymbolIcon Filter24}"
+                        Style="{StaticResource ShellCompactIconButtonStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.FilterSources}">
+                        <ui:Button.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupParser}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowParserEntries, Mode=TwoWay}" />
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupBuild}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupTools}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowToolEntries, Mode=TwoWay}" />
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupFiles}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowFileEntries, Mode=TwoWay}" />
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupSettings}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowSettingsEntries, Mode=TwoWay}" />
+                                <MenuItem
+                                    Header="{DynamicResource Str.Shell.Output.GroupMessages}"
+                                    IsCheckable="True"
+                                    IsChecked="{Binding Output.ShowMessageEntries, Mode=TwoWay}" />
+                            </ContextMenu>
+                        </ui:Button.ContextMenu>
+                    </ui:Button>
+                    <ui:Button
+                        Command="{Binding Output.PreviousProblemCommand}"
+                        Icon="{ui:SymbolIcon ArrowUp24}"
+                        Style="{StaticResource ShellCompactIconButtonStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.Previous}" />
+                    <ui:Button
+                        Command="{Binding Output.NextProblemCommand}"
+                        Icon="{ui:SymbolIcon ArrowDown24}"
+                        Style="{StaticResource ShellCompactIconButtonStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.Next}" />
+                    <ui:Button
+                        Command="{Binding Output.CopyAllCommand}"
+                        Icon="{ui:SymbolIcon Copy24}"
+                        Style="{StaticResource ShellCompactIconButtonStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Problems.CopyAll}" />
+                </StackPanel>
+                <ui:Button
                     Command="{Binding Output.RefreshCommand}"
                     Icon="{ui:SymbolIcon ArrowSync24}"
-                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    Style="{StaticResource ShellCompactIconButtonStyle}"
                     ToolTip="{DynamicResource Str.Shell.Output.Refresh}" />
                 <ui:Button
                     Command="{Binding Output.ClearAllCommand}"
                     Icon="{ui:SymbolIcon Delete24}"
-                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    Style="{StaticResource ShellCompactIconButtonStyle}"
                     ToolTip="{DynamicResource Str.Shell.Output.ClearAll}" />
                 <ui:Button
                     x:Name="MinimizeButton"
                     Command="{Binding ToggleOutputMinimizedCommand}"
                     Icon="{ui:SymbolIcon ChevronDown24}"
-                    Style="{StaticResource ShellSmallIconButtonStyle}"
+                    Style="{StaticResource ShellCompactIconButtonStyle}"
                     ToolTip="{DynamicResource Str.Shell.Output.Minimize}" />
             </StackPanel>
         </Grid>

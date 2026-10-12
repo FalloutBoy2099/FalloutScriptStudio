@@ -149,7 +149,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 		private void InsertInclude(DocumentViewModel document, IEditorSurface editor, String header)
 		{
-			String includePath = IncludePathFormatter.Format(header, this._settings.Settings.Paths.HeadersDirectory);
+			String includePath = IncludePathFormatter.Format(header, this._settings.Effective.Settings.Paths.HeadersDirectory);
 			IncludePasteResult result = this._includeInserter.CreateInclude(document.TextDocument.Text, includePath, editor.CaretLine);
 			document.TextDocument.ApplyEdits(new[] { result.Edit });
 			editor.GoTo(result.Line, 1);
@@ -163,7 +163,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		[RelayCommand]
 		public async Task OpenHeaderFileAsync()
 		{
-			IReadOnlyList<String> files = this._dialogs.PickOpenFiles(Loc.Get("Str.Shell.Dlg.SelectHeadersTitle"), Loc.Get("Str.Shell.Filter.Header"), this._settings.Settings.Paths.HeadersDirectory);
+			IReadOnlyList<String> files = this._dialogs.PickOpenFiles(Loc.Get("Str.Shell.Dlg.SelectHeadersTitle"), Loc.Get("Str.Shell.Filter.Header"), this._settings.Effective.Settings.Paths.HeadersDirectory);
 			foreach (String file in files)
 			{
 				await this._workspace.OpenAsync(file, new OpenDocumentOptions { AddToRecent = false });
@@ -191,7 +191,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 				return;
 			}
 
-			IncludeResolver resolver = this._settings.Settings.ToIncludeResolver(this._settings.Paths);
+			IncludeResolver resolver = this._settings.Effective.ToIncludeResolver(this._settings.Paths);
 			foreach (String include in resolver.GetAllIncludes(document.TextDocument.Text, document.FilePath).Distinct(StringComparer.OrdinalIgnoreCase))
 			{
 				if (File.Exists(include))
@@ -263,7 +263,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		}
 
 		/// <summary>Compiles the active script.</summary>
-		[RelayCommand]
+		[RelayCommand(CanExecute = nameof(CanBuild))]
 		public async Task CompileAsync()
 		{
 			if (this._workspace.ActiveDocument is { } document)
@@ -274,21 +274,21 @@ namespace FalloutScriptStudio.ViewModels.Main
 		}
 
 		/// <summary>Compiles every open script.</summary>
-		[RelayCommand]
+		[RelayCommand(CanExecute = nameof(CanBuild))]
 		public async Task CompileAllOpenAsync()
 		{
 			await this._build.CompileAllOpenAsync();
 		}
 
 		/// <summary>Compiles all scripts of a folder.</summary>
-		[RelayCommand]
+		[RelayCommand(CanExecute = nameof(CanBuild))]
 		public async Task MassCompileAsync()
 		{
 			await this._build.MassCompileAsync();
 		}
 
 		/// <summary>Preprocesses the active script and opens the result.</summary>
-		[RelayCommand]
+		[RelayCommand(CanExecute = nameof(CanBuild))]
 		public async Task PreprocessAsync()
 		{
 			if (this._workspace.ActiveDocument is { } document)
@@ -298,7 +298,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		}
 
 		/// <summary>Compiles the active script and decompiles the result.</summary>
-		[RelayCommand]
+		[RelayCommand(CanExecute = nameof(CanBuild))]
 		public async Task RoundTripAsync()
 		{
 			if (this._workspace.ActiveDocument is { } document)
@@ -323,13 +323,6 @@ namespace FalloutScriptStudio.ViewModels.Main
 		{
 			await this._toolWindows.ShowSettingsAsync();
 			await this.AfterSettingsChangedAsync();
-		}
-
-		/// <summary>Chooses the project folder.</summary>
-		[RelayCommand]
-		public void SetProjectFolder()
-		{
-			this.Project.ChooseFolder();
 		}
 
 		/// <summary>Opens the project folder in Explorer.</summary>
@@ -403,6 +396,29 @@ namespace FalloutScriptStudio.ViewModels.Main
 			{
 				await this._dialogs.ShowInfoAsync(Loc.Get("Str.Common.Help"), Loc.Format("Str.Shell.Dlg.DocsNotFound", DocumentationUrl));
 			}
+		}
+
+		/// <summary>Associates the Fallout script file types (<c>.ssl .int .msg .fcd</c>) with the editor, after a confirmation (Help menu).</summary>
+		[RelayCommand]
+		public async Task AssociateFileTypesAsync()
+		{
+			String title = Loc.Get("Str.Shell.Dlg.AssociateTitle");
+			if (!await this._dialogs.ConfirmAsync(title, Loc.Get("Str.Shell.Dlg.AssociateText"), Loc.Get("Str.Common.Yes"), Loc.Get("Str.Common.No")))
+			{
+				return;
+			}
+
+			try
+			{
+				this._association.Associate(Environment.ProcessPath ?? Path.Combine(this._settings.Paths.ProgramDirectory, "FalloutScriptStudio.exe"), this._settings.Paths.ResourcesDirectory);
+			}
+			catch (Exception ex) when (ex is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+			{
+				await this._dialogs.ShowErrorAsync(title, Loc.Format("Str.ToolWindows.Settings.AssociateFailed", ex.Message));
+				return;
+			}
+
+			await this._dialogs.ShowInfoAsync(title, Loc.Get("Str.ToolWindows.Settings.AssociateDone"));
 		}
 
 		private async Task<DocumentViewModel?> GetDialogueScriptAsync(String title)

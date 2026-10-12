@@ -1,0 +1,1210 @@
+{
+  "version": 1,
+  "about": "Common glossary of the user interface texts. Every Str.* text of the other languages that translates an English text containing a term below must contain one of the accepted forms of that term (test GlossaryTests). docs/GLOSSARY.md is generated from this file; to regenerate it run the tests with FSS_WRITE_GLOSSARY=1.",
+  "matching": ["Texts are compared in lower case. Placeholders such as {0}, file names (scripts.lst, parser.dll, .ssl), underscores (access keys) and the phrases of \"ignore\" are removed first.", "English: a term applies to a key when one of its \"en\" variants occurs as a whole word (case-insensitive) in the English text; text between single or double quotes without a blank (such as 'Node') is skipped.", "Other languages: the text must contain one of the \"accept\" fragments (plain substrings, so that inflected forms and German compounds match). A fragment that starts with ^ must start at a word start, one that ends with $ must end a word.", "\"forbid\" fragments (same syntax) must not occur in a text where the term applies. \"forbiddenEverywhere\" fragments must not occur in any text of the language.", "\"enForbid\": English wordings that must not be used (the English texts are checked too)."],
+  "ignore": ["Fallout Script Studio", "Sfall Script Editor", "sFall TeamX", "ICSharpCode.TextEditor", "int2ssl", "Mr.Stalin", "(Delete)", "'Node'", "Node999"],
+  "forbiddenEverywhere": {
+    "pt": [
+      {"text": "ficheiro", "reason": "European Portuguese; the app uses Brazilian Portuguese (arquivo)"},
+      {"text": "utilizador", "reason": "European Portuguese (usuário)"},
+      {"text": "guardar", "reason": "European Portuguese for Save (salvar)"},
+      {"text": "registo", "reason": "European Portuguese (registro)"},
+      {"text": "ecrã", "reason": "European Portuguese (tela)"},
+      {"text": "tem a certeza", "reason": "European Portuguese (tem certeza)"},
+      {"text": "eliminar", "reason": "European Portuguese for Delete (excluir)"},
+      {"text": "descarreg", "reason": "European Portuguese (baixar)"},
+      {"text": "separador", "reason": "European Portuguese for tab (guia)"},
+      {"text": "a carregar", "reason": "European Portuguese gerund (carregando)"}
+    ],
+    "zh": [
+      {"chars": "設檔體軟資訊錯誤這個點選視專儲編說閉開顯來為與對應過後無沒時節變數條規則範圍輸輯單頁據請題報錄複製貼畫線鍵滑預覽讀寫連檢壓縮環實際", "reason": "Traditional characters; the app uses Simplified Chinese (简体)"}
+    ]
+  },
+  "groups": [
+    {"name": "Fallout and SSL", "terms": ["script", "procedure", "function", "variable", "macro", "definition", "declaration", "header", "include", "message", "dialogue", "node", "flowchart", "player", "opcode", "register", "template", "archive"]},
+    {"name": "Tools", "terms": ["compile", "compiler", "decompile", "preprocess", "roundtrip", "parser", "native", "builtin", "external"]},
+    {"name": "Editor and interface", "terms": ["project", "problem", "settings", "theme", "language", "editor", "folder", "encoding", "log", "reference", "rename", "associate", "collapse", "expand", "comment", "indent", "caret", "find", "replace", "matchcase", "wholeword", "regex", "reload", "unsaved", "save", "cancel", "delete", "remove", "undo", "redo", "warning", "error"]}
+  ],
+  "terms": [
+    {
+      "id": "script",
+      "english": "Script",
+      "group": "Fallout and SSL",
+      "en": ["script", "scripts"],
+      "enForbid": [],
+      "notes": "An SSL source file (.ssl) or its compiled form (.int). Keep the English loan word where the language already does (\"script\" in es/fr/it/pt); never \"program\" or \"file\" alone.",
+      "languages": {
+        "cs": {"canonical": "skript", "accept": ["skript"], "forbid": []},
+        "de": {"canonical": "Skript", "accept": ["skript"], "forbid": []},
+        "es": {"canonical": "script", "accept": ["script"], "forbid": []},
+        "fr": {"canonical": "script", "accept": ["script"], "forbid": []},
+        "it": {"canonical": "script", "accept": ["script"], "forbid": []},
+        "pl": {"canonical": "skrypt", "accept": ["skryp"], "forbid": []},
+        "pt": {"canonical": "script", "accept": ["script"], "forbid": []},
+        "ru": {"canonical": "скрипт", "accept": ["скрипт"], "forbid": []},
+        "sv": {"canonical": "skript", "accept": ["skript"], "forbid": []},
+        "zh": {"canonical": "脚本", "accept": ["脚本"], "forbid": []}
+      }
+    },
+    {
+      "id": "procedure",
+      "english": "Procedure",
+      "group": "Fallout and SSL",
+      "en": ["procedure", "procedures"],
+      "enForbid": [],
+      "notes": "An SSL procedure (the unit of code; a dialogue node is a procedure). Never \"function\" (that is a built-in/engine function) and never \"subroutine\".",
+      "languages": {
+        "cs": {"canonical": "procedura", "accept": ["procedur"], "forbid": []},
+        "de": {"canonical": "Prozedur", "accept": ["prozedur"], "forbid": []},
+        "es": {"canonical": "procedimiento", "accept": ["procedimiento"], "forbid": ["subrutina"]},
+        "fr": {"canonical": "procédure", "accept": ["procédure"], "forbid": []},
+        "it": {"canonical": "procedura", "accept": ["procedur"], "forbid": []},
+        "pl": {"canonical": "procedura", "accept": ["procedur"], "forbid": []},
+        "pt": {"canonical": "procedimento", "accept": ["procedimento"], "forbid": []},
+        "ru": {"canonical": "процедура", "accept": ["процедур"], "forbid": []},
+        "sv": {"canonical": "procedur", "accept": ["procedur"], "forbid": []},
+        "zh": {"canonical": "过程", "accept": ["过程"], "forbid": ["程序", "存储过程"]}
+      }
+    },
+    {
+      "id": "function",
+      "english": "Function",
+      "group": "Fallout and SSL",
+      "en": ["function", "functions"],
+      "enForbid": [],
+      "notes": "An engine/sfall function or a user code snippet of the function tree. Not the same as a procedure.",
+      "languages": {
+        "cs": {"canonical": "funkce", "accept": ["funkc", "funkcí"], "forbid": []},
+        "de": {"canonical": "Funktion", "accept": ["funktion"], "forbid": []},
+        "es": {"canonical": "función", "accept": ["funci"], "forbid": []},
+        "fr": {"canonical": "fonction", "accept": ["fonction"], "forbid": []},
+        "it": {"canonical": "funzione", "accept": ["funzion"], "forbid": []},
+        "pl": {"canonical": "funkcja", "accept": ["funkc"], "forbid": []},
+        "pt": {"canonical": "função", "accept": ["funç", "funcion"], "forbid": []},
+        "ru": {"canonical": "функция", "accept": ["функци", "функций"], "forbid": []},
+        "sv": {"canonical": "funktion", "accept": ["funktion"], "forbid": []},
+        "zh": {"canonical": "函数", "accept": ["函数"], "forbid": ["功能"]}
+      }
+    },
+    {
+      "id": "variable",
+      "english": "Variable",
+      "group": "Fallout and SSL",
+      "en": ["variable", "variables"],
+      "enForbid": [],
+      "notes": "A script, local, argument or global variable.",
+      "languages": {
+        "cs": {"canonical": "proměnná", "accept": ["proměnn"], "forbid": []},
+        "de": {"canonical": "Variable", "accept": ["variable"], "forbid": []},
+        "es": {"canonical": "variable", "accept": ["variable"], "forbid": []},
+        "fr": {"canonical": "variable", "accept": ["variable"], "forbid": []},
+        "it": {"canonical": "variabile", "accept": ["variabil"], "forbid": []},
+        "pl": {"canonical": "zmienna", "accept": ["zmienn"], "forbid": []},
+        "pt": {"canonical": "variável", "accept": ["variáve"], "forbid": []},
+        "ru": {"canonical": "переменная", "accept": ["переменн"], "forbid": []},
+        "sv": {"canonical": "variabel", "accept": ["variab"], "forbid": []},
+        "zh": {"canonical": "变量", "accept": ["变量"], "forbid": []}
+      }
+    },
+    {
+      "id": "macro",
+      "english": "Macro",
+      "group": "Fallout and SSL",
+      "en": ["macro", "macros"],
+      "enForbid": [],
+      "notes": "A #define macro of the preprocessor.",
+      "languages": {
+        "cs": {"canonical": "makro", "accept": ["makr", "maker"], "forbid": []},
+        "de": {"canonical": "Makro", "accept": ["makro"], "forbid": []},
+        "es": {"canonical": "macro", "accept": ["macro"], "forbid": []},
+        "fr": {"canonical": "macro", "accept": ["macro"], "forbid": []},
+        "it": {"canonical": "macro", "accept": ["macro"], "forbid": []},
+        "pl": {"canonical": "makro", "accept": ["makr"], "forbid": []},
+        "pt": {"canonical": "macro", "accept": ["macro"], "forbid": []},
+        "ru": {"canonical": "макрос", "accept": ["макрос"], "forbid": []},
+        "sv": {"canonical": "makro", "accept": ["makro"], "forbid": []},
+        "zh": {"canonical": "宏", "accept": ["宏"], "forbid": []}
+      }
+    },
+    {
+      "id": "definition",
+      "english": "Definition (define)",
+      "group": "Fallout and SSL",
+      "en": ["definition", "definitions", "define", "defines", "defined"],
+      "enForbid": [],
+      "notes": "A #define (preprocessor definition) or \"where something is defined\" (Go to definition). Not \"declaration\".",
+      "languages": {
+        "cs": {"canonical": "definice", "accept": ["definic", "definov", "definuj", "define"], "forbid": []},
+        "de": {"canonical": "Definition", "accept": ["definition", "definier", "define"], "forbid": []},
+        "es": {"canonical": "definición", "accept": ["definici", "definid", "definir", "define"], "forbid": []},
+        "fr": {"canonical": "définition", "accept": ["défin", "define"], "forbid": []},
+        "it": {"canonical": "definizione", "accept": ["defin", "define"], "forbid": []},
+        "pl": {"canonical": "definicja", "accept": ["definic", "definiow", "zdefiniow", "definiuj", "define"], "forbid": []},
+        "pt": {"canonical": "definição", "accept": ["definiç", "defini", "define"], "forbid": []},
+        "ru": {"canonical": "определение", "accept": ["определ", "define"], "forbid": []},
+        "sv": {"canonical": "definition", "accept": ["definition", "definier", "define"], "forbid": []},
+        "zh": {"canonical": "定义", "accept": ["定义", "define"], "forbid": []}
+      }
+    },
+    {
+      "id": "declaration",
+      "english": "Declaration",
+      "group": "Fallout and SSL",
+      "en": ["declaration", "declarations", "declared", "declare"],
+      "enForbid": [],
+      "notes": "Where a procedure or variable is declared (Go to declaration).",
+      "languages": {
+        "cs": {"canonical": "deklarace", "accept": ["deklar"], "forbid": []},
+        "de": {"canonical": "Deklaration", "accept": ["deklar"], "forbid": []},
+        "es": {"canonical": "declaración", "accept": ["declar"], "forbid": []},
+        "fr": {"canonical": "déclaration", "accept": ["déclar"], "forbid": []},
+        "it": {"canonical": "dichiarazione", "accept": ["dichiar"], "forbid": []},
+        "pl": {"canonical": "deklaracja", "accept": ["deklar", "zadeklar"], "forbid": []},
+        "pt": {"canonical": "declaração", "accept": ["declar"], "forbid": []},
+        "ru": {"canonical": "объявление", "accept": ["объявл"], "forbid": []},
+        "sv": {"canonical": "deklaration", "accept": ["deklar"], "forbid": []},
+        "zh": {"canonical": "声明", "accept": ["声明"], "forbid": []}
+      }
+    },
+    {
+      "id": "header",
+      "english": "Header (file)",
+      "group": "Fallout and SSL",
+      "en": ["header", "headers"],
+      "enForbid": [],
+      "notes": "A header file (*.h) with macros, procedures and variables shared between scripts. Spell the file kind out: \"header file\". Do not use \"include\" for the file itself.",
+      "languages": {
+        "cs": {"canonical": "hlavičkový soubor", "accept": ["hlavič"], "forbid": []},
+        "de": {"canonical": "Header", "accept": ["header"], "forbid": []},
+        "es": {"canonical": "encabezado", "accept": ["encabezado"], "forbid": ["cabecera"]},
+        "fr": {"canonical": "en-tête", "accept": ["en-tête"], "forbid": []},
+        "it": {"canonical": "intestazione", "accept": ["intestazion"], "forbid": ["header"]},
+        "pl": {"canonical": "plik nagłówkowy", "accept": ["nagłówk"], "forbid": []},
+        "pt": {"canonical": "cabeçalho", "accept": ["cabeçalho"], "forbid": []},
+        "ru": {"canonical": "заголовочный файл", "accept": ["заголовоч", "заголовк"], "forbid": []},
+        "sv": {"canonical": "huvudfil", "accept": ["huvudfil"], "forbid": ["headerfil", "rubrik"]},
+        "zh": {"canonical": "头文件", "accept": ["头文件"], "forbid": []}
+      }
+    },
+    {
+      "id": "include",
+      "english": "Include",
+      "group": "Fallout and SSL",
+      "en": ["include file", "include files", "includes", "#include", "open include", "included file", "included files"],
+      "enForbid": [],
+      "notes": "The #include directive and the file it pulls in. The keyword #include itself is never translated.",
+      "languages": {
+        "cs": {"canonical": "vložený soubor / include", "accept": ["include", "vložen", "vložit", "začlen", "includ"], "forbid": []},
+        "de": {"canonical": "einbinden / Include", "accept": ["include", "einbind", "eingebund"], "forbid": []},
+        "es": {"canonical": "incluir / include", "accept": ["include", "inclu"], "forbid": []},
+        "fr": {"canonical": "inclure / include", "accept": ["include", "inclu", "inclusion"], "forbid": []},
+        "it": {"canonical": "includere / include", "accept": ["include", "inclu"], "forbid": []},
+        "pl": {"canonical": "dołączyć / include", "accept": ["include", "dołącz"], "forbid": []},
+        "pt": {"canonical": "incluir / include", "accept": ["include", "inclu"], "forbid": []},
+        "ru": {"canonical": "подключить / include", "accept": ["include", "подключ"], "forbid": []},
+        "sv": {"canonical": "inkludera / include", "accept": ["include", "inkluder"], "forbid": []},
+        "zh": {"canonical": "包含", "accept": ["包含", "include"], "forbid": []}
+      }
+    },
+    {
+      "id": "message",
+      "english": "Message (file)",
+      "group": "Fallout and SSL",
+      "en": ["message", "messages"],
+      "enForbid": ["messages file", "msg file", "msg files"],
+      "notes": "A numbered text of a .msg message file (NPC line, player reply, UI message of the game). \"Message file\" = the .msg file; say \"message file\", never \".msg file\" or \"messages file\".",
+      "languages": {
+        "cs": {"canonical": "zpráva", "accept": ["zpráv"], "forbid": []},
+        "de": {"canonical": "Nachricht", "accept": ["nachricht"], "forbid": ["meldung"]},
+        "es": {"canonical": "mensaje", "accept": ["mensaje"], "forbid": []},
+        "fr": {"canonical": "message", "accept": ["message"], "forbid": []},
+        "it": {"canonical": "messaggio", "accept": ["messagg"], "forbid": []},
+        "pl": {"canonical": "komunikat", "accept": ["komun"], "forbid": ["wiadomo"]},
+        "pt": {"canonical": "mensagem", "accept": ["mensage"], "forbid": []},
+        "ru": {"canonical": "сообщение", "accept": ["сообщ"], "forbid": []},
+        "sv": {"canonical": "meddelande", "accept": ["medd"], "forbid": []},
+        "zh": {"canonical": "消息", "accept": ["消息"], "forbid": []}
+      }
+    },
+    {
+      "id": "dialogue",
+      "english": "Dialogue",
+      "group": "Fallout and SSL",
+      "en": ["dialogue", "dialogues"],
+      "enForbid": ["dialog node", "dialog nodes", "dialog exit node", "dialog function"],
+      "notes": "The conversation between the player and an NPC. (A \"dialog\" in the sense of a window is a dialog box, not this term.)",
+      "languages": {
+        "cs": {"canonical": "dialog", "accept": ["dialog"], "forbid": []},
+        "de": {"canonical": "Dialog", "accept": ["dialog"], "forbid": []},
+        "es": {"canonical": "diálogo", "accept": ["diálogo"], "forbid": []},
+        "fr": {"canonical": "dialogue", "accept": ["dialogue"], "forbid": []},
+        "it": {"canonical": "dialogo", "accept": ["dialog"], "forbid": []},
+        "pl": {"canonical": "dialog", "accept": ["dialog"], "forbid": []},
+        "pt": {"canonical": "diálogo", "accept": ["diálogo"], "forbid": []},
+        "ru": {"canonical": "диалог", "accept": ["диалог"], "forbid": []},
+        "sv": {"canonical": "dialog", "accept": ["dialog"], "forbid": []},
+        "zh": {"canonical": "对话", "accept": ["对话"], "forbid": []}
+      }
+    },
+    {
+      "id": "node",
+      "english": "Node",
+      "group": "Fallout and SSL",
+      "en": ["node", "nodes"],
+      "enForbid": [],
+      "notes": "A node of the dialogue flowchart = an NPC/player dialogue procedure (Node001...). Always \"node\", not \"block\", \"box\" or \"step\".",
+      "languages": {
+        "cs": {"canonical": "uzel", "accept": ["uzel", "uzl"], "forbid": []},
+        "de": {"canonical": "Knoten", "accept": ["knoten"], "forbid": []},
+        "es": {"canonical": "nodo", "accept": ["nodo"], "forbid": []},
+        "fr": {"canonical": "nœud", "accept": ["nœud"], "forbid": []},
+        "it": {"canonical": "nodo", "accept": ["nod"], "forbid": []},
+        "pl": {"canonical": "węzeł", "accept": ["węzeł", "węzł"], "forbid": []},
+        "pt": {"canonical": "nó", "accept": ["^nó"], "forbid": []},
+        "ru": {"canonical": "узел", "accept": ["узел", "узл"], "forbid": []},
+        "sv": {"canonical": "nod", "accept": ["nod"], "forbid": []},
+        "zh": {"canonical": "节点", "accept": ["节点"], "forbid": []}
+      }
+    },
+    {
+      "id": "flowchart",
+      "english": "Flowchart",
+      "group": "Fallout and SSL",
+      "en": ["flowchart", "flowcharts"],
+      "enForbid": ["nodes flowchart"],
+      "notes": "The dialogue flowchart window/file (.fcd). A short form (\"diagram\" in es/it/cs, \"schemat\" in pl) is accepted when the context is clear.",
+      "languages": {
+        "cs": {"canonical": "vývojový diagram", "accept": ["diagram"], "forbid": []},
+        "de": {"canonical": "Flussdiagramm", "accept": ["flussdiagramm", "diagramm"], "forbid": []},
+        "es": {"canonical": "diagrama de flujo", "accept": ["diagrama"], "forbid": []},
+        "fr": {"canonical": "organigramme", "accept": ["organigramme", "diagramme"], "forbid": []},
+        "it": {"canonical": "diagramma di flusso", "accept": ["diagramma"], "forbid": []},
+        "pl": {"canonical": "schemat blokowy", "accept": ["schemat", "schemac", "diagram"], "forbid": []},
+        "pt": {"canonical": "fluxograma", "accept": ["fluxograma", "diagrama"], "forbid": []},
+        "ru": {"canonical": "блок-схема", "accept": ["блок-схем", "диаграмм"], "forbid": []},
+        "sv": {"canonical": "flödesschema", "accept": ["flödesschema", "diagram"], "forbid": []},
+        "zh": {"canonical": "流程图", "accept": ["流程图", "图表"], "forbid": []}
+      }
+    },
+    {
+      "id": "player",
+      "english": "Player",
+      "group": "Fallout and SSL",
+      "en": ["player"],
+      "enForbid": [],
+      "notes": "The player character (PC) that answers in a dialogue. Gender-neutral wherever the language allows.",
+      "languages": {
+        "cs": {"canonical": "hráč", "accept": ["hráč"], "forbid": []},
+        "de": {"canonical": "Spieler", "accept": ["spieler", "spielfigur"], "forbid": []},
+        "es": {"canonical": "jugador", "accept": ["jugador"], "forbid": []},
+        "fr": {"canonical": "joueur", "accept": ["joueu"], "forbid": []},
+        "it": {"canonical": "giocatore", "accept": ["giocator", "giocatr"], "forbid": []},
+        "pl": {"canonical": "gracz", "accept": ["gracz"], "forbid": []},
+        "pt": {"canonical": "jogador", "accept": ["jogador"], "forbid": []},
+        "ru": {"canonical": "игрок", "accept": ["игрок"], "forbid": []},
+        "sv": {"canonical": "spelare", "accept": ["spelar"], "forbid": []},
+        "zh": {"canonical": "玩家", "accept": ["玩家"], "forbid": []}
+      }
+    },
+    {
+      "id": "opcode",
+      "english": "Opcode",
+      "group": "Fallout and SSL",
+      "en": ["opcode", "opcodes"],
+      "enForbid": [],
+      "notes": "An engine/sfall opcode. The word stays \"opcode\" (not translated) in every language.",
+      "languages": {
+        "cs": {"canonical": "operační kód", "accept": ["operační", "opcode"], "forbid": []},
+        "de": {"canonical": "Opcode", "accept": ["opcode"], "forbid": []},
+        "es": {"canonical": "opcode", "accept": ["opcode"], "forbid": []},
+        "fr": {"canonical": "opcode", "accept": ["opcode"], "forbid": []},
+        "it": {"canonical": "opcode", "accept": ["opcode"], "forbid": []},
+        "pl": {"canonical": "opkod", "accept": ["opkod", "opcode"], "forbid": []},
+        "pt": {"canonical": "opcode", "accept": ["opcode"], "forbid": []},
+        "ru": {"canonical": "опкод", "accept": ["опкод", "opcode"], "forbid": []},
+        "sv": {"canonical": "opkod", "accept": ["opkod", "opcode"], "forbid": []},
+        "zh": {"canonical": "操作码", "accept": ["操作码", "opcode"], "forbid": []}
+      }
+    },
+    {
+      "id": "register",
+      "english": "Register",
+      "group": "Fallout and SSL",
+      "en": ["register", "registered", "registering"],
+      "enForbid": [],
+      "notes": "Adding a script to scripts.lst (register). Not the Windows registry and not \"save\".",
+      "languages": {
+        "cs": {"canonical": "registrovat", "accept": ["registr"], "forbid": []},
+        "de": {"canonical": "registrieren", "accept": ["registrier"], "forbid": []},
+        "es": {"canonical": "registrar", "accept": ["registr"], "forbid": []},
+        "fr": {"canonical": "inscrire", "accept": ["inscri", "inscrit"], "forbid": []},
+        "it": {"canonical": "registrare", "accept": ["registr"], "forbid": []},
+        "pl": {"canonical": "zarejestrować", "accept": ["rejestr"], "forbid": []},
+        "pt": {"canonical": "registrar", "accept": ["registr"], "forbid": []},
+        "ru": {"canonical": "зарегистрировать", "accept": ["регистр"], "forbid": []},
+        "sv": {"canonical": "registrera", "accept": ["registrer"], "forbid": []},
+        "zh": {"canonical": "注册", "accept": ["注册"], "forbid": []}
+      }
+    },
+    {
+      "id": "template",
+      "english": "Template",
+      "group": "Fallout and SSL",
+      "en": ["template", "templates"],
+      "enForbid": [],
+      "notes": "A script template (.ssl) or a node code template.",
+      "languages": {
+        "cs": {"canonical": "šablona", "accept": ["šablon"], "forbid": []},
+        "de": {"canonical": "Vorlage", "accept": ["vorlage"], "forbid": []},
+        "es": {"canonical": "plantilla", "accept": ["plantilla"], "forbid": []},
+        "fr": {"canonical": "modèle", "accept": ["modèle"], "forbid": []},
+        "it": {"canonical": "modello", "accept": ["modell"], "forbid": []},
+        "pl": {"canonical": "szablon", "accept": ["szablon"], "forbid": []},
+        "pt": {"canonical": "modelo", "accept": ["modelo"], "forbid": []},
+        "ru": {"canonical": "шаблон", "accept": ["шаблон"], "forbid": []},
+        "sv": {"canonical": "mall", "accept": ["mall"], "forbid": []},
+        "zh": {"canonical": "模板", "accept": ["模板"], "forbid": []}
+      }
+    },
+    {
+      "id": "archive",
+      "english": "Archive",
+      "group": "Fallout and SSL",
+      "en": ["archive", "archives"],
+      "enForbid": [],
+      "notes": "The Fallout game archive (master.dat / critter.dat). es/pt use the same word as for \"file\" (archivo/arquivo); zh: 档案, never 存档 (that means a saved game).",
+      "languages": {
+        "cs": {"canonical": "archiv", "accept": ["archiv"], "forbid": []},
+        "de": {"canonical": "Archiv", "accept": ["archiv"], "forbid": []},
+        "es": {"canonical": "archivo", "accept": ["archivo"], "forbid": []},
+        "fr": {"canonical": "archive", "accept": ["archive"], "forbid": []},
+        "it": {"canonical": "archivio", "accept": ["archivi"], "forbid": []},
+        "pl": {"canonical": "archiwum", "accept": ["archiw"], "forbid": []},
+        "pt": {"canonical": "arquivo", "accept": ["arquiv"], "forbid": []},
+        "ru": {"canonical": "архив", "accept": ["архив"], "forbid": []},
+        "sv": {"canonical": "arkiv", "accept": ["arkiv"], "forbid": []},
+        "zh": {"canonical": "档案", "accept": ["档案"], "forbid": ["存档"]}
+      }
+    },
+    {
+      "id": "compile",
+      "english": "Compile",
+      "group": "Tools",
+      "en": ["compile", "compiled", "compiling", "compilation", "compiles"],
+      "enForbid": [],
+      "notes": "Turning an .ssl script into an .int (the compile verb and its nouns).",
+      "languages": {
+        "cs": {"canonical": "kompilovat", "accept": ["kompil"], "forbid": []},
+        "de": {"canonical": "kompilieren", "accept": ["kompil"], "forbid": []},
+        "es": {"canonical": "compilar", "accept": ["compil"], "forbid": []},
+        "fr": {"canonical": "compiler", "accept": ["compil"], "forbid": []},
+        "it": {"canonical": "compilare", "accept": ["compil"], "forbid": []},
+        "pl": {"canonical": "kompilować", "accept": ["kompil"], "forbid": []},
+        "pt": {"canonical": "compilar", "accept": ["compil"], "forbid": []},
+        "ru": {"canonical": "компилировать", "accept": ["компил"], "forbid": []},
+        "sv": {"canonical": "kompilera", "accept": ["kompil"], "forbid": []},
+        "zh": {"canonical": "编译", "accept": ["编译"], "forbid": []}
+      }
+    },
+    {
+      "id": "compiler",
+      "english": "Compiler",
+      "group": "Tools",
+      "en": ["compiler", "compilers"],
+      "enForbid": [],
+      "notes": "The compiler program (sslc, compile.exe).",
+      "languages": {
+        "cs": {"canonical": "kompilátor", "accept": ["kompilátor"], "forbid": []},
+        "de": {"canonical": "Compiler", "accept": ["compiler"], "forbid": []},
+        "es": {"canonical": "compilador", "accept": ["compilador"], "forbid": []},
+        "fr": {"canonical": "compilateur", "accept": ["compilateur"], "forbid": []},
+        "it": {"canonical": "compilatore", "accept": ["compilatore"], "forbid": []},
+        "pl": {"canonical": "kompilator", "accept": ["kompilator"], "forbid": []},
+        "pt": {"canonical": "compilador", "accept": ["compilador"], "forbid": []},
+        "ru": {"canonical": "компилятор", "accept": ["компилятор"], "forbid": []},
+        "sv": {"canonical": "kompilator", "accept": ["kompilator"], "forbid": []},
+        "zh": {"canonical": "编译器", "accept": ["编译器"], "forbid": []}
+      }
+    },
+    {
+      "id": "decompile",
+      "english": "Decompile / Decompiler",
+      "group": "Tools",
+      "en": ["decompile", "decompiled", "decompiling", "decompilation", "decompiler", "decompilers"],
+      "enForbid": [],
+      "notes": "Turning an .int back into .ssl (int2ssl or the built-in decompiler).",
+      "languages": {
+        "cs": {"canonical": "dekompilovat", "accept": ["dekompil"], "forbid": []},
+        "de": {"canonical": "dekompilieren", "accept": ["dekompil"], "forbid": []},
+        "es": {"canonical": "descompilar", "accept": ["descompil"], "forbid": []},
+        "fr": {"canonical": "décompiler", "accept": ["décompil"], "forbid": []},
+        "it": {"canonical": "decompilare", "accept": ["decompil"], "forbid": []},
+        "pl": {"canonical": "dekompilować", "accept": ["dekompil"], "forbid": []},
+        "pt": {"canonical": "descompilar", "accept": ["descompil"], "forbid": []},
+        "ru": {"canonical": "декомпилировать", "accept": ["декомпил"], "forbid": []},
+        "sv": {"canonical": "dekompilera", "accept": ["dekompil"], "forbid": []},
+        "zh": {"canonical": "反编译", "accept": ["反编译"], "forbid": []}
+      }
+    },
+    {
+      "id": "preprocess",
+      "english": "Preprocess / Preprocessor",
+      "group": "Tools",
+      "en": ["preprocess", "preprocessing", "preprocessed", "preprocessor", "preprocessors"],
+      "enForbid": [],
+      "notes": "Running the C-style preprocessor (mcpp/wcc/built-in) before the compiler.",
+      "languages": {
+        "cs": {"canonical": "předzpracování / preprocesor", "accept": ["předzpracov", "preprocesor"], "forbid": []},
+        "de": {"canonical": "Vorverarbeitung / Präprozessor", "accept": ["vorverarbeit", "präprozessor"], "forbid": []},
+        "es": {"canonical": "preprocesamiento / preprocesador", "accept": ["preproces"], "forbid": []},
+        "fr": {"canonical": "prétraitement / préprocesseur", "accept": ["prétrait", "préprocesseur"], "forbid": []},
+        "it": {"canonical": "preelaborazione / preprocessore", "accept": ["preelabor", "preprocessor"], "forbid": ["preprocessing"]},
+        "pl": {"canonical": "przetwarzanie wstępne / preprocesor", "accept": ["przetwarz", "przetworz", "preprocesor"], "forbid": []},
+        "pt": {"canonical": "pré-processamento / pré-processador", "accept": ["pré-process"], "forbid": []},
+        "ru": {"canonical": "предобработка / препроцессор", "accept": ["препроцесс", "предобработ"], "forbid": []},
+        "sv": {"canonical": "förbearbetning / förprocessor", "accept": ["förbearbet", "förprocessor"], "forbid": ["förbehandl"]},
+        "zh": {"canonical": "预处理 / 预处理器", "accept": ["预处理"], "forbid": []}
+      }
+    },
+    {
+      "id": "roundtrip",
+      "english": "Round trip",
+      "group": "Tools",
+      "en": ["round trip", "roundtrip"],
+      "enForbid": ["roundtrip"],
+      "notes": "Compile a script and decompile it back to check the result. Written \"Round trip\" in English.",
+      "languages": {
+        "cs": {"canonical": "zpětná kontrola", "accept": ["zpětn"], "forbid": []},
+        "de": {"canonical": "Round-Trip", "accept": ["round-trip"], "forbid": []},
+        "es": {"canonical": "ida y vuelta", "accept": ["ida y vuelta"], "forbid": []},
+        "fr": {"canonical": "aller-retour", "accept": ["aller-retour"], "forbid": []},
+        "it": {"canonical": "andata e ritorno", "accept": ["andata e ritorno"], "forbid": []},
+        "pl": {"canonical": "kompilacja zwrotna", "accept": ["zwrotn"], "forbid": []},
+        "pt": {"canonical": "ida e volta", "accept": ["ida e volta"], "forbid": []},
+        "ru": {"canonical": "круговая проверка", "accept": ["кругов"], "forbid": []},
+        "sv": {"canonical": "tur och retur", "accept": ["tur och retur"], "forbid": []},
+        "zh": {"canonical": "往返检查", "accept": ["往返检查"], "forbid": []}
+      }
+    },
+    {
+      "id": "parser",
+      "english": "Parser",
+      "group": "Tools",
+      "en": ["parser", "parsers"],
+      "enForbid": [],
+      "notes": "The script parser that supplies procedures, variables and errors. es/fr/pt translate it (analizador, analyseur, analisador); the other languages keep \"parser\" (ru: парсер, zh: 解析器).",
+      "languages": {
+        "cs": {"canonical": "parser", "accept": ["parser"], "forbid": ["analyzátor"]},
+        "de": {"canonical": "Parser", "accept": ["parser"], "forbid": []},
+        "es": {"canonical": "analizador", "accept": ["analizador"], "forbid": ["parser"]},
+        "fr": {"canonical": "analyseur", "accept": ["analyseur"], "forbid": ["parser"]},
+        "it": {"canonical": "parser", "accept": ["parser"], "forbid": ["analizzatore"]},
+        "pl": {"canonical": "parser", "accept": ["parser"], "forbid": []},
+        "pt": {"canonical": "analisador", "accept": ["analisador"], "forbid": ["parser"]},
+        "ru": {"canonical": "парсер", "accept": ["парсер"], "forbid": []},
+        "sv": {"canonical": "parser", "accept": ["parser"], "forbid": ["tolk"]},
+        "zh": {"canonical": "解析器", "accept": ["解析器"], "forbid": []}
+      }
+    },
+    {
+      "id": "native",
+      "english": "Native",
+      "group": "Tools",
+      "en": ["native"],
+      "enForbid": [],
+      "notes": "The native parser (parser.dll, x86) as opposed to the built-in C# parser. zh: 原生, not 本机.",
+      "languages": {
+        "cs": {"canonical": "nativní", "accept": ["nativn"], "forbid": []},
+        "de": {"canonical": "nativ", "accept": ["nativ"], "forbid": []},
+        "es": {"canonical": "nativo", "accept": ["nativo"], "forbid": []},
+        "fr": {"canonical": "natif", "accept": ["natif"], "forbid": []},
+        "it": {"canonical": "nativo", "accept": ["nativo"], "forbid": []},
+        "pl": {"canonical": "natywny", "accept": ["natywn"], "forbid": []},
+        "pt": {"canonical": "nativo", "accept": ["nativo"], "forbid": []},
+        "ru": {"canonical": "нативный", "accept": ["нативн"], "forbid": []},
+        "sv": {"canonical": "nativ", "accept": ["nativ"], "forbid": []},
+        "zh": {"canonical": "原生", "accept": ["原生"], "forbid": ["本机"]}
+      }
+    },
+    {
+      "id": "builtin",
+      "english": "Built-in",
+      "group": "Tools",
+      "en": ["built-in"],
+      "enForbid": [],
+      "notes": "Shipped inside the editor (built-in parser/decompiler). Not \"internal\" and not \"native\".",
+      "languages": {
+        "cs": {"canonical": "vestavěný", "accept": ["vestavěn"], "forbid": []},
+        "de": {"canonical": "integriert", "accept": ["integriert"], "forbid": []},
+        "es": {"canonical": "integrado", "accept": ["integrad"], "forbid": []},
+        "fr": {"canonical": "intégré", "accept": ["intégré"], "forbid": []},
+        "it": {"canonical": "integrato", "accept": ["integrat"], "forbid": []},
+        "pl": {"canonical": "wbudowany", "accept": ["wbudowan"], "forbid": []},
+        "pt": {"canonical": "integrado", "accept": ["integrad"], "forbid": []},
+        "ru": {"canonical": "встроенный", "accept": ["встроен"], "forbid": []},
+        "sv": {"canonical": "inbyggd", "accept": ["inbyggd"], "forbid": []},
+        "zh": {"canonical": "内置", "accept": ["内置"], "forbid": []}
+      }
+    },
+    {
+      "id": "external",
+      "english": "External",
+      "group": "Tools",
+      "en": ["external"],
+      "enForbid": [],
+      "notes": "A program outside the editor (external editor, external decompiler).",
+      "languages": {
+        "cs": {"canonical": "externí", "accept": ["extern"], "forbid": []},
+        "de": {"canonical": "extern", "accept": ["extern"], "forbid": []},
+        "es": {"canonical": "externo", "accept": ["extern"], "forbid": []},
+        "fr": {"canonical": "externe", "accept": ["extern"], "forbid": []},
+        "it": {"canonical": "esterno", "accept": ["estern"], "forbid": []},
+        "pl": {"canonical": "zewnętrzny", "accept": ["zewnętrzn"], "forbid": []},
+        "pt": {"canonical": "externo", "accept": ["extern"], "forbid": []},
+        "ru": {"canonical": "внешний", "accept": ["внешн"], "forbid": []},
+        "sv": {"canonical": "extern", "accept": ["extern"], "forbid": []},
+        "zh": {"canonical": "外部", "accept": ["外部"], "forbid": []}
+      }
+    },
+    {
+      "id": "project",
+      "english": "Project",
+      "group": "Editor and interface",
+      "en": ["project", "projects"],
+      "enForbid": [],
+      "notes": "A project folder with an optional fss-project.json.",
+      "languages": {
+        "cs": {"canonical": "projekt", "accept": ["projekt"], "forbid": []},
+        "de": {"canonical": "Projekt", "accept": ["projekt"], "forbid": []},
+        "es": {"canonical": "proyecto", "accept": ["proyecto"], "forbid": []},
+        "fr": {"canonical": "projet", "accept": ["projet"], "forbid": []},
+        "it": {"canonical": "progetto", "accept": ["progett"], "forbid": []},
+        "pl": {"canonical": "projekt", "accept": ["projek"], "forbid": []},
+        "pt": {"canonical": "projeto", "accept": ["projeto"], "forbid": []},
+        "ru": {"canonical": "проект", "accept": ["проект"], "forbid": []},
+        "sv": {"canonical": "projekt", "accept": ["projekt"], "forbid": []},
+        "zh": {"canonical": "项目", "accept": ["项目"], "forbid": []}
+      }
+    },
+    {
+      "id": "problem",
+      "english": "Problem",
+      "group": "Editor and interface",
+      "en": ["problem", "problems"],
+      "enForbid": [],
+      "notes": "An entry of the Errors tab / problem list (error, warning or information).",
+      "languages": {
+        "cs": {"canonical": "problém", "accept": ["problém"], "forbid": []},
+        "de": {"canonical": "Problem", "accept": ["problem"], "forbid": []},
+        "es": {"canonical": "problema", "accept": ["problema"], "forbid": []},
+        "fr": {"canonical": "problème", "accept": ["problème"], "forbid": []},
+        "it": {"canonical": "problema", "accept": ["problem"], "forbid": []},
+        "pl": {"canonical": "problem", "accept": ["problem"], "forbid": []},
+        "pt": {"canonical": "problema", "accept": ["problema"], "forbid": []},
+        "ru": {"canonical": "проблема", "accept": ["проблем"], "forbid": []},
+        "sv": {"canonical": "problem", "accept": ["problem"], "forbid": []},
+        "zh": {"canonical": "问题", "accept": ["问题"], "forbid": []}
+      }
+    },
+    {
+      "id": "settings",
+      "english": "Settings",
+      "group": "Editor and interface",
+      "en": ["settings", "setting"],
+      "enForbid": [],
+      "notes": "The Settings window and the settings file (Visual Studio: Options/Settings). \"Options\" is reserved for a menu of toggles.",
+      "languages": {
+        "cs": {"canonical": "nastavení", "accept": ["nastaven"], "forbid": []},
+        "de": {"canonical": "Einstellungen", "accept": ["einstellung"], "forbid": []},
+        "es": {"canonical": "configuración", "accept": ["configuraci"], "forbid": []},
+        "fr": {"canonical": "paramètres", "accept": ["paramètre"], "forbid": []},
+        "it": {"canonical": "impostazioni", "accept": ["impostazion"], "forbid": []},
+        "pl": {"canonical": "ustawienia", "accept": ["ustawie", "ustawień"], "forbid": []},
+        "pt": {"canonical": "configurações", "accept": ["configura"], "forbid": []},
+        "ru": {"canonical": "настройки", "accept": ["настро"], "forbid": []},
+        "sv": {"canonical": "inställningar", "accept": ["inställning"], "forbid": []},
+        "zh": {"canonical": "设置", "accept": ["设置"], "forbid": []}
+      }
+    },
+    {
+      "id": "theme",
+      "english": "Theme",
+      "group": "Editor and interface",
+      "en": ["theme"],
+      "enForbid": [],
+      "notes": "The light/dark colour theme (Windows/Visual Studio wording).",
+      "languages": {
+        "cs": {"canonical": "motiv", "accept": ["motiv"], "forbid": []},
+        "de": {"canonical": "Design", "accept": ["design"], "forbid": []},
+        "es": {"canonical": "tema", "accept": ["tema"], "forbid": []},
+        "fr": {"canonical": "thème", "accept": ["thème"], "forbid": []},
+        "it": {"canonical": "tema", "accept": ["tema"], "forbid": []},
+        "pl": {"canonical": "motyw", "accept": ["motyw"], "forbid": []},
+        "pt": {"canonical": "tema", "accept": ["tema"], "forbid": []},
+        "ru": {"canonical": "тема", "accept": ["тем"], "forbid": []},
+        "sv": {"canonical": "tema", "accept": ["tema"], "forbid": []},
+        "zh": {"canonical": "主题", "accept": ["主题"], "forbid": []}
+      }
+    },
+    {
+      "id": "language",
+      "english": "Language",
+      "group": "Editor and interface",
+      "en": ["language"],
+      "enForbid": [],
+      "notes": "The UI or message language.",
+      "languages": {
+        "cs": {"canonical": "jazyk", "accept": ["jazyk"], "forbid": []},
+        "de": {"canonical": "Sprache", "accept": ["sprach"], "forbid": []},
+        "es": {"canonical": "idioma", "accept": ["idioma"], "forbid": []},
+        "fr": {"canonical": "langue", "accept": ["langue"], "forbid": []},
+        "it": {"canonical": "lingua", "accept": ["lingua"], "forbid": []},
+        "pl": {"canonical": "język", "accept": ["języ"], "forbid": []},
+        "pt": {"canonical": "idioma", "accept": ["idioma"], "forbid": []},
+        "ru": {"canonical": "язык", "accept": ["язык"], "forbid": []},
+        "sv": {"canonical": "språk", "accept": ["språk"], "forbid": []},
+        "zh": {"canonical": "语言", "accept": ["语言"], "forbid": []}
+      }
+    },
+    {
+      "id": "editor",
+      "english": "Editor",
+      "group": "Editor and interface",
+      "en": ["editor", "editors"],
+      "enForbid": [],
+      "notes": "The script editor, the message editor, an external editor.",
+      "languages": {
+        "cs": {"canonical": "editor", "accept": ["editor"], "forbid": []},
+        "de": {"canonical": "Editor", "accept": ["editor"], "forbid": []},
+        "es": {"canonical": "editor", "accept": ["editor"], "forbid": []},
+        "fr": {"canonical": "éditeur", "accept": ["éditeur"], "forbid": []},
+        "it": {"canonical": "editor", "accept": ["editor"], "forbid": []},
+        "pl": {"canonical": "edytor", "accept": ["edytor"], "forbid": []},
+        "pt": {"canonical": "editor", "accept": ["editor"], "forbid": []},
+        "ru": {"canonical": "редактор", "accept": ["редактор"], "forbid": []},
+        "sv": {"canonical": "redigerare", "accept": ["redigerar"], "forbid": []},
+        "zh": {"canonical": "编辑器", "accept": ["编辑器"], "forbid": []}
+      }
+    },
+    {
+      "id": "folder",
+      "english": "Folder",
+      "group": "Editor and interface",
+      "en": ["folder", "folders", "subfolder", "subfolders"],
+      "enForbid": [],
+      "notes": "A directory on disk. Never \"directory\" or \"path\" for the folder itself.",
+      "languages": {
+        "cs": {"canonical": "složka", "accept": ["složk", "složc", "slože"], "forbid": []},
+        "de": {"canonical": "Ordner", "accept": ["ordner"], "forbid": []},
+        "es": {"canonical": "carpeta", "accept": ["carpeta"], "forbid": []},
+        "fr": {"canonical": "dossier", "accept": ["dossier"], "forbid": []},
+        "it": {"canonical": "cartella", "accept": ["cartell"], "forbid": []},
+        "pl": {"canonical": "folder", "accept": ["folder"], "forbid": []},
+        "pt": {"canonical": "pasta", "accept": ["pasta"], "forbid": []},
+        "ru": {"canonical": "папка", "accept": ["папк", "папок"], "forbid": []},
+        "sv": {"canonical": "mapp", "accept": ["mapp"], "forbid": []},
+        "zh": {"canonical": "文件夹", "accept": ["文件夹"], "forbid": []}
+      }
+    },
+    {
+      "id": "encoding",
+      "english": "Encoding",
+      "group": "Editor and interface",
+      "en": ["encoding"],
+      "enForbid": [],
+      "notes": "The text encoding / code page used to read and write files.",
+      "languages": {
+        "cs": {"canonical": "kódování", "accept": ["kódován"], "forbid": []},
+        "de": {"canonical": "Kodierung", "accept": ["kodierung"], "forbid": []},
+        "es": {"canonical": "codificación", "accept": ["codificaci"], "forbid": []},
+        "fr": {"canonical": "encodage", "accept": ["encodage"], "forbid": []},
+        "it": {"canonical": "codifica", "accept": ["codific"], "forbid": []},
+        "pl": {"canonical": "kodowanie", "accept": ["kodowani"], "forbid": []},
+        "pt": {"canonical": "codificação", "accept": ["codifica"], "forbid": []},
+        "ru": {"canonical": "кодировка", "accept": ["кодиров"], "forbid": []},
+        "sv": {"canonical": "teckenkodning", "accept": ["kodning"], "forbid": []},
+        "zh": {"canonical": "编码", "accept": ["编码"], "forbid": []}
+      }
+    },
+    {
+      "id": "log",
+      "english": "Log",
+      "group": "Editor and interface",
+      "en": ["log"],
+      "enForbid": [],
+      "notes": "The log panel / build log / parser log / log file (Windows wording \"registro\", \"journal\", \"Protokoll\").",
+      "languages": {
+        "cs": {"canonical": "protokol", "accept": ["protokol"], "forbid": []},
+        "de": {"canonical": "Protokoll", "accept": ["protokoll"], "forbid": []},
+        "es": {"canonical": "registro", "accept": ["registro"], "forbid": []},
+        "fr": {"canonical": "journal", "accept": ["journal"], "forbid": []},
+        "it": {"canonical": "registro", "accept": ["registro"], "forbid": ["^log"]},
+        "pl": {"canonical": "dziennik", "accept": ["dziennik"], "forbid": []},
+        "pt": {"canonical": "registro", "accept": ["registro"], "forbid": ["^log"]},
+        "ru": {"canonical": "журнал", "accept": ["журнал"], "forbid": []},
+        "sv": {"canonical": "logg", "accept": ["logg"], "forbid": []},
+        "zh": {"canonical": "日志", "accept": ["日志"], "forbid": []}
+      }
+    },
+    {
+      "id": "reference",
+      "english": "Reference",
+      "group": "Editor and interface",
+      "en": ["reference", "references"],
+      "enForbid": [],
+      "notes": "Find references: the places that use a symbol.",
+      "languages": {
+        "cs": {"canonical": "odkaz", "accept": ["odkaz"], "forbid": []},
+        "de": {"canonical": "Verweis", "accept": ["verweis"], "forbid": []},
+        "es": {"canonical": "referencia", "accept": ["referencia"], "forbid": []},
+        "fr": {"canonical": "référence", "accept": ["référence"], "forbid": []},
+        "it": {"canonical": "riferimento", "accept": ["riferiment"], "forbid": []},
+        "pl": {"canonical": "odwołanie", "accept": ["odwoła"], "forbid": []},
+        "pt": {"canonical": "referência", "accept": ["referênc"], "forbid": []},
+        "ru": {"canonical": "ссылка", "accept": ["ссыл"], "forbid": []},
+        "sv": {"canonical": "referens", "accept": ["referens"], "forbid": []},
+        "zh": {"canonical": "引用", "accept": ["引用"], "forbid": []}
+      }
+    },
+    {
+      "id": "rename",
+      "english": "Rename",
+      "group": "Editor and interface",
+      "en": ["rename", "renamed", "renames", "renaming"],
+      "enForbid": [],
+      "notes": "Rename a symbol, node, file or macro.",
+      "languages": {
+        "cs": {"canonical": "přejmenovat", "accept": ["přejmen"], "forbid": []},
+        "de": {"canonical": "umbenennen", "accept": ["benenn", "benannt"], "forbid": []},
+        "es": {"canonical": "cambiar nombre", "accept": ["nombre"], "forbid": ["renombr"]},
+        "fr": {"canonical": "renommer", "accept": ["renomm"], "forbid": []},
+        "it": {"canonical": "rinominare", "accept": ["rinomin"], "forbid": ["ridenomin"]},
+        "pl": {"canonical": "zmienić nazwę", "accept": ["nazw"], "forbid": []},
+        "pt": {"canonical": "renomear", "accept": ["renom"], "forbid": ["mudar nome", "mudar o nome", "mudança de nome"]},
+        "ru": {"canonical": "переименовать", "accept": ["переименов", "переименуй"], "forbid": []},
+        "sv": {"canonical": "byta namn", "accept": ["namn"], "forbid": ["döp om", "omdöp"]},
+        "zh": {"canonical": "重命名", "accept": ["重命名"], "forbid": []}
+      }
+    },
+    {
+      "id": "associate",
+      "english": "Associate",
+      "group": "Editor and interface",
+      "en": ["associate", "associated", "association", "associating"],
+      "enForbid": [],
+      "notes": "Message file <-> script association, and the Windows file type association.",
+      "languages": {
+        "cs": {"canonical": "přidružit", "accept": ["přidruž"], "forbid": []},
+        "de": {"canonical": "zuordnen", "accept": ["zuordn", "zugeordn", "zugehör", "verknüpf"], "forbid": []},
+        "es": {"canonical": "asociar", "accept": ["asoci"], "forbid": []},
+        "fr": {"canonical": "associer", "accept": ["associ"], "forbid": []},
+        "it": {"canonical": "associare", "accept": ["associ"], "forbid": []},
+        "pl": {"canonical": "skojarzyć", "accept": ["kojarz"], "forbid": ["powiąz"]},
+        "pt": {"canonical": "associar", "accept": ["associ"], "forbid": []},
+        "ru": {"canonical": "связать", "accept": ["связ", "сопостав"], "forbid": []},
+        "sv": {"canonical": "associera", "accept": ["associ", "tillhör"], "forbid": ["kopp"]},
+        "zh": {"canonical": "关联", "accept": ["关联"], "forbid": []}
+      }
+    },
+    {
+      "id": "collapse",
+      "english": "Collapse",
+      "group": "Editor and interface",
+      "en": ["collapse", "collapsed"],
+      "enForbid": [],
+      "notes": "Fold an outline region (procedure) of the editor or a node of the flowchart.",
+      "languages": {
+        "cs": {"canonical": "sbalit", "accept": ["sbal"], "forbid": []},
+        "de": {"canonical": "einklappen", "accept": ["einklapp", "eingeklapp"], "forbid": []},
+        "es": {"canonical": "contraer", "accept": ["contra"], "forbid": []},
+        "fr": {"canonical": "réduire", "accept": ["réduire", "réduit", "réduct"], "forbid": []},
+        "it": {"canonical": "comprimere", "accept": ["comprim", "compress"], "forbid": []},
+        "pl": {"canonical": "zwinąć", "accept": ["zwi"], "forbid": []},
+        "pt": {"canonical": "recolher", "accept": ["recolh"], "forbid": []},
+        "ru": {"canonical": "свернуть", "accept": ["сверн", "сворач"], "forbid": []},
+        "sv": {"canonical": "fälla ihop", "accept": ["fäll ihop", "fälla ihop", "fälls ihop", "fäll samman"], "forbid": []},
+        "zh": {"canonical": "折叠", "accept": ["折叠"], "forbid": []}
+      }
+    },
+    {
+      "id": "expand",
+      "english": "Expand",
+      "group": "Editor and interface",
+      "en": ["expand", "expanded"],
+      "enForbid": [],
+      "notes": "Unfold an outline region.",
+      "languages": {
+        "cs": {"canonical": "rozbalit", "accept": ["rozbal"], "forbid": []},
+        "de": {"canonical": "ausklappen", "accept": ["ausklapp"], "forbid": []},
+        "es": {"canonical": "expandir", "accept": ["expand"], "forbid": []},
+        "fr": {"canonical": "développer", "accept": ["développ"], "forbid": []},
+        "it": {"canonical": "espandere", "accept": ["espand"], "forbid": []},
+        "pl": {"canonical": "rozwinąć", "accept": ["rozwi"], "forbid": []},
+        "pt": {"canonical": "expandir", "accept": ["expand"], "forbid": []},
+        "ru": {"canonical": "развернуть", "accept": ["разверн"], "forbid": []},
+        "sv": {"canonical": "expandera", "accept": ["expander", "fäll ut", "fälla ut"], "forbid": []},
+        "zh": {"canonical": "展开", "accept": ["展开"], "forbid": []}
+      }
+    },
+    {
+      "id": "comment",
+      "english": "Comment",
+      "group": "Editor and interface",
+      "en": ["comment", "comments", "commented", "uncomment"],
+      "enForbid": [],
+      "notes": "Comment / uncomment code; a comment line of a .msg file.",
+      "languages": {
+        "cs": {"canonical": "komentář", "accept": ["koment"], "forbid": []},
+        "de": {"canonical": "Kommentar", "accept": ["komment"], "forbid": []},
+        "es": {"canonical": "comentario", "accept": ["coment"], "forbid": []},
+        "fr": {"canonical": "commentaire", "accept": ["comment"], "forbid": []},
+        "it": {"canonical": "commento", "accept": ["comment"], "forbid": []},
+        "pl": {"canonical": "komentarz", "accept": ["koment"], "forbid": []},
+        "pt": {"canonical": "comentário", "accept": ["coment"], "forbid": []},
+        "ru": {"canonical": "комментарий", "accept": ["коммент"], "forbid": []},
+        "sv": {"canonical": "kommentar", "accept": ["komment"], "forbid": []},
+        "zh": {"canonical": "注释", "accept": ["注释"], "forbid": []}
+      }
+    },
+    {
+      "id": "indent",
+      "english": "Indent",
+      "group": "Editor and interface",
+      "en": ["indent", "indentation"],
+      "enForbid": [],
+      "notes": "Left indentation of code.",
+      "languages": {
+        "cs": {"canonical": "odsazení", "accept": ["odsazen"], "forbid": []},
+        "de": {"canonical": "Einzug", "accept": ["einzug", "einrück"], "forbid": []},
+        "es": {"canonical": "sangría", "accept": ["sangr"], "forbid": []},
+        "fr": {"canonical": "retrait", "accept": ["retrait"], "forbid": []},
+        "it": {"canonical": "rientro", "accept": ["rientr"], "forbid": []},
+        "pl": {"canonical": "wcięcie", "accept": ["wcięci"], "forbid": []},
+        "pt": {"canonical": "recuo", "accept": ["recuo"], "forbid": []},
+        "ru": {"canonical": "отступ", "accept": ["отступ"], "forbid": []},
+        "sv": {"canonical": "indrag", "accept": ["indrag"], "forbid": []},
+        "zh": {"canonical": "缩进", "accept": ["缩进"], "forbid": []}
+      }
+    },
+    {
+      "id": "caret",
+      "english": "Caret",
+      "group": "Editor and interface",
+      "en": ["caret"],
+      "enForbid": [],
+      "notes": "The text cursor of the editor (not the mouse pointer).",
+      "languages": {
+        "cs": {"canonical": "kurzor", "accept": ["kurzor"], "forbid": []},
+        "de": {"canonical": "Cursor", "accept": ["cursor"], "forbid": ["einfügemarke"]},
+        "es": {"canonical": "cursor", "accept": ["cursor"], "forbid": []},
+        "fr": {"canonical": "curseur", "accept": ["curseur"], "forbid": []},
+        "it": {"canonical": "cursore", "accept": ["cursor"], "forbid": []},
+        "pl": {"canonical": "kursor", "accept": ["kursor"], "forbid": []},
+        "pt": {"canonical": "cursor", "accept": ["cursor"], "forbid": []},
+        "ru": {"canonical": "курсор", "accept": ["курсор"], "forbid": []},
+        "sv": {"canonical": "markör", "accept": ["markör"], "forbid": []},
+        "zh": {"canonical": "光标", "accept": ["光标"], "forbid": []}
+      }
+    },
+    {
+      "id": "find",
+      "english": "Find / Search",
+      "group": "Editor and interface",
+      "en": ["find", "search", "searches", "searched", "searching"],
+      "enForbid": [],
+      "notes": "Find / Search (text, references, files). Same verb family for both in most languages (Visual Studio: Find/Search).",
+      "languages": {
+        "cs": {"canonical": "najít / hledat", "accept": ["najít", "najd", "najde", "hled"], "forbid": []},
+        "de": {"canonical": "suchen", "accept": ["such"], "forbid": []},
+        "es": {"canonical": "buscar", "accept": ["busc", "búsqueda"], "forbid": []},
+        "fr": {"canonical": "rechercher", "accept": ["recherch"], "forbid": []},
+        "it": {"canonical": "trovare / cercare", "accept": ["trov", "cerc", "ricerc"], "forbid": []},
+        "pl": {"canonical": "znajdź / szukaj", "accept": ["znajd", "znajdu", "szuk", "wyszuk", "przeszuk"], "forbid": []},
+        "pt": {"canonical": "localizar / pesquisar", "accept": ["localiz", "pesquis", "procur"], "forbid": []},
+        "ru": {"canonical": "найти / поиск", "accept": ["найти", "найд", "поиск", "иск", "наход", "ищ"], "forbid": []},
+        "sv": {"canonical": "söka", "accept": ["sök", "hitta"], "forbid": []},
+        "zh": {"canonical": "查找 / 搜索", "accept": ["查找", "搜索"], "forbid": []}
+      }
+    },
+    {
+      "id": "replace",
+      "english": "Replace",
+      "group": "Editor and interface",
+      "en": ["replace", "replaced", "replacement"],
+      "enForbid": [],
+      "notes": "Replace text.",
+      "languages": {
+        "cs": {"canonical": "nahradit", "accept": ["nahra", "vymě"], "forbid": []},
+        "de": {"canonical": "ersetzen", "accept": ["ersetz"], "forbid": []},
+        "es": {"canonical": "reemplazar", "accept": ["reempl", "sustitu"], "forbid": []},
+        "fr": {"canonical": "remplacer", "accept": ["rempla"], "forbid": []},
+        "it": {"canonical": "sostituire", "accept": ["sostitu"], "forbid": []},
+        "pl": {"canonical": "zamienić", "accept": ["zamie", "zamian", "zastąp", "zastęp", "wymie"], "forbid": []},
+        "pt": {"canonical": "substituir", "accept": ["substitu"], "forbid": []},
+        "ru": {"canonical": "заменить", "accept": ["замен"], "forbid": []},
+        "sv": {"canonical": "ersätta", "accept": ["ersät", "ersat", "byt ut"], "forbid": []},
+        "zh": {"canonical": "替换", "accept": ["替换", "更换", "替代"], "forbid": []}
+      }
+    },
+    {
+      "id": "matchcase",
+      "english": "Match case",
+      "group": "Editor and interface",
+      "en": ["match case"],
+      "enForbid": [],
+      "notes": "The case-sensitive search option.",
+      "languages": {
+        "cs": {"canonical": "rozlišovat velikost písmen", "accept": ["velikost písmen"], "forbid": []},
+        "de": {"canonical": "Groß-/Kleinschreibung beachten", "accept": ["groß-/kleinschreibung", "groß- und kleinschreibung"], "forbid": []},
+        "es": {"canonical": "coincidir mayúsculas y minúsculas", "accept": ["mayúsculas"], "forbid": []},
+        "fr": {"canonical": "respecter la casse", "accept": ["casse"], "forbid": []},
+        "it": {"canonical": "maiuscole/minuscole", "accept": ["maiuscol"], "forbid": []},
+        "pl": {"canonical": "uwzględnij wielkość liter", "accept": ["wielkość liter"], "forbid": []},
+        "pt": {"canonical": "diferenciar maiúsculas/minúsculas", "accept": ["maiúscul"], "forbid": []},
+        "ru": {"canonical": "учитывать регистр", "accept": ["регистр"], "forbid": []},
+        "sv": {"canonical": "matcha skiftläge", "accept": ["skiftläge"], "forbid": []},
+        "zh": {"canonical": "区分大小写", "accept": ["大小写"], "forbid": []}
+      }
+    },
+    {
+      "id": "wholeword",
+      "english": "Whole word",
+      "group": "Editor and interface",
+      "en": ["whole word", "whole words"],
+      "enForbid": [],
+      "notes": "The whole-word search option.",
+      "languages": {
+        "cs": {"canonical": "pouze celá slova", "accept": ["celá slova", "celých slov", "celé slovo"], "forbid": []},
+        "de": {"canonical": "nur ganze Wörter", "accept": ["ganze wörter", "ganzes wort"], "forbid": []},
+        "es": {"canonical": "solo palabras completas", "accept": ["palabras completas", "palabra completa"], "forbid": []},
+        "fr": {"canonical": "mot entier uniquement", "accept": ["mot entier", "mots entiers"], "forbid": []},
+        "it": {"canonical": "solo parole intere", "accept": ["parole intere", "parola intera"], "forbid": []},
+        "pl": {"canonical": "tylko całe wyrazy", "accept": ["całe wyrazy", "całych wyrazów", "całe słowa", "całego wyrazu"], "forbid": []},
+        "pt": {"canonical": "somente palavras inteiras", "accept": ["palavras inteiras", "palavra inteira"], "forbid": []},
+        "ru": {"canonical": "только слово целиком", "accept": ["слово целиком", "слова целиком", "слов целиком", "целые слова"], "forbid": []},
+        "sv": {"canonical": "endast hela ord", "accept": ["hela ord", "helt ord"], "forbid": []},
+        "zh": {"canonical": "全字匹配", "accept": ["全字", "整词"], "forbid": []}
+      }
+    },
+    {
+      "id": "regex",
+      "english": "Regular expression",
+      "group": "Editor and interface",
+      "en": ["regular expression", "regular expressions"],
+      "enForbid": [],
+      "notes": "The regular-expression search option.",
+      "languages": {
+        "cs": {"canonical": "regulární výraz", "accept": ["regulární"], "forbid": []},
+        "de": {"canonical": "regulärer Ausdruck", "accept": ["regulär"], "forbid": []},
+        "es": {"canonical": "expresión regular", "accept": ["expresión regular", "expresiones regulares"], "forbid": []},
+        "fr": {"canonical": "expression régulière", "accept": ["expression régulière", "expressions régulières"], "forbid": []},
+        "it": {"canonical": "espressione regolare", "accept": ["espressione regolare", "espressioni regolari"], "forbid": []},
+        "pl": {"canonical": "wyrażenie regularne", "accept": ["wyrażeni"], "forbid": []},
+        "pt": {"canonical": "expressão regular", "accept": ["expressão regular", "expressões regulares"], "forbid": []},
+        "ru": {"canonical": "регулярное выражение", "accept": ["регулярн"], "forbid": []},
+        "sv": {"canonical": "reguljärt uttryck", "accept": ["reguljär"], "forbid": []},
+        "zh": {"canonical": "正则表达式", "accept": ["正则表达式"], "forbid": []}
+      }
+    },
+    {
+      "id": "reload",
+      "english": "Reload",
+      "group": "Editor and interface",
+      "en": ["reload", "reloads", "reloading"],
+      "enForbid": [],
+      "notes": "Read a file again from disk (discarding unsaved changes). Not \"refresh\" and not \"update\".",
+      "languages": {
+        "cs": {"canonical": "načíst znovu", "accept": ["znovu", "načt", "načí"], "forbid": []},
+        "de": {"canonical": "neu laden", "accept": ["neu lad", "neu gelad", "neuladen", "^neu$"], "forbid": []},
+        "es": {"canonical": "recargar", "accept": ["recarg", "volver a cargar", "vuelva a cargar", "vuelve a cargar"], "forbid": []},
+        "fr": {"canonical": "recharger", "accept": ["recharg"], "forbid": []},
+        "it": {"canonical": "ricaricare", "accept": ["ricaric"], "forbid": []},
+        "pl": {"canonical": "wczytać ponownie", "accept": ["ponown", "wczyt"], "forbid": []},
+        "pt": {"canonical": "recarregar", "accept": ["recarreg"], "forbid": []},
+        "ru": {"canonical": "перезагрузить", "accept": ["перезагруз", "перезагруж"], "forbid": []},
+        "sv": {"canonical": "läsa om", "accept": ["läs om", "läsa om", "läser om", "läses om", "läs in", "läsa in", "läser in", "läses in", "omläs", "läsas in", "läsas om"], "forbid": []},
+        "zh": {"canonical": "重新加载", "accept": ["重新加载"], "forbid": []}
+      }
+    },
+    {
+      "id": "unsaved",
+      "english": "Unsaved",
+      "group": "Editor and interface",
+      "en": ["unsaved"],
+      "enForbid": [],
+      "notes": "Changes that were not written to disk yet.",
+      "languages": {
+        "cs": {"canonical": "neuložený", "accept": ["neuložen"], "forbid": []},
+        "de": {"canonical": "nicht gespeichert", "accept": ["nicht gespeicher", "ungespeicher"], "forbid": []},
+        "es": {"canonical": "sin guardar", "accept": ["sin guardar"], "forbid": []},
+        "fr": {"canonical": "non enregistré", "accept": ["non enregistr"], "forbid": []},
+        "it": {"canonical": "non salvato", "accept": ["non salvat"], "forbid": []},
+        "pl": {"canonical": "niezapisany", "accept": ["niezapisan"], "forbid": []},
+        "pt": {"canonical": "não salvo", "accept": ["não salv"], "forbid": []},
+        "ru": {"canonical": "несохранённый", "accept": ["несохран"], "forbid": []},
+        "sv": {"canonical": "osparad", "accept": ["ospar"], "forbid": []},
+        "zh": {"canonical": "未保存", "accept": ["未保存"], "forbid": []}
+      }
+    },
+    {
+      "id": "save",
+      "english": "Save",
+      "group": "Editor and interface",
+      "en": ["save", "saved", "saving"],
+      "enForbid": [],
+      "notes": "Write to disk. fr: enregistrer (also reserved for Save; \"register\" uses inscrire).",
+      "languages": {
+        "cs": {"canonical": "uložit", "accept": ["ulož", "uklád"], "forbid": []},
+        "de": {"canonical": "speichern", "accept": ["speicher"], "forbid": []},
+        "es": {"canonical": "guardar", "accept": ["guard", "guárd"], "forbid": []},
+        "fr": {"canonical": "enregistrer", "accept": ["enregistr", "mémoris"], "forbid": []},
+        "it": {"canonical": "salvare", "accept": ["salv"], "forbid": []},
+        "pl": {"canonical": "zapisać", "accept": ["zapis", "zapamięt"], "forbid": []},
+        "pt": {"canonical": "salvar", "accept": ["salv"], "forbid": []},
+        "ru": {"canonical": "сохранить", "accept": ["сохран", "запомин"], "forbid": []},
+        "sv": {"canonical": "spara", "accept": ["spar"], "forbid": []},
+        "zh": {"canonical": "保存", "accept": ["保存", "另存"], "forbid": []}
+      }
+    },
+    {
+      "id": "cancel",
+      "english": "Cancel",
+      "group": "Editor and interface",
+      "en": ["cancel", "cancelled", "canceled", "cancelling"],
+      "enForbid": [],
+      "notes": "Cancel an operation or a dialog.",
+      "languages": {
+        "cs": {"canonical": "zrušit", "accept": ["ruš", "storno"], "forbid": []},
+        "de": {"canonical": "abbrechen", "accept": ["abbrech", "abgebrochen", "abbruch", "brechen"], "forbid": []},
+        "es": {"canonical": "cancelar", "accept": ["cancel", "cancél"], "forbid": []},
+        "fr": {"canonical": "annuler", "accept": ["annul"], "forbid": []},
+        "it": {"canonical": "annullare", "accept": ["annull"], "forbid": []},
+        "pl": {"canonical": "anulować", "accept": ["anul"], "forbid": []},
+        "pt": {"canonical": "cancelar", "accept": ["cancel"], "forbid": []},
+        "ru": {"canonical": "отменить", "accept": ["отмен"], "forbid": []},
+        "sv": {"canonical": "avbryta", "accept": ["avbr"], "forbid": []},
+        "zh": {"canonical": "取消", "accept": ["取消"], "forbid": []}
+      }
+    },
+    {
+      "id": "delete",
+      "english": "Delete",
+      "group": "Editor and interface",
+      "en": ["delete", "deleted", "deleting"],
+      "enForbid": [],
+      "notes": "Permanently delete data (procedure, node, file, line). \"Remove\" is for taking an entry out of a list.",
+      "languages": {
+        "cs": {"canonical": "odstranit", "accept": ["odstran", "odstraň"], "forbid": []},
+        "de": {"canonical": "löschen", "accept": ["lösch", "gelösch"], "forbid": []},
+        "es": {"canonical": "eliminar", "accept": ["elimin"], "forbid": []},
+        "fr": {"canonical": "supprimer", "accept": ["supprim", "suppress"], "forbid": []},
+        "it": {"canonical": "eliminare", "accept": ["elimin"], "forbid": []},
+        "pl": {"canonical": "usunąć", "accept": ["usu"], "forbid": []},
+        "pt": {"canonical": "excluir", "accept": ["exclu"], "forbid": ["eliminar"]},
+        "ru": {"canonical": "удалить", "accept": ["удал"], "forbid": []},
+        "sv": {"canonical": "ta bort", "accept": ["bort", "tagit", "tagits"], "forbid": []},
+        "zh": {"canonical": "删除", "accept": ["删除"], "forbid": []}
+      }
+    },
+    {
+      "id": "remove",
+      "english": "Remove",
+      "group": "Editor and interface",
+      "en": ["remove", "removed"],
+      "enForbid": [],
+      "notes": "Take an entry out of a list or strip characters (not a destructive delete).",
+      "languages": {
+        "cs": {"canonical": "odebrat", "accept": ["odeb", "odstran", "odstraň"], "forbid": []},
+        "de": {"canonical": "entfernen", "accept": ["entfern"], "forbid": []},
+        "es": {"canonical": "quitar", "accept": ["quit"], "forbid": []},
+        "fr": {"canonical": "supprimer / retirer", "accept": ["supprim", "retir"], "forbid": []},
+        "it": {"canonical": "rimuovere", "accept": ["rimuov", "rimoss"], "forbid": []},
+        "pl": {"canonical": "usunąć", "accept": ["usu"], "forbid": []},
+        "pt": {"canonical": "remover", "accept": ["remov"], "forbid": []},
+        "ru": {"canonical": "удалить", "accept": ["удал", "убра", "убер"], "forbid": []},
+        "sv": {"canonical": "ta bort", "accept": ["bort", "tagit", "tagits"], "forbid": []},
+        "zh": {"canonical": "移除", "accept": ["移除", "删除", "清除", "移出"], "forbid": []}
+      }
+    },
+    {
+      "id": "undo",
+      "english": "Undo",
+      "group": "Editor and interface",
+      "en": ["undo"],
+      "enForbid": [],
+      "notes": "Undo the last edit.",
+      "languages": {
+        "cs": {"canonical": "zpět", "accept": ["zpět"], "forbid": []},
+        "de": {"canonical": "Rückgängig", "accept": ["rückgängig"], "forbid": []},
+        "es": {"canonical": "deshacer", "accept": ["desha"], "forbid": []},
+        "fr": {"canonical": "annuler", "accept": ["annul"], "forbid": []},
+        "it": {"canonical": "annullare", "accept": ["annull"], "forbid": []},
+        "pl": {"canonical": "cofnij", "accept": ["cofn"], "forbid": []},
+        "pt": {"canonical": "desfazer", "accept": ["desfaz"], "forbid": []},
+        "ru": {"canonical": "отменить", "accept": ["отмен"], "forbid": []},
+        "sv": {"canonical": "ångra", "accept": ["ångr"], "forbid": []},
+        "zh": {"canonical": "撤销", "accept": ["撤销"], "forbid": []}
+      }
+    },
+    {
+      "id": "redo",
+      "english": "Redo",
+      "group": "Editor and interface",
+      "en": ["redo"],
+      "enForbid": [],
+      "notes": "Redo the undone edit.",
+      "languages": {
+        "cs": {"canonical": "znovu", "accept": ["znovu", "opakov"], "forbid": []},
+        "de": {"canonical": "Wiederholen", "accept": ["wiederhol"], "forbid": []},
+        "es": {"canonical": "rehacer", "accept": ["reha"], "forbid": []},
+        "fr": {"canonical": "rétablir", "accept": ["rétabl"], "forbid": []},
+        "it": {"canonical": "ripristina / ripeti", "accept": ["ripet", "ripristin"], "forbid": []},
+        "pl": {"canonical": "ponów", "accept": ["ponów"], "forbid": []},
+        "pt": {"canonical": "refazer", "accept": ["refaz"], "forbid": []},
+        "ru": {"canonical": "повторить", "accept": ["повтор"], "forbid": []},
+        "sv": {"canonical": "gör om", "accept": ["gör om"], "forbid": []},
+        "zh": {"canonical": "重做", "accept": ["重做"], "forbid": []}
+      }
+    },
+    {
+      "id": "warning",
+      "english": "Warning",
+      "group": "Editor and interface",
+      "en": ["warning", "warnings"],
+      "enForbid": [],
+      "notes": "A compiler/parser warning (below an error).",
+      "languages": {
+        "cs": {"canonical": "upozornění", "accept": ["upozorn"], "forbid": ["varován"]},
+        "de": {"canonical": "Warnung", "accept": ["warnung"], "forbid": []},
+        "es": {"canonical": "advertencia", "accept": ["advertencia"], "forbid": []},
+        "fr": {"canonical": "avertissement", "accept": ["avertissement"], "forbid": []},
+        "it": {"canonical": "avviso", "accept": ["avvis"], "forbid": []},
+        "pl": {"canonical": "ostrzeżenie", "accept": ["ostrze"], "forbid": []},
+        "pt": {"canonical": "aviso", "accept": ["aviso"], "forbid": []},
+        "ru": {"canonical": "предупреждение", "accept": ["предупрежд"], "forbid": []},
+        "sv": {"canonical": "varning", "accept": ["varning"], "forbid": []},
+        "zh": {"canonical": "警告", "accept": ["警告"], "forbid": []}
+      }
+    },
+    {
+      "id": "error",
+      "english": "Error",
+      "group": "Editor and interface",
+      "en": ["error", "errors"],
+      "enForbid": [],
+      "notes": "A compiler/parser/tool error.",
+      "languages": {
+        "cs": {"canonical": "chyba", "accept": ["chyb"], "forbid": []},
+        "de": {"canonical": "Fehler", "accept": ["fehler"], "forbid": []},
+        "es": {"canonical": "error", "accept": ["error"], "forbid": []},
+        "fr": {"canonical": "erreur", "accept": ["erreur"], "forbid": []},
+        "it": {"canonical": "errore", "accept": ["error"], "forbid": []},
+        "pl": {"canonical": "błąd", "accept": ["błąd", "błęd"], "forbid": []},
+        "pt": {"canonical": "erro", "accept": ["erro"], "forbid": []},
+        "ru": {"canonical": "ошибка", "accept": ["ошибк", "ошибок"], "forbid": []},
+        "sv": {"canonical": "fel", "accept": ["fel"], "forbid": []},
+        "zh": {"canonical": "错误", "accept": ["错误", "出错"], "forbid": []}
+      }
+    }
+  ]
+}

@@ -31,5 +31,14 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>Gets or sets the additional folders searched for message files.</summary>
 		public List<String> MessageSearchDirectories { get; set; } = new List<String>();
+
+		/// <summary>Creates a copy that can be changed without touching this instance.</summary>
+		/// <returns>The copy.</returns>
+		internal PathSettings Copy()
+		{
+			PathSettings copy = (PathSettings)this.MemberwiseClone();
+			copy.MessageSearchDirectories = new List<String>(this.MessageSearchDirectories ?? new List<String>());
+			return copy;
+		}
 	}
 }

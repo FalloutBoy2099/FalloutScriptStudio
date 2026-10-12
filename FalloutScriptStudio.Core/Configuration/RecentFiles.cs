@@ -11,11 +11,17 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>The maximum number of entries per list.</summary>
 		public const Int32 MaxItems = 40;
 
+		/// <summary>The maximum number of recent projects.</summary>
+		public const Int32 MaxProjects = 10;
+
 		/// <summary>Gets or sets the recent script files, oldest first.</summary>
 		public List<String> Scripts { get; set; } = new List<String>();
 
 		/// <summary>Gets or sets the recent message files, oldest first.</summary>
 		public List<String> Messages { get; set; } = new List<String>();
+
+		/// <summary>Gets or sets the recent project folders, oldest first.</summary>
+		public List<String> Projects { get; set; } = new List<String>();
 
 		/// <summary>
 		/// Moves a script to the end of the list, adding it if necessary. The oldest entry is dropped when the list is full.
@@ -24,7 +30,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The path that was dropped to make room, or <see langword="null"/>.</returns>
 		public String? AddScript(String path)
 		{
-			return Add(this.Scripts, path);
+			return Add(this.Scripts, path, MaxItems);
 		}
 
 		/// <summary>
@@ -34,7 +40,33 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The path that was dropped to make room, or <see langword="null"/>.</returns>
 		public String? AddMessage(String path)
 		{
-			return Add(this.Messages, path);
+			return Add(this.Messages, path, MaxItems);
+		}
+
+		/// <summary>
+		/// Moves a project folder to the end of the list, adding it if necessary. The oldest entry is dropped when the list is full.
+		/// </summary>
+		/// <param name="folder">The project folder.</param>
+		/// <returns>The folder that was dropped to make room, or <see langword="null"/>.</returns>
+		public String? AddProject(String folder)
+		{
+			this.Projects ??= new List<String>();
+			return Add(this.Projects, folder, MaxProjects);
+		}
+
+		/// <summary>Removes a project folder from the list.</summary>
+		/// <param name="folder">The project folder.</param>
+		public void RemoveProject(String folder)
+		{
+			this.Projects ??= new List<String>();
+			Remove(this.Projects, folder);
+		}
+
+		/// <summary>Clears the list of recent projects.</summary>
+		public void ClearProjects()
+		{
+			this.Projects ??= new List<String>();
+			this.Projects.Clear();
 		}
 
 		/// <summary>Removes a script from the list.</summary>
@@ -62,13 +94,13 @@ namespace FalloutScriptStudio.Core.Configuration
 			list.RemoveAll(item => String.Equals(item, path, StringComparison.OrdinalIgnoreCase));
 		}
 
-		private static String? Add(List<String> list, String path)
+		private static String? Add(List<String> list, String path, Int32 maxItems)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(path);
 
 			Remove(list, path);
 			String? dropped = null;
-			if (list.Count >= MaxItems)
+			if (list.Count >= maxItems)
 			{
 				dropped = list[0];
 				list.RemoveAt(0);

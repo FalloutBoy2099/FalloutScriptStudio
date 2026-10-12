@@ -14,7 +14,6 @@
     <sys:String x:Key="Str.Common.No">Нет</sys:String>
     <sys:String x:Key="Str.Common.Close">Закрыть</sys:String>
     <sys:String x:Key="Str.Common.Save">Сохранить</sys:String>
-    <sys:String x:Key="Str.Common.Browse">Обзор...</sys:String>
     <sys:String x:Key="Str.Common.Add">Добавить</sys:String>
     <sys:String x:Key="Str.Common.Remove">Удалить</sys:String>
     <sys:String x:Key="Str.Common.Delete">Удалить</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">Справка</sys:String>
     <sys:String x:Key="Str.Common.About">О программе</sys:String>
     <sys:String x:Key="Str.Common.Loading">Загрузка...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">Свернуть</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">Развернуть</sys:String>
+    <sys:String x:Key="Str.Common.Restore">Восстановить</sys:String>
 </ResourceDictionary>

@@ -112,8 +112,8 @@
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFileQuestion">是否创建消息文件 {0}？</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreatedIn">文件将创建在：{0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.CreateFailed">无法创建消息文件：</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">编译后脚本所在文件夹中不存在 Scripts.lst。</sys:String>
-    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">无法从 Scripts.lst 读取关联的名称。</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListMissing">编译后脚本所在文件夹中不存在 scripts.lst。</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Msg.ScriptsListEntryInvalid">无法从 scripts.lst 读取关联的名称。</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.NameMacroMissing">此脚本中未找到 NAME 宏，或该宏没有脚本编号。</sys:String>
     <sys:String x:Key="Str.MessageEditor.Msg.AssociatedByName">将改为按脚本名称关联消息文件。</sys:String>
     <sys:String x:Key="Str.MessageEditor.External.Deleted">磁盘上已不存在该文件。保存时将重新创建。</sys:String>
@@ -150,4 +150,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.MissingNumber">缺少消息的行号。</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">消息的行号无效。</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">消息行号重复：{0}</sys:String>
+    <sys:String x:Key="Str.MessageEditor.A11y.Grid">消息</sys:String>
 </ResourceDictionary>

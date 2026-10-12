@@ -8,3 +8,4 @@
 # (the tools are binary or LF text, the sample sources are CRLF text)
 _test_files/tools/** -text
 _test_files/samples/** text eol=crlf
+FalloutScriptStudio/Content/resources/*.dll binary

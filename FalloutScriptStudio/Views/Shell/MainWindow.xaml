@@ -2,6 +2,7 @@
     x:Class="FalloutScriptStudio.Views.Shell.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:docs="clr-namespace:FalloutScriptStudio.Documents"
     xmlns:panels="clr-namespace:FalloutScriptStudio.Views.Panels"
     xmlns:shell="clr-namespace:FalloutScriptStudio.Views.Shell"
@@ -12,11 +13,14 @@
     Height="860"
     MinWidth="720"
     MinHeight="480"
+    a11y:WindowFit.FitToWorkArea="True"
     AllowDrop="True"
     DragOver="OnWindowDragOver"
     Drop="OnWindowDrop"
     ExtendsContentIntoTitleBar="True"
     FontSize="12"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowCornerPreference="Round">
     <Window.Resources>
@@ -131,6 +135,18 @@
         <KeyBinding Key="F4" Command="{Binding PreprocessCommand}" />
         <KeyBinding Key="F5" Command="{Binding RoundTripCommand}" />
         <KeyBinding
+            Key="F8"
+            Command="{Binding Output.NextProblemCommand}"
+            Modifiers="Ctrl" />
+        <KeyBinding
+            Key="F8"
+            Command="{Binding Output.PreviousProblemCommand}"
+            Modifiers="Ctrl+Shift" />
+        <KeyBinding
+            Key="Cancel"
+            Command="{Binding CancelOperationCommand}"
+            Modifiers="Ctrl" />
+        <KeyBinding
             Key="G"
             Command="{Binding OpenAllIncludesCommand}"
             Modifiers="Alt+Shift" />
@@ -221,7 +237,7 @@
                     Margin="0"
                     VerticalAlignment="Center"
                     Background="Transparent">
-                    <MenuItem Header="{DynamicResource Str.Common.File}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.File}">
                         <MenuItem
                             Command="{Binding NewScriptCommand}"
                             Header="{DynamicResource Str.Shell.Menu.NewScript}"
@@ -251,6 +267,23 @@
                             <MenuItem Header="{DynamicResource Str.Common.Loading}" IsEnabled="False" />
                         </MenuItem>
                         <MenuItem Command="{Binding OpenFromArchiveCommand}" Header="{DynamicResource Str.Shell.Menu.OpenFromArchive}" />
+                        <Separator />
+                        <MenuItem
+                            Command="{Binding OpenProjectCommand}"
+                            Header="{DynamicResource Str.Shell.Menu.OpenProject}"
+                            ToolTip="{DynamicResource Str.Shell.Tip.SetProjectFolder}" />
+                        <MenuItem
+                            x:Name="RecentProjectsMenu"
+                            Header="{DynamicResource Str.Shell.Menu.RecentProjects}"
+                            SubmenuOpened="OnRecentProjectsMenuOpened">
+                            <MenuItem Header="{DynamicResource Str.Common.Loading}" IsEnabled="False" />
+                        </MenuItem>
+                        <MenuItem Command="{Binding CreateProjectSettingsCommand}" Header="{DynamicResource Str.Shell.Menu.CreateProjectSettings}" />
+                        <MenuItem Command="{Binding CloseProjectCommand}" Header="{DynamicResource Str.Shell.Menu.CloseProject}" />
+                        <MenuItem
+                            Command="{Binding OpenProjectFolderCommand}"
+                            Header="{DynamicResource Str.Shell.Menu.ShowProjectFolder}"
+                            IsEnabled="{Binding HasProject}" />
                         <Separator />
                         <MenuItem
                             Command="{Binding SaveCommand}"
@@ -300,7 +333,7 @@
                             InputGestureText="Alt+F4" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Edit}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Edit}">
                         <MenuItem
                             Command="{Binding UndoCommand}"
                             Header="{DynamicResource Str.Common.Undo}"
@@ -406,7 +439,7 @@
                             Style="{StaticResource DocumentMenuItemStyle}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Code}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Code}">
                         <MenuItem
                             Command="{Binding EditCommand}"
                             CommandParameter="{x:Static docs:EditorCommand.CommentSelection}"
@@ -585,7 +618,7 @@
                             IsEnabled="{Binding IsMessage}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Script}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Script}">
                         <MenuItem
                             Command="{Binding ScriptsListCommand}"
                             Header="{DynamicResource Str.Shell.Menu.ScriptsListEditor}"
@@ -603,7 +636,7 @@
                             ToolTip="{DynamicResource Str.Shell.Tip.DefineToScriptsHeader}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Headers}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Headers}">
                         <MenuItem
                             Command="{Binding IncludeFileToCodeCommand}"
                             Header="{DynamicResource Str.Shell.Menu.IncludeFile}"
@@ -617,7 +650,7 @@
                             Style="{StaticResource ParsableMenuItemStyle}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Dialog}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Dialog}">
                         <MenuItem Command="{Binding OpenMessageEditorCommand}" Header="{DynamicResource Str.Shell.Menu.MessageEditor}" />
                         <MenuItem
                             Command="{Binding AssociateMessageFileCommand}"
@@ -640,7 +673,7 @@
                             ToolTip="{DynamicResource Str.Shell.Tip.AutoOpenMessageEditor}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Compile}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Compile}">
                         <MenuItem
                             Command="{Binding CompileCommand}"
                             Header="{DynamicResource Str.Shell.Menu.CompileScript}"
@@ -670,6 +703,25 @@
                             ToolTip="{DynamicResource Str.Shell.Tip.Roundtrip}" />
                         <Separator />
                         <MenuItem
+                            Command="{Binding CancelOperationCommand}"
+                            Header="{DynamicResource Str.Shell.Operation.Cancel}"
+                            InputGestureText="Ctrl+Break">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Stop24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Command="{Binding ShowProblemsCommand}" Header="{DynamicResource Str.Shell.Problems.Show}" />
+                        <MenuItem
+                            Command="{Binding Output.NextProblemCommand}"
+                            Header="{DynamicResource Str.Shell.Problems.Next}"
+                            InputGestureText="Ctrl+F8" />
+                        <MenuItem
+                            Command="{Binding Output.PreviousProblemCommand}"
+                            Header="{DynamicResource Str.Shell.Problems.Previous}"
+                            InputGestureText="Ctrl+Shift+F8" />
+                        <Separator />
+                        <MenuItem
                             Header="{DynamicResource Str.Shell.Menu.DecompileFallout1}"
                             IsCheckable="True"
                             IsChecked="{Binding DecompileAsFallout1, Mode=TwoWay}" />
@@ -682,7 +734,7 @@
                             ToolTipService.ShowOnDisabled="True" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.View}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.View}">
                         <MenuItem
                             Header="{DynamicResource Str.Shell.Menu.LineNumbers}"
                             IsCheckable="True"
@@ -750,16 +802,13 @@
                             Style="{StaticResource DocumentMenuItemStyle}" />
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Shell.Menu.Options}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Options}">
                         <MenuItem Command="{Binding SettingsCommand}" Header="{DynamicResource Str.Shell.Menu.Settings}">
                             <MenuItem.Icon>
                                 <ui:SymbolIcon Symbol="Settings24" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem
-                            Command="{Binding SetProjectFolderCommand}"
-                            Header="{DynamicResource Str.Shell.Menu.SetProjectFolder}"
-                            ToolTip="{DynamicResource Str.Shell.Tip.SetProjectFolder}" />
+                        <MenuItem Command="{Binding ProjectSettingsCommand}" Header="{DynamicResource Str.Shell.Menu.ProjectSettings}" />
                         <MenuItem Header="{DynamicResource Str.Shell.Menu.MessageEncoding}">
                             <MenuItem
                                 Header="{DynamicResource Str.Shell.Menu.EncodingWindows}"
@@ -772,8 +821,9 @@
                         </MenuItem>
                     </MenuItem>
 
-                    <MenuItem Header="{DynamicResource Str.Common.Help}">
+                    <MenuItem Header="{DynamicResource Str.Shell.MenuBar.Help}">
                         <MenuItem Command="{Binding HelpCommand}" Header="{DynamicResource Str.Shell.Menu.Documentation}" />
+                        <MenuItem Command="{Binding AssociateFileTypesCommand}" Header="{DynamicResource Str.Shell.Menu.AssociateFiles}" />
                         <MenuItem Command="{Binding AboutCommand}" Header="{DynamicResource Str.Shell.Menu.About}">
                             <MenuItem.Icon>
                                 <ui:SymbolIcon Symbol="Info24" />
@@ -895,6 +945,7 @@
                         Style="{StaticResource ShellIconButtonStyle}"
                         ToolTip="{DynamicResource Str.Shell.Tip.MassCompile}" />
                     <ComboBox
+                        AutomationProperties.Name="{DynamicResource Str.Shell.Tip.PreprocessorDefine}"
                         ItemsSource="{Binding PreprocessorDefineOptions}"
                         SelectedValue="{Binding SelectedPreprocessorDefine, Mode=TwoWay}"
                         SelectedValuePath="Value"
@@ -928,6 +979,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         IsChecked="{Binding ShowFunctionTree, Mode=TwoWay}"
+                        Style="{StaticResource ShellIconToggleStyle}"
                         ToolTip="{DynamicResource Str.Shell.Tip.ToggleFunctionTree}">
                         <ui:SymbolIcon FontSize="16" Symbol="PanelLeft24" />
                     </ToggleButton>
@@ -939,6 +991,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         IsChecked="{Binding ShowRightBrowser, Mode=TwoWay}"
+                        Style="{StaticResource ShellIconToggleStyle}"
                         ToolTip="{DynamicResource Str.Shell.Tip.ToggleRightBrowser}">
                         <ui:SymbolIcon FontSize="16" Symbol="PanelRight24" />
                     </ToggleButton>
@@ -1046,18 +1099,70 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock
+                    a11y:LiveRegion.Text="{Binding StatusMessage}"
                     Style="{StaticResource ShellCaptionTextStyle}"
                     Text="{Binding StatusMessage}"
                     TextTrimming="CharacterEllipsis" />
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="12,0,12,0"
+                    Orientation="Horizontal"
+                    Visibility="{Binding IsOperationRunning, Converter={StaticResource BoolToVisibility}}">
+                    <ProgressBar
+                        Width="120"
+                        Height="6"
+                        VerticalAlignment="Center"
+                        AutomationProperties.Name="{DynamicResource Str.Shell.A11y.Progress}"
+                        IsIndeterminate="{Binding IsOperationIndeterminate, Mode=OneWay}"
+                        Maximum="1"
+                        Minimum="0"
+                        Value="{Binding OperationFraction, Mode=OneWay}" />
                     <TextBlock
-                        Margin="0,0,16,0"
-                        Cursor="Hand"
-                        MouseLeftButtonUp="OnParserStatusClick"
+                        MaxWidth="320"
+                        Margin="8,0,0,0"
+                        a11y:LiveRegion.Text="{Binding OperationText}"
                         Style="{StaticResource ShellCaptionTextStyle}"
-                        Text="{Binding ParserStatusText}"
+                        Text="{Binding OperationText}"
+                        TextTrimming="CharacterEllipsis" />
+                    <ui:Button
+                        Margin="6,0,0,0"
+                        Command="{Binding CancelOperationCommand}"
+                        Icon="{ui:SymbolIcon Stop24}"
+                        Style="{StaticResource ShellStatusButtonStyle}"
+                        ToolTip="{DynamicResource Str.Shell.Operation.CancelTip}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <ui:Button
+                        a11y:LiveRegion.Text="{Binding ProblemsTip}"
+                        Command="{Binding ShowProblemsCommand}"
+                        Style="{StaticResource ShellStatusButtonStyle}"
+                        ToolTip="{Binding ProblemsTip}">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon
+                                FontSize="14"
+                                Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                                Symbol="ErrorCircle24" />
+                            <TextBlock
+                                Margin="4,0,10,0"
+                                Style="{StaticResource ShellCaptionTextStyle}"
+                                Text="{Binding Output.ProblemErrorCount}" />
+                            <ui:SymbolIcon
+                                FontSize="14"
+                                Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                                Symbol="Warning24" />
+                            <TextBlock
+                                Margin="4,0,0,0"
+                                Style="{StaticResource ShellCaptionTextStyle}"
+                                Text="{Binding Output.ProblemWarningCount}" />
+                        </StackPanel>
+                    </ui:Button>
+                    <ui:Button
+                        Command="{Binding UpdateParserDataCommand}"
+                        Content="{Binding ParserStatusText}"
+                        Style="{StaticResource ShellStatusTextButtonStyle}"
                         ToolTip="{DynamicResource Str.Shell.Tip.ParserStatus}" />
                     <TextBlock
                         MinWidth="44"
@@ -1069,21 +1174,22 @@
                         Margin="0,0,16,0"
                         Style="{StaticResource ShellCaptionTextStyle}"
                         Text="{Binding ColumnText}" />
-                    <TextBlock
-                        Margin="0,0,16,0"
-                        Cursor="Hand"
-                        MouseLeftButtonUp="OnZoomClick"
-                        Style="{StaticResource ShellCaptionTextStyle}"
-                        Text="{Binding ZoomText}"
+                    <ui:Button
+                        Click="OnZoomClick"
+                        Content="{Binding ZoomText}"
+                        PreviewMouseLeftButtonUp="OnZoomPreviewMouseUp"
+                        Style="{StaticResource ShellStatusTextButtonStyle}"
                         ToolTip="{DynamicResource Str.Shell.Tip.Zoom}" />
-                    <TextBlock
-                        MaxWidth="360"
-                        Cursor="Hand"
-                        MouseLeftButtonUp="OnProjectClick"
-                        Style="{StaticResource ShellCaptionTextStyle}"
-                        Text="{Binding ProjectText}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTip="{DynamicResource Str.Shell.Tip.Project}" />
+                    <ui:Button
+                        Margin="0"
+                        Command="{Binding ProjectSettingsCommand}"
+                        Style="{StaticResource ShellStatusTextButtonStyle}"
+                        ToolTip="{Binding ProjectTip}">
+                        <TextBlock
+                            MaxWidth="340"
+                            Text="{Binding ProjectText}"
+                            TextTrimming="CharacterEllipsis" />
+                    </ui:Button>
                 </StackPanel>
             </Grid>
         </Border>
@@ -1116,6 +1222,7 @@
                 <StackPanel>
                     <ui:TextBox
                         x:Name="ProcedureFilterBox"
+                        AutomationProperties.Name="{DynamicResource Str.Shell.Popup.GoToProcedure}"
                         PlaceholderText="{DynamicResource Str.Shell.Popup.GoToProcedure}"
                         PreviewKeyDown="OnProcedureFilterKeyDown"
                         Text="{Binding GoToProcedureFilter, UpdateSourceTrigger=PropertyChanged}" />
@@ -1123,6 +1230,7 @@
                         x:Name="ProcedureList"
                         MaxHeight="320"
                         Margin="0,8,0,0"
+                        AutomationProperties.Name="{DynamicResource Str.Shell.Popup.GoToProcedure}"
                         Background="Transparent"
                         BorderThickness="0"
                         DisplayMemberPath="Name"

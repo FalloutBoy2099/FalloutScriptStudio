@@ -29,7 +29,7 @@
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Ir para a definição</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Localizar referências</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Renomear</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Abrir include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Abrir arquivo incluído</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Mostrar lista de preenchimento</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Ir para as declarações</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Excluir linha</sys:String>
@@ -37,7 +37,7 @@
     <sys:String x:Key="Str.Editor.Cmd.SelectWord">Selecionar palavra</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.NavigateBack">Voltar</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.NavigateForward">Avançar</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.DeleteToLineEnd">Eliminar até ao fim da linha</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteToLineEnd">Excluir até o fim da linha</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToMatchingBracket">Ir para o parêntese correspondente</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameProcedure">Renomear: Procedimento</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameArgument">Renomear: Variável de argumento</sys:String>
@@ -47,9 +47,11 @@
     <sys:String x:Key="Str.Editor.Menu.RenameOutOfData">Renomear: Desatualizado</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameNone">Renomear: Nenhum</sys:String>
     <sys:String x:Key="Str.Editor.Tip.Note">Nota</sys:String>
-    <sys:String x:Key="Str.Editor.Tip.IncludeError">Erro ao analisar o conteúdo do ficheiro de cabeçalho.</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.IncludeError">Erro ao analisar o conteúdo do arquivo de cabeçalho.</sys:String>
     <sys:String x:Key="Str.Editor.Tip.Message">Mensagem {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Arquivo não encontrado: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Pressione a tecla TAB para inserir o código automático.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Nenhuma referência encontrada para '{0}'.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Editor de scripts</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Editor de scripts, segunda vista</sys:String>
 </ResourceDictionary>

@@ -13,6 +13,7 @@ namespace FalloutScriptStudio.Core.Tests.Functions
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			this._folder.Dispose();
 		}
 

@@ -10,6 +10,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	using FalloutScriptStudio.Core.Refactoring;
 	using FalloutScriptStudio.Core.TextTools;
 	using FalloutScriptStudio.Documents;
+	using FalloutScriptStudio.Problems;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Tests.Flowchart;
 	using FalloutScriptStudio.ViewModels.Main;
@@ -34,9 +35,12 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Settings = new SettingsService(this.Paths, new LegacySettingsImporter(NullLogger<LegacySettingsImporter>.Instance), NullLogger<SettingsService>.Instance);
 			this.Settings.Load();
 			this.Shell = new FakeShellService();
-			this.Output = new OutputPanelViewModel(this.Settings, this.Shell);
+			this.FileAssociation = new FakeFileAssociationService();
+			this.Problems = new ProblemService();
+			this.Operations = new OperationTracker();
+			this.Output = new OutputPanelViewModel(this.Settings, this.Shell, this.Problems);
 			this.Parser = new FakeParser();
-			this.Coordinator = new ParseCoordinator(this.Parser, this.Settings, null, TimeSpan.FromMilliseconds(20));
+			this.Coordinator = new ParseCoordinator(this.Parser, this.Settings, null, TimeSpan.FromMilliseconds(20), this.Problems);
 			this.Compiler = new FakeScriptCompiler();
 			this.Dialogs = new FakeDialogService();
 			this.ScriptTools = new FakeScriptToolService();
@@ -50,8 +54,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Catalog = new FunctionCatalogService(
 				new FunctionCatalogPaths(Path.Combine(this.Paths.DescriptionsDirectory, "functions.ini"), Path.Combine(this.Paths.DescriptionsDirectory, "userfunctions.ini")));
 			this.Catalog.LoadAsync().GetAwaiter().GetResult();
-			this.Workspace = WorkspaceServiceFactory.Create(this.Settings, this.Coordinator, this.Compiler, new FakeArchiveExtractor(), this.Dialogs, this.Output, this.MessageEditor, this.ScriptTools, this.DialogueDialogs);
-			this.Build = new BuildCoordinator(this.Settings, this.Compiler, new FakeBatchCompileService(), this.Workspace, this.Coordinator, this.Dialogs, this.Output, this.Notifications, this.Sounds, this.ToolWindows);
+			this.Workspace = WorkspaceServiceFactory.Create(this.Settings, this.Coordinator, this.Compiler, new FakeArchiveExtractor(), this.Dialogs, this.Output, this.MessageEditor, this.ScriptTools, this.DialogueDialogs, this.Problems, this.Operations);
+			this.Build = new BuildCoordinator(this.Settings, this.Compiler, new FakeBatchCompileService(), this.Workspace, this.Coordinator, this.Dialogs, this.Output, this.Notifications, this.Sounds, this.ToolWindows, this.Operations, this.Problems);
 			this.Tracker = new ActiveEditorTracker(this.Workspace);
 			this.Search = new SearchBarViewModel(this.Workspace, this.Settings, this.Sounds, new TextSearcher());
 			this.NodeEditors = new FakeNodeCodeEditorService();
@@ -59,6 +63,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Variables = new VariablesPanelViewModel(this.Workspace, this.Tracker);
 			this.Functions = new FunctionsPanelViewModel(this.Catalog, this.Tracker, this.Dialogs, this.DialogueDialogs);
 			this.Project = new ProjectExplorerViewModel(this.Settings, this.Workspace, this.Dialogs, this.Shell);
+			this.Projects = new ProjectService(this.Settings, NullLogger<ProjectService>.Instance);
 			this.Main = new MainViewModel(
 				this.Workspace,
 				this.Settings,
@@ -69,7 +74,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				this.MessageEditor,
 				this.Build,
 				this.Shell,
-				new FileAssociationService(),
+				this.FileAssociation,
 				new MessageStructureChecker(),
 				new IncludeInserter(),
 				new ShellLayoutStore(this.Paths),
@@ -80,7 +85,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				this.Procedures,
 				this.Variables,
 				this.Functions,
-				this.Project);
+				this.Project,
+				this.Projects);
 		}
 
 		public TempFolder Folder { get; }
@@ -90,6 +96,12 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		public SettingsService Settings { get; }
 
 		public FakeShellService Shell { get; }
+
+		public FakeFileAssociationService FileAssociation { get; }
+
+		public IProblemService Problems { get; }
+
+		public IOperationTracker Operations { get; }
 
 		public OutputPanelViewModel Output { get; }
 
@@ -136,6 +148,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		public FunctionsPanelViewModel Functions { get; }
 
 		public ProjectExplorerViewModel Project { get; }
+
+		public ProjectService Projects { get; }
 
 		public MainViewModel Main { get; }
 

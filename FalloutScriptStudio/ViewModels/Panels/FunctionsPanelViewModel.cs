@@ -44,6 +44,9 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		/// <summary>Gets the top level nodes.</summary>
 		public ObservableCollection<FunctionNodeViewModel> Roots { get; } = new ObservableCollection<FunctionNodeViewModel>();
 
+		/// <summary>Gets the top level nodes that pass the filter, the ones the tree shows.</summary>
+		public ObservableCollection<FunctionNodeViewModel> VisibleRoots { get; } = new ObservableCollection<FunctionNodeViewModel>();
+
 		/// <summary>The selected node.</summary>
 		[ObservableProperty]
 		[NotifyPropertyChangedFor(nameof(CanEditFunction), nameof(CanAddFunction), nameof(CanAddGroup), nameof(CanRenameGroup), nameof(CanDeleteNode))]
@@ -76,6 +79,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		private void ApplyFilter()
 		{
 			_ = TreeFilter.Apply(this.Roots, this.FilterText);
+			FunctionNodeViewModel.SyncVisible(this.VisibleRoots, this.Roots);
 		}
 
 		/// <summary>Rebuilds the tree from the catalog, keeping the expanded categories and the selection.</summary>
@@ -87,6 +91,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			this._keyToSelect = null;
 
 			this.Roots.Clear();
+			this.VisibleRoots.Clear();
 			this.SelectedNode = null;
 			Boolean firstLoad = expanded.Count == 0;
 			foreach (FunctionNode node in this._catalog.Catalog.Roots)

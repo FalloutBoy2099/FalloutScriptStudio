@@ -7,7 +7,7 @@
     <sys:String x:Key="Str.Shell.App.StartFailed" xml:space="preserve">Nie udało się uruchomić programu:&#10;&#10;{0}&#10;&#10;Szczegóły zapisano w pliku sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.App.UnexpectedError" xml:space="preserve">Wystąpił nieoczekiwany błąd:&#10;&#10;{0}&#10;&#10;Szczegóły zapisano w pliku sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.Build.AllCompiled">Wszystkie skrypty ({0}) zostały skompilowane pomyślnie</sys:String>
-    <sys:String x:Key="Str.Shell.Build.CompileFailed">Nie udało się skompilować: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileFailed">Nie udało się skompilować {0}: zobacz kartę Błędy.</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompileTitle">Kompilacja</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledAll">Skompilowano {0} z {1} otwartych skryptów.</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledOk">{0} skompilowano pomyślnie</sys:String>
@@ -19,11 +19,11 @@
     <sys:String x:Key="Str.Shell.Build.MassCompileTitle">Kompilacja zbiorcza</sys:String>
     <sys:String x:Key="Str.Shell.Build.NoScripts">Nie znaleziono skryptów (*.ssl) w {0}.</sys:String>
     <sys:String x:Key="Str.Shell.Build.NotSsl">Ten plik nie jest skryptem SSL.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Nie ustawiono folderu dla skompilowanych skryptów.&#10;Przed kompilacją ustaw folder wyjściowy w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Folder skompilowanych skryptów nie jest ustawiony.&#10;Wybierz folder wyjściowy w ustawieniach (lub włącz kompilowanie obok skryptu źródłowego) i skompiluj ponownie.</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessFailed">Przetwarzanie wstępne nie powiodło się! Szczegóły na karcie „Kompilacja”.</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessedMissing">Nie znaleziono pliku po przetwarzaniu wstępnym.</sys:String>
     <sys:String x:Key="Str.Shell.Build.RoundtripUserCommand">Najpierw wyłącz kompilację przez plik wsadowy użytkownika.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Nie ustawiono folderu wyjściowego skryptów.&#10;Najpierw wybierz folder skryptów w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Folder wyjściowy skryptów nie jest ustawiony.&#10;Kompilacja zbiorcza zapisuje tam skompilowane skrypty: najpierw wybierz folder w ustawieniach.</sys:String>
     <sys:String x:Key="Str.Shell.Build.SelectMassFolder">Wybierz folder ze skryptami do skompilowania</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchivePrompt">Nazwa skryptu w folderze skryptów archiwum (na przykład klamath.int):</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchiveTitle">Otwórz z archiwum gry</sys:String>
@@ -40,9 +40,9 @@
     <sys:String x:Key="Str.Shell.Dlg.ClearRecentPrompt">Czy wyczyścić listę ostatnio używanych plików?</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.CreateProcedureTitle">Utwórz procedurę</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileErrorTitle">Błąd dekompilacji</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Dekompilacja skryptu „{0}” nie powiodła się. Szczegóły na karcie „Kompilacja”.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Dekompilacja skryptu „{0}” nie powiodła się. Przeczytaj dane wyjściowe dekompilatora na karcie Kompilacja; inny dekompilator (zobacz ustawienia kompilatora) może się powieść.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DocsNotFound" xml:space="preserve">Nie udało się otworzyć dokumentacji w przeglądarce. Jest dostępna online pod adresem:&#10;{0}</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Nie udało się uruchomić programu:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Nie można uruchomić programu:&#10;{0}&#10;Wybierz zewnętrzny edytor ponownie w ustawieniach.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExternalEditorTitle">Edytor zewnętrzny</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExtractionFailedTitle">Wyodrębnianie nie powiodło się</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileAlreadyOpen" xml:space="preserve">Ten plik jest już otwarty.&#10;&#10;Czy otworzyć jego kopię?</sys:String>
@@ -52,14 +52,14 @@
     <sys:String x:Key="Str.Shell.Dlg.FileChangedTitle">Plik został zmieniony</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowed">Tego typu pliku nie można otworzyć w edytorze.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowedTitle">Plik niedozwolony</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Nie znaleziono pliku:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Nie znaleziono pliku:&#10;{0}&#10;Mógł zostać przeniesiony lub usunięty.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FlowchartScriptMissing">Nie znaleziono pliku skryptu tego schematu blokowego.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Schemat blokowy węzłów</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Nie znaleziono pliku nagłówkowego:&#10;{0}</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ImportedRename">Zaimportowanych symboli nie można jeszcze zmieniać.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Plików dołączanych ze ścieżką względną nie można otworzyć z niezapisanego skryptu.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Schemat dialogu</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Nie znaleziono pliku nagłówkowego:&#10;{0}&#10;Sprawdź ścieżkę #include i folder nagłówków w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ImportedRename">Nie można jeszcze zmienić nazwy zaimportowanych symboli.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Dołączonych plików ze ścieżką względną nie można otworzyć z niezapisanego skryptu. Najpierw zapisz skrypt.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileCreate" xml:space="preserve">Nie znaleziono pliku komunikatów tego skryptu.&#10;&#10;Utworzyć {0} w {1}?</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Nie znaleziono pliku komunikatów skojarzonego z tym skryptem.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Nie znaleziono pliku komunikatów skojarzonego z tym skryptem. Sprawdź foldery komunikatów i język w ustawieniach albo utwórz plik w Edytorze komunikatów.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileTitle">Plik komunikatów</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameHasSpaces">Nazwy skryptu zawierającej spacje nie można zarejestrować.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameMacroNotFound" xml:space="preserve">Nie znaleziono makra NAME w tym skrypcie lub nie ma ono numeru skryptu.&#10;Plik komunikatów zostanie skojarzony na podstawie nazwy skryptu.</sys:String>
@@ -71,7 +71,7 @@
     <sys:String x:Key="Str.Shell.Dlg.NoPlaces">Nie znaleziono żadnych miejsc.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NoReferences">Nie znaleziono odwołań.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.OpenFileTitle">Otwórz plik</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.OpenIncludeTitle">Otwórz plik dołączony</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.OpenIncludeTitle">Otwórz dołączony plik</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.OpenScriptFirst">Najpierw otwórz skrypt.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.OpenTitle">Otwórz</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.PreviewTitle">Podgląd dialogu</sys:String>
@@ -96,7 +96,7 @@
     <sys:String x:Key="Str.Shell.Dlg.ScriptMissingTitle">Nie znaleziono pliku skryptu</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsListTitle">Lista skryptów</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsLstInvalid">Nie udało się odczytać skojarzonej nazwy z pliku scripts.lst.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Plik scripts.lst nie istnieje w folderze wyjściowym skryptów.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Plik scripts.lst nie istnieje w folderze wyjściowym skryptów. Sprawdź folder wyjściowy w ustawieniach.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectArchiveTitle">Wybierz archiwum gry Fallout</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectEditorTitle">Wybierz edytor zewnętrzny</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectHeadersTitle">Wybierz pliki nagłówkowe</sys:String>
@@ -122,10 +122,8 @@
     <sys:String x:Key="Str.Shell.Menu.CheckMessageStructure">Sprawdź strukturę tekstu komunikatów</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ClearRecent">Wyczyść listę ostatnich plików</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CloseAll">Zamknij wszystkie</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Code">Kod</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CollapseAll">Zwiń wszystko</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CommentText">Zakomentuj tekst</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Compile">Kompilacja</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileAllOpen">Kompiluj wszystkie otwarte</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileScript">Kompiluj skrypt</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ConvertAllTabsToSpaces">Zamień wszystkie tabulatory na spacje</sys:String>
@@ -134,11 +132,10 @@
     <sys:String x:Key="Str.Shell.Menu.ConvertLeadingTabsToSpaces">Zamień tabulatory wiodące na spacje</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecompileFallout1">Dekompiluj jako Fallout 1</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecreaseIndent">Zmniejsz wcięcie</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Dodaj define do Scripts.h</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Dialog">Dialog</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Dodaj define do scripts.h</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DialoguePreview">Podgląd i testowanie</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Documentation">Dokumentacja</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Edit">Edycja</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.AssociateFiles">Skojarz typy plików…</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Empty">(pusto)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingOem">OEM-866 (DOS / rosyjska)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingWindows">Domyślne systemu Windows</sys:String>
@@ -153,33 +150,31 @@
     <sys:String x:Key="Str.Shell.Menu.FormatSelection">Formatuj zaznaczenie</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Forward">Dalej</sys:String>
     <sys:String x:Key="Str.Shell.Menu.FunctionTree">Drzewo funkcji</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Konfiguracja funkcji</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Funkcje dialogów</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDeclaration">Przejdź do deklaracji</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDefinition">Przejdź do definicji</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToLine">Przejdź do wiersza...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToProcedure">Przejdź do procedury...</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Headers">Nagłówki</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightParseErrors">Wyróżniaj błędy analizy</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightWord">Wyróżnij słowo</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncludeFile">Dołącz plik do kodu...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncreaseIndent">Zwiększ wcięcie</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LineNumbers">Numery wierszy</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.LogWindow">Okno dziennika</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.LogWindow">Panel dziennika</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LowerCase">Małe litery</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MassCompile">Kompilacja zbiorcza</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Edytor plików komunikatów</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Edytor komunikatów</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MessageEncoding">Kodowanie plików komunikatów</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewFromTemplate">Nowy z szablonu</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewScript">Nowy skrypt</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NoTemplates">(brak szablonów)</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Schemat blokowy węzłów</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Schemat dialogu</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Open">Otwórz...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenAllIncludes">Otwórz wszystkie dołączone pliki</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenFromArchive">Otwórz skrypt z archiwum gry...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenHeader">Otwórz plik nagłówkowy...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenInclude">Otwórz dołączony plik</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenRecent">Otwórz ostatnie</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Options">Opcje</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Preprocess">Przetwarzanie wstępne</sys:String>
     <sys:String x:Key="Str.Shell.Menu.QuickFind">Szybkie wyszukiwanie</sys:String>
     <sys:String x:Key="Str.Shell.Menu.RegisterScript">Zarejestruj bieżący skrypt...</sys:String>
@@ -190,9 +185,7 @@
     <sys:String x:Key="Str.Shell.Menu.SaveAs">Zapisz jako...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAsTemplate">Zapisz jako szablon...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveUtf8">Zapisuj w UTF-8</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Script">Skrypt</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ScriptsListEditor">Edytor listy skryptów</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.SetProjectFolder">Ustaw folder projektu...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Settings">Ustawienia...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowIndentLine">Pokaż linię wcięcia</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowWhitespace">Pokaż tabulatory i spacje</sys:String>
@@ -205,7 +198,6 @@
     <sys:String x:Key="Str.Shell.Menu.UpperCase">Wielkie litery</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompiler">Użyj starego dekompilatora</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompilerTip">Używane tylko przez zewnętrzny dekompilator int2ssl. Wybierz go w Ustawienia &gt; Kompilator, aby włączyć tę opcję.</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.View">Widok</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomIn">Powiększ</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomOut">Pomniejsz</sys:String>
     <sys:String x:Key="Str.Shell.Output.AutoRefresh">Odświeżaj automatycznie</sys:String>
@@ -225,7 +217,7 @@
     <sys:String x:Key="Str.Shell.Output.TabErrors">Błędy</sys:String>
     <sys:String x:Key="Str.Shell.Output.TabParser">Parser</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipBuild">Dane wyjściowe kompilatora.</sys:String>
-    <sys:String x:Key="Str.Shell.Output.TipErrors">Błędy, ostrzeżenia i wyniki wyszukiwania. Kliknij dwukrotnie wpis, aby do niego przejść.</sys:String>
+    <sys:String x:Key="Str.Shell.Output.TipErrors">Błędy, ostrzeżenia i inne problemy skryptów i narzędzi. Kliknij dwukrotnie wpis lub naciśnij Enter, aby do niego przejść.</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipParser">Dane wyjściowe parsera skryptów.</sys:String>
     <sys:String x:Key="Str.Shell.Output.UnresolvedReferences">Nie udało się zlokalizować odwołań: {0}.</sys:String>
     <sys:String x:Key="Str.Shell.Parser.Builtin">Parser: wbudowany (parser natywny niedostępny)</sys:String>
@@ -282,17 +274,17 @@
     <sys:String x:Key="Str.Shell.Tip.DecreaseIndent">Zmniejsz wcięcie (Alt+Q)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.DefineToScriptsHeader">Dodaj define skryptu do scripts.h podczas rejestracji.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.FindReplaceBar">Pasek wyszukiwania i zamiany (Ctrl+H)</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Flowchart">Schemat blokowy węzłów dialogu</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Flowchart">Schemat dialogu</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Forward">Przejdź do następnej pozycji</sys:String>
     <sys:String x:Key="Str.Shell.Tip.GoToProcedure">Przejdź do procedury (Alt+P)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.MassCompile">Kompiluj zbiorczo cały projekt</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Edytor plików komunikatów</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Edytor komunikatów</sys:String>
     <sys:String x:Key="Str.Shell.Tip.NewScript">Utwórz nowy skrypt (Ctrl+N)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Open">Otwórz plik (Ctrl+O)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.ParserStatus">Kliknij, aby zaktualizować dane parsera.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Preprocess">Otwórz skrypt w postaci po przetworzeniu wstępnym.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.PreprocessorDefine">Definicja preprocesora używana podczas kompilacji i analizy skryptu (dla dyrektyw #if).</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Project">Folder projektu. Kliknij, aby otworzyć go w Eksploratorze.</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Project">Żaden projekt nie jest otwarty. Kliknij, aby otworzyć folder projektu.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.QuickFind">Znajdź następne wystąpienie słowa przy kursorze.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Redo">Ponów (Ctrl+Y)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.RegisterScript">Dodaj skrypt do scripts.lst.</sys:String>
@@ -323,4 +315,110 @@
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpenTitle">Dekompilacja</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpen">Plik {0} jest już otwarty na karcie. Zastąpić go zdekompilowanym kodem i ponownie wczytać kartę? Niezapisane zmiany na karcie zostaną utracone.</sys:String>
     <sys:String x:Key="Str.Shell.Output.OperationFailed">Operacja nie powiodła się: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupTools">Narzędzia</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupFiles">Pliki</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupSettings">Ustawienia</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupMessages">Pliki komunikatów</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowErrors">Pokaż lub ukryj błędy</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowWarnings">Pokaż lub ukryj ostrzeżenia</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowInfo">Pokaż lub ukryj informacje</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.FilterSources">Wybierz, które źródła są wyświetlane</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.CopyAll">Kopiuj wszystko</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Next">Następny problem</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Previous">Poprzedni problem</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.NoProblems">Brak problemów.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.StatusTip">Błędy: {0}, ostrzeżenia: {1}. Kliknij, aby wyświetlić listę problemów.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Show">Pokaż problemy</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Compile">Kompilowanie {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CompileCounted">Kompilowanie {0} ({1}/{2})</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Preprocess">Przetwarzanie wstępne {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.RoundTrip">Kompilacja zwrotna {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompile">Kompilacja zbiorcza</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompileCounted">Kompilacja zbiorcza ({1}/{2}): {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Decompile">Dekompilowanie {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancelling">Anulowanie: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancel">Anuluj trwającą operację</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CancelTip">Anuluj (Esc w panelu dziennika, Ctrl+Break)</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.DecompileCancelled">Anulowano dekompilację {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.AlreadyRunning">Inna operacja kompilacji nadal trwa. Poczekaj na jej zakończenie lub najpierw ją anuluj (Esc w panelu dziennika).</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileCancelled">Anulowano kompilację {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.PreprocessCancelled">Anulowano przetwarzanie wstępne {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.RoundTripCancelled">Anulowano kompilację zwrotną {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileAllCancelled">Kompilacja anulowana: skompilowano {0} z {1} otwartych skryptów.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.MassCompileCancelled">Kompilacja zbiorcza anulowana: skompilowano {0} z {1}, niepowodzeń: {2}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.LogCancelled">Kompilacja została anulowana przez użytkownika.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFound">Nie znaleziono {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFoundHint">Umieść {0} w folderze {1} (lub popraw ustawienia kompilatora) i skompiluj ponownie.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailed">Nie można uruchomić {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailedHint">Sprawdź, czy {0} jest prawidłowym programem dla tego systemu i czy system Windows lub antywirus go nie blokuje (właściwości pliku, Odblokuj).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.CompileFailedNoDetails">Kompilacja {0} nie powiodła się, ale narzędzie nie podało położenia błędu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.PreprocessFailed">Przetwarzanie wstępne {0} nie powiodło się.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SeeBuildLogHint">Pełne dane wyjściowe narzędzia znajdziesz na karcie Kompilacja.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSet">Folder skompilowanych skryptów nie jest ustawiony.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSetHint">Wybierz go w ustawieniach lub włącz kompilowanie obok skryptu źródłowego.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScript">{0} nie jest skryptem SSL i nie można go skompilować.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScriptHint">Można kompilować tylko pliki .ssl. Najpierw zapisz tekst jako plik .ssl.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailed">Nie można zapisać {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedHint">Sprawdź, czy plik nie jest otwarty w innym programie i czy możesz zapisywać w jego folderze, albo użyj opcji Zapisz jako, aby zapisać go gdzie indziej.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedReadOnlyHint">Plik jest tylko do odczytu. Usuń atrybut tylko do odczytu w Eksploratorze lub użyj opcji Zapisz jako.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailed">Nie można otworzyć {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailedHint">Sprawdź, czy plik istnieje, czy masz prawo go odczytać i czy nie blokuje go inny program.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFound">Plik {0} nie istnieje.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFoundHint">Mógł zostać przeniesiony lub usunięty. Otwórz go ponownie poleceniem Plik, Otwórz.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallback">{0} nie jest prawidłowym UTF-8 i został odczytany jako {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallbackHint">Jeśli litery z akcentami wyglądają źle, zmień kodowanie plików w ustawieniach (lub przekonwertuj plik na UTF-8) i otwórz go ponownie.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailed">Nie można dekompilować {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailedHint">Przeczytaj dane wyjściowe dekompilatora na karcie Kompilacja. Inny dekompilator może się powieść (zobacz ustawienia kompilatora).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailed">Nie można wyodrębnić {0} z archiwum: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailedHint">Wybierz archiwum .dat (lub folder) gry, która zawiera ten skrypt.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFound">Nie znaleziono dołączonego pliku {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFoundHint">Sprawdź ścieżkę #include i folder nagłówków w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissing">Nie znaleziono pliku komunikatów (.msg) dla {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissingHint">Sprawdź foldery komunikatów i język w ustawieniach albo utwórz plik w Edytorze komunikatów.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailable">Natywny parser (parser.dll) jest niedostępny; używany jest parser wbudowany.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailableHint">Skopiuj parser.dll do folderu resources, aby uzyskać dokładne dane o procedurach i zmiennych, albo wyłącz natywny parser w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBroken">Natywny parser przestał działać: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBrokenHint">Przejął go parser wbudowany. Wymień parser.dll lub wyłącz natywny parser w ustawieniach, jeśli to się powtarza.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailed">Nie można przeanalizować {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailedHint">Zmień tekst lub zapisz plik ponownie; szczegóły są w pliku dziennika.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamaged">Plik ustawień {0} jest uszkodzony; używane są wartości domyślne.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamagedHint">Kopia uszkodzonego pliku została zachowana obok (.corrupt). Sprawdź ustawienia i zapisz je ponownie.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadable">Nie można odczytać pliku ustawień {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadableHint">Plik pozostał nietknięty. Zamknij program, który go blokuje, i uruchom edytor ponownie.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailed">Nie można zapisać pliku ustawień {0}: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailedHint">Sprawdź, czy możesz zapisywać w folderze ustawień i czy dysk nie jest pełny.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailed">Nie można uruchomić zewnętrznego edytora {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailedHint">Wybierz program ponownie w ustawieniach.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailed">Operacja nie powiodła się: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailedHint">Spróbuj ponownie; szczegóły są w pliku dziennika.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSettings">Otwórz ustawienia: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionFolder">Otwórz folder</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.OpenProject">Otwórz projekt...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.RecentProjects">Ostatnie projekty</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ClearRecentProjects">Wyczyść listę ostatnich projektów</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ProjectSettings">Ustawienia projektu...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CreateProjectSettings">Utwórz ustawienia projektu</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CloseProject">Zamknij projekt</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.ProjectOpen">Projekt: {0}. Kliknij, aby otworzyć ustawienia projektu.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.RecentProjectsTitle">Ostatnie projekty</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ClearRecentProjectsPrompt">Czy wyczyścić listę ostatnich projektów?</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ProjectFolderNotFound">Folder projektu {0} nie istnieje.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.SettingsCreated">Utworzono {0} dla projektu {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.Detected">Dla tego skryptu znaleziono plik projektu w {0}. Aby przełączyć się na ten projekt, zobacz kartę Błędy.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetected">Ten skrypt należy do projektu w {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetectedHint">Przełącz się na projekt, aby używać jego ustawień kompilatora, nagłówków i folderów.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSwitchProject">Przełącz na ten projekt</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ShowProjectFolder">Pokaż folder projektu w Eksploratorze</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.Progress">Postęp</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.DocumentTabs">Otwarte dokumenty</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.File">Pl_ik</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Edit">Ed_ycja</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Code">_Kod</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Script">Skryp_t</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Headers">_Nagłówki</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Dialog">_Dialog</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Compile">K_ompilacja</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.View">_Widok</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Options">Opc_je</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Help">Pomo_c</sys:String>
 </ResourceDictionary>

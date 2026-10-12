@@ -14,6 +14,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 			this._folder.Dispose();
 		}
 

@@ -22,14 +22,14 @@
     <sys:String x:Key="Str.Editor.Cmd.TrimTrailingSpaces">Ta bort avslutande blanksteg</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ConvertHexDec">Konvertera värde: Hex &lt;&gt; Dec</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ToggleOutline">Dispositionsvy</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.CollapseAll">Dölj alla</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.ExpandAll">Visa alla</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.CollapseAll">Fäll ihop alla</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExpandAll">Expandera alla</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.HighlightWord">Markera</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToDeclaration">Gå till deklaration</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToDefinition">Gå till definition</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.FindReferences">Hitta referenser</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.RenameSymbol">Byt namn</sys:String>
-    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Öppna include</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.OpenInclude">Öppna inkluderad fil</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.ShowCompletion">Visa slutförandelista</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.GoToProcedureBegin">Gå till deklarationerna</sys:String>
     <sys:String x:Key="Str.Editor.Cmd.DeleteLine">Ta bort rad</sys:String>
@@ -47,9 +47,11 @@
     <sys:String x:Key="Str.Editor.Menu.RenameOutOfData">Byt namn: Föråldrad</sys:String>
     <sys:String x:Key="Str.Editor.Menu.RenameNone">Byt namn: Ingen</sys:String>
     <sys:String x:Key="Str.Editor.Tip.Note">Anmärkning</sys:String>
-    <sys:String x:Key="Str.Editor.Tip.IncludeError">Fel vid tolkning av innehållet i rubrikfilen.</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.IncludeError">Fel vid tolkning av innehållet i huvudfilen.</sys:String>
     <sys:String x:Key="Str.Editor.Tip.Message">Meddelande {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.FileNotFound">Filen hittades inte: {0}</sys:String>
     <sys:String x:Key="Str.Editor.Tip.BlockKeywordHint">Tryck på TAB för att infoga autokoden.</sys:String>
     <sys:String x:Key="Str.Editor.Status.NoReferences">Inga referenser hittades för '{0}'.</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Skriptredigerare</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Skriptredigerare, andra vyn</sys:String>
 </ResourceDictionary>

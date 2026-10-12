@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Salva diagramma come immagine</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Nodo di dialogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Nota</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Configurazione funzioni</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funzioni di dialogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Modifica le regole che indicano al diagramma quali funzioni e macro mostrano messaggi e saltano ai nodi.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Non creare il nodo di uscita</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Non crea il nodo di uscita del dialogo (di solito Node999) nel diagramma.</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Numero di riga nel file dei messaggi. Fai clic per aprire l’editor dei messaggi.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Apri l’editor dei messaggi su questo messaggio</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Testo del messaggio</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">File msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">File dei messaggi</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Nodi:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Il nodo di dialogo da mostrare</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Nodo di dialogo</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Fai clic qui per inserire il testo...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">File mancante</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Il file dei messaggi del dialogo non è stato trovato.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Diagramma di flusso del dialogo</sys:String>
 </ResourceDictionary>

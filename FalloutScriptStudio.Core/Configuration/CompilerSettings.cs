@@ -55,5 +55,12 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>Gets or sets a value indicating whether only the old external decompiler (<c>int2ssl_v35.exe</c>) is used. It has no effect on the built-in decompiler.</summary>
 		public Boolean UseLegacyDecompiler { get; set; }
+
+		/// <summary>Creates a copy that can be changed without touching this instance.</summary>
+		/// <returns>The copy.</returns>
+		internal CompilerSettings Copy()
+		{
+			return (CompilerSettings)this.MemberwiseClone();
+		}
 	}
 }

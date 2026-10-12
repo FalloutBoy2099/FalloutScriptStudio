@@ -37,6 +37,7 @@
             <Setter Property="Visibility" Value="{Binding IsFilterVisible, Converter={StaticResource BoolToVisibility}}" />
             <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
             <Setter Property="ToolTip" Value="{Binding ToolTip}" />
+            <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
             <Setter Property="ContextMenu">
                 <Setter.Value>
                     <ContextMenu>
@@ -76,16 +77,19 @@
         <ui:TextBox
             Grid.Row="0"
             Margin="6,4"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
             ClearButtonEnabled="True"
             PlaceholderText="{DynamicResource Str.Panels.TreeFilterPlaceholder}"
-            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
 
         <TreeView
             Grid.Row="1"
+            AutomationProperties.Name="{DynamicResource Str.Panels.TabVariables}"
             Background="Transparent"
             BorderThickness="0"
             ItemContainerStyle="{StaticResource VariableItemStyle}"
             ItemsSource="{Binding Groups}"
+            KeyDown="OnTreeKeyDown"
             PreviewMouseRightButtonDown="OnTreePreviewMouseRightButtonDown" />
         <TextBlock
             Grid.Row="1"

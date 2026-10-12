@@ -12,6 +12,12 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	/// </summary>
 	internal sealed class NodeLayout
 	{
+		/// <summary>Gets the render context the layout was made with (its texts are only valid for it).</summary>
+		public DiagramRenderContext? Context { get; set; }
+
+		/// <summary>Gets the text measurements of the layout, which the next layout of the node reuses.</summary>
+		public NaturalTextCache? Natural { get; set; }
+
 		public Double Width { get; init; }
 
 		public Double Height { get; init; }

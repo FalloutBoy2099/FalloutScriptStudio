@@ -14,10 +14,9 @@
     <sys:String x:Key="Str.Common.No">Nej</sys:String>
     <sys:String x:Key="Str.Common.Close">Stäng</sys:String>
     <sys:String x:Key="Str.Common.Save">Spara</sys:String>
-    <sys:String x:Key="Str.Common.Browse">Bläddra...</sys:String>
     <sys:String x:Key="Str.Common.Add">Lägg till</sys:String>
     <sys:String x:Key="Str.Common.Remove">Ta bort</sys:String>
-    <sys:String x:Key="Str.Common.Delete">Radera</sys:String>
+    <sys:String x:Key="Str.Common.Delete">Ta bort</sys:String>
     <sys:String x:Key="Str.Common.Clear">Rensa</sys:String>
     <sys:String x:Key="Str.Common.Rename">Byt namn</sys:String>
     <sys:String x:Key="Str.Common.Copy">Kopiera</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">Hjälp</sys:String>
     <sys:String x:Key="Str.Common.About">Om</sys:String>
     <sys:String x:Key="Str.Common.Loading">Läser in...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">Minimera</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">Maximera</sys:String>
+    <sys:String x:Key="Str.Common.Restore">Återställ</sys:String>
 </ResourceDictionary>

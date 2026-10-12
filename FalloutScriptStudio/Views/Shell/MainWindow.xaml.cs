@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.Views.Shell
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Windows;
+	using System.Windows.Automation;
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
@@ -13,6 +14,7 @@ namespace FalloutScriptStudio.Views.Shell
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.ViewModels.Main;
+	using FalloutScriptStudio.Views.Accessibility;
 	using Wpf.Ui.Controls;
 	using MenuItem = System.Windows.Controls.MenuItem;
 
@@ -223,6 +225,9 @@ namespace FalloutScriptStudio.Views.Shell
 		{
 			this.ToastTitle.Text = notification.Title;
 			this.ToastMessage.Text = notification.Message;
+			String announcement = String.IsNullOrEmpty(notification.Message) ? notification.Title : notification.Title + ". " + notification.Message;
+			AutomationProperties.SetName(this.Toast, announcement);
+			LiveRegion.SetText(this.Toast, announcement);
 			switch (notification.Kind)
 			{
 				case NotificationKind.Failure:
@@ -345,6 +350,33 @@ namespace FalloutScriptStudio.Views.Shell
 			this.RecentMenu.Items.Add(clear);
 		}
 
+		private void OnRecentProjectsMenuOpened(Object sender, RoutedEventArgs e)
+		{
+			if (!ReferenceEquals(e.OriginalSource, this.RecentProjectsMenu))
+			{
+				return;
+			}
+
+			this.RecentProjectsMenu.Items.Clear();
+			if (this._viewModel.RecentProjects.Count == 0)
+			{
+				this.RecentProjectsMenu.Items.Add(new MenuItem { Header = Loc.Get("Str.Shell.Menu.Empty"), IsEnabled = false });
+				return;
+			}
+
+			foreach (String folder in this._viewModel.RecentProjects)
+			{
+				MenuItem item = new MenuItem { Header = folder.Replace("_", "__", StringComparison.Ordinal), ToolTip = folder };
+				item.Click += (_, _) => this._viewModel.OpenRecentProjectCommand.Execute(folder);
+				this.RecentProjectsMenu.Items.Add(item);
+			}
+
+			this.RecentProjectsMenu.Items.Add(new Separator());
+			MenuItem clear = new MenuItem { Header = Loc.Get("Str.Shell.Menu.ClearRecentProjects") };
+			clear.Click += (_, _) => this._viewModel.ClearRecentProjectsCommand.Execute(null);
+			this.RecentProjectsMenu.Items.Add(clear);
+		}
+
 		private void OnTemplatesMenuOpened(Object sender, RoutedEventArgs e)
 		{
 			if (!ReferenceEquals(e.OriginalSource, this.TemplatesMenu))
@@ -367,18 +399,9 @@ namespace FalloutScriptStudio.Views.Shell
 			}
 		}
 
-		private void OnParserStatusClick(Object sender, MouseButtonEventArgs e)
+		private void OnZoomClick(Object sender, RoutedEventArgs e)
 		{
-			this._viewModel.UpdateParserDataCommand.Execute(null);
-		}
-
-		private void OnZoomClick(Object sender, MouseButtonEventArgs e)
-		{
-			if (e.ClickCount >= 2)
-			{
-				this._viewModel.ResetZoomCommand.Execute(null);
-			}
-			else if (Keyboard.Modifiers == ModifierKeys.Control)
+			if (Keyboard.Modifiers == ModifierKeys.Control)
 			{
 				this._viewModel.ZoomOutCommand.Execute(null);
 			}
@@ -388,9 +411,14 @@ namespace FalloutScriptStudio.Views.Shell
 			}
 		}
 
-		private void OnProjectClick(Object sender, MouseButtonEventArgs e)
+		private void OnZoomPreviewMouseUp(Object sender, MouseButtonEventArgs e)
 		{
-			this._viewModel.OpenProjectFolderCommand.Execute(null);
+			// The second click of a double click resets the zoom, and it must not zoom in once more.
+			if (e.ClickCount >= 2)
+			{
+				this._viewModel.ResetZoomCommand.Execute(null);
+				e.Handled = true;
+			}
 		}
 
 		private void OnGoToProcedureOpened(Object? sender, EventArgs e)

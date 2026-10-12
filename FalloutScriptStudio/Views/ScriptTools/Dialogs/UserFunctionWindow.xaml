@@ -2,6 +2,7 @@
     x:Class="FalloutScriptStudio.Views.ScriptTools.Dialogs.UserFunctionWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{Binding Title}"
@@ -9,12 +10,15 @@
     Height="560"
     MinWidth="480"
     MinHeight="440"
+    a11y:WindowFit.FitToWorkArea="True"
     Background="{DynamicResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
     FontSize="12"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ResizeMode="CanResize"
     ShowInTaskbar="False"
+    SnapsToDevicePixels="True"
+    UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
     <Window.InputBindings>
@@ -94,7 +98,7 @@
                     <ae:TextEditor
                         x:Name="CodeEditor"
                         Padding="4,2"
-                        AutomationProperties.Name="{DynamicResource Str.ScriptTools.UfCode}"
+                        a11y:EditorAutomation.NameResource="Str.ScriptTools.UfCode"
                         FontFamily="Consolas"
                         FontSize="13"
                         HorizontalScrollBarVisibility="Auto"

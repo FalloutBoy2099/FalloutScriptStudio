@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Flussdiagramm als Bild speichern</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Dialogknoten</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Notiz</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funktionskonfiguration</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Dialogfunktionen</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Bearbeitet die Regeln, die dem Flussdiagramm sagen, welche Funktionen und Makros Nachrichten anzeigen und zu Knoten springen.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">Keinen Endknoten erstellen</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">Keinen Dialog-Endknoten (meist Node999) im Flussdiagramm erstellen.</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Zeilennummer in der Nachrichtendatei. Klicken, um den Nachrichteneditor zu öffnen.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Nachrichteneditor bei dieser Nachricht öffnen</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Nachrichtentext</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Msg-Datei</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Nachrichtendatei</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Knoten:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">Der anzuzeigende Dialogknoten</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Dialogknoten</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Hier klicken, um Text einzugeben...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Datei fehlt</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Die Nachrichtendatei für den Dialog wurde nicht gefunden.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Dialog-Flussdiagramm</sys:String>
 </ResourceDictionary>

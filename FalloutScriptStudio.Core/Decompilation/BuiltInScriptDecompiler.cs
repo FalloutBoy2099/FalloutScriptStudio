@@ -70,7 +70,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(exception, "The script {Script} could not be read", request.ScriptPath);
+				this._logger.ScriptNotRead(exception, request.ScriptPath);
 				Report(output, outputProgress, "[Error] <none>:0: The script could not be read: " + exception.Message);
 				return new DecompilationResult(false, null, output.ToString());
 			}
@@ -85,11 +85,12 @@ namespace FalloutScriptStudio.Core.Decompilation
 			}
 			catch (ScriptFormatException exception)
 			{
-				this._logger.LogWarning(exception, "The script {Script} could not be decompiled", request.ScriptPath);
+				this._logger.ScriptNotDecompiled(exception, request.ScriptPath);
 				Report(output, outputProgress, "[Error] <none>:0: " + exception.Message);
 				return new DecompilationResult(false, null, output.ToString());
 			}
 
+			cancellationToken.ThrowIfCancellationRequested();
 			foreach (String message in script.Messages)
 			{
 				Report(output, outputProgress, message);
@@ -101,9 +102,14 @@ namespace FalloutScriptStudio.Core.Decompilation
 			{
 				await File.WriteAllBytesAsync(paths.DecompilationFile, Encoding.Latin1.GetBytes(source), cancellationToken).ConfigureAwait(false);
 			}
+			catch (OperationCanceledException)
+			{
+				DecompilationOutputFiles.Discard(paths);
+				throw;
+			}
 			catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
 			{
-				this._logger.LogWarning(exception, "The decompiled script {Script} could not be written", request.ScriptPath);
+				this._logger.OutputNotWritten(exception, request.ScriptPath);
 				Report(output, outputProgress, "[Error] <none>:0: The decompiled script could not be written: " + exception.Message);
 				return new DecompilationResult(false, null, output.ToString());
 			}

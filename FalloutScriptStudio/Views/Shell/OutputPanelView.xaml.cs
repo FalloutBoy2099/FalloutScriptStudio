@@ -59,6 +59,45 @@ namespace FalloutScriptStudio.Views.Shell
 			}
 		}
 
+		private void OnPreviewKeyDown(Object sender, KeyEventArgs e)
+		{
+			// Esc in the panel stops the running build (the same command as the Cancel button and Ctrl+Break).
+			if (e.Key == Key.Escape && this.ViewModel is { } viewModel && viewModel.CancelOperationCommand.CanExecute(null))
+			{
+				viewModel.CancelOperationCommand.Execute(null);
+				e.Handled = true;
+			}
+		}
+
+		private void OnErrorsKeyDown(Object sender, KeyEventArgs e)
+		{
+			if (this.ViewModel is not { } viewModel || sender is not System.Windows.Controls.DataGrid { SelectedItem: ErrorItemViewModel selected })
+			{
+				return;
+			}
+
+			if (e.Key == Key.Enter)
+			{
+				viewModel.Output.GoToErrorCommand.Execute(selected);
+				e.Handled = true;
+			}
+			else if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control)
+			{
+				viewModel.Output.CopyError(selected);
+				e.Handled = true;
+			}
+		}
+
+		private void OnSourcesClick(Object sender, RoutedEventArgs e)
+		{
+			if (sender is FrameworkElement { ContextMenu: { } menu } element)
+			{
+				menu.PlacementTarget = element;
+				menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+				menu.IsOpen = true;
+			}
+		}
+
 		private void OnErrorsDoubleClick(Object sender, MouseButtonEventArgs e)
 		{
 			if (this.ViewModel is { } viewModel && sender is System.Windows.Controls.DataGrid { SelectedItem: ErrorItemViewModel selected })

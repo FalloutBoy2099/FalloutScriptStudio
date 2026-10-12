@@ -2,8 +2,10 @@ namespace FalloutScriptStudio.Services.ToolWindows
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Compilation;
+	using FalloutScriptStudio.ViewModels.ToolWindows;
 
 	/// <summary>
 	/// Opens the small Fluent tool windows of the application: settings, About, Go to line, the batch compiler and the headers picker.
@@ -15,6 +17,25 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		/// </summary>
 		/// <returns><see langword="true"/> when the settings were applied; <see langword="false"/> when the dialog was cancelled.</returns>
 		Task<Boolean> ShowSettingsAsync();
+
+		/// <summary>
+		/// Shows the settings dialog modally with one page selected (the fix offered by a problem such as a missing compiler).
+		/// </summary>
+		/// <param name="page">The page to show.</param>
+		/// <returns><see langword="true"/> when the settings were applied; <see langword="false"/> when the dialog was cancelled.</returns>
+		Task<Boolean> ShowSettingsAsync(SettingsPage page)
+		{
+			return this.ShowSettingsAsync();
+		}
+
+		/// <summary>
+		/// Shows the settings of the active project (<c>fss-project.json</c>) modally. The changes are saved to the project file, not to the global settings.
+		/// </summary>
+		/// <returns><see langword="true"/> when the project settings were saved; <see langword="false"/> when the dialog was cancelled.</returns>
+		Task<Boolean> ShowProjectSettingsAsync()
+		{
+			return Task.FromResult(false);
+		}
 
 		/// <summary>
 		/// Shows the About window modally.
@@ -38,6 +59,19 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		/// <param name="scriptPaths">The scripts to compile.</param>
 		/// <returns>The summary of the run; an empty summary when nothing was compiled because there was nothing to do or the output folder is not set.</returns>
 		Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths);
+
+		/// <summary>
+		/// Compiles scripts in a batch like <see cref="RunBatchCompileAsync(IReadOnlyList{String})"/>, reports every finished script and stops when
+		/// the token is cancelled (the compilations in flight are cancelled, their processes killed, and the result says it was cancelled).
+		/// </summary>
+		/// <param name="scriptPaths">The scripts to compile.</param>
+		/// <param name="progress">Receives a notification for every finished script, or <see langword="null"/>.</param>
+		/// <param name="cancellationToken">Cancels the run, like the Cancel button of the window.</param>
+		/// <returns>The summary of the run.</returns>
+		Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, CancellationToken cancellationToken)
+		{
+			return this.RunBatchCompileAsync(scriptPaths);
+		}
 
 		/// <summary>
 		/// Lets the user pick one of the header files of the configured headers folder.

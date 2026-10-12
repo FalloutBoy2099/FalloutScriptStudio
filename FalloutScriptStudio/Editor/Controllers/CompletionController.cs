@@ -169,7 +169,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			window.Closed += this.OnWindowClosed;
 
 			this._window = window;
-			window.Show();
+			this._context.Services.Popups.Show(window);
 		}
 
 		private Double MeasureWidth(IReadOnlyList<AutosuggestItem> items)

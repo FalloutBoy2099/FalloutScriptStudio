@@ -25,7 +25,7 @@
     <sys:String x:Key="Str.Flowchart.Menu.File.SaveImage">Guardar diagrama como imagen</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Node">Nodo de diálogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Add.Note">Nota</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Configuración de funciones</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Options.FunctionsConfig">Funciones de diálogo</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.FunctionsConfig">Edita las reglas que indican al diagrama qué funciones y macros muestran mensajes y saltan a nodos.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Options.NoExitNode">No crear nodo de salida</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.NoExitNode">No crea un nodo de salida del diálogo (normalmente Node999) en el diagrama.</sys:String>
@@ -42,8 +42,8 @@
     <sys:String x:Key="Str.Flowchart.Tip.LowDetails">Dibuja los nodos sin información gráfica adicional.</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Edit">Editar nodo</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Editar nodo: {0}</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Renombrar nodo</sys:String>
-    <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Renombrar nodo: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Cambiar nombre del nodo</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Cambiar nombre del nodo: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Saltar desde: --- a</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Saltar desde: {0} a</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Ocultar nodo</sys:String>
@@ -132,7 +132,7 @@
     <sys:String x:Key="Str.Flowchart.Tip.LineColumn">Número de línea en el archivo de mensajes. Haga clic para abrir el editor de mensajes.</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.OpenMessage">Abrir el editor de mensajes en este mensaje</sys:String>
     <sys:String x:Key="Str.Flowchart.Col.MessageText">Texto del mensaje</sys:String>
-    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Archivo msg</sys:String>
+    <sys:String x:Key="Str.Flowchart.Col.MsgFile">Archivo de mensajes</sys:String>
     <sys:String x:Key="Str.Flowchart.NodesLabel">Nodos:</sys:String>
     <sys:String x:Key="Str.Flowchart.Tip.PreviewNode">El nodo de diálogo que se muestra</sys:String>
     <sys:String x:Key="Str.Flowchart.PreviewNodeName">Nodo de diálogo</sys:String>
@@ -157,4 +157,5 @@
     <sys:String x:Key="Str.Flowchart.Note.Placeholder">Haga clic aquí para escribir texto...</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Archivo ausente</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">No se encontró el archivo de mensajes del diálogo.&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.A11y.Diagram">Diagrama de flujo del diálogo</sys:String>
 </ResourceDictionary>

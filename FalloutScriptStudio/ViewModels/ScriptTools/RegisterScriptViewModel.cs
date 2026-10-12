@@ -113,8 +113,9 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		/// <returns><see langword="false"/> when the files cannot be edited (the reason was shown to the user).</returns>
 		public async Task<Boolean> InitializeAsync(String? scriptFileName)
 		{
-			AppSettings settings = this._settings.Settings;
-			ScriptRegistryPathResult resolved = ScriptRegistryPathResolver.Resolve(settings.Paths.OutputDirectory, settings.Paths.ScriptsHeaderFile, settings.Messages.Language);
+			EffectiveSettings effective = this._settings.Effective;
+			AppSettings settings = effective.Settings;
+			ScriptRegistryPathResult resolved = ScriptRegistryPathResolver.Resolve(settings.Paths.OutputDirectory, settings.Paths.ScriptsHeaderFile, settings.Messages.Language, effective.ScriptsListFile);
 			ScriptRegistryProblem? error = resolved.Problems.FirstOrDefault(problem => problem.IsError);
 			if (error is not null || resolved.Paths is null)
 			{
@@ -390,7 +391,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		[RelayCommand]
 		private async Task OpenScriptAsync(ScriptEntryViewModel? entry)
 		{
-			String? outputDirectory = this._settings.Settings.Paths.OutputDirectory;
+			String? outputDirectory = this._settings.Effective.Settings.Paths.OutputDirectory;
 			if (entry is null || entry.Script.Length == 0 || String.IsNullOrEmpty(outputDirectory))
 			{
 				return;

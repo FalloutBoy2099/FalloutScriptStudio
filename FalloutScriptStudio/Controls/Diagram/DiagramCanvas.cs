@@ -45,7 +45,6 @@ namespace FalloutScriptStudio.Controls.Diagram
 		{
 			this._readOnlyItems = new ReadOnlyObservableCollection<DiagramItem>(this._items);
 			this.Focusable = true;
-			this.FocusVisualStyle = null;
 			this.SnapsToDevicePixels = true;
 			this.UseLayoutRounding = true;
 

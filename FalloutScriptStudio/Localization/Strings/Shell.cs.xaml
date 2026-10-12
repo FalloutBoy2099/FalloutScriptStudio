@@ -7,7 +7,7 @@
     <sys:String x:Key="Str.Shell.App.StartFailed" xml:space="preserve">Program se nepodařilo spustit:&#10;&#10;{0}&#10;&#10;Podrobnosti byly zapsány do souboru sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.App.UnexpectedError" xml:space="preserve">Došlo k neočekávané chybě:&#10;&#10;{0}&#10;&#10;Podrobnosti byly zapsány do souboru sse.log.</sys:String>
     <sys:String x:Key="Str.Shell.Build.AllCompiled">Všech {0} skriptů bylo úspěšně zkompilováno</sys:String>
-    <sys:String x:Key="Str.Shell.Build.CompileFailed">Kompilace se nezdařila: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileFailed">{0} se nepodařilo zkompilovat: viz karta Chyby.</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompileTitle">Kompilace</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledAll">Zkompilováno {0} z {1} otevřených skriptů.</sys:String>
     <sys:String x:Key="Str.Shell.Build.CompiledOk">{0} byl úspěšně zkompilován</sys:String>
@@ -19,11 +19,11 @@
     <sys:String x:Key="Str.Shell.Build.MassCompileTitle">Hromadná kompilace</sys:String>
     <sys:String x:Key="Str.Shell.Build.NoScripts">V {0} nebyly nalezeny žádné skripty (*.ssl).</sys:String>
     <sys:String x:Key="Str.Shell.Build.NotSsl">Tento soubor není skript SSL.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Složka pro zkompilované skripty není nastavena.&#10;Před kompilací nastavte výstupní složku v nastavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.OutputFolderNotSet" xml:space="preserve">Složka pro zkompilované skripty není nastavena.&#10;Vyberte výstupní složku v nastavení (nebo zapněte kompilaci vedle zdrojového skriptu) a kompilujte znovu.</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessFailed">Předzpracování se nezdařilo! Podrobnosti najdete na kartě „Sestavení“.</sys:String>
     <sys:String x:Key="Str.Shell.Build.PreprocessedMissing">Předzpracovaný soubor nebyl nalezen.</sys:String>
     <sys:String x:Key="Str.Shell.Build.RoundtripUserCommand">Nejprve vypněte kompilaci pomocí uživatelského dávkového souboru.</sys:String>
-    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Výstupní složka skriptů není nastavena.&#10;Nejprve vyberte složku skriptů v nastavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.ScriptsFolderNotSet" xml:space="preserve">Výstupní složka skriptů není nastavena.&#10;Hromadná kompilace do ní zapisuje zkompilované skripty: nejdříve složku vyberte v nastavení.</sys:String>
     <sys:String x:Key="Str.Shell.Build.SelectMassFolder">Vyberte složku se skripty ke kompilaci</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchivePrompt">Název skriptu ve složce skriptů archivu (například klamath.int):</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ArchiveTitle">Otevřít z archivu hry</sys:String>
@@ -40,9 +40,9 @@
     <sys:String x:Key="Str.Shell.Dlg.ClearRecentPrompt">Chcete vymazat seznam nedávných souborů?</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.CreateProcedureTitle">Vytvořit proceduru</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileErrorTitle">Chyba dekompilace</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Dekompilace skriptu „{0}“ se nezdařila. Podrobnosti najdete na kartě „Sestavení“.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.DecompileFailed">Dekompilace skriptu „{0}“ selhala. Přečtěte si výstup dekompilátoru na kartě Sestavení; jiný dekompilátor (viz nastavení kompilátoru) může uspět.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DocsNotFound" xml:space="preserve">Dokumentaci se nepodařilo otevřít v prohlížeči. Je dostupná online na adrese:&#10;{0}</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Program se nepodařilo spustit:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ExternalEditorFailed" xml:space="preserve">Program se nepodařilo spustit:&#10;{0}&#10;Zvolte externí editor znovu v nastavení.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExternalEditorTitle">Externí editor</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ExtractionFailedTitle">Extrakce se nezdařila</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileAlreadyOpen" xml:space="preserve">Tento soubor je již otevřen.&#10;&#10;Otevřít jeho kopii?</sys:String>
@@ -52,14 +52,14 @@
     <sys:String x:Key="Str.Shell.Dlg.FileChangedTitle">Soubor byl změněn</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowed">Tento typ souboru nelze otevřít v editoru.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FileNotAllowedTitle">Soubor není povolen</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Soubor nebyl nalezen:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FileNotFound" xml:space="preserve">Soubor nebyl nalezen:&#10;{0}&#10;Možná byl přesunut nebo odstraněn.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.FlowchartScriptMissing">Soubor skriptu tohoto vývojového diagramu nebyl nalezen.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Vývojový diagram uzlů</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Soubor hlavičky nebyl nalezen:&#10;{0}</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.FlowchartTitle">Vývojový diagram dialogu</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.HeaderNotFound" xml:space="preserve">Soubor hlavičky nebyl nalezen:&#10;{0}&#10;Zkontrolujte cestu v #include a složku hlaviček v nastavení.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ImportedRename">Importované symboly zatím nelze přejmenovat.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Vložené soubory s relativní cestou nelze otevřít z neuloženého skriptu.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.IncludeRelativeUnsaved">Vložené soubory s relativní cestou nelze otevřít z neuloženého skriptu. Nejdříve skript uložte.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileCreate" xml:space="preserve">Soubor zpráv tohoto skriptu nebyl nalezen.&#10;&#10;Vytvořit {0} ve složce {1}?</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Soubor zpráv přidružený k tomuto skriptu nebyl nalezen.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.MessageFileNotFound">Soubor zpráv přidružený k tomuto skriptu nebyl nalezen. Zkontrolujte složky zpráv a jazyk v nastavení nebo soubor vytvořte v editoru zpráv.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.MessageFileTitle">Soubor zpráv</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameHasSpaces">Název skriptu obsahující mezery nelze registrovat.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.NameMacroNotFound" xml:space="preserve">Makro NAME nebylo v tomto skriptu nalezeno nebo nemá číslo skriptu.&#10;Soubor zpráv bude přidružen podle názvu skriptu.</sys:String>
@@ -96,7 +96,7 @@
     <sys:String x:Key="Str.Shell.Dlg.ScriptMissingTitle">Soubor skriptu nebyl nalezen</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsListTitle">Seznam skriptů</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.ScriptsLstInvalid">Přidružený název se nepodařilo přečíst ze souboru scripts.lst.</sys:String>
-    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Soubor scripts.lst neexistuje ve výstupní složce skriptů.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ScriptsLstMissing">Soubor scripts.lst ve výstupní složce skriptů neexistuje. Zkontrolujte výstupní složku v nastavení.</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectArchiveTitle">Vyberte archiv hry Fallout</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectEditorTitle">Vyberte externí editor</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.SelectHeadersTitle">Vyberte soubory hlaviček</sys:String>
@@ -122,10 +122,8 @@
     <sys:String x:Key="Str.Shell.Menu.CheckMessageStructure">Zkontrolovat strukturu textu zpráv</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ClearRecent">Vymazat nedávné soubory</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CloseAll">Zavřít vše</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Code">Kód</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CollapseAll">Sbalit vše</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CommentText">Zakomentovat text</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Compile">Kompilace</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileAllOpen">Kompilovat všechny otevřené</sys:String>
     <sys:String x:Key="Str.Shell.Menu.CompileScript">Kompilovat skript</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ConvertAllTabsToSpaces">Převést všechny tabulátory na mezery</sys:String>
@@ -134,11 +132,10 @@
     <sys:String x:Key="Str.Shell.Menu.ConvertLeadingTabsToSpaces">Převést úvodní tabulátory na mezery</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecompileFallout1">Dekompilovat jako Fallout 1</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DecreaseIndent">Zmenšit odsazení</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Přidat define do Scripts.h</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Dialog">Dialog</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.DefineToScriptsHeader">Přidat define do scripts.h</sys:String>
     <sys:String x:Key="Str.Shell.Menu.DialoguePreview">Náhled a testování</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Documentation">Dokumentace</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Edit">Úpravy</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.AssociateFiles">Přidružit typy souborů…</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Empty">(prázdné)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingOem">OEM-866 (DOS / ruská)</sys:String>
     <sys:String x:Key="Str.Shell.Menu.EncodingWindows">Výchozí systému Windows</sys:String>
@@ -153,33 +150,31 @@
     <sys:String x:Key="Str.Shell.Menu.FormatSelection">Formátovat výběr</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Forward">Vpřed</sys:String>
     <sys:String x:Key="Str.Shell.Menu.FunctionTree">Strom funkcí</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Konfigurace funkcí</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.FunctionsConfig">Funkce dialogů</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDeclaration">Přejít na deklaraci</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToDefinition">Přejít na definici</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToLine">Přejít na řádek...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.GoToProcedure">Přejít na proceduru...</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Headers">Hlavičky</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightParseErrors">Zvýrazňovat chyby analýzy</sys:String>
     <sys:String x:Key="Str.Shell.Menu.HighlightWord">Zvýraznit slovo</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncludeFile">Vložit soubor do kódu...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.IncreaseIndent">Zvětšit odsazení</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LineNumbers">Čísla řádků</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.LogWindow">Okno protokolu</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.LogWindow">Panel protokolu</sys:String>
     <sys:String x:Key="Str.Shell.Menu.LowerCase">Malá písmena</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MassCompile">Hromadná kompilace</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Editor souborů zpráv</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.MessageEditor">Editor zpráv</sys:String>
     <sys:String x:Key="Str.Shell.Menu.MessageEncoding">Kódování souborů zpráv</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewFromTemplate">Nový ze šablony</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NewScript">Nový skript</sys:String>
     <sys:String x:Key="Str.Shell.Menu.NoTemplates">(žádné šablony)</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Vývojový diagram uzlů</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.NodesFlowchart">Vývojový diagram dialogu</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Open">Otevřít...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenAllIncludes">Otevřít všechny vložené soubory</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenFromArchive">Otevřít skript z archivu hry...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenHeader">Otevřít soubor hlavičky...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenInclude">Otevřít vložený soubor</sys:String>
     <sys:String x:Key="Str.Shell.Menu.OpenRecent">Otevřít nedávné</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Options">Možnosti</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Preprocess">Předzpracovat</sys:String>
     <sys:String x:Key="Str.Shell.Menu.QuickFind">Rychlé hledání</sys:String>
     <sys:String x:Key="Str.Shell.Menu.RegisterScript">Registrovat aktuální skript...</sys:String>
@@ -190,9 +185,7 @@
     <sys:String x:Key="Str.Shell.Menu.SaveAs">Uložit jako...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveAsTemplate">Uložit jako šablonu...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.SaveUtf8">Ukládat v UTF-8</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.Script">Skript</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ScriptsListEditor">Editor seznamu skriptů</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.SetProjectFolder">Nastavit složku projektu...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.Settings">Nastavení...</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowIndentLine">Zobrazit čáru odsazení</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ShowWhitespace">Zobrazit tabulátory a mezery</sys:String>
@@ -205,7 +198,6 @@
     <sys:String x:Key="Str.Shell.Menu.UpperCase">Velká písmena</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompiler">Použít starý dekompilátor</sys:String>
     <sys:String x:Key="Str.Shell.Menu.UseOldDecompilerTip">Používá pouze externí dekompilátor int2ssl. Vyberte jej v Nastavení &gt; Kompilátor, aby se tato volba povolila.</sys:String>
-    <sys:String x:Key="Str.Shell.Menu.View">Zobrazení</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomIn">Přiblížit</sys:String>
     <sys:String x:Key="Str.Shell.Menu.ZoomOut">Oddálit</sys:String>
     <sys:String x:Key="Str.Shell.Output.AutoRefresh">Automaticky obnovovat</sys:String>
@@ -225,7 +217,7 @@
     <sys:String x:Key="Str.Shell.Output.TabErrors">Chyby</sys:String>
     <sys:String x:Key="Str.Shell.Output.TabParser">Parser</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipBuild">Výstup kompilátoru.</sys:String>
-    <sys:String x:Key="Str.Shell.Output.TipErrors">Chyby, upozornění a výsledky hledání. Dvojitým kliknutím na položku na ni přejdete.</sys:String>
+    <sys:String x:Key="Str.Shell.Output.TipErrors">Chyby, upozornění a další problémy skriptů a nástrojů. Dvojitým kliknutím na položku nebo klávesou Enter na ni přejdete.</sys:String>
     <sys:String x:Key="Str.Shell.Output.TipParser">Výstup parseru skriptů.</sys:String>
     <sys:String x:Key="Str.Shell.Output.UnresolvedReferences">Nepodařilo se najít odkazů: {0}.</sys:String>
     <sys:String x:Key="Str.Shell.Parser.Builtin">Parser: vestavěný (nativní parser není k dispozici)</sys:String>
@@ -282,17 +274,17 @@
     <sys:String x:Key="Str.Shell.Tip.DecreaseIndent">Zmenšit odsazení (Alt+Q)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.DefineToScriptsHeader">Při registraci přidat do scripts.h define pro skript.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.FindReplaceBar">Panel hledání a nahrazení (Ctrl+H)</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Flowchart">Vývojový diagram uzlů dialogu</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Flowchart">Vývojový diagram dialogu</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Forward">Vpřed na další pozici</sys:String>
     <sys:String x:Key="Str.Shell.Tip.GoToProcedure">Přejít na proceduru (Alt+P)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.MassCompile">Hromadně zkompilovat projekt</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Editor souborů zpráv</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.MessageEditor">Editor zpráv</sys:String>
     <sys:String x:Key="Str.Shell.Tip.NewScript">Vytvořit nový skript (Ctrl+N)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Open">Otevřít soubor (Ctrl+O)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.ParserStatus">Kliknutím aktualizujete data parseru.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Preprocess">Otevřít skript v podobě po předzpracování.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.PreprocessorDefine">Definice preprocesoru použitá při kompilaci a analýze skriptu (pro direktivy #if).</sys:String>
-    <sys:String x:Key="Str.Shell.Tip.Project">Složka projektu. Kliknutím ji otevřete v Průzkumníku.</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.Project">Není otevřen žádný projekt. Kliknutím otevřete složku projektu.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.QuickFind">Najít další výskyt slova u kurzoru.</sys:String>
     <sys:String x:Key="Str.Shell.Tip.Redo">Znovu (Ctrl+Y)</sys:String>
     <sys:String x:Key="Str.Shell.Tip.RegisterScript">Přidat skript do scripts.lst.</sys:String>
@@ -323,4 +315,110 @@
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpenTitle">Dekompilace</sys:String>
     <sys:String x:Key="Str.Shell.Dlg.DecompileTargetOpen">Soubor {0} je již otevřen na kartě. Přepsat jej dekompilovaným zdrojovým kódem a kartu znovu načíst? Neuložené změny na kartě budou ztraceny.</sys:String>
     <sys:String x:Key="Str.Shell.Output.OperationFailed">Operace se nezdařila: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupTools">Nástroje</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupFiles">Soubory</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupSettings">Nastavení</sys:String>
+    <sys:String x:Key="Str.Shell.Output.GroupMessages">Soubory zpráv</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowErrors">Zobrazit nebo skrýt chyby</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowWarnings">Zobrazit nebo skrýt upozornění</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.ShowInfo">Zobrazit nebo skrýt informace</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.FilterSources">Vyberte, které zdroje se zobrazí</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.CopyAll">Kopírovat vše</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Next">Další problém</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Previous">Předchozí problém</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.NoProblems">Žádné problémy.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.StatusTip">Chyb: {0}, upozornění: {1}. Kliknutím zobrazíte seznam problémů.</sys:String>
+    <sys:String x:Key="Str.Shell.Problems.Show">Zobrazit problémy</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Compile">Kompilace {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CompileCounted">Kompilace {0} ({1}/{2})</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Preprocess">Předzpracování {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.RoundTrip">Zpětná kontrola {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompile">Hromadná kompilace</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.MassCompileCounted">Hromadná kompilace ({1}/{2}): {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Decompile">Dekompilace {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancelling">Ruším: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.Cancel">Zrušit probíhající operaci</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.CancelTip">Zrušit (Esc v panelu protokolu, Ctrl+Break)</sys:String>
+    <sys:String x:Key="Str.Shell.Operation.DecompileCancelled">Dekompilace {0} byla zrušena.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.AlreadyRunning">Jiná operace sestavení stále běží. Počkejte na její dokončení nebo ji nejdříve zrušte (Esc v panelu protokolu).</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileCancelled">Kompilace {0} byla zrušena.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.PreprocessCancelled">Předzpracování {0} bylo zrušeno.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.RoundTripCancelled">Zpětná kontrola {0} byla zrušena.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.CompileAllCancelled">Kompilace byla zrušena: zkompilováno {0} z {1} otevřených skriptů.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.MassCompileCancelled">Hromadná kompilace byla zrušena: zkompilováno {0} z {1}, selhalo {2}.</sys:String>
+    <sys:String x:Key="Str.Shell.Build.LogCancelled">Kompilace byla zrušena uživatelem.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFound">{0} nebyl nalezen: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolNotFoundHint">Vložte {0} do složky {1} (nebo opravte nastavení kompilátoru) a sestavte znovu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailed">{0} se nepodařilo spustit: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ToolStartFailedHint">Zkontrolujte, že {0} je platný program pro tento systém a že jej Windows ani antivirus neblokuje (vlastnosti souboru, Odblokovat).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.CompileFailedNoDetails">Kompilace {0} selhala, ale nástroj nehlásil pozici chyby.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.PreprocessFailed">Předzpracování {0} selhalo.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SeeBuildLogHint">Úplný výstup nástroje najdete na kartě Sestavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSet">Složka pro zkompilované skripty není nastavena.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OutputFolderNotSetHint">Zvolte ji v nastavení nebo zapněte kompilaci vedle zdrojového skriptu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScript">{0} není skript SSL a nelze jej zkompilovat.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.NotAScriptHint">Zkompilovat lze jen soubory .ssl. Nejdříve text uložte jako soubor .ssl.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailed">{0} se nepodařilo uložit: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedHint">Zkontrolujte, že soubor není otevřen v jiném programu a že máte právo zápisu do jeho složky, nebo jej uložte jinam pomocí Uložit jako.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SaveFailedReadOnlyHint">Soubor je jen pro čtení. Zrušte atribut jen pro čtení v Průzkumníku nebo použijte Uložit jako.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailed">{0} se nepodařilo otevřít: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OpenFailedHint">Zkontrolujte, že soubor existuje, že jej smíte číst a že jej nezamkl jiný program.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFound">Soubor {0} neexistuje.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.FileNotFoundHint">Možná byl přesunut nebo odstraněn. Otevřete jej znovu pomocí Soubor, Otevřít.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallback">{0} není platné UTF-8 a bylo přečteno jako {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.EncodingFallbackHint">Pokud se znaky s diakritikou zobrazují špatně, změňte kódování souborů v nastavení (nebo soubor převeďte na UTF-8) a otevřete jej znovu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailed">{0} se nepodařilo dekompilovat.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.DecompileFailedHint">Přečtěte si výstup dekompilátoru na kartě Sestavení. Jiný dekompilátor může uspět (viz nastavení kompilátoru).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailed">{0} se nepodařilo extrahovat z archivu: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExtractFailedHint">Zvolte archiv .dat (nebo složku) hry, která tento skript obsahuje.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFound">Vložený soubor {0} nebyl nalezen.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.IncludeNotFoundHint">Zkontrolujte cestu v #include a složku hlaviček v nastavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissing">Pro {0} nebyl nalezen žádný soubor zpráv (.msg).</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.MessageFileMissingHint">Zkontrolujte složky zpráv a jazyk v nastavení nebo soubor vytvořte v editoru zpráv.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailable">Nativní parser (parser.dll) není k dispozici; používá se vestavěný parser.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserUnavailableHint">Zkopírujte parser.dll do složky resources pro přesné údaje o procedurách a proměnných, nebo nativní parser vypněte v nastavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBroken">Nativní parser přestal fungovat: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParserBrokenHint">Převzal ho vestavěný parser. Vyměňte parser.dll, nebo nativní parser vypněte v nastavení, pokud se to opakuje.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailed">{0} se nepodařilo analyzovat: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ParseFailedHint">Upravte text nebo soubor znovu uložte; podrobnosti jsou v souboru protokolu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamaged">Soubor nastavení {0} je poškozen; použijí se výchozí hodnoty.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsDamagedHint">Kopie poškozeného souboru byla ponechána vedle něj (.corrupt). Zkontrolujte nastavení a uložte je znovu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadable">Soubor nastavení {0} nelze přečíst.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsUnreadableHint">Soubor zůstal beze změny. Zavřete program, který jej používá, a spusťte editor znovu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailed">Soubor nastavení {0} se nepodařilo uložit: {1}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.SettingsSaveFailedHint">Zkontrolujte, že máte právo zápisu do složky nastavení a že disk není plný.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailed">Externí editor {0} se nepodařilo spustit.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ExternalEditorFailedHint">Zvolte program znovu v nastavení.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailed">Operace selhala: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.OperationFailedHint">Zkuste to znovu; podrobnosti jsou v souboru protokolu.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSettings">Otevřít nastavení: {0}</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionFolder">Otevřít složku</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.OpenProject">Otevřít projekt...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.RecentProjects">Nedávné projekty</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ClearRecentProjects">Vymazat nedávné projekty</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ProjectSettings">Nastavení projektu...</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CreateProjectSettings">Vytvořit nastavení projektu</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.CloseProject">Zavřít projekt</sys:String>
+    <sys:String x:Key="Str.Shell.Tip.ProjectOpen">Projekt: {0}. Kliknutím otevřete nastavení projektu.</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.RecentProjectsTitle">Nedávné projekty</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ClearRecentProjectsPrompt">Chcete vymazat seznam nedávných projektů?</sys:String>
+    <sys:String x:Key="Str.Shell.Dlg.ProjectFolderNotFound">Složka projektu {0} neexistuje.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.SettingsCreated">Soubor {0} byl vytvořen pro projekt {1}.</sys:String>
+    <sys:String x:Key="Str.Shell.Project.Detected">Pro tento skript byl nalezen soubor projektu v {0}. Na kartě Chyby můžete na tento projekt přepnout.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetected">Tento skript patří k projektu v {0}.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ProjectDetectedHint">Přepněte na projekt, abyste použili jeho nastavení kompilátoru, hlavičkových souborů a složek.</sys:String>
+    <sys:String x:Key="Str.Shell.Problem.ActionSwitchProject">Přepnout na tento projekt</sys:String>
+    <sys:String x:Key="Str.Shell.Menu.ShowProjectFolder">Zobrazit složku projektu v Průzkumníku</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.Progress">Průběh</sys:String>
+    <sys:String x:Key="Str.Shell.A11y.DocumentTabs">Otevřené dokumenty</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.File">So_ubor</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Edit">Úpra_vy</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Code">Kó_d</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Script">Skrip_t</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Headers">_Hlavičky</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Dialog">D_ialog</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Compile">_Kompilace</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.View">_Zobrazení</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Options">M_ožnosti</sys:String>
+    <sys:String x:Key="Str.Shell.MenuBar.Help">_Nápověda</sys:String>
 </ResourceDictionary>

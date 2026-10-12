@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Collections.Generic;
+	using System.IO;
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace FalloutScriptStudio.Workspace
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
+	using FalloutScriptStudio.Problems;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
 
@@ -25,18 +27,20 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IScriptParser _parser;
 		private readonly ISettingsService _settings;
 		private readonly ILogger _logger;
+		private readonly IProblemService _problems;
 		private readonly ParserLogParser _logParser = new ParserLogParser();
 		private readonly Dictionary<DocumentViewModel, CancellationTokenSource> _pending = new Dictionary<DocumentViewModel, CancellationTokenSource>();
 		private readonly Dictionary<DocumentViewModel, EventHandler> _textHandlers = new Dictionary<DocumentViewModel, EventHandler>();
 
 		/// <summary>Initializes the coordinator.</summary>
-		public ParseCoordinator(IScriptParser parser, ISettingsService settings, ILogger<ParseCoordinator>? logger = null, TimeSpan? debounce = null)
+		public ParseCoordinator(IScriptParser parser, ISettingsService settings, ILogger<ParseCoordinator>? logger = null, TimeSpan? debounce = null, IProblemService? problems = null)
 		{
 			ArgumentNullException.ThrowIfNull(parser);
 			ArgumentNullException.ThrowIfNull(settings);
 			this._parser = parser;
 			this._settings = settings;
 			this._logger = logger ?? NullLogger<ParseCoordinator>.Instance;
+			this._problems = problems ?? new ProblemService();
 			this.Debounce = debounce ?? DefaultDebounce;
 		}
 
@@ -148,11 +152,12 @@ namespace FalloutScriptStudio.Workspace
 			}
 			catch (Exception ex)
 			{
-				this._logger.LogError(ex, "Parsing '{File}' failed", document.FilePath ?? document.FileName);
+				this._logger.ParseFailed(ex, document.FilePath ?? document.FileName);
 				if (this._pending.TryGetValue(document, out CancellationTokenSource? current) && current == source)
 				{
 					document.ParserStatus = new ParserStatus(ParserStatusKind.FailedLog);
 					document.NeedsParse = false;
+					this._problems.Report(ProblemFactory.ParseFailed(document.FilePath ?? document.FileName, ex, document));
 				}
 			}
 			finally
@@ -198,6 +203,32 @@ namespace FalloutScriptStudio.Workspace
 			});
 		}
 
+		/// <summary>
+		/// Drops the problems of the previous parse of the document and tells the user when the native parser is turned on but not in use:
+		/// a missing parser.dll is only a note (the built-in parser is the normal choice), a parser that broke or was switched off after crashes is a warning.
+		/// </summary>
+		private void UpdateProblems(DocumentViewModel document, ParseResult result, Boolean parserEnabled)
+		{
+			this._problems.ClearOwner(document, ProblemSource.Parse);
+			if (parserEnabled && result.Outcome is ParseOutcome.NativeUnavailable or ParseOutcome.NativeFailed)
+			{
+				String? library = ParserOptionsFactory.Create(this._settings).NativeParserPath;
+				Boolean exists = result.Outcome == ParseOutcome.NativeFailed || (library is not null && File.Exists(library));
+				Problem problem = ProblemFactory.NativeParser(exists, result.Message);
+				Problem? current = this._problems.Problems.FirstOrDefault(item => item.Origin == ProblemOrigins.NativeParser);
+				if (current is null || !String.Equals(current.Identity, problem.Identity, StringComparison.Ordinal))
+				{
+					// Replaced, not added: the note of a missing parser.dll must not stay next to the warning of a broken one.
+					this._problems.ClearOrigin(ProblemOrigins.NativeParser);
+					this._problems.Report(problem);
+				}
+			}
+			else if (result.Outcome is ParseOutcome.NativeSucceeded or ParseOutcome.NativeReportedErrors or ParseOutcome.NativeDisabled)
+			{
+				this._problems.ClearOrigin(ProblemOrigins.NativeParser);
+			}
+		}
+
 		private void Apply(DocumentViewModel document, ParseResult result, Boolean parserEnabled)
 		{
 			Boolean includeWarnings = this._settings.Settings.Editor.ParserWarnings;
@@ -226,6 +257,7 @@ namespace FalloutScriptStudio.Workspace
 				}
 			}
 
+			this.UpdateProblems(document, result, parserEnabled);
 			document.ProgramInfo = result.ProgramInfo;
 			document.ParserLog = logText;
 			document.ParserErrors = errors;

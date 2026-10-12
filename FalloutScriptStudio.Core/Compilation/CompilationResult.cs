@@ -22,5 +22,8 @@ namespace FalloutScriptStudio.Core.Compilation
 
 		/// <summary>Gets the path of the preprocessed script when a preprocessing run succeeded.</summary>
 		public String? PreprocessedFilePath { get; init; }
+
+		/// <summary>Gets the external tools that were missing or could not be started (their messages are also part of <see cref="Output"/>).</summary>
+		public IReadOnlyList<ToolFailure> ToolFailures { get; init; } = Array.Empty<ToolFailure>();
 	}
 }

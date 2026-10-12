@@ -14,7 +14,6 @@
     <sys:String x:Key="Str.Common.No">Non</sys:String>
     <sys:String x:Key="Str.Common.Close">Fermer</sys:String>
     <sys:String x:Key="Str.Common.Save">Enregistrer</sys:String>
-    <sys:String x:Key="Str.Common.Browse">Parcourir...</sys:String>
     <sys:String x:Key="Str.Common.Add">Ajouter</sys:String>
     <sys:String x:Key="Str.Common.Remove">Retirer</sys:String>
     <sys:String x:Key="Str.Common.Delete">Supprimer</sys:String>
@@ -40,4 +39,7 @@
     <sys:String x:Key="Str.Common.Help">Aide</sys:String>
     <sys:String x:Key="Str.Common.About">À propos</sys:String>
     <sys:String x:Key="Str.Common.Loading">Chargement...</sys:String>
+    <sys:String x:Key="Str.Common.Minimize">Réduire</sys:String>
+    <sys:String x:Key="Str.Common.Maximize">Agrandir</sys:String>
+    <sys:String x:Key="Str.Common.Restore">Restaurer</sys:String>
 </ResourceDictionary>

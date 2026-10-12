@@ -1,5 +1,6 @@
 namespace FalloutScriptStudio.Tests.Editor
 {
+	using FalloutScriptStudio.Tests.Support;
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
@@ -36,17 +37,7 @@ namespace FalloutScriptStudio.Tests.Editor
 
 		private static Window Show(FrameworkElement view)
 		{
-			Window window = new Window
-			{
-				Content = view,
-				Width = 800,
-				Height = 600,
-				Left = -20000,
-				Top = -20000,
-				ShowInTaskbar = false,
-				WindowStartupLocation = WindowStartupLocation.Manual,
-			};
-			window.Show();
+			Window window = OffscreenWindow.Show(view, 800, 600);
 			UiThread.Flush();
 			return window;
 		}

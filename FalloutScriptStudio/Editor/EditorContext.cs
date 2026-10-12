@@ -98,7 +98,7 @@ namespace FalloutScriptStudio.Editor
 
 		public FontFamily FontFamily => this.Editor.FontFamily;
 
-		/// <summary>Runs a workspace operation without waiting for it; failures are reported in the status bar.</summary>
+		/// <summary>Runs a workspace operation without waiting for it; failures are reported in the status bar and the list of problems.</summary>
 		/// <param name="operation">The operation.</param>
 		public async void RunInBackground(Func<Task> operation)
 		{
@@ -108,7 +108,7 @@ namespace FalloutScriptStudio.Editor
 			}
 			catch (Exception ex)
 			{
-				this.Services.Workspace.ReportStatus(ex.Message);
+				this.Services.Workspace.ReportFailure(ex.Message);
 			}
 		}
 
