@@ -39,7 +39,7 @@
                         Width="64"
                         Height="64"
                         RenderOptions.BitmapScalingMode="HighQuality"
-                        Source="pack://application:,,,/FalloutScriptStudio;component/Assets/Icons/app.ico" />
+                        Source="pack://application:,,,/FalloutScriptStudio;component/Assets/Icons/app_64.png" />
                     <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
                         <TextBlock
                             FontSize="24"
