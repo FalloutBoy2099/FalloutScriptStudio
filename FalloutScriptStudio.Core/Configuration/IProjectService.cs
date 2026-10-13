@@ -17,6 +17,17 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Occurs when the project file is found damaged or unreadable, or could not be saved.</summary>
 		event EventHandler<SettingsProblem>? ProblemRaised;
 
+		/// <summary>
+		/// Occurs after the project file was changed outside of the editor (edited by hand, replaced by another program, deleted) and the change
+		/// was handled: a valid new content was applied (<see cref="ProjectChanged"/> was raised first), an invalid content was refused (the
+		/// last valid settings stay in effect), or the file was deleted (the project is a folder without settings). The editor's own saves do not raise it.
+		/// </summary>
+		event EventHandler<ProjectFileChangedEventArgs>? FileChangedOnDisk
+		{
+			add { }
+			remove { }
+		}
+
 		/// <summary>Gets the folder of the active project, or <see langword="null"/> when no project is open.</summary>
 		String? Folder { get; }
 
@@ -57,7 +68,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns><see langword="true"/> when the file was written; <see langword="false"/> when there is no project, the existing file cannot be read, or the write failed (the problem is raised).</returns>
 		Boolean SaveSettings(ProjectSettings settings);
 
-		/// <summary>Reads the project file again (it may have been edited by hand).</summary>
+		/// <summary>Reads the project file again and makes its settings take effect (the file is also watched, this is the manual way).</summary>
 		void Reload();
 
 		/// <summary>Finds the project a file belongs to: the nearest folder with a project file, at most <see cref="ProjectLocator.MaxLevels"/> levels up.</summary>

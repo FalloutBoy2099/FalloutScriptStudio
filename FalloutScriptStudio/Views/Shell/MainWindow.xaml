@@ -115,6 +115,10 @@
             Command="{Binding GoToProcedureCommand}"
             Modifiers="Alt" />
         <KeyBinding
+            Key="T"
+            Command="{Binding GoToSymbolCommand}"
+            Modifiers="Ctrl" />
+        <KeyBinding
             Key="P"
             Command="{Binding Procedures.CreateProcedureCommand}"
             Modifiers="Ctrl" />
@@ -415,6 +419,10 @@
                             InputGestureText="Alt+P"
                             Style="{StaticResource ParsableMenuItemStyle}" />
                         <MenuItem
+                            Command="{Binding GoToSymbolCommand}"
+                            Header="{DynamicResource Str.Shell.Menu.GoToSymbol}"
+                            InputGestureText="Ctrl+T" />
+                        <MenuItem
                             Command="{Binding GoBackCommand}"
                             Header="{DynamicResource Str.Shell.Menu.Back}"
                             IsEnabled="{Binding CanGoBack}">
@@ -609,6 +617,28 @@
                             CommandParameter="{x:Static docs:EditorCommand.OpenInclude}"
                             Header="{DynamicResource Str.Shell.Menu.OpenInclude}"
                             InputGestureText="Alt+G"
+                            Style="{StaticResource ParsableMenuItemStyle}" />
+                        <Separator />
+                        <MenuItem
+                            Command="{Binding EditCommand}"
+                            CommandParameter="{x:Static docs:EditorCommand.ExtractProcedure}"
+                            Header="{DynamicResource Str.Shell.Menu.ExtractProcedure}"
+                            InputGestureText="Ctrl+Shift+E"
+                            Style="{StaticResource ParsableMenuItemStyle}" />
+                        <MenuItem
+                            Command="{Binding EditCommand}"
+                            CommandParameter="{x:Static docs:EditorCommand.DeleteUnusedProcedure}"
+                            Header="{DynamicResource Str.Shell.Menu.DeleteUnusedProcedure}"
+                            Style="{StaticResource ParsableMenuItemStyle}" />
+                        <MenuItem
+                            Command="{Binding EditCommand}"
+                            CommandParameter="{x:Static docs:EditorCommand.FindUnusedVariables}"
+                            Header="{DynamicResource Str.Shell.Menu.FindUnusedVariables}"
+                            Style="{StaticResource ParsableMenuItemStyle}" />
+                        <MenuItem
+                            Command="{Binding EditCommand}"
+                            CommandParameter="{x:Static docs:EditorCommand.RemoveUnusedVariable}"
+                            Header="{DynamicResource Str.Shell.Menu.RemoveUnusedVariable}"
                             Style="{StaticResource ParsableMenuItemStyle}" />
                         <Separator />
                         <MenuItem

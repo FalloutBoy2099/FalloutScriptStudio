@@ -131,6 +131,16 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			}
 		}
 
+		/// <summary>Lists the variables of the script that are declared but never used in the list of problems.</summary>
+		[RelayCommand]
+		public async Task FindUnusedAsync()
+		{
+			if (this._workspace.ActiveDocument is { } document)
+			{
+				await this._workspace.FindUnusedVariablesAsync(document);
+			}
+		}
+
 		/// <summary>Renames a variable everywhere it is used.</summary>
 		[RelayCommand]
 		public async Task RenameAsync(TreeNodeViewModel? node)

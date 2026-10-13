@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Zapisz</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Zaznacz wszystko</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">Z_mień nazwę</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Wyodrębnij procedurę</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Wyodrębnij</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">Parametry to zmienne używane przez zaznaczone instrukcje: {0}. Możesz zmienić ich kolejność.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">Zaznaczone instrukcje nie używają żadnej zmiennej procedury, więc nowa procedura nie ma parametrów.</sys:String>
 </ResourceDictionary>

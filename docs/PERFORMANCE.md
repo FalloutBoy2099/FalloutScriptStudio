@@ -42,6 +42,7 @@ Use Release for numbers you want to compare; Debug is several times slower (the 
 * `...\SearchPerformanceTests.cs`: folder search, project explorer, symbol trees and filters, global rename preview.
 * `...\MessageEditorPerformanceTests.cs`: loading and editing a 30 000 line `.msg`.
 * `...\DiagramPerformanceTests.cs`: the flowchart of 200 nodes.
+* `FalloutScriptStudio.Core.Tests\Performance\IntelligencePerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\IntelligencePerformanceTests.cs`: the project symbol index (5 000 files, from scratch / unchanged / one saved file / cancellation / memory), the symbol search and the references, the tokenizer, the unused variables, the removal of a procedure and the extraction on a 20 000 line script, the unused variable marks of the editor, typing in the symbol list.
 * Equivalence tests for the optimised pieces (they compare with a full recomputation on random or large inputs):
   `LexicalMapIncrementalTests`, `BracketMatcherLargeTextTests`, `FoldingRedrawTests`, `DiagramCachedRenderingTests`, `MessageEditorLargeFileTests`,
   `FunctionsTreeFilterTests`, `ProceduresPanelSyncTests`, `MacroRegistryCacheTests`.
@@ -100,6 +101,13 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
 | `.dat` archive of 30 000 entries: open / 30 000 lookups | 30 ms / 6 ms |
 | Mass compile scheduling of 5 000 scripts | 1 to 6 ms of overhead |
 | Open a 5 000 / 20 000 line script in the editor (read, session, layout) | 150 to 180 ms / 230 to 310 ms |
+| Project symbol index of 5 000 files (4 250 scripts and headers, 54 000 symbols), from scratch / nothing changed / one saved script | 260 ms (4 threads) / 17 ms / 22 ms |
+| Symbol search over 54 000 symbols (prefix, substring, letters in order, two words, no match) | 1.5 to 3.4 ms |
+| References of a name in 5 000 files / files that include a header | 170 ms / 8 ms |
+| Cancelling an index run | under 20 ms |
+| Tokenizer / script model / unused variables / procedure removal plan / extraction analysis, 20 000 lines | 3.5 ms / 4.3 ms / 18 ms / 5 ms / 4.5 ms |
+| Unused variable marks of the editor, 20 000 lines (after each parse; off: nothing) | 18 ms |
+| Ten keystrokes in the Go to Symbol list (200 rows each) over 54 000 symbols | 72 ms (about 6.5 ms each) |
 
 ### Memory
 
@@ -108,6 +116,7 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
   parse results) with 2 full collections.
 * Search over 5 000 files with 4 000 hits: the files are read one at a time (streaming); managed memory grows by 3 to 4 MB, the peak working set of the test
   process stays at about 74 MB (72 MB before). Cancellation stops the search about 1 to 13 ms after the request.
+* Project symbol index: 12 MB of managed memory for 54 000 symbols in 4 250 files (only names, kinds, files and lines are kept, never the text; the index stops at 300 000 symbols, about 36 MB, for the 2 to 4 GB of an x86 process).
 * `.msg` of 30 000 lines: 17 MB managed after loading, 22 MB after 30 edits (undo history 4 MB).
 
 ## Known remaining hotspots

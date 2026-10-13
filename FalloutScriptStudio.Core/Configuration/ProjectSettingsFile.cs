@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
 	using System.IO;
+	using System.Text;
 	using System.Text.Json;
 	using System.Threading;
 
@@ -102,22 +103,52 @@ namespace FalloutScriptStudio.Core.Configuration
 				}
 			}
 
-			try
+			if (TryParse(content, projectFolder, out ProjectSettings? settings, out _))
 			{
-				ProjectSettings? settings = JsonSerializer.Deserialize<ProjectSettings>(content, SettingsJson.Options);
-				if (settings is not null)
-				{
-					settings.Normalize();
-					return new ProjectFileReadResult(ProjectFileStatus.Loaded, settings.ConvertPaths(value => ResolvePath(projectFolder, value)));
-				}
-			}
-			catch (Exception ex) when (ex is JsonException or NotSupportedException)
-			{
-				// Handled below like an empty file.
+				return new ProjectFileReadResult(ProjectFileStatus.Loaded, settings, null, content);
 			}
 
 			KeepCorruptCopy(path);
-			return new ProjectFileReadResult(ProjectFileStatus.Damaged, null);
+			return new ProjectFileReadResult(ProjectFileStatus.Damaged, null, null, content);
+		}
+
+		/// <summary>
+		/// Interprets the content of a project file (nothing is read from or written to the disk).
+		/// </summary>
+		/// <param name="content">The bytes of the file.</param>
+		/// <param name="projectFolder">The project folder, which relative paths are resolved against.</param>
+		/// <param name="settings">The settings with absolute paths when the content is valid, otherwise <see langword="null"/>.</param>
+		/// <param name="error">Why the content is not valid, otherwise <see langword="null"/>.</param>
+		/// <returns><see langword="true"/> when the content is valid.</returns>
+		public static Boolean TryParse(Byte[] content, String projectFolder, out ProjectSettings? settings, out ProjectFileError? error)
+		{
+			ArgumentNullException.ThrowIfNull(content);
+			ArgumentException.ThrowIfNullOrEmpty(projectFolder);
+
+			settings = null;
+			error = null;
+			try
+			{
+				ProjectSettings? parsed = JsonSerializer.Deserialize<ProjectSettings>(ToUtf8(content), SettingsJson.Options);
+				if (parsed is not null)
+				{
+					parsed.Normalize();
+					settings = parsed.ConvertPaths(value => ResolvePath(projectFolder, value));
+					return true;
+				}
+
+				error = new ProjectFileError("The file does not contain a settings object");
+			}
+			catch (JsonException ex)
+			{
+				error = new ProjectFileError(CleanMessage(ex.Message), ex.LineNumber is { } line ? (Int32)line + 1 : -1, ex.BytePositionInLine is { } column ? (Int32)column + 1 : -1);
+			}
+			catch (NotSupportedException ex)
+			{
+				error = new ProjectFileError(ex.Message);
+			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -125,15 +156,56 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// </summary>
 		/// <param name="projectFolder">The project folder.</param>
 		/// <param name="settings">The settings, with absolute paths.</param>
+		/// <returns>The bytes that were written.</returns>
 		/// <exception cref="IOException">The file could not be written.</exception>
 		/// <exception cref="UnauthorizedAccessException">The file could not be written.</exception>
-		public static void Write(String projectFolder, ProjectSettings settings)
+		public static Byte[] Write(String projectFolder, ProjectSettings settings)
+		{
+			Byte[] content = Serialize(projectFolder, settings);
+			AtomicFile.WriteAllBytes(GetPath(projectFolder), content);
+			return content;
+		}
+
+		/// <summary>
+		/// Creates the content of the project file of a folder: the paths are stored relative to the folder.
+		/// </summary>
+		/// <param name="projectFolder">The project folder.</param>
+		/// <param name="settings">The settings, with absolute paths.</param>
+		/// <returns>The bytes to write.</returns>
+		public static Byte[] Serialize(String projectFolder, ProjectSettings settings)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 
 			ProjectSettings stored = settings.ConvertPaths(value => ToStoredPath(projectFolder, value));
 			stored.Normalize();
-			AtomicFile.WriteAllBytes(GetPath(projectFolder), JsonSerializer.SerializeToUtf8Bytes(stored, SettingsJson.Options));
+			return JsonSerializer.SerializeToUtf8Bytes(stored, SettingsJson.Options);
+		}
+
+		/// <summary>
+		/// Brings the bytes of a file saved by a Windows editor to plain UTF-8: Notepad and PowerShell write a byte order mark, and
+		/// "Unicode" files are UTF-16; the JSON parser accepts neither.
+		/// </summary>
+		private static Byte[] ToUtf8(Byte[] content)
+		{
+			if (content.Length >= 3 && content[0] == 0xEF && content[1] == 0xBB && content[2] == 0xBF)
+			{
+				return content[3..];
+			}
+
+			if (content.Length >= 2 && ((content[0] == 0xFF && content[1] == 0xFE) || (content[0] == 0xFE && content[1] == 0xFF)))
+			{
+				Encoding encoding = content[0] == 0xFF ? Encoding.Unicode : Encoding.BigEndianUnicode;
+				return Encoding.UTF8.GetBytes(encoding.GetString(content, 2, content.Length - 2));
+			}
+
+			return content;
+		}
+
+		/// <summary>The parser appends " Path: $.x | LineNumber: 2 | BytePositionInLine: 5." to its explanation; the position is reported separately and the final period dropped (the texts that show the message add their own).</summary>
+		private static String CleanMessage(String message)
+		{
+			Int32 position = message.IndexOf(" Path:", StringComparison.Ordinal);
+			return (position > 0 ? message[..position] : message).Trim().TrimEnd('.');
 		}
 
 		private static void KeepCorruptCopy(String path)

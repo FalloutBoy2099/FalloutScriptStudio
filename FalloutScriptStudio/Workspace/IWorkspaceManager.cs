@@ -92,5 +92,15 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>Reloads the macros of the headers folder (after a header was saved or the folder setting changed).</summary>
 		Task ReloadGlobalMacrosAsync();
+
+		/// <summary>
+		/// Opens the "Go to symbol" list: the procedures, macros and variables of the whole project, filtered while the user types; the
+		/// chosen symbol is opened in its file. The default implementation does nothing.
+		/// </summary>
+		/// <returns>A task that completes when the list was closed and the symbol opened.</returns>
+		Task GoToSymbolAsync()
+		{
+			return Task.CompletedTask;
+		}
 	}
 }

@@ -121,7 +121,10 @@ severity (toggles with the counts) and by source (filter menu). Click, double cl
 the file when needed (the list is not replaced by the list of the file that is opened); the link of a row runs its action; "copy selected"
 copies the message and its hint, "copy all" one `file(line,column): kind: message` line per row. **Ctrl+F8 / Ctrl+Shift+F8** select the next /
 previous error or warning (F8 compiles, F7 is the scripts list, so the Ctrl variants of the compile key were chosen). The status bar shows
-the error and warning counts and opens the tab. Search and references results keep their own closable tabs and are not problems.
+the error and warning counts and opens the tab. Search and references results keep their own closable tabs and are not problems. With no
+parser entry, no build entry and no problem at all (`OutputPanelViewModel.HasNoProblems`, independent of the filters) the grid is replaced by
+the "No problems" text with an icon; when only the filters hide the rows the grid stays. The grid columns have minimum widths (file 110, line
+52, message 200) so that the header is never crushed.
 
 **Failures that are reported as problems:** missing or unstartable compile.exe / preprocessor / usercomp.bat / int2ssl.exe (`ToolFailure`
 of `CompilationResult` / `DecompilationResult`, the raw log line is then not duplicated in the list), a compilation that fails without an
@@ -169,7 +172,46 @@ mods; with no project open nothing changes.
 * **Detection.** `ProjectLocator` looks for `fss-project.json` in the folder of an opened script and the four folders above it (five levels,
   the nearest wins). When it belongs to a project other than the active one, an *information* problem with a "Switch to this project" link is
   reported (never a dialog), once per project and session.
+* **Watching the project file.** `ProjectService` owns a `ProjectFileWatcher` (Core) for the folder of the active project; it is created when
+  a project is opened, replaced when the project changes, and disposed when the project is closed or the container is disposed (`IDisposable`).
+  A file system event only starts a quiet period (`ProjectFileWatchOptions.Debounce`, 300 ms); a slow safety net compares size and time every
+  2 s in case the file system reports nothing (network folders). When the file is examined, a locked file is read again with a bounded
+  doubling backoff, a missing file or an invalid content is looked at again a few times (`SettleAttempts`) so that an editor that saves through a
+  temporary file and a rename, deletes and recreates the file, or is still writing, is one change and a half-written file is never applied.
+  The outcome is a `ProjectFileChange`: *Modified* (valid content: applied through the same path as `Reload()`, which raises
+  `ProjectChanged`, so the effective settings, the toolbar definitions, the global macros and every open script follow like after a project
+  switch), *Invalid* (the last valid settings stay in effect; `IProjectService.FileChangedOnDisk` carries the parse error with its line and
+  column) or *Deleted* (the project becomes a folder without settings). The editor's own saves are recognised by the SHA-256 of the content:
+  `SaveSettings` acknowledges the bytes before it writes, `Read` acknowledges what it read, so only a content that differs from what the editor
+  holds is a change (no reload loop). The change is posted to the synchronization context the service was created on (the UI thread).
+  `MainViewModel` turns `FileChangedOnDisk` into a status text ("Project settings reloaded") or, for an invalid content, a *Warning*
+  problem (`ProblemOrigins.ProjectFile`) with the line and column and an "Open the file" link (the editor opens `.json` files as plain text);
+  it is cleared by the next valid content or when the project changes. A file saved with a byte order mark (Notepad, PowerShell) or as UTF-16 is read.
+* **Which options a project overrides.** `ProjectSettings.GetOverriddenOptions()` / `EffectiveSettings.GetOverriddenOptions()` list the option
+  identifiers (`ProjectOptions`, the property names of `ProjectSettings`) that have a value in the file. The Settings window uses them: a
+  `SettingCard` carries `OptionId`, the implicit style binds `IsOverridden` to `SettingsViewModel.OverriddenOptions`, and the template shows
+  "Overridden by project X" with a link ("Edit project setting" opens the project settings window on that option, `ProjectSettingsViewModel.FocusOptionId`),
+  dims the control and sets a tool tip; the global value stays editable and is never replaced by the project value.
+* **Open documents per project.** `RecentFiles.ProjectSessions` (in `recent.json`, written with the same atomic and merged saves as the other
+  settings) keeps for at most 20 projects (the oldest is dropped) the open documents of the project folder, relative with forward slashes, and
+  the active one (`ProjectSession`); the caret line and the folds stay in `positions.json` / `folding.json` and come back when a document is
+  opened. `ProjectSessionService` (Workspace) captures the list when the project is left (`ProjectChanged` with another folder, Close Project) and
+  when the program ends (`CanCloseAsync`, before the documents are closed); documents outside the project folder and untitled ones are not
+  remembered. When a project is opened (menu, recent list, command line folder, or at start-up without files on the command line) and the editor
+  option "Restore the open files of a project" (`EditorSettings.RestoreProjectDocuments`, default on) is on, the remembered files that still
+  exist are opened in the background at once when nothing is open, with the remembered active one in front; when documents are open already a
+  *Information* problem with a "Restore open files" link is reported instead (`ProblemOrigins.ProjectSession`). Missing files are skipped and logged.
+  With the option off, or without a project, nothing is offered and nothing changes.
 * **UI.** File menu: Open Project, Recent Projects, Create Project Settings, Close Project, Show Project Folder in Explorer; Options menu and
   a click on the project name in the status bar: *Project settings* (`ProjectSettingsWindow` / `ProjectSettingsViewModel`). For each option
   the window offers "Inherit global" / "Override" (`OverrideModeBox`, `ProjectOption<T>`) and the value; the result is saved to
-  `fss-project.json`, never to the global files. The project name is shown in the status bar and the window title.
+  `fss-project.json`, never to the global files. The project name is shown in the status bar and the window title. The window also has
+  "Reload from file" (reads the file again, discarding what was typed and not saved) and "Open fss-project.json" (closes the window and opens the file in the editor).
+
+## Project index and code intelligence
+
+**One index of the whole project.** `IProjectSymbolIndex` (`FalloutScriptStudio.Core.Indexing`, `ProjectSymbolIndex`) holds the procedures, `#define` macros (with their parameters) and script level variables (`variable`, `import variable`, `export variable`) of every `.ssl` and `.h` file below its *roots* (`ProjectIndexRoots`): the project folder, or the folders of the open scripts, plus the headers folder of `ISettingsService.Effective`. It reuses the editor's own scanners (`InternalParser` for procedures, `MacroCollector` for macros) and the token based `SslScriptModel` for variables, keeps only symbols (never the text of a file: about 12 MB for 54 000 symbols in 4 250 files, hard limit 300 000 symbols for the x86 address space) and skips `.int`, binary files and files above 5 MB; files are read with the code page of `Editor.FileEncoding` (BOM, then strict UTF-8, then that code page). A run lists the files, compares size and time stamp with the previous snapshot (a file written less than 2 s before it was read is read again) and reads only what changed, on at most four pool threads, with cancellation between files; the snapshot is replaced as a whole, so a query never sees half an update. `Search` ranks exact > prefix > start of a word > substring > letters in order (`SymbolMatcher`), several words must all match (the next ones may match the file name), `Find` is a dictionary lookup, `FindOccurrencesAsync` scans the files that can *see* a definition (the files that include its file, `GetFilesSeeing`; every file for `import`/`export` names) with the open documents' texts instead of the disk.
+
+**Who keeps it up to date.** `ProjectSymbolService` (`Workspace`) computes the roots, runs the index in the background (debounced) on start, project change, document open / close (only when the roots change), settings change, save / reload (`UpdateFileAsync`) and window activation, and writes "Indexing 1200/5000" / "Indexed N symbols in M files" in the status bar for runs of 10 files and more (it does not use `IOperationTracker`, which would block the build commands). `CodeIntelligenceOperations` implements what the user asks: `NavigateAsync` (definition / declaration / references of a name the document does not resolve, a list `SymbolPickerWindow` in *Choose* mode when there are several candidates, ordered by `SymbolCloseness`), the *Go to Symbol* list (*Search* mode), project wide references, *Delete Unused Procedure*, *Find Unused Variables* and *Extract Procedure*. The editor asks through `IWorkspace` (default interface members, so fakes keep compiling); `NavigationController` keeps the old behaviour whenever the document or its includes resolve the symbol.
+
+**Text refactorings are pure Core.** `SslTokenizer` / `SslScriptModel` (`Core.Analysis`) give tokens (comments and strings skipped, preprocessor lines marked), procedures with bodies and every declared variable; `UnusedVariableFinder` (never used / assigned but never read; macro bodies and the words of included macros count as uses; a declaration is removable when its initialiser calls nothing), `VariableDeclarationEditor`, `SymbolOccurrenceScanner`, `UnusedProcedureRemover` (plan with leading comment block and forward declaration; engine handlers, `*_p_proc` and the names of `prochandlers.ini` are never removed) and `ProcedureExtractor` (checks complete statements, balanced `begin`/`end`, no `return`, `break` / `continue` only for loops inside the block; parameters in order of first use, locals only used inside move, one changed and later read variable is returned) return `TextEdit`s that the workspace applies as one undo group (`TextDocumentEdits.ApplyEdits`). The `ShowUnusedVariables` option (global only) makes `DiagnosticsController` draw `MarkerSeverity.Unused` marks after each parse (about 18 ms on 20 000 lines).

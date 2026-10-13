@@ -27,13 +27,14 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 				new LegacySettingsImporter(NullLogger<LegacySettingsImporter>.Instance),
 				NullLogger<SettingsService>.Instance);
 			this._settings.Load();
-			this._projects = new ProjectService(this._settings, NullLogger<ProjectService>.Instance);
+			this._projects = new ProjectService(this._settings, NullLogger<ProjectService>.Instance, ProjectFileWatchOptions.Disabled);
 			this._folder = this._root.Combine("mod");
 			Directory.CreateDirectory(this._folder);
 		}
 
 		public void Dispose()
 		{
+			this._projects.Dispose();
 			this._settings.Dispose();
 			this._root.Dispose();
 		}
@@ -453,6 +454,83 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 			Assert.Contains("\"outputDirectory\": \"\"", File.ReadAllText(this.ProjectFile), StringComparison.Ordinal);
 			Assert.Null(this._settings.Effective.Settings.Paths.OutputDirectory);
+		}
+
+		[Fact]
+		public void ReloadFromFile_ReadsAHandEditedFileAndDiscardsWhatWasEditedInTheWindow()
+		{
+			ProjectSettingsViewModel viewModel = this.Open("{ \"name\": \"Before\", \"optimization\": \"none\" }");
+			viewModel.ProjectName = "Typed in the window";
+			File.WriteAllText(this.ProjectFile, "{ \"name\": \"By hand\", \"optimization\": \"full\", \"defines\": [ \"EDITED\" ] }");
+
+			viewModel.ReloadFromFileCommand.Execute(null);
+
+			Assert.Equal("By hand", viewModel.ProjectName);
+			Assert.True(viewModel.Optimization.IsOverridden);
+			Assert.Equal(OptimizationLevel.Full, viewModel.Optimization.Value);
+			Assert.Equal(new[] { "EDITED" }, viewModel.ProjectDefines.ToArray());
+			Assert.Equal("By hand", this._projects.DisplayName);
+			Assert.False(viewModel.Applied);
+		}
+
+		[Fact]
+		public void ReloadFromFile_ShowsAFileThatWasCreatedOrDamagedMeanwhile()
+		{
+			ProjectSettingsViewModel viewModel = this.Open(null);
+			Assert.True(viewModel.IsMissing);
+
+			File.WriteAllText(this.ProjectFile, "{ \"name\": \"Hand made\" }");
+			viewModel.ReloadFromFileCommand.Execute(null);
+			Assert.True(viewModel.IsEditable);
+			Assert.Equal("Hand made", viewModel.ProjectName);
+
+			File.WriteAllText(this.ProjectFile, "{ not json");
+			viewModel.ReloadFromFileCommand.Execute(null);
+			Assert.True(viewModel.IsDamaged);
+			Assert.False(viewModel.IsEditable);
+		}
+
+		[Fact]
+		public void OpenProjectFile_ClosesTheWindowWithoutSavingAndAsksForTheFileToBeOpened()
+		{
+			ProjectSettingsViewModel viewModel = this.Open("{ \"name\": \"Mod\" }");
+			Boolean? closed = null;
+			viewModel.CloseRequested += (_, accepted) => closed = accepted;
+			viewModel.ProjectName = "Unsaved";
+
+			Assert.True(viewModel.OpenProjectFileCommand.CanExecute(null));
+			viewModel.OpenProjectFileCommand.Execute(null);
+
+			Assert.False(closed);
+			Assert.True(viewModel.OpenFileRequested);
+			Assert.False(viewModel.Applied);
+			Assert.Equal("{ \"name\": \"Mod\" }", File.ReadAllText(this.ProjectFile));
+			Assert.Equal("Mod", this._projects.DisplayName);
+		}
+
+		[Fact]
+		public void OpenProjectFile_IsOnlyPossibleWhenThereIsAFile()
+		{
+			ProjectSettingsViewModel viewModel = this.Open(null);
+			Assert.False(viewModel.HasFile);
+			Assert.False(viewModel.OpenProjectFileCommand.CanExecute(null));
+
+			viewModel.CreateSettingsCommand.Execute(null);
+
+			Assert.True(viewModel.HasFile);
+			Assert.True(viewModel.OpenProjectFileCommand.CanExecute(null));
+		}
+
+		[Fact]
+		public void TheButtonNamesTheFile_AndTheWindowOpensOnTheOptionItWasAskedFor()
+		{
+			ProjectSettingsViewModel viewModel = this.Open();
+
+			Assert.Equal("Open the file fss-project.json", viewModel.OpenFileText);
+			Assert.Null(viewModel.FocusOptionId);
+
+			viewModel.FocusOptionId = ProjectOptions.Optimization;
+			Assert.Equal("Optimization", viewModel.FocusOptionId);
 		}
 	}
 }

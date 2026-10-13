@@ -133,6 +133,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			recent.Scripts ??= new List<String>();
 			recent.Messages ??= new List<String>();
 			recent.Projects ??= new List<String>();
+			recent.ProjectSessions ??= new List<ProjectSession>();
 
 			ScriptPositions positions = ResolveFile(raw.Positions, this.Paths.ScriptPositionsFile, () => GetLegacy()?.Positions);
 			FoldedProcedures folding = ResolveFile(raw.Folding, this.Paths.FoldingFile, () => GetLegacy()?.Folding);

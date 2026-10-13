@@ -49,6 +49,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		private readonly EditorViewOptions _viewOptions;
 		private readonly ActiveEditorTracker _tracker;
 		private readonly IProjectService _projects;
+		private readonly ProjectSessionService _sessions;
 		private DocumentViewModel? _observedDocument;
 		private Boolean _loadingLayout;
 		private Boolean _loadingDefines;
@@ -77,7 +78,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 			VariablesPanelViewModel variables,
 			FunctionsPanelViewModel functions,
 			ProjectExplorerViewModel project,
-			IProjectService projects)
+			IProjectService projects,
+			ProjectSessionService? sessions = null)
 		{
 			this._workspace = workspace;
 			this._settings = settings;
@@ -102,6 +104,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.Functions = functions;
 			this.Project = project;
 			this._projects = projects;
+			this._sessions = sessions ?? new ProjectSessionService(workspace, settings, projects, output.Problems);
+			this._sessionFolder = projects.Folder;
 
 			this._layout = layoutStore.Load();
 			this._loadingLayout = true;
@@ -119,6 +123,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this._workspace.DocumentClosed += (_, _) => this.RefreshRecentFiles();
 			this._settings.SettingsChanged += (_, _) => this.RefreshSettingsProperties();
 			this._projects.ProjectChanged += (_, _) => this.OnProjectChanged();
+			this._projects.FileChangedOnDisk += (_, e) => this.OnProjectFileChangedOnDisk(e);
 			this._projects.ProblemRaised += (_, problem) => this.Output.Problems.Report(ProblemFactory.FromSettings(problem));
 			this._workspace.DocumentOpened += (_, document) => this.OfferProjectOf(document);
 			this._tracker.EditorChanged += (_, _) => this.RefreshEditorState();
@@ -289,6 +294,12 @@ namespace FalloutScriptStudio.ViewModels.Main
 		/// <returns><see langword="true"/> when the window may close.</returns>
 		public async Task<Boolean> CanCloseAsync()
 		{
+			if (this._projects.Folder is { } projectFolder)
+			{
+				// The open documents are remembered before closing them removes them from the list.
+				this._sessions.Capture(projectFolder);
+			}
+
 			// The Message Editor windows close between the questions and the saving, so a "Cancel" in either place changes nothing.
 			return await this._workspace.CloseAllAsync(null, this._messageEditor.CloseAllAsync);
 		}

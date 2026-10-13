@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 
 	/// <summary>
 	/// The most recently opened script files and message files. Both lists are ordered oldest first.
@@ -14,6 +15,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>The maximum number of recent projects.</summary>
 		public const Int32 MaxProjects = 10;
 
+		/// <summary>The maximum number of projects whose open documents are remembered.</summary>
+		public const Int32 MaxProjectSessions = 20;
+
 		/// <summary>Gets or sets the recent script files, oldest first.</summary>
 		public List<String> Scripts { get; set; } = new List<String>();
 
@@ -22,6 +26,9 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>Gets or sets the recent project folders, oldest first.</summary>
 		public List<String> Projects { get; set; } = new List<String>();
+
+		/// <summary>Gets or sets the documents that were open when a project was left, the project left last at the end.</summary>
+		public List<ProjectSession> ProjectSessions { get; set; } = new List<ProjectSession>();
 
 		/// <summary>
 		/// Moves a script to the end of the list, adding it if necessary. The oldest entry is dropped when the list is full.
@@ -67,6 +74,52 @@ namespace FalloutScriptStudio.Core.Configuration
 		{
 			this.Projects ??= new List<String>();
 			this.Projects.Clear();
+		}
+
+		/// <summary>Gets the remembered open documents of a project.</summary>
+		/// <param name="folder">The project folder.</param>
+		/// <returns>The session, or <see langword="null"/> when none is remembered.</returns>
+		public ProjectSession? GetProjectSession(String folder)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(folder);
+			this.ProjectSessions ??= new List<ProjectSession>();
+			String key = ProjectLocator.Normalize(folder);
+			return this.ProjectSessions.LastOrDefault(session => String.Equals(session.Folder, key, StringComparison.OrdinalIgnoreCase));
+		}
+
+		/// <summary>
+		/// Remembers the open documents of a project, replacing what was remembered for it. The project becomes the newest; the oldest is
+		/// dropped when <see cref="MaxProjectSessions"/> projects are remembered. A session without documents forgets the project.
+		/// </summary>
+		/// <param name="session">The session.</param>
+		public void SetProjectSession(ProjectSession session)
+		{
+			ArgumentNullException.ThrowIfNull(session);
+			ArgumentException.ThrowIfNullOrEmpty(session.Folder);
+			this.ProjectSessions ??= new List<ProjectSession>();
+			String key = ProjectLocator.Normalize(session.Folder);
+			this.ProjectSessions.RemoveAll(existing => String.Equals(existing.Folder, key, StringComparison.OrdinalIgnoreCase));
+			if (session.Documents.Count == 0)
+			{
+				return;
+			}
+
+			session.Folder = key;
+			this.ProjectSessions.Add(session);
+			while (this.ProjectSessions.Count > MaxProjectSessions)
+			{
+				this.ProjectSessions.RemoveAt(0);
+			}
+		}
+
+		/// <summary>Forgets the open documents of a project.</summary>
+		/// <param name="folder">The project folder.</param>
+		public void RemoveProjectSession(String folder)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(folder);
+			this.ProjectSessions ??= new List<ProjectSession>();
+			String key = ProjectLocator.Normalize(folder);
+			this.ProjectSessions.RemoveAll(existing => String.Equals(existing.Folder, key, StringComparison.OrdinalIgnoreCase));
 		}
 
 		/// <summary>Removes a script from the list.</summary>

@@ -73,4 +73,6 @@
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtrar...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Editar el código del nodo</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Mostrar solo el procedimiento al que se va: los demás se contraen al seleccionar uno</sys:String>
+    <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Eliminar procedimiento sin usar...</sys:String>
+    <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Buscar variables sin usar</sys:String>
 </ResourceDictionary>

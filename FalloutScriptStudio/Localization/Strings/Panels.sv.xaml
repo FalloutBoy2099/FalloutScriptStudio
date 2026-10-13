@@ -73,4 +73,6 @@
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtrera...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Redigera nodens kod</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Visa bara den valda proceduren: övriga procedurer fälls ihop när en procedur väljs</sys:String>
+    <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Ta bort oanvänd procedur...</sys:String>
+    <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Hitta oanvända variabler</sys:String>
 </ResourceDictionary>

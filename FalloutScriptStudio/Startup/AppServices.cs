@@ -8,6 +8,7 @@ namespace FalloutScriptStudio.Startup
 	using FalloutScriptStudio.Core.Decompilation;
 	using FalloutScriptStudio.Core.Dialogue;
 	using FalloutScriptStudio.Core.Functions;
+	using FalloutScriptStudio.Core.Indexing;
 	using FalloutScriptStudio.Core.Messages;
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Core.Parsing.Interop.Host;
@@ -86,6 +87,7 @@ namespace FalloutScriptStudio.Startup
 			// Core: text tools (search, procedure text, include insertion), refactoring and the functions catalog.
 			services.AddTextTools();
 			services.AddRefactoring();
+			services.AddProjectIndex(provider => new ProjectIndexOptions { Encoding = provider.GetRequiredService<ISettingsService>().Settings.Editor.FileEncoding.ToEncoding() });
 			services.AddFunctionCatalog(
 				_ => new FunctionCatalogPaths(Path.Combine(paths.DescriptionsDirectory, "functions.ini"), Path.Combine(paths.SettingsDirectory, "userfunctions.ini")),
 				_ => Path.Combine(paths.SettingsDirectory, "user-keywords.json"));
@@ -104,12 +106,15 @@ namespace FalloutScriptStudio.Startup
 			services.AddSingleton<MessageAssociationService>();
 			services.AddSingleton<ProcedureOperations>();
 			services.AddSingleton<ReferenceResultsPresenter>();
+			services.AddSingleton<ProjectSymbolService>();
+			services.AddSingleton<CodeIntelligenceOperations>();
 			services.AddSingleton<WorkspaceService>();
 			services.AddSingleton<IWorkspace>(provider => provider.GetRequiredService<WorkspaceService>());
 			services.AddSingleton<IWorkspaceManager>(provider => provider.GetRequiredService<WorkspaceService>());
 			services.AddSingleton<BuildCoordinator>();
 			services.AddSingleton<ActiveEditorTracker>();
 			services.AddSingleton<CommandLineHandler>();
+			services.AddSingleton<ProjectSessionService>();
 
 			// View models, dialogs and windows.
 			services.AddSingleton<SearchBarViewModel>();

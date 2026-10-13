@@ -2,6 +2,8 @@ namespace FalloutScriptStudio.Editor
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
+	using FalloutScriptStudio.Core.Analysis;
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Core.TextTools;
 	using FalloutScriptStudio.Documents;
@@ -25,6 +27,8 @@ namespace FalloutScriptStudio.Editor
 		private readonly Action _toggleSplit;
 		private readonly BracketController? _brackets;
 		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new FalloutScriptStudio.Core.TextTools.CodeFormatter();
+		private ITextSourceVersion? _unusedVersion;
+		private IReadOnlyList<UnusedVariable> _unused = Array.Empty<UnusedVariable>();
 
 		public EditorCommandHandler(
 			EditorContext context,
@@ -94,9 +98,9 @@ namespace FalloutScriptStudio.Editor
 				case EditorCommand.ShowOnlyCurrentProcedure:
 					return this._folding is { Count: > 0 };
 				case EditorCommand.GoToDeclaration:
-					return this.GetSymbol() is { Declaration.Line: > 0 };
+					return this.GetSymbol() is { Declaration.Line: > 0 } || this._navigation.CanGoToProjectDeclaration();
 				case EditorCommand.GoToDefinition:
-					return this.GetSymbol() is { Kind: SymbolKind.Procedure, IsImported: false };
+					return this.GetSymbol() is { Kind: SymbolKind.Procedure, IsImported: false } || this._navigation.CanGoToProjectDefinition();
 				case EditorCommand.FindReferences:
 					return this.CanFindReferences();
 				case EditorCommand.RenameSymbol:
@@ -105,7 +109,14 @@ namespace FalloutScriptStudio.Editor
 					return this._navigation.GetIncludePath(this._context.TextArea.Caret.Line) is not null;
 				case EditorCommand.ShowCompletion:
 				case EditorCommand.GoToProcedureBegin:
+				case EditorCommand.FindUnusedVariables:
 					return script;
+				case EditorCommand.ExtractProcedure:
+					return script && this._context.Editor.SelectionLength > 0;
+				case EditorCommand.DeleteUnusedProcedure:
+					return script && this._navigation.CurrentProcedure is not null;
+				case EditorCommand.RemoveUnusedVariable:
+					return script && this.FindUnusedVariableAtCaret() is { CanRemove: true };
 				default:
 					return false;
 			}
@@ -230,6 +241,18 @@ namespace FalloutScriptStudio.Editor
 				case EditorCommand.SplitDocument:
 					this._toggleSplit();
 					break;
+				case EditorCommand.ExtractProcedure:
+					this.RunOnDocument(workspace => workspace.ExtractProcedureAsync(this._context.DocumentModel));
+					break;
+				case EditorCommand.DeleteUnusedProcedure:
+					this.DeleteUnusedProcedure();
+					break;
+				case EditorCommand.FindUnusedVariables:
+					this.RunOnDocument(workspace => workspace.FindUnusedVariablesAsync(this._context.DocumentModel));
+					break;
+				case EditorCommand.RemoveUnusedVariable:
+					this.RemoveUnusedVariable();
+					break;
 				default:
 					break;
 			}
@@ -275,12 +298,56 @@ namespace FalloutScriptStudio.Editor
 		/// <summary>Procedures need the data of the native parser to know their references; variables always have them.</summary>
 		private Boolean CanFindReferences()
 		{
+			if (this._navigation.CanFindProjectReferences())
+			{
+				return true;
+			}
+
 			return this.GetSymbol() switch
 			{
 				{ Kind: SymbolKind.Procedure } => this._context.ProgramInfo?.HasNativeData == true,
 				{ Kind: SymbolKind.Macro } or null => false,
 				_ => true,
 			};
+		}
+
+		private void RunOnDocument(Func<IWorkspace, System.Threading.Tasks.Task> operation)
+		{
+			this._context.RunInBackground(() => operation(this._context.Services.Workspace));
+		}
+
+		/// <summary>Finds the unused variable whose name is under the caret; the analysis is kept until the text changes.</summary>
+		private UnusedVariable? FindUnusedVariableAtCaret()
+		{
+			TextDocument document = this._context.Document;
+			ITextSourceVersion version = document.Version;
+			if (this._unusedVersion is null || !version.BelongsToSameDocumentAs(this._unusedVersion) || version.CompareAge(this._unusedVersion) != 0)
+			{
+				this._unused = UnusedVariableScan.Find(document.Text, this._context.ProgramInfo, true, this._context.Kind == DocumentKind.Script, true);
+				this._unusedVersion = version;
+			}
+
+			Int32 caret = this._context.TextArea.Caret.Offset;
+			return this._unused.FirstOrDefault(variable => caret >= variable.Offset && caret <= variable.Offset + variable.Length);
+		}
+
+		private void DeleteUnusedProcedure()
+		{
+			if (this._navigation.CurrentProcedure is { } procedure)
+			{
+				String name = procedure.Name;
+				this.RunOnDocument(workspace => workspace.DeleteUnusedProcedureAsync(this._context.DocumentModel, name));
+			}
+		}
+
+		private void RemoveUnusedVariable()
+		{
+			UnusedVariable? variable = this.FindUnusedVariableAtCaret();
+			TextEdit? edit = variable is null ? null : VariableDeclarationEditor.CreateRemoval(this._context.Document.Text, variable);
+			if (edit is not null)
+			{
+				DocumentEdits.Apply(this._context.Document, new[] { edit });
+			}
 		}
 
 		private IScriptSymbol? GetSymbol()

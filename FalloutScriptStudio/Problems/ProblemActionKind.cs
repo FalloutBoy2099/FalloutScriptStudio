@@ -11,5 +11,14 @@ namespace FalloutScriptStudio.Problems
 
 		/// <summary>Makes a folder the active project.</summary>
 		SwitchProject = 2,
+
+		/// <summary>Opens a file in the editor (at the line of the problem).</summary>
+		OpenFile = 3,
+
+		/// <summary>Opens again the documents a project had open when it was left.</summary>
+		RestoreDocuments = 4,
+
+		/// <summary>Removes the declaration of an unused variable from its script.</summary>
+		RemoveUnusedVariable = 5,
 	}
 }

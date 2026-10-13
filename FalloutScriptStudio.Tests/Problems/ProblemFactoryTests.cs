@@ -40,6 +40,52 @@ namespace FalloutScriptStudio.Tests.Problems
 			yield return ProblemFactory.FromSettings(new SettingsProblem(SettingsProblemKind.SaveFailed, @"C:\app\settings\settings.json", "disk full"));
 			yield return ProblemFactory.ExternalEditorFailed(@"C:\tools\editor.exe");
 			yield return ProblemFactory.OperationFailed("it broke");
+			yield return ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("'}' is invalid after a property name", 3, 7));
+			yield return ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("The file does not contain a settings object"));
+			yield return ProblemFactory.ProjectDocumentsAvailable(@"C:\mods\a", "Great Mod", 4);
+			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Local, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.Unused, "start", 10, 3, 5, 1, true), @"C:\s\a.ssl", owner);
+			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Local, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.WriteOnly, "start", 10, 3, 5, 1, false), @"C:\s\a.ssl", owner);
+			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Parameter, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.Unused, "start", 10, 3, 5, 1, false), @"C:\s\a.ssl", owner);
+		}
+
+		[Fact]
+		public void An_invalid_project_file_is_a_warning_that_points_at_the_error_and_offers_to_open_the_file()
+		{
+			Problem problem = ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("Expected a ':'", 3, 7));
+
+			Assert.Equal(ProblemSeverity.Warning, problem.Severity);
+			Assert.Equal(ProblemSource.Settings, problem.Source);
+			Assert.Equal(@"C:\mods\a\fss-project.json", problem.File);
+			Assert.Equal(3, problem.Line);
+			Assert.Equal(7, problem.Column);
+			Assert.Equal(ProblemOrigins.ProjectFile, problem.Origin);
+			Assert.Equal("fss-project.json is not valid: Expected a ':' (line 3, column 7). The last valid project settings stay in effect.", problem.Message);
+			Assert.Equal(ProblemActionKind.OpenFile, problem.Action!.Kind);
+			Assert.Equal(@"C:\mods\a\fss-project.json", problem.Action.FilePath);
+			Assert.Equal("Open the file", problem.Action.Label);
+		}
+
+		[Fact]
+		public void An_invalid_project_file_without_a_position_has_no_line_to_go_to()
+		{
+			Problem problem = ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("The file does not contain a settings object"));
+
+			Assert.Equal(-1, problem.Line);
+			Assert.Equal(-1, problem.Column);
+			Assert.Equal("fss-project.json is not valid: The file does not contain a settings object. The last valid project settings stay in effect.", problem.Message);
+		}
+
+		[Fact]
+		public void The_documents_of_a_project_are_offered_with_an_information_and_a_restore_link()
+		{
+			Problem problem = ProblemFactory.ProjectDocumentsAvailable(@"C:\mods\a", "Great Mod", 4);
+
+			Assert.Equal(ProblemSeverity.Info, problem.Severity);
+			Assert.Equal(ProblemOrigins.ProjectSession, problem.Origin);
+			Assert.Equal("4 file(s) were open the last time project Great Mod was open.", problem.Message);
+			Assert.Equal(ProblemActionKind.RestoreDocuments, problem.Action!.Kind);
+			Assert.Equal(@"C:\mods\a", problem.Action.FolderPath);
+			Assert.Equal("Restore open files", problem.Action.Label);
 		}
 
 		public static IEnumerable<Object[]> Problems()

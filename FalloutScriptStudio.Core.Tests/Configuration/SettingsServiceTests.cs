@@ -59,6 +59,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.False(settings.Editor.ShortDescriptions);
 			Assert.True(settings.Editor.ShowVerticalRuler);
 			Assert.True(settings.Editor.StoreLastPosition);
+			Assert.True(settings.Editor.RestoreProjectDocuments);
+			Assert.False(settings.Editor.ShowUnusedVariables);
 			Assert.Equal(1, settings.Editor.FontIndex);
 			Assert.Equal(0, settings.Editor.FontSizeAdjustment);
 			Assert.Equal("english", settings.Messages.Language);
@@ -84,6 +86,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			first.Settings.Editor.FileEncoding = TextEncodingKind.Oem866;
 			first.Settings.Editor.TabSize = 8;
 			first.Settings.Editor.FontSizeAdjustment = -2;
+			first.Settings.Editor.RestoreProjectDocuments = false;
+			first.Settings.Editor.ShowUnusedVariables = true;
 			first.Settings.Messages.CommentColor = CommentHighlightColor.Lavender;
 			first.Settings.Messages.Language = "french";
 			first.Settings.Paths.OutputDirectory = @"C:\Fallout2\data\scripts";
@@ -111,6 +115,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.Equal(TextEncodingKind.Oem866, second.Settings.Editor.FileEncoding);
 			Assert.Equal(8, second.Settings.Editor.TabSize);
 			Assert.Equal(-2, second.Settings.Editor.FontSizeAdjustment);
+			Assert.False(second.Settings.Editor.RestoreProjectDocuments);
+			Assert.True(second.Settings.Editor.ShowUnusedVariables);
 			Assert.Equal(CommentHighlightColor.Lavender, second.Settings.Messages.CommentColor);
 			Assert.Equal("french", second.Settings.Messages.Language);
 			Assert.Equal(@"C:\Fallout2\data\scripts", second.Settings.Paths.OutputDirectory);

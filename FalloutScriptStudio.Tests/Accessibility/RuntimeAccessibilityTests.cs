@@ -25,7 +25,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	{
 		public static IEnumerable<Object[]> Windows()
 		{
-			return new[] { "Settings", "About", "GoToLine", "BatchCompile", "MacroRenamePreview", "NewNode", "Headers", "RegisterScript" }.Select(name => new Object[] { name });
+			return new[] { "Settings", "About", "GoToLine", "BatchCompile", "MacroRenamePreview", "NewNode", "Headers", "RegisterScript", "SymbolPicker", "SymbolChoice" }.Select(name => new Object[] { name });
 		}
 
 		private static Window Create(String name)
@@ -40,8 +40,23 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				"NewNode" => new NewNodeWindow(Uninitialized<NewNodeViewModel>()),
 				"Headers" => new HeadersWindow(Uninitialized<HeadersViewModel>(), new FakeSettingsService(@"C:ss")),
 				"RegisterScript" => new RegisterScriptWindow(Uninitialized<RegisterScriptViewModel>()),
+				"SymbolPicker" => new SymbolPickerWindow(CreateSymbolPicker(FalloutScriptStudio.Services.ToolWindows.SymbolPickerMode.Search)),
+				"SymbolChoice" => new SymbolPickerWindow(CreateSymbolPicker(FalloutScriptStudio.Services.ToolWindows.SymbolPickerMode.Choose)),
 				_ => throw new ArgumentOutOfRangeException(nameof(name)),
 			};
+		}
+
+		private static SymbolPickerViewModel CreateSymbolPicker(FalloutScriptStudio.Services.ToolWindows.SymbolPickerMode mode)
+		{
+			SymbolPickerViewModel viewModel = new SymbolPickerViewModel();
+			viewModel.Initialize(new FalloutScriptStudio.Services.ToolWindows.SymbolPickerRequest
+			{
+				Mode = mode,
+				Name = "name",
+				Index = new FakeSymbolIndex(),
+				Candidates = new[] { new FalloutScriptStudio.Core.Indexing.IndexedSymbol("name", FalloutScriptStudio.Core.Indexing.IndexedSymbolKind.Procedure, @"C:\a.ssl", 1) },
+			});
+			return viewModel;
 		}
 
 		private static T Uninitialized<T>()

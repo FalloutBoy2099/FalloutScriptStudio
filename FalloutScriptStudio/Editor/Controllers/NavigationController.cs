@@ -189,6 +189,33 @@ namespace FalloutScriptStudio.Editor.Controllers
 			return text.StartsWith(SslKeywords.Include, StringComparison.OrdinalIgnoreCase) ? IncludeResolver.ExtractIncludePath(text) : null;
 		}
 
+		/// <summary>
+		/// Determines whether the symbol at the caret has to be looked for in the other files of the project to go to its definition: the
+		/// document and the files it includes do not know it, only know its <c>import</c>, or only declare a procedure whose body is elsewhere.
+		/// </summary>
+		/// <returns><see langword="true"/> when the project index knows a symbol of that name and the definition may be in another file.</returns>
+		public Boolean CanGoToProjectDefinition()
+		{
+			IScriptSymbol? symbol = this.FindSymbol(this._context.TextArea.Caret.Offset, out String word);
+			return word.Length > 0 && this.NeedsProjectDefinition(symbol, word) && this._context.Services.Workspace.HasProjectSymbol(word);
+		}
+
+		/// <summary>Determines whether the declaration of the symbol at the caret can be looked for in the project (the document does not know the symbol).</summary>
+		/// <returns><see langword="true"/> when the project index knows a symbol of that name.</returns>
+		public Boolean CanGoToProjectDeclaration()
+		{
+			IScriptSymbol? symbol = this.FindSymbol(this._context.TextArea.Caret.Offset, out String word);
+			return symbol is null && word.Length > 0 && this._context.Services.Workspace.HasProjectSymbol(word);
+		}
+
+		/// <summary>Determines whether the references of the symbol at the caret can be looked for in the project.</summary>
+		/// <returns><see langword="true"/> when the project index knows a symbol of that name.</returns>
+		public Boolean CanFindProjectReferences()
+		{
+			IScriptSymbol? symbol = this.FindSymbol(this._context.TextArea.Caret.Offset, out String word);
+			return word.Length > 0 && symbol is not { Kind: SymbolKind.LocalVariable } && this._context.Services.Workspace.HasProjectSymbol(word);
+		}
+
 		/// <summary>Goes to the declaration of the symbol at the caret.</summary>
 		public void GoToDeclaration()
 		{
@@ -198,6 +225,10 @@ namespace FalloutScriptStudio.Editor.Controllers
 			{
 				this.GoToReference(declaration, word);
 			}
+			else if (symbol is null)
+			{
+				this.NavigateInProject(word, ProjectNavigationKind.Declaration);
+			}
 		}
 
 		/// <summary>Goes to the body of the procedure at the caret (or to the declaration of other symbols).</summary>
@@ -205,8 +236,9 @@ namespace FalloutScriptStudio.Editor.Controllers
 		{
 			Int32 caret = this._context.TextArea.Caret.Offset;
 			IScriptSymbol? symbol = this.FindSymbol(caret, out String word);
-			if (symbol is null)
+			if (symbol is null || (this.NeedsProjectDefinition(symbol, word) && this._context.Services.Workspace.HasProjectSymbol(word)))
 			{
+				this.NavigateInProject(word, ProjectNavigationKind.Definition);
 				return;
 			}
 
@@ -224,6 +256,14 @@ namespace FalloutScriptStudio.Editor.Controllers
 			IScriptSymbol? symbol = this.FindSymbol(this._context.TextArea.Caret.Offset, out String word);
 			if (symbol is null)
 			{
+				this.NavigateInProject(word, ProjectNavigationKind.References);
+				return;
+			}
+
+			if (symbol.Kind != SymbolKind.LocalVariable && this._context.Services.Workspace.HasProjectSymbol(word))
+			{
+				DocumentViewModel document = this._context.DocumentModel;
+				this._context.RunInBackground(() => this._context.Services.Workspace.ShowProjectReferencesAsync(document, symbol, word));
 				return;
 			}
 
@@ -386,6 +426,25 @@ namespace FalloutScriptStudio.Editor.Controllers
 				this._currentProcedure = procedure;
 				this.CurrentProcedureChanged?.Invoke(this, EventArgs.Empty);
 			}
+		}
+
+		/// <summary>The document and its includes do not give the definition: no symbol, an <c>import</c>, or a procedure that is only declared.</summary>
+		private Boolean NeedsProjectDefinition(IScriptSymbol? symbol, String word)
+		{
+			return symbol is null
+				|| symbol.IsImported
+				|| (symbol.Kind == SymbolKind.Procedure && this._context.ProgramInfo?.LookupDefinition(word) is null);
+		}
+
+		private void NavigateInProject(String word, ProjectNavigationKind kind)
+		{
+			if (word.Length == 0 || !this._context.IsScript)
+			{
+				return;
+			}
+
+			DocumentViewModel document = this._context.DocumentModel;
+			this._context.RunInBackground(() => this._context.Services.Workspace.NavigateToProjectSymbolAsync(document, word, kind));
 		}
 
 		private void GoToHistory(CaretLocation? location)

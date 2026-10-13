@@ -32,6 +32,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<GoToLineViewModel>();
 			services.AddTransient<BatchCompileViewModel>();
 			services.AddTransient<HeadersViewModel>();
+			services.AddTransient<SymbolPickerViewModel>();
 
 			services.AddTransient<SettingsWindow>();
 			services.AddTransient<ProjectSettingsWindow>();
@@ -39,6 +40,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<GoToLineWindow>();
 			services.AddTransient<BatchCompileWindow>();
 			services.AddTransient<HeadersWindow>();
+			services.AddTransient<SymbolPickerWindow>();
 
 			return services;
 		}

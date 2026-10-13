@@ -13,7 +13,7 @@ namespace FalloutScriptStudio.TestSupport
 	/// script with 200 nodes and a project folder with 5 000 files. The content is deterministic (fixed seed), so the numbers of two runs
 	/// compare. Each file is generated on first use. This file is linked into both test projects.
 	/// </summary>
-	public sealed class PerformanceInputs : IDisposable
+	public sealed partial class PerformanceInputs : IDisposable
 	{
 		/// <summary>The number of macros of the generated header.</summary>
 		public const Int32 HeaderMacroCount = 2000;

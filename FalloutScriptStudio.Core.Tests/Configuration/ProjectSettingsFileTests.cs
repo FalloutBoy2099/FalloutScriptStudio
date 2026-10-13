@@ -24,6 +24,88 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		private String FilePath => Path.Combine(this.Project, ProjectSettings.FileName);
 
 		[Fact]
+		public void TryParse_ReportsWhereTheContentIsNotValid()
+		{
+			Byte[] content = System.Text.Encoding.UTF8.GetBytes("{\r\n  \"name\": \"Mod\",\r\n  \"optimization\" \"full\"\r\n}");
+
+			Boolean valid = ProjectSettingsFile.TryParse(content, this.Project, out ProjectSettings? settings, out ProjectFileError? error);
+
+			Assert.False(valid);
+			Assert.Null(settings);
+			Assert.NotNull(error);
+			Assert.Equal(3, error.Line);
+			Assert.True(error.Column > 0);
+			Assert.False(String.IsNullOrWhiteSpace(error.Message));
+			Assert.DoesNotContain("LineNumber", error.Message, StringComparison.Ordinal);
+			Assert.DoesNotContain("BytePositionInLine", error.Message, StringComparison.Ordinal);
+		}
+
+		[Theory]
+		[InlineData("")]
+		[InlineData("   ")]
+		[InlineData("null")]
+		[InlineData("{ \"optimization\": \"warp\" }")]
+		[InlineData("{ \"name\": ")]
+		public void TryParse_RefusesEmptyTruncatedAndUnknownContent(String json)
+		{
+			Assert.False(ProjectSettingsFile.TryParse(System.Text.Encoding.UTF8.GetBytes(json), this.Project, out ProjectSettings? settings, out ProjectFileError? error));
+			Assert.Null(settings);
+			Assert.NotNull(error);
+		}
+
+		[Fact]
+		public void TryParse_AcceptsTheByteOrderMarkOfWindowsEditors_AndUtf16Files()
+		{
+			String json = "{ \"name\": \"Café Mod\", \"optimization\": \"full\" }";
+			Byte[] bom = new Byte[] { 0xEF, 0xBB, 0xBF }.Concat(System.Text.Encoding.UTF8.GetBytes(json)).ToArray();
+			Byte[] utf16 = System.Text.Encoding.Unicode.GetPreamble().Concat(System.Text.Encoding.Unicode.GetBytes(json)).ToArray();
+			Byte[] utf16Big = System.Text.Encoding.BigEndianUnicode.GetPreamble().Concat(System.Text.Encoding.BigEndianUnicode.GetBytes(json)).ToArray();
+
+			foreach (Byte[] content in new[] { bom, utf16, utf16Big })
+			{
+				Assert.True(ProjectSettingsFile.TryParse(content, this.Project, out ProjectSettings? settings, out ProjectFileError? error), error?.Message);
+				Assert.Equal("Café Mod", settings!.Name);
+				Assert.Equal(OptimizationLevel.Full, settings.Optimization);
+			}
+		}
+
+		[Fact]
+		public void Read_OfAFileWithAByteOrderMark_IsLoadedNotDamaged()
+		{
+			File.WriteAllBytes(this.FilePath, new Byte[] { 0xEF, 0xBB, 0xBF }.Concat(System.Text.Encoding.UTF8.GetBytes("{ \"name\": \"Notepad\" }")).ToArray());
+
+			ProjectFileReadResult result = ProjectSettingsFile.Read(this.Project);
+
+			Assert.Equal(ProjectFileStatus.Loaded, result.Status);
+			Assert.Equal("Notepad", result.Settings!.Name);
+			Assert.False(File.Exists(this.FilePath + ".corrupt"));
+		}
+
+		[Fact]
+		public void TryParse_ResolvesPathsAndToleratesCommentsAndTrailingCommas()
+		{
+			Byte[] content = System.Text.Encoding.UTF8.GetBytes("{ // comment\n \"outputDirectory\": \"out\", }");
+
+			Assert.True(ProjectSettingsFile.TryParse(content, this.Project, out ProjectSettings? settings, out ProjectFileError? error));
+
+			Assert.Null(error);
+			Assert.Equal(Path.Combine(this.Project, "out"), settings!.OutputDirectory);
+		}
+
+		[Fact]
+		public void Read_ReturnsTheBytesItInterpreted_AndWriteReturnsTheBytesItWrote()
+		{
+			Byte[] written = ProjectSettingsFile.Write(this.Project, new ProjectSettings { Name = "Mod" });
+
+			ProjectFileReadResult result = ProjectSettingsFile.Read(this.Project);
+
+			Assert.Equal(written, File.ReadAllBytes(this.FilePath));
+			Assert.Equal(written, result.Content);
+			Assert.Equal(written, ProjectSettingsFile.Serialize(this.Project, new ProjectSettings { Name = "Mod" }));
+			Assert.Null(ProjectSettingsFile.Read(this.Project + "-none").Content);
+		}
+
+		[Fact]
 		public void Read_WithoutAFile_ReportsMissing()
 		{
 			ProjectFileReadResult result = ProjectSettingsFile.Read(this.Project);

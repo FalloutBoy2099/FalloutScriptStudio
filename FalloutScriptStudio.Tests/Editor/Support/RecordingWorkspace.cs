@@ -16,6 +16,9 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 		/// <summary>Gets the recorded calls as <c>MethodName(argument, ...)</c> strings.</summary>
 		public List<String> Calls { get; } = new List<String>();
 
+		/// <summary>Gets the names that <see cref="IWorkspace.HasProjectSymbol"/> reports as known to the project index.</summary>
+		public HashSet<String> ProjectSymbols { get; } = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+
 		/// <summary>Gets the texts returned by <see cref="IWorkspace.GetMessageText"/>.</summary>
 		public Dictionary<Int32, String> Messages { get; } = new Dictionary<Int32, String>();
 
@@ -42,6 +45,11 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			}
 
 			this.Calls.Add(name + "(" + String.Join(", ", args ?? Array.Empty<Object?>()) + ")");
+			if (name == nameof(IWorkspace.HasProjectSymbol) && args is [String symbol])
+			{
+				return this.ProjectSymbols.Contains(symbol);
+			}
+
 			if (name == nameof(IWorkspace.GetMessageText) && args is [_, Int32 id])
 			{
 				return this.Messages.TryGetValue(id, out String? text) ? text : null;

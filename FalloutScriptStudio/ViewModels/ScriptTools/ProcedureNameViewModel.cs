@@ -85,12 +85,17 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			this._request = request;
 			this.OnPropertyChanged(nameof(this.PlaceholderText));
 			Boolean rename = request.Mode == ProcedureNameDialogMode.Rename;
+			Boolean extract = request.Mode == ProcedureNameDialogMode.Extract;
 			this.Title = rename
 				? (request.Subject.Length > 0 ? Loc.Format("Str.ScriptTools.ProcTitleRenameSubject", request.Subject) : Loc.Get("Str.ScriptTools.ProcTitleRename"))
-				: Loc.Get("Str.ScriptTools.ProcTitleCreate");
-			this.OkText = rename ? Loc.Get("Str.Common.Rename") : Loc.Get("Str.ScriptTools.ProcOkCreate");
+				: Loc.Get(extract ? "Str.ScriptTools.ProcTitleExtract" : "Str.ScriptTools.ProcTitleCreate");
+			this.OkText = rename ? Loc.Get("Str.Common.Rename") : Loc.Get(extract ? "Str.ScriptTools.ProcOkExtract" : "Str.ScriptTools.ProcOkCreate");
 			this.NameReadOnly = request.NameReadOnly;
-			this.Hint = Loc.Get(rename ? "Str.ScriptTools.ProcHintRename" : "Str.ScriptTools.ProcHintCreate");
+			this.Hint = rename
+				? Loc.Get("Str.ScriptTools.ProcHintRename")
+				: extract
+					? (request.Subject.Length > 0 ? Loc.Format("Str.ScriptTools.ProcHintExtract", request.Subject) : Loc.Get("Str.ScriptTools.ProcHintExtractNone"))
+					: Loc.Get("Str.ScriptTools.ProcHintCreate");
 			this.ShowOptions = !rename && request.CanChoosePlacement;
 			this.CanCopyBody = this.ShowOptions && request.CanCopyBody;
 			this.CopyBody = false;

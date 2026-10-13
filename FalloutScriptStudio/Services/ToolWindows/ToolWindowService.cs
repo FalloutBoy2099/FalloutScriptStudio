@@ -11,6 +11,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.ViewModels.ToolWindows;
+	using FalloutScriptStudio.Workspace;
 	using FalloutScriptStudio.Views.ToolWindows;
 	using Microsoft.Extensions.DependencyInjection;
 
@@ -52,6 +53,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		private Task<Boolean> ShowSettingsCoreAsync(SettingsPage? page)
 		{
 			SettingsViewModel viewModel = this._services.GetRequiredService<SettingsViewModel>();
+			viewModel.EditProjectSettingHandler = optionId => this.ShowProjectSettingsAsync(optionId);
 			if (page is { } selected)
 			{
 				viewModel.SelectPage(selected);
@@ -65,10 +67,27 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		/// <inheritdoc />
 		public Task<Boolean> ShowProjectSettingsAsync()
 		{
+			return this.ShowProjectSettingsCoreAsync(null);
+		}
+
+		/// <inheritdoc />
+		public Task<Boolean> ShowProjectSettingsAsync(String optionId)
+		{
+			return this.ShowProjectSettingsCoreAsync(optionId);
+		}
+
+		private async Task<Boolean> ShowProjectSettingsCoreAsync(String? optionId)
+		{
 			ProjectSettingsViewModel viewModel = this._services.GetRequiredService<ProjectSettingsViewModel>();
+			viewModel.FocusOptionId = optionId;
 			ProjectSettingsWindow window = ActivatorUtilities.CreateInstance<ProjectSettingsWindow>(this._services, viewModel);
 			ShowModal(window);
-			return Task.FromResult(viewModel.Applied);
+			if (viewModel.OpenFileRequested && this._services.GetService<IWorkspaceManager>() is { } workspace)
+			{
+				await workspace.OpenAsync(viewModel.ProjectFilePath, new OpenDocumentOptions()).ConfigureAwait(true);
+			}
+
+			return viewModel.Applied;
 		}
 
 		/// <inheritdoc />
@@ -152,6 +171,18 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			HeadersWindow window = ActivatorUtilities.CreateInstance<HeadersWindow>(this._services, viewModel);
 			ShowModal(window);
 			return viewModel.SelectedPath;
+		}
+
+		/// <inheritdoc />
+		public Task<FalloutScriptStudio.Core.Indexing.IndexedSymbol?> PickSymbolAsync(SymbolPickerRequest request)
+		{
+			ArgumentNullException.ThrowIfNull(request);
+
+			SymbolPickerViewModel viewModel = this._services.GetRequiredService<SymbolPickerViewModel>();
+			viewModel.Initialize(request);
+			SymbolPickerWindow window = ActivatorUtilities.CreateInstance<SymbolPickerWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.FromResult(viewModel.SelectedSymbol);
 		}
 
 		private static Window? FindOwner()

@@ -4,15 +4,24 @@ namespace FalloutScriptStudio.Core.Configuration
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// <see cref="IProjectService"/> on top of the settings service: the active project is the solution folder of the global settings.
 	/// </summary>
-	public sealed class ProjectService : IProjectService
+	/// <remarks>
+	/// The project file of the active project is watched (<see cref="ProjectFileWatcher"/>): a change made by hand is reloaded, an invalid
+	/// content is refused, and the editor's own saves are recognised by their content and ignored. The reload runs on the thread the service
+	/// was created on (the user interface thread) when it has a synchronization context.
+	/// </remarks>
+	public sealed class ProjectService : IProjectService, IDisposable
 	{
 		private readonly ISettingsService _settings;
 		private readonly ILogger<ProjectService> _logger;
+		private readonly ProjectFileWatchOptions _watchOptions;
+		private readonly SynchronizationContext? _context = SynchronizationContext.Current;
+		private ProjectFileWatcher? _watcher;
 		private String? _folder;
 		private ProjectFileStatus _status = ProjectFileStatus.Missing;
 		private ProjectSettings? _project;
@@ -23,14 +32,16 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// </summary>
 		/// <param name="settings">The settings service.</param>
 		/// <param name="logger">The logger.</param>
-		public ProjectService(ISettingsService settings, ILogger<ProjectService> logger)
+		/// <param name="watchOptions">How the project file is watched; by default <see cref="ProjectFileWatchOptions.Default"/>.</param>
+		public ProjectService(ISettingsService settings, ILogger<ProjectService> logger, ProjectFileWatchOptions? watchOptions = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(logger);
 			this._settings = settings;
 			this._logger = logger;
-			this._settings.SettingsChanged += (_, _) => this.Synchronize(false);
-			this.Synchronize(true);
+			this._watchOptions = watchOptions ?? ProjectFileWatchOptions.Default;
+			this._settings.SettingsChanged += (_, _) => this.Synchronize(false, null);
+			this.Synchronize(true, null);
 		}
 
 		/// <inheritdoc/>
@@ -38,6 +49,9 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <inheritdoc/>
 		public event EventHandler<SettingsProblem>? ProblemRaised;
+
+		/// <inheritdoc/>
+		public event EventHandler<ProjectFileChangedEventArgs>? FileChangedOnDisk;
 
 		/// <inheritdoc/>
 		public String? Folder => this._folder;
@@ -90,7 +104,7 @@ namespace FalloutScriptStudio.Core.Configuration
 
 			if (SameFolder(normalized, this._folder))
 			{
-				this.Synchronize(true);
+				this.Synchronize(true, null);
 				return true;
 			}
 
@@ -141,10 +155,14 @@ namespace FalloutScriptStudio.Core.Configuration
 			saved.Normalize();
 			try
 			{
-				ProjectSettingsFile.Write(folder, saved);
+				// The watcher must know the content before the file changes: the event of this very write is then recognised as our own.
+				Byte[] content = ProjectSettingsFile.Serialize(folder, saved);
+				this._watcher?.Acknowledge(content);
+				AtomicFile.WriteAllBytes(path, content);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
+				this._watcher?.Forget();
 				this._logger.ProjectFileNotSaved(ex, path);
 				this.RaiseProblem(new SettingsProblem(SettingsProblemKind.SaveFailed, path, ex.Message));
 				return false;
@@ -159,7 +177,13 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <inheritdoc/>
 		public void Reload()
 		{
-			this.Synchronize(true);
+			this.Synchronize(true, null);
+		}
+
+		/// <summary>Stops watching the project file.</summary>
+		public void Dispose()
+		{
+			this.StopWatching();
 		}
 
 		/// <inheritdoc/>
@@ -204,7 +228,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		}
 
 		/// <summary>Follows the solution folder of the settings: whoever changed it (this service, the project explorer, a settings import), the project file is read again.</summary>
-		private void Synchronize(Boolean force)
+		/// <param name="force">Read the file even when the folder did not change.</param>
+		/// <param name="preRead">The content the file watcher already read and verified, used instead of reading the file again.</param>
+		private void Synchronize(Boolean force, ProjectFileReadResult? preRead)
 		{
 			String? wanted = NormalizeOrNull(this._settings.Settings.Paths.SolutionFolder);
 			if (!force && this._initialized && SameFolder(wanted, this._folder))
@@ -218,7 +244,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			this._status = ProjectFileStatus.Missing;
 			if (wanted is not null)
 			{
-				ProjectFileReadResult read = ProjectSettingsFile.Read(wanted);
+				ProjectFileReadResult read = preRead ?? ProjectSettingsFile.Read(wanted);
 				this._status = read.Status;
 				this._project = read.Settings;
 				this.ReportReadProblem(wanted, read);
@@ -226,9 +252,98 @@ namespace FalloutScriptStudio.Core.Configuration
 				{
 					this._settings.Recent.AddProject(wanted);
 				}
+
+				this.Watch(wanted, read);
+			}
+			else
+			{
+				this.StopWatching();
 			}
 
 			this.Publish();
+		}
+
+		/// <summary>Watches the project file of a folder, starting from the content that was just read.</summary>
+		private void Watch(String folder, ProjectFileReadResult read)
+		{
+			ProjectFileWatcher? existing = this._watcher;
+			if (existing is not null && SameFolder(existing.Folder, folder))
+			{
+				if (read.Status == ProjectFileStatus.Unreadable)
+				{
+					existing.Forget();
+				}
+				else
+				{
+					existing.Acknowledge(read.Content);
+				}
+
+				return;
+			}
+
+			this.StopWatching();
+			if (!this._watchOptions.Enabled)
+			{
+				return;
+			}
+
+			ProjectFileWatcher? created = null;
+			created = new ProjectFileWatcher(folder, this._watchOptions, change => this.OnFileChange(created, change), this._logger);
+			this._watcher = created;
+			if (read.Status == ProjectFileStatus.Unreadable)
+			{
+				created.Start(null, true);
+			}
+			else
+			{
+				created.Start(read.Content, read.Status != ProjectFileStatus.Missing);
+			}
+		}
+
+		private void StopWatching()
+		{
+			ProjectFileWatcher? watcher = this._watcher;
+			this._watcher = null;
+			watcher?.Dispose();
+		}
+
+		/// <summary>A verified change of the project file arrived on a thread-pool thread: it is applied on the thread of the service.</summary>
+		private void OnFileChange(ProjectFileWatcher? source, ProjectFileChange change)
+		{
+			if (this._context is not null)
+			{
+				this._context.Post(_ => this.ApplyFileChange(source, change), null);
+			}
+			else
+			{
+				this.ApplyFileChange(source, change);
+			}
+		}
+
+		private void ApplyFileChange(ProjectFileWatcher? source, ProjectFileChange change)
+		{
+			if (source is null || !ReferenceEquals(source, this._watcher) || this._folder is not { } folder)
+			{
+				return;
+			}
+
+			ProjectFileError? error = null;
+			switch (change.Kind)
+			{
+				case ProjectFileChangeKind.Modified:
+					this.Synchronize(true, change.Read);
+					break;
+				case ProjectFileChangeKind.Deleted:
+					this.Synchronize(true, new ProjectFileReadResult(ProjectFileStatus.Missing, null));
+					break;
+				default:
+					// The last valid settings stay in effect; there is nothing to reload.
+					error = change.Error ?? new ProjectFileError(String.Empty);
+					this._logger.ProjectFileInvalid(ProjectSettingsFile.GetPath(folder), error.Message);
+					break;
+			}
+
+			this.FileChangedOnDisk?.Invoke(this, new ProjectFileChangedEventArgs(change.Kind, ProjectSettingsFile.GetPath(folder), error));
 		}
 
 		private void ReportReadProblem(String folder, ProjectFileReadResult read)

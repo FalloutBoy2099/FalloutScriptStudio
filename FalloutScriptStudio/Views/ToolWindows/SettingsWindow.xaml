@@ -23,12 +23,27 @@
     WindowStartupLocation="CenterOwner">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <local:OptionOverriddenConverter x:Key="OptionOverridden" />
+
+        <!--  The note under an option the open project overrides: where, and a link to the option in the project settings.  -->
+        <Style x:Key="OverrideNote" TargetType="WrapPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
 
         <Style TargetType="local:SettingCard">
             <Setter Property="Margin" Value="0,0,0,6" />
             <Setter Property="Padding" Value="16,12" />
             <Setter Property="IsTabStop" Value="False" />
             <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="IsOverridden">
+                <Setter.Value>
+                    <MultiBinding Converter="{StaticResource OptionOverridden}">
+                        <Binding Path="DataContext.OverriddenOptions" RelativeSource="{RelativeSource Self}" />
+                        <Binding Path="OptionId" RelativeSource="{RelativeSource Self}" />
+                    </MultiBinding>
+                </Setter.Value>
+            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="local:SettingCard">
@@ -55,8 +70,36 @@
                                         Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                         Text="{TemplateBinding Description}"
                                         TextWrapping="Wrap" />
+                                    <WrapPanel
+                                        x:Name="OverrideNote"
+                                        Style="{StaticResource OverrideNote}"
+                                        Visibility="Collapsed">
+                                        <ui:SymbolIcon
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Symbol="Pin24" />
+                                        <TextBlock
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Text="{Binding DataContext.OverrideBadgeText, RelativeSource={RelativeSource TemplatedParent}}"
+                                            TextWrapping="Wrap" />
+                                        <ui:HyperlinkButton
+                                            Height="20"
+                                            Margin="8,0,0,0"
+                                            Padding="4,0"
+                                            VerticalAlignment="Center"
+                                            AutomationProperties.HelpText="{Binding DataContext.OverrideBadgeText, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Command="{Binding DataContext.EditProjectSettingCommand, RelativeSource={RelativeSource TemplatedParent}}"
+                                            CommandParameter="{Binding OptionId, RelativeSource={RelativeSource TemplatedParent}}"
+                                            Content="{DynamicResource Str.ToolWindows.Override.Edit}"
+                                            FontSize="12" />
+                                    </WrapPanel>
                                 </StackPanel>
                                 <ContentPresenter
+                                    x:Name="EditorHost"
                                     Grid.Column="1"
                                     Margin="16,0,0,0"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -69,6 +112,11 @@
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.6" />
+                            </Trigger>
+                            <Trigger Property="IsOverridden" Value="True">
+                                <Setter TargetName="OverrideNote" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="EditorHost" Property="Opacity" Value="0.5" />
+                                <Setter TargetName="EditorHost" Property="ToolTip" Value="{Binding DataContext.OverrideTipText, RelativeSource={RelativeSource TemplatedParent}}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -211,6 +259,12 @@
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SaveCaret.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SaveCaret.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Editor.StoreLastPosition}" />
                         </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.RestoreFiles.Title}" Description="{DynamicResource Str.ToolWindows.Opt.RestoreFiles.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Editor.RestoreProjectDocuments}" />
+                        </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowUnusedVariables.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowUnusedVariables.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShowUnusedVariables}" />
+                        </local:SettingCard>
 
                         <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Files}" />
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Encoding.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Encoding.Desc}">
@@ -256,7 +310,8 @@
                         <local:SettingCard
                             Title="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Title}"
                             Description="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Desc}"
-                            IsEnabled="{Binding IsPreprocessorEnabled}">
+                            IsEnabled="{Binding IsPreprocessorEnabled}"
+                            OptionId="Preprocessor">
                             <ComboBox
                                 MinWidth="260"
                                 DisplayMemberPath="Text"
@@ -267,7 +322,10 @@
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.UseBatch.Title}" Description="{DynamicResource Str.ToolWindows.Opt.UseBatch.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding UseUserCommand}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}"
+                            OptionId="Optimization">
                             <ComboBox
                                 MinWidth="180"
                                 DisplayMemberPath="Text"
@@ -275,22 +333,40 @@
                                 SelectedValue="{Binding Draft.Compiler.Optimization, Mode=TwoWay}"
                                 SelectedValuePath="Value" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}"
+                            OptionId="ShowWarnings">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.ShowWarnings}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}"
+                            OptionId="DebugInfo">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.DebugInfo}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}"
+                            OptionId="ShortCircuit">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.ShortCircuit}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}"
+                            OptionId="BackwardCompatibility">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.BackwardCompatibility}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}"
+                            OptionId="SearchIncludePath">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.SearchIncludePath}" />
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}"
+                            OptionId="CompileToSourceDirectory">
                             <ui:ToggleSwitch IsChecked="{Binding CompileToSourceDirectory}" />
                         </local:SettingCard>
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowErrorLog.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowErrorLog.Desc}">
@@ -313,6 +389,30 @@
                                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                     Text="{DynamicResource Str.ToolWindows.PreprocessorDefines.Help}"
                                     TextWrapping="Wrap" />
+                                <WrapPanel Style="{StaticResource OverrideNote}" Visibility="{Binding HasProjectDefines, Converter={StaticResource BoolToVisibility}}">
+                                    <ui:SymbolIcon
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                        Symbol="Pin24" />
+                                    <TextBlock
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                        Text="{Binding DefinesBadgeText}"
+                                        TextWrapping="Wrap" />
+                                    <ui:HyperlinkButton
+                                        Height="20"
+                                        Margin="8,0,0,0"
+                                        Padding="4,0"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.HelpText="{Binding DefinesBadgeText}"
+                                        Command="{Binding EditProjectSettingCommand}"
+                                        CommandParameter="Defines"
+                                        Content="{DynamicResource Str.ToolWindows.Override.Edit}"
+                                        FontSize="12" />
+                                </WrapPanel>
                                 <Grid Margin="0,10,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -401,7 +501,8 @@
                         <local:SettingCard
                             Title="{DynamicResource Str.ToolWindows.Opt.OutputDir.Title}"
                             Description="{DynamicResource Str.ToolWindows.Opt.OutputDir.Desc}"
-                            IsEnabled="{Binding IsOutputDirectoryEnabled}">
+                            IsEnabled="{Binding IsOutputDirectoryEnabled}"
+                            OptionId="OutputDirectory">
                             <StackPanel Orientation="Horizontal">
                                 <ui:TextBox
                                     Width="260"
@@ -421,7 +522,10 @@
                                     ToolTip="{DynamicResource Str.Common.Clear}" />
                             </StackPanel>
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}"
+                            OptionId="HeadersDirectory">
                             <StackPanel Orientation="Horizontal">
                                 <ui:TextBox
                                     Width="260"
@@ -441,7 +545,10 @@
                                     ToolTip="{DynamicResource Str.Common.Clear}" />
                             </StackPanel>
                         </local:SettingCard>
-                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}">
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}"
+                            OptionId="ScriptsHeaderFile">
                             <StackPanel Orientation="Horizontal">
                                 <ui:TextBox
                                     Width="260"
@@ -534,7 +641,41 @@
                                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                                     Text="{DynamicResource Str.ToolWindows.MessagePaths.Help}"
                                     TextWrapping="Wrap" />
+                                <WrapPanel Style="{StaticResource OverrideNote}" Visibility="{Binding IsMessagePathsOverridden, Converter={StaticResource BoolToVisibility}}">
+                                    <ui:SymbolIcon
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                        Symbol="Pin24" />
+                                    <TextBlock
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                        Text="{Binding OverrideBadgeText}"
+                                        TextWrapping="Wrap" />
+                                    <ui:HyperlinkButton
+                                        Height="20"
+                                        Margin="8,0,0,0"
+                                        Padding="4,0"
+                                        VerticalAlignment="Center"
+                                        AutomationProperties.HelpText="{Binding OverrideBadgeText}"
+                                        Command="{Binding EditProjectSettingCommand}"
+                                        CommandParameter="MessageSearchDirectories"
+                                        Content="{DynamicResource Str.ToolWindows.Override.Edit}"
+                                        FontSize="12" />
+                                </WrapPanel>
                                 <Grid Margin="0,10,0,0">
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsMessagePathsOverridden}" Value="True">
+                                                    <Setter Property="Opacity" Value="0.5" />
+                                                    <Setter Property="ToolTip" Value="{Binding OverrideTipText}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />

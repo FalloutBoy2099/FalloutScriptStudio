@@ -27,7 +27,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			IScriptToolService scriptTools,
 			IDialogueDialogsService dialogueDialogs,
 			IProblemService? problems = null,
-			IOperationTracker? operations = null)
+			IOperationTracker? operations = null,
+			ProjectSymbolService? symbols = null,
+			CodeIntelligenceOperations? intelligence = null)
 		{
 			DocumentFileService files = new DocumentFileService(settings, dialogs, NullLogger<DocumentFileService>.Instance, null, problems);
 			return new WorkspaceService(
@@ -45,7 +47,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				new ReferenceResultsPresenter(dialogs, output, settings),
 				scriptTools,
 				null,
-				problems);
+				problems,
+				symbols,
+				intelligence);
 		}
 	}
 }

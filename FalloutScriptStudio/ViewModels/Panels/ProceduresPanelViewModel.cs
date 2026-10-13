@@ -265,6 +265,16 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			}
 		}
 
+		/// <summary>Deletes a procedure that nothing uses, after showing what is removed; a procedure that is still used is refused and its uses listed.</summary>
+		[RelayCommand]
+		public async Task DeleteUnusedAsync(ProcedureNodeViewModel? node)
+		{
+			if (node is not null && this._workspace.ActiveDocument is { } document)
+			{
+				await this._workspace.DeleteUnusedProcedureAsync(document, node.Procedure.Name);
+			}
+		}
+
 		/// <summary>Moves a procedure one position up.</summary>
 		[RelayCommand]
 		public Task MoveUpAsync(ProcedureNodeViewModel? node)

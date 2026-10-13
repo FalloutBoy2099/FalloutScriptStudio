@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.Services
 		private const String ProgIdPrefix = "FalloutScriptStudio";
 
 		private static readonly String[] _associatedExtensions = { ".ssl", ".msg", ".int", ".fcd" };
-		private static readonly String[] _openableExtensions = { ".ssl", ".msg", ".int", ".fcd", ".h", ".ini", ".txt", ".cfg", ".xshd" };
+		private static readonly String[] _openableExtensions = { ".ssl", ".msg", ".int", ".fcd", ".h", ".ini", ".txt", ".cfg", ".xshd", ".json" };
 
 		/// <inheritdoc />
 		public Boolean IsAssociated

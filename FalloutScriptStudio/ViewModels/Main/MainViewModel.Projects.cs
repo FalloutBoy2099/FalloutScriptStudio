@@ -10,11 +10,13 @@ namespace FalloutScriptStudio.ViewModels.Main
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Problems;
+	using FalloutScriptStudio.Workspace;
 
 	/// <summary>Projects: open, recent, close, create the settings file, open the project settings, and the hint about the project of an opened script.</summary>
 	public sealed partial class MainViewModel
 	{
 		private readonly HashSet<String> _offeredProjects = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+		private String? _sessionFolder;
 
 		/// <summary>Gets the recent projects, newest first.</summary>
 		public ObservableCollection<String> RecentProjects { get; } = new ObservableCollection<String>();
@@ -111,6 +113,42 @@ namespace FalloutScriptStudio.ViewModels.Main
 			return this._projects.CanCreateSettings;
 		}
 
+		/// <summary>Opens again the documents a project had open when it was left (the link of the hint offered when a project is opened with other documents open).</summary>
+		/// <param name="folder">The project folder.</param>
+		/// <returns>A task that completes when the documents are open.</returns>
+		public async Task RestoreProjectDocumentsAsync(String folder)
+		{
+			Int32 count = await this._sessions.RestoreAsync(folder);
+			this.Output.ReportStatus(Loc.Format("Str.Shell.Project.FilesRestored", count));
+		}
+
+		/// <summary>
+		/// Offers the documents the project that was open when the program started had open: the program starts with them again when the
+		/// option is on. Called once, when the program was started without files.
+		/// </summary>
+		/// <returns>A task that completes when the offer was handled.</returns>
+		public async Task RestoreStartupProjectAsync()
+		{
+			if (this._projects.Folder is { } folder)
+			{
+				await this._workspace.GuardAsync(() => this.OfferProjectDocumentsAsync(folder));
+			}
+		}
+
+		private async Task OfferProjectDocumentsAsync(String folder)
+		{
+			ProjectSessionOffer offer = await this._sessions.OfferAsync(folder);
+			switch (offer.Kind)
+			{
+				case ProjectSessionOfferKind.Restored:
+					this.Output.ReportStatus(Loc.Format("Str.Shell.Project.FilesRestored", offer.Count));
+					break;
+				case ProjectSessionOfferKind.Offered:
+					this.Output.ReportStatus(Loc.Format("Str.Shell.Project.FilesAvailable", this._projects.DisplayName, offer.Count));
+					break;
+			}
+		}
+
 		private async Task OpenProjectAtAsync(String folder)
 		{
 			if (this._projects.Open(folder))
@@ -142,6 +180,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		private void OnProjectChanged()
 		{
 			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectDetection);
+			this.SwitchSession();
 			this.RefreshRecentProjects();
 			foreach (String name in new[] { nameof(this.HasProject), nameof(this.HasProjectSettings), nameof(this.ProjectText), nameof(this.ProjectTip), nameof(this.Title) })
 			{
@@ -151,6 +190,52 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.CloseProjectCommand.NotifyCanExecuteChanged();
 			this.CreateProjectSettingsCommand.NotifyCanExecuteChanged();
 			_ = this._workspace.GuardAsync(this.AfterSettingsChangedAsync);
+		}
+
+		/// <summary>
+		/// The documents that are open belong to the project that was active until now: they are remembered for it before anything changes,
+		/// then the documents of the project that was opened are restored or offered. A reload of the settings of the same project does nothing.
+		/// </summary>
+		private void SwitchSession()
+		{
+			String? previous = this._sessionFolder;
+			String? current = this._projects.Folder;
+			if (String.Equals(previous, current, StringComparison.OrdinalIgnoreCase))
+			{
+				return;
+			}
+
+			if (previous is not null)
+			{
+				this._sessions.Capture(previous);
+			}
+
+			this._sessionFolder = current;
+			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectFile);
+			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectSession);
+			if (current is not null)
+			{
+				_ = this._workspace.GuardAsync(() => this.OfferProjectDocumentsAsync(current));
+			}
+		}
+
+		/// <summary>The project file was changed outside of the editor: a notice (never a dialog), or a warning with a link to the file when its content is not valid.</summary>
+		private void OnProjectFileChangedOnDisk(ProjectFileChangedEventArgs e)
+		{
+			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectFile);
+			switch (e.Kind)
+			{
+				case ProjectFileChangeKind.Modified:
+					this.Output.ReportStatus(Loc.Get("Str.Shell.Project.Reloaded"));
+					break;
+				case ProjectFileChangeKind.Deleted:
+					this.Output.ReportStatus(Loc.Format("Str.Shell.Project.FileDeleted", ProjectSettings.FileName));
+					break;
+				default:
+					this.Output.Problems.Report(ProblemFactory.ProjectFileInvalid(e.Path, e.Error ?? new ProjectFileError(String.Empty)));
+					this.Output.ReportStatus(Loc.Format("Str.Shell.Project.FileInvalid", ProjectSettings.FileName));
+					break;
+			}
 		}
 
 		/// <summary>A script was opened: when it belongs to a project other than the active one, a hint (not a dialog) offers to switch, once per project and session.</summary>

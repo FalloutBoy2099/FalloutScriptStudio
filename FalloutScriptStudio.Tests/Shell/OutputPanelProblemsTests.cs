@@ -417,6 +417,55 @@ namespace FalloutScriptStudio.Tests.Shell
 		}
 
 		[Fact]
+		public void The_list_is_empty_for_good_only_when_nothing_is_reported_at_all_not_when_the_filters_hide_it()
+		{
+			ShellStaRunner.Run(() =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				List<String> changed = new List<String>();
+				harness.Output.PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
+				Assert.True(harness.Output.HasNoProblems);
+
+				harness.Problems.Report(Tool("tool", ProblemSeverity.Warning));
+
+				Assert.False(harness.Output.HasNoProblems);
+				Assert.Contains(nameof(OutputPanelViewModel.HasNoProblems), changed);
+
+				harness.Output.ShowWarnings = false;
+				Assert.Empty(harness.Output.Errors);
+				Assert.False(harness.Output.HasNoProblems);
+
+				harness.Problems.Clear();
+				Assert.True(harness.Output.HasNoProblems);
+				return Task.CompletedTask;
+			});
+		}
+
+		[Fact]
+		public void A_restore_link_runs_the_handler_of_the_main_window_and_an_open_file_link_goes_to_the_file()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				List<String> restored = new List<String>();
+				harness.Output.RestoreDocumentsHandler = folder =>
+				{
+					restored.Add(folder);
+					return Task.CompletedTask;
+				};
+				String file = harness.Folder.Write("mod/fss-project.json", "{ }");
+				harness.Problems.Report(ProblemFactory.ProjectDocumentsAvailable(@"C:\mods\a", "A", 2));
+				harness.Problems.Report(ProblemFactory.ProjectFileInvalid(file, new FalloutScriptStudio.Core.Configuration.ProjectFileError("bad", 1, 1)));
+
+				await harness.Output.RunProblemActionAsync(harness.Output.Errors.Single(item => item.Action?.Kind == ProblemActionKind.RestoreDocuments));
+				await harness.Output.RunProblemActionAsync(harness.Output.Errors.Single(item => item.Action?.Kind == ProblemActionKind.OpenFile));
+
+				Assert.Equal(new[] { @"C:\mods\a" }, restored);
+				Assert.Equal(Path.GetFullPath(file), Assert.Single(harness.Workspace.Documents).FilePath);
+			});
+		}
+
+		[Fact]
 		public void Search_results_tabs_are_not_problems()
 		{
 			ShellStaRunner.Run(async () =>

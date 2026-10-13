@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">Ссылки на «{0}» не найдены.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Редактор скриптов</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Редактор скриптов, второе представление</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Выделить процедуру...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Удалить неиспользуемую процедуру...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Найти неиспользуемые переменные</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Удалить неиспользуемую переменную</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">{0} не найдено в проекте.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Переменная {0} объявлена, но не используется.</sys:String>
 </ResourceDictionary>

@@ -60,6 +60,8 @@
                                 <ui:SymbolIcon Symbol="Rename24" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <Separator />
+                        <MenuItem Command="{Binding PlacementTarget.Tag.FindUnusedCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" Header="{DynamicResource Str.Panels.MenuFindUnusedVariables}" />
                     </ContextMenu>
                 </Setter.Value>
             </Setter>

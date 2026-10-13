@@ -52,6 +52,10 @@ namespace FalloutScriptStudio.Editor
 			[EditorCommand.SelectWord] = Create("Str.Editor.Cmd.SelectWord", nameof(EditorCommand.SelectWord)),
 			[EditorCommand.DeleteToLineEnd] = Create("Str.Editor.Cmd.DeleteToLineEnd", nameof(EditorCommand.DeleteToLineEnd), new KeyGesture(Key.D, ModifierKeys.Control | ModifierKeys.Shift)),
 			[EditorCommand.GoToMatchingBracket] = Create("Str.Editor.Cmd.GoToMatchingBracket", nameof(EditorCommand.GoToMatchingBracket), new KeyGesture(Key.B, ModifierKeys.Control)),
+			[EditorCommand.ExtractProcedure] = Create("Str.Editor.Cmd.ExtractProcedure", nameof(EditorCommand.ExtractProcedure), new KeyGesture(Key.E, ModifierKeys.Control | ModifierKeys.Shift)),
+			[EditorCommand.DeleteUnusedProcedure] = Create("Str.Editor.Cmd.DeleteUnusedProcedure", nameof(EditorCommand.DeleteUnusedProcedure)),
+			[EditorCommand.FindUnusedVariables] = Create("Str.Editor.Cmd.FindUnusedVariables", nameof(EditorCommand.FindUnusedVariables)),
+			[EditorCommand.RemoveUnusedVariable] = Create("Str.Editor.Cmd.RemoveUnusedVariable", nameof(EditorCommand.RemoveUnusedVariable)),
 		};
 
 		static EditorCommands()

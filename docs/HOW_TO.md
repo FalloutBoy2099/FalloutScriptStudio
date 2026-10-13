@@ -249,7 +249,7 @@ shown in the Errors tab; do not report it only with a message box, the status ba
 
 1. **Model.** `FalloutScriptStudio\Problems\Problem.cs`: severity (`ProblemSeverity` Error / Warning / Info), source (`ProblemSource`
    Parse, Build, Tool, File, Settings, Message), a message key plus arguments (or the `Text` a tool wrote), an optional hint key, an
-   optional `ProblemAction` (`ProblemAction.OpenSettings(SettingsPage.X)`, `OpenFolder`, `SwitchProject`), file / line / column,
+   optional `ProblemAction` (`ProblemAction.OpenSettings(SettingsPage.X)`, `OpenFolder`, `SwitchProject`, `OpenFile`, `RestoreDocuments`), file / line / column,
    `Owner` (the document: the problem is dropped when it is re-parsed, recompiled, saved or closed) and `Origin`.
 2. **Origin.** If the producer must replace or remove its own problems when its situation changes, add a constant to
    `FalloutScriptStudio\Problems\ProblemOrigins.cs` and clear it with `IProblemService.ClearOrigin` (examples: `BuildTool` cleared when a
@@ -407,8 +407,14 @@ The chain for an option, traced on `ShortCircuit` (grep it to see every hop):
       `ToSettings()`.
    4. `FalloutScriptStudio\Views\ToolWindows\ProjectSettingsWindow.xaml`: a `SettingCard` with `local:OverrideModeBox`
       (`SelectedIndex="{Binding Foo.ModeIndex}"`) and the editing control bound to `Foo.Value` / enabled by `Foo.IsOverridden`; reuse the
-      `Str.ToolWindows.Opt.Foo.Title/Desc` keys of the global page.
-   5. `ProjectSettingsFile` (read / write, unknown properties kept) needs no change.
+      `Str.ToolWindows.Opt.Foo.Title/Desc` keys of the global page. Give the card `OptionId="Foo"`: the window scrolls to it when the link
+      "Edit project setting" of the Settings window points at it.
+   5. `FalloutScriptStudio.Core\Configuration\ProjectOptions.cs` and `ProjectSettings.GetOverriddenOptions()`: add the identifier
+      (the property name) and the line that tells the option has a value. In `FalloutScriptStudio\Views\ToolWindows\SettingsWindow.xaml` put
+      the same `OptionId="Foo"` on the card of the global option: the card then shows "Overridden by project X", dims its control and links to the
+      project settings by itself (`SettingsViewModel.ProjectOverrides.cs`). An option without a global control only needs the first part.
+   6. `ProjectSettingsFile` (read / write, unknown properties kept) needs no change; the file is watched and reloaded by itself
+      (`ProjectFileWatcher`), a new property needs nothing for that.
 7. **Interfaces.** A new member of `ISettingsService` also goes to `SettingsService` and the three test fakes (guide 2).
 
 Tests:
@@ -416,8 +422,11 @@ Tests:
 * `FalloutScriptStudio.Core.Tests\Compilation\CompilerCommandLineBuilderTests.cs` (the flag), `Configuration\SettingsModelsTests.cs`
   (`Projection_BuildsCompilerOptionsFromSettingsAndPaths`).
 * `FalloutScriptStudio.Core.Tests\Configuration\EffectiveSettingsTests.cs` (`EveryOverrideWins`,
-  `CompilerOptions_FollowTheProject_AndFallBackToTheGlobalValues`, `CreateFrom_CopiesTheValuesInEffect`), `ProjectSettingsFileTests.cs`
-  (file round trip), `ProjectServiceTests.cs`.
+  `CompilerOptions_FollowTheProject_AndFallBackToTheGlobalValues`, `CreateFrom_CopiesTheValuesInEffect`,
+  `GetOverriddenOptions_ListsEveryOptionWithAValueInTheProject`: add the option to its list), `ProjectSettingsFileTests.cs`
+  (file round trip), `ProjectServiceTests.cs`, `ProjectFileWatchTests.cs` (the watching, with the real file system).
+* `FalloutScriptStudio.Tests\ToolWindows\ProjectOverrideMarkupTests.cs` (`Every_option_that_has_a_global_control_is_marked_on_its_card_in_the_settings_window`
+  lists the options that have a global control: add yours) and `SettingsViewModelProjectOverrideTests.cs`.
 * `FalloutScriptStudio.Tests\ToolWindows\ProjectSettingsViewModelTests.cs` (inherit, override, save only the overridden options) and
   `Shell\MainViewModelProjectTests.cs` (`Effective` follows the project).
 * Parser option: `FalloutScriptStudio.Tests\Shell\IncludeSearchWorkspaceTests.cs` and `MainViewModelProjectTests.cs` call

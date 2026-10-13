@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Guardar</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Seleccionar todo</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Cambiar nombre</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Extraer procedimiento</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Extraer</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">Los parámetros son las variables que usan las instrucciones seleccionadas: {0}. Puedes cambiar su orden.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">Las instrucciones seleccionadas no usan ninguna variable del procedimiento, así que el nuevo procedimiento no tiene parámetros.</sys:String>
 </ResourceDictionary>

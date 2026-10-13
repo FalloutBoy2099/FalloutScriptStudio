@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Speichern</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">A_lles auswählen</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Umbenennen</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Prozedur extrahieren</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Extrahieren</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">Die Parameter sind die Variablen, die die markierten Anweisungen verwenden: {0}. Sie können ihre Reihenfolge ändern.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">Die markierten Anweisungen verwenden keine Variable der Prozedur, daher hat die neue Prozedur keinen Parameter.</sys:String>
 </ResourceDictionary>

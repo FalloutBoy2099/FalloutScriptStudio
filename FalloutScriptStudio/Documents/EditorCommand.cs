@@ -65,5 +65,17 @@ namespace FalloutScriptStudio.Documents
 
 		/// <summary>Collapse every procedure except the one that contains the caret and expand that one ("only procedure" mode; no routed command).</summary>
 		ShowOnlyCurrentProcedure,
+
+		/// <summary>Move the selected statements into a new procedure and replace them by a call (Ctrl+Shift+E).</summary>
+		ExtractProcedure,
+
+		/// <summary>Delete the procedure that contains the caret when nothing uses it.</summary>
+		DeleteUnusedProcedure,
+
+		/// <summary>List the variables of the script that are declared but never read or never used in the list of problems.</summary>
+		FindUnusedVariables,
+
+		/// <summary>Remove the declaration of the unused variable under the caret.</summary>
+		RemoveUnusedVariable,
 	}
 }

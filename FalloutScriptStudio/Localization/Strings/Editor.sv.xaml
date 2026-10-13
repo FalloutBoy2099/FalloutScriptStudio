@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">Inga referenser hittades för '{0}'.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Skriptredigerare</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Skriptredigerare, andra vyn</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Extrahera procedur...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Ta bort oanvänd procedur...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Hitta oanvända variabler</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Ta bort oanvänd variabel</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">{0} hittades inte i projektet.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Variabeln {0} är deklarerad men används aldrig.</sys:String>
 </ResourceDictionary>

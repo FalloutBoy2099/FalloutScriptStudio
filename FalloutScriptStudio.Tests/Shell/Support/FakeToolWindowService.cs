@@ -17,6 +17,18 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public List<String> Calls { get; } = new List<String>();
 
+		/// <summary>Gets or sets what the symbol list answers; it chooses nothing when it is <see langword="null"/>.</summary>
+		public Func<SymbolPickerRequest, FalloutScriptStudio.Core.Indexing.IndexedSymbol?>? SymbolAnswer { get; set; }
+
+		/// <summary>Gets the requests of the symbol list that were shown.</summary>
+		public List<SymbolPickerRequest> SymbolRequests { get; } = new List<SymbolPickerRequest>();
+
+		public Task<FalloutScriptStudio.Core.Indexing.IndexedSymbol?> PickSymbolAsync(SymbolPickerRequest request)
+		{
+			this.SymbolRequests.Add(request);
+			return Task.FromResult(this.SymbolAnswer?.Invoke(request));
+		}
+
 		/// <summary>Gets or sets a value indicating whether a mass compilation waits until its token is cancelled (like a batch window of hanging tools).</summary>
 		public Boolean BatchHangs { get; set; }
 

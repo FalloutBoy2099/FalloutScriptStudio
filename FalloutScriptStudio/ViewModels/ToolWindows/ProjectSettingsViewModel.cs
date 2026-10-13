@@ -31,6 +31,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		[ObservableProperty]
 		[NotifyPropertyChangedFor(nameof(IsEditable))]
+		[NotifyPropertyChangedFor(nameof(HasFile))]
 		[NotifyPropertyChangedFor(nameof(CanCreate))]
 		[NotifyPropertyChangedFor(nameof(IsMissing))]
 		[NotifyPropertyChangedFor(nameof(IsDamaged))]
@@ -61,6 +62,15 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets a value indicating whether the user saved the settings.</summary>
 		public Boolean Applied { get; private set; }
 
+		/// <summary>
+		/// Gets or sets the identifier of the option the window opens on (see <see cref="ProjectOptions"/>): the window scrolls to it and
+		/// puts the focus on it. <see langword="null"/> opens the window at the top.
+		/// </summary>
+		public String? FocusOptionId { get; set; }
+
+		/// <summary>Gets a value indicating whether the user asked to edit the project file in the editor; the window is closed without saving and the caller opens the file.</summary>
+		public Boolean OpenFileRequested { get; private set; }
+
 		/// <summary>Gets the folder of the project.</summary>
 		public String ProjectFolder => this._projects.Folder ?? String.Empty;
 
@@ -69,6 +79,12 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		/// <summary>Gets the name shown when the project has no name of its own: the name of its folder.</summary>
 		public String DefaultName => this._projects.Folder is { } folder ? (Path.GetFileName(folder).Length > 0 ? Path.GetFileName(folder) : folder) : String.Empty;
+
+		/// <summary>Gets the text of the button that opens the project file in the editor, in the current language.</summary>
+		public String OpenFileText => Loc.Format("Str.ToolWindows.Project.OpenFile", this.ProjectFilePath.Length > 0 ? Path.GetFileName(this.ProjectFilePath) : ProjectSettings.FileName);
+
+		/// <summary>Gets a value indicating whether the project has a settings file that can be opened in the editor.</summary>
+		public Boolean HasFile => this.FileStatus != ProjectFileStatus.Missing;
 
 		/// <summary>Gets a value indicating whether the options can be edited (the project has a settings file).</summary>
 		public Boolean IsEditable => this.FileStatus == ProjectFileStatus.Loaded;
@@ -203,6 +219,13 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			return result;
 		}
 
+		/// <inheritdoc/>
+		protected override void OnLanguageChanged()
+		{
+			base.OnLanguageChanged();
+			this.OnPropertyChanged(nameof(this.OpenFileText));
+		}
+
 		private static ProjectOption<String> TextOption(String? globalValue, String? projectValue)
 		{
 			return new ProjectOption<String>(globalValue ?? String.Empty, projectValue is not null, projectValue ?? String.Empty);
@@ -258,6 +281,22 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.SelectedMessagePath = null;
 		}
 
+		/// <summary>Reads the project file again (it may have been edited by hand); what was edited in the window and not saved is discarded.</summary>
+		[RelayCommand]
+		private void ReloadFromFile()
+		{
+			this._projects.Reload();
+			this.Load();
+		}
+
+		/// <summary>Closes the window without saving and asks the caller to open the project file in the editor.</summary>
+		[RelayCommand(CanExecute = nameof(HasFile))]
+		private void OpenProjectFile()
+		{
+			this.OpenFileRequested = true;
+			this.RequestClose(false);
+		}
+
 		[RelayCommand(CanExecute = nameof(CanCreate))]
 		private void CreateSettings()
 		{
@@ -290,6 +329,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		{
 			this.CreateSettingsCommand.NotifyCanExecuteChanged();
 			this.SaveCommand.NotifyCanExecuteChanged();
+			this.OpenProjectFileCommand.NotifyCanExecuteChanged();
 		}
 	}
 }

@@ -73,4 +73,6 @@
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtrovat...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Upravit kód uzlu</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Zobrazit jen cílovou proceduru: ostatní procedury se po výběru procedury sbalí</sys:String>
+    <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Odstranit nepoužívanou proceduru...</sys:String>
+    <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Najít nepoužívané proměnné</sys:String>
 </ResourceDictionary>

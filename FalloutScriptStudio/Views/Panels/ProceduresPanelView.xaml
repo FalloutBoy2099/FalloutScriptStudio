@@ -153,6 +153,11 @@
                                 <ui:SymbolIcon Symbol="Delete24" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.DeleteUnusedCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuDeleteUnusedProcedure}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanModify, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
                     </ContextMenu>
                 </Setter.Value>
             </Setter>

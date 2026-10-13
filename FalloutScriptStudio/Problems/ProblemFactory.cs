@@ -360,6 +360,78 @@ namespace FalloutScriptStudio.Problems
 			};
 		}
 
+		/// <summary>The project file was edited into something that is not valid: the last valid settings stay in effect.</summary>
+		/// <param name="path">The project file.</param>
+		/// <param name="error">Where and why the parser stopped.</param>
+		/// <returns>The problem.</returns>
+		public static Problem ProjectFileInvalid(String path, ProjectFileError error)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(path);
+			ArgumentNullException.ThrowIfNull(error);
+			Boolean hasPosition = error.Line > 0;
+			return new Problem
+			{
+				Severity = ProblemSeverity.Warning,
+				Source = ProblemSource.Settings,
+				MessageKey = KeyPrefix + (hasPosition ? "ProjectFileInvalid" : "ProjectFileInvalidNoPosition"),
+				MessageArguments = hasPosition ? new Object?[] { Path.GetFileName(path), error.Message, error.Line, Math.Max(error.Column, 1) } : new Object?[] { Path.GetFileName(path), error.Message },
+				HintKey = KeyPrefix + "ProjectFileInvalidHint",
+				Action = ProblemAction.OpenFile(path),
+				File = path,
+				Line = hasPosition ? error.Line : -1,
+				Column = hasPosition ? Math.Max(error.Column, 1) : -1,
+				Origin = ProblemOrigins.ProjectFile,
+			};
+		}
+
+		/// <summary>The project that was just opened had documents open when it was left: the hint offers to open them again (it never does so by itself when other documents are open).</summary>
+		/// <param name="projectFolder">The project folder.</param>
+		/// <param name="projectName">The name of the project.</param>
+		/// <param name="count">How many documents are remembered.</param>
+		/// <returns>The problem.</returns>
+		public static Problem ProjectDocumentsAvailable(String projectFolder, String projectName, Int32 count)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(projectFolder);
+			return new Problem
+			{
+				Severity = ProblemSeverity.Info,
+				Source = ProblemSource.Settings,
+				MessageKey = KeyPrefix + "ProjectDocumentsAvailable",
+				MessageArguments = new Object?[] { projectName, count },
+				HintKey = KeyPrefix + "ProjectDocumentsAvailableHint",
+				Action = ProblemAction.RestoreDocuments(projectFolder),
+				Origin = ProblemOrigins.ProjectSession,
+			};
+		}
+
+		/// <summary>A variable that is declared but never read, or never used at all, or an argument that is never used.</summary>
+		/// <param name="variable">The variable.</param>
+		/// <param name="file">The script, or <see langword="null"/> when it was never saved.</param>
+		/// <param name="owner">The document of the script.</param>
+		/// <returns>The problem: an information of the parser, whose action removes the declaration when that is safe.</returns>
+		public static Problem UnusedVariable(Core.Analysis.UnusedVariable variable, String? file, Object? owner)
+		{
+			ArgumentNullException.ThrowIfNull(variable);
+			String suffix = variable.Kind == Core.Analysis.VariableDeclarationKind.Parameter
+				? "UnusedParameter"
+				: variable.Status == Core.Analysis.UnusedVariableStatus.WriteOnly ? "VariableNeverRead" : "UnusedVariable";
+			return new Problem
+			{
+				Severity = ProblemSeverity.Info,
+				Source = ProblemSource.Parse,
+				MessageKey = KeyPrefix + suffix,
+				MessageArguments = new Object?[] { variable.Name, variable.ProcedureName ?? String.Empty },
+				HintKey = KeyPrefix + suffix + "Hint",
+				File = file,
+				Line = variable.Line,
+				Column = variable.Column,
+				Length = variable.Length,
+				Action = variable.CanRemove && file is not null ? ProblemAction.RemoveUnusedVariable(file, variable.Line, variable.Column) : null,
+				Owner = owner,
+				Origin = ProblemOrigins.UnusedVariables,
+			};
+		}
+
 		private static Boolean IsReadOnly(String path)
 		{
 			try

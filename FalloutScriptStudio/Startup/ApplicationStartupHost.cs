@@ -7,6 +7,7 @@ namespace FalloutScriptStudio.Startup
 	using FalloutScriptStudio.Editor;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services.MessageEditor;
+	using FalloutScriptStudio.ViewModels.Main;
 	using FalloutScriptStudio.Views.Editor;
 	using FalloutScriptStudio.Views.Shell;
 	using FalloutScriptStudio.Workspace;
@@ -73,6 +74,12 @@ namespace FalloutScriptStudio.Startup
 				}
 			}));
 			singleInstance.StartListening();
+			if (arguments.Length == 0)
+			{
+				// Without files on the command line the project of the last session gets its documents back.
+				await services.Provider.GetRequiredService<MainViewModel>().RestoreStartupProjectAsync();
+			}
+
 			await handler.HandleAsync(arguments);
 		}
 

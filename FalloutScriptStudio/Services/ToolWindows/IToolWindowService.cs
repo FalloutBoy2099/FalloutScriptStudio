@@ -38,6 +38,17 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <summary>
+		/// Shows the settings of the active project like <see cref="ShowProjectSettingsAsync()"/>, opened on one option (the link "Edit project
+		/// setting" of the Settings window).
+		/// </summary>
+		/// <param name="optionId">The option (see <c>ProjectOptions</c>) the window scrolls to.</param>
+		/// <returns><see langword="true"/> when the project settings were saved; <see langword="false"/> when the dialog was cancelled.</returns>
+		Task<Boolean> ShowProjectSettingsAsync(String optionId)
+		{
+			return this.ShowProjectSettingsAsync();
+		}
+
+		/// <summary>
 		/// Shows the About window modally.
 		/// </summary>
 		void ShowAbout();
@@ -82,5 +93,16 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		/// </param>
 		/// <returns>The full path of the chosen header, or <see langword="null"/> when cancelled, when only headers chosen with Ctrl were handled, or when the headers folder is not available (the user is told).</returns>
 		Task<String?> PickHeaderAsync(Func<String, Task>? chooseAndKeepOpen = null);
+
+		/// <summary>
+		/// Shows the list of the symbols of the project ("Go to symbol": a filter box and the best matches while the user types), or the
+		/// list of the places to choose from when a name is defined several times.
+		/// </summary>
+		/// <param name="request">What to show.</param>
+		/// <returns>The chosen symbol, or <see langword="null"/> when the list was cancelled. The default implementation chooses nothing.</returns>
+		Task<FalloutScriptStudio.Core.Indexing.IndexedSymbol?> PickSymbolAsync(SymbolPickerRequest request)
+		{
+			return Task.FromResult<FalloutScriptStudio.Core.Indexing.IndexedSymbol?>(null);
+		}
 	}
 }

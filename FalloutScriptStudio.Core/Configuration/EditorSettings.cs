@@ -67,6 +67,18 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets or sets a value indicating whether the last caret line of every script is remembered.</summary>
 		public Boolean StoreLastPosition { get; set; } = true;
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the documents that were open in a project when it was left are opened again when the
+		/// project is opened (at once when nothing is open, otherwise a hint offers it).
+		/// </summary>
+		public Boolean RestoreProjectDocuments { get; set; } = true;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the local variables that are declared but never used get a faint hint mark in the editor
+		/// (Code &gt; Find Unused Variables lists them whatever this option says).
+		/// </summary>
+		public Boolean ShowUnusedVariables { get; set; }
+
 		/// <summary>Gets or sets a value indicating whether scripts are saved as UTF-8.</summary>
 		public Boolean SaveScriptsAsUtf8 { get; set; }
 

@@ -32,6 +32,7 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Ctrl+Shift+F8` | Previous problem |
 | `Ctrl+Shift+S` | Save All |
 | `Ctrl+Shift+Tab` | Previous document |
+| `Ctrl+T` | Go to Symbol... |
 | `Ctrl+Tab` | Next document |
 | `Ctrl+W` | Close |
 | `F3` | Find Next |
@@ -62,6 +63,7 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Ctrl+F12` | Go to declaration |
 | `Ctrl+Shift+A` | Upper case |
 | `Ctrl+Shift+D` | Delete to end of line |
+| `Ctrl+Shift+E` | Extract Procedure... |
 | `Ctrl+Shift+W` | Capitalize |
 | `Ctrl+Shift+Z` | Lower case |
 | `Ctrl+Space` | Show completion list |
@@ -196,6 +198,15 @@ These keys are not bindings of a window: the controls themselves handle them. Th
 | Enter, Shift+Enter | Finds the next or the previous match; in the replace box, replaces |
 | Esc | Closes the search bar or the list |
 | Down | In the filter of the Go to procedure list, moves into the list |
+
+### Symbol list (Go to Symbol, and the choice between several definitions)
+
+| Key | Action |
+| --- | --- |
+| Type | Filters the procedures, macros and variables of the project while you type: a name that starts with the text comes first, then a word that starts with it, then any name that contains it; the case is ignored and several words must all match (the next words may also match the file name) |
+| Up, Down, Page Up, Page Down | Moves in the list while the filter box has the focus |
+| Enter | Opens the selected symbol in its file, at its line |
+| Esc | Closes the list |
 
 ### Message grid
 

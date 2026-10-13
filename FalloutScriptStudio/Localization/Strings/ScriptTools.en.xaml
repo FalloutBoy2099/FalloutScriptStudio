@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Save</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Select all</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Rename</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Extract procedure</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Extract</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">The parameters are the variables the selected statements use: {0}. You can change their order.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">The selected statements use no variable of the procedure, so the new procedure has no parameter.</sys:String>
 </ResourceDictionary>

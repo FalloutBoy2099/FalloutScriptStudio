@@ -3,8 +3,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+	using FalloutScriptStudio.Core.Analysis;
 	using FalloutScriptStudio.Core.Compilation;
 	using FalloutScriptStudio.Editor.Rendering;
+	using FalloutScriptStudio.Editor.Text;
+	using FalloutScriptStudio.Localization;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Rendering;
 
@@ -70,16 +73,37 @@ namespace FalloutScriptStudio.Editor.Controllers
 			this.InvalidateViews();
 		}
 
-		/// <summary>Rebuilds the marks from the parser errors of the document.</summary>
+		/// <summary>Rebuilds the marks from the parser errors of the document and, when asked for, from its unused variables.</summary>
 		public void Update()
 		{
 			this._renderer.Clear();
-			if (!this._context.Options.HighlightParseErrors)
+			if (this._context.Options.HighlightParseErrors)
 			{
-				this.InvalidateViews();
-				return;
+				this.AddParseMarkers();
 			}
 
+			if (this._context.Options.ShowUnusedVariables && this._context.IsScript)
+			{
+				this.AddUnusedMarkers();
+			}
+
+			this.InvalidateViews();
+		}
+
+		private void AddUnusedMarkers()
+		{
+			TextDocument document = this._context.Document;
+			foreach (UnusedVariable variable in UnusedVariableScan.Find(document.Text, this._context.ProgramInfo, false, false, false))
+			{
+				if (variable.Kind == VariableDeclarationKind.Local)
+				{
+					this._renderer.Add(new DiagnosticMarker(variable.Offset, variable.Length, MarkerSeverity.Unused, Loc.Format("Str.Editor.Hint.UnusedVariable", variable.Name)));
+				}
+			}
+		}
+
+		private void AddParseMarkers()
+		{
 			TextDocument document = this._context.Document;
 			String documentName = this._context.DocumentModel.FileName;
 			Boolean isMessage = this._context.IsMessage;
@@ -111,8 +135,6 @@ namespace FalloutScriptStudio.Editor.Controllers
 					this.AddMarker(document, note, MarkerSeverity.IncludeError);
 				}
 			}
-
-			this.InvalidateViews();
 		}
 
 		private void AddMarker(TextDocument document, BuildError error, MarkerSeverity severity)

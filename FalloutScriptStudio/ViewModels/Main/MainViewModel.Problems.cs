@@ -84,6 +84,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		{
 			this.Output.OpenSettingsHandler = this.OpenSettingsPageAsync;
 			this.Output.SwitchProjectHandler = this.SwitchProjectAsync;
+			this.Output.RestoreDocumentsHandler = this.RestoreProjectDocumentsAsync;
 			this._build.Operations.Changed += (_, _) => this.RaiseOperationChanged();
 			this.Output.PropertyChanged += this.OnOutputProblemsChanged;
 			_ = LanguageChangedSubscription.Subscribe(this, static viewModel => viewModel.RaiseProblemTexts());

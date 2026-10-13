@@ -88,6 +88,9 @@ namespace FalloutScriptStudio.ViewModels.Main
 		/// <summary>Gets or sets the function that makes a folder the active project (the link of the hint about the project of an opened script).</summary>
 		public Func<String, Task>? SwitchProjectHandler { get; set; }
 
+		/// <summary>Gets or sets the function that opens again the documents a project had open (the link of the hint offered when a project is opened).</summary>
+		public Func<String, Task>? RestoreDocumentsHandler { get; set; }
+
 		/// <summary>
 		/// Gets the tabs: Parser, Build and Errors (at the indexes of <see cref="OutputTab"/>), then one closable tab for every search
 		/// and every "find references".
@@ -160,15 +163,24 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 		/// <summary>Gets the number of errors, whatever the filters (for the toolbar and the status bar).</summary>
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasNoProblems))]
 		public partial Int32 ProblemErrorCount { get; private set; }
 
 		/// <summary>Gets the number of warnings, whatever the filters.</summary>
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasNoProblems))]
 		public partial Int32 ProblemWarningCount { get; private set; }
 
 		/// <summary>Gets the number of informations, whatever the filters.</summary>
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasNoProblems))]
 		public partial Int32 ProblemInfoCount { get; private set; }
+
+		/// <summary>
+		/// Gets a value indicating whether there is nothing to list at all (no parser or build entry, no problem), whatever the filters: the
+		/// Errors tab then shows a friendly "No problems" text instead of an empty grid. When the filters only hide the entries the grid stays.
+		/// </summary>
+		public Boolean HasNoProblems => this.ProblemErrorCount + this.ProblemWarningCount + this.ProblemInfoCount == 0;
 
 		/// <summary>Gets a value indicating whether the Errors tab is the selected tab.</summary>
 		public Boolean IsErrorsTabSelected => this.SelectedTab == (Int32)OutputTab.Errors;
@@ -309,6 +321,28 @@ namespace FalloutScriptStudio.ViewModels.Main
 					if (action.FolderPath is not null && this.SwitchProjectHandler is not null)
 					{
 						await this.SwitchProjectHandler(action.FolderPath);
+					}
+
+					break;
+				case ProblemActionKind.OpenFile:
+					if (action.FilePath is not null && this._workspace is not null)
+					{
+						ErrorItemViewModel? row = item ?? this.SelectedError;
+						await this._workspace.GoToAsync(action.FilePath, row?.Line ?? -1, row?.Error.Column ?? -1, row?.Error.Length ?? -1);
+					}
+
+					break;
+				case ProblemActionKind.RestoreDocuments:
+					if (action.FolderPath is not null && this.RestoreDocumentsHandler is not null)
+					{
+						await this.RestoreDocumentsHandler(action.FolderPath);
+					}
+
+					break;
+				case ProblemActionKind.RemoveUnusedVariable:
+					if (action.FilePath is not null && this._workspace is not null)
+					{
+						await this._workspace.RemoveUnusedVariableAsync(action.FilePath, action.Line, action.Column);
 					}
 
 					break;

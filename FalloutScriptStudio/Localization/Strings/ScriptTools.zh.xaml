@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">保存(_S)</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">全选(_S)</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">重命名(_R)</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">提取过程</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">提取</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">参数是所选语句使用的变量：{0}。您可以更改它们的顺序。</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">所选语句没有使用该过程的任何变量，因此新过程没有参数。</sys:String>
 </ResourceDictionary>

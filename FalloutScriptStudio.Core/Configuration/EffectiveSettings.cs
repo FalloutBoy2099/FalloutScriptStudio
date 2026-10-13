@@ -51,6 +51,36 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets the definitions the toolbar offers: the built-in ones, the global ones and the ones of the project.</summary>
 		public IReadOnlyList<String> DefineChoices { get; }
 
+		/// <summary>Gets the name of the active project (the name in its settings, otherwise the name of its folder), or an empty text when no project is open.</summary>
+		public String ProjectName
+		{
+			get
+			{
+				if (this.ProjectFolder is not { Length: > 0 } folder)
+				{
+					return String.Empty;
+				}
+
+				if (this.Project?.Name is { Length: > 0 } name)
+				{
+					return name;
+				}
+
+				String leaf = System.IO.Path.GetFileName(folder);
+				return leaf.Length > 0 ? leaf : folder;
+			}
+		}
+
+		/// <summary>
+		/// Lists the options the active project overrides, so that the Settings window can tell that the global value of an option is not in
+		/// effect while the project is open.
+		/// </summary>
+		/// <returns>The identifiers (see <see cref="ProjectOptions"/>); empty when no project is open or it overrides nothing.</returns>
+		public IReadOnlyList<String> GetOverriddenOptions()
+		{
+			return this.ProjectFolder is null || this.Project is null ? Array.Empty<String>() : this.Project.GetOverriddenOptions();
+		}
+
 		/// <summary>Creates the compiler options.</summary>
 		/// <param name="paths">The paths of the installation.</param>
 		/// <returns>The options.</returns>

@@ -106,12 +106,18 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			await this.RefreshScriptsOfMessageFileAsync(document.FilePath, document.Kind);
+			if (this._symbols is not null)
+			{
+				_ = this._symbols.NotifySavedAsync(document.FilePath, decoded.Text);
+			}
+
 			return true;
 		}
 
 		public async Task CheckExternalChangesAsync()
 		{
 			await this._externalChanges.CheckAsync(this.Documents, this.ReloadAsync);
+			this._symbols?.RequestRefresh(true);
 			if (this.ActiveDocument is { Kind: DocumentKind.Script, MessageFilePath: not null } script)
 			{
 				await this.RefreshMessageTextsAsync(script);
@@ -145,6 +151,11 @@ namespace FalloutScriptStudio.Workspace
 
 			// The kind of the target path counts, not the one the document had before "Save as".
 			await this.RefreshScriptsOfMessageFileAsync(path, DocumentViewModel.KindFromPath(path));
+			if (this._symbols is not null)
+			{
+				_ = this._symbols.NotifySavedAsync(path, document.TextDocument.Text);
+			}
+
 			return true;
 		}
 	}

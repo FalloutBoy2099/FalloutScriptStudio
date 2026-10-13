@@ -41,7 +41,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 			ServiceCollection services = new ServiceCollection();
 			FakeSettingsService settings = new FakeSettingsService(@"C:\fss");
 			services.AddSingleton<ISettingsService>(settings);
-			services.AddSingleton<IProjectService>(new ProjectService(settings, Microsoft.Extensions.Logging.Abstractions.NullLogger<ProjectService>.Instance));
+			services.AddSingleton<IProjectService>(new ProjectService(settings, Microsoft.Extensions.Logging.Abstractions.NullLogger<ProjectService>.Instance, ProjectFileWatchOptions.Disabled));
 			services.AddSingleton<IThemeService>(new FakeThemeService());
 			services.AddSingleton<IDialogService>(new FakeDialogService());
 			services.AddSingleton<IBatchCompileService>(new FakeBatchCompileService());

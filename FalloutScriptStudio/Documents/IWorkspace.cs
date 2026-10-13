@@ -97,5 +97,88 @@ namespace FalloutScriptStudio.Documents
 		{
 			this.ReportStatus(message);
 		}
+
+		/// <summary>
+		/// Determines whether the index of the project knows a procedure, macro or variable of that name (a cheap lookup, used to enable
+		/// the navigation commands). The default implementation knows nothing.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// <returns><see langword="true"/> when the project index holds a symbol of that name.</returns>
+		Boolean HasProjectSymbol(String name)
+		{
+			return false;
+		}
+
+		/// <summary>
+		/// Goes to the definition or declaration of a symbol, or lists its references, searching the whole project when the symbol is not
+		/// defined in the document or in the files it includes. Several candidates are offered in a list, the nearest first. The default
+		/// implementation does nothing.
+		/// </summary>
+		/// <param name="from">The document the symbol is used in.</param>
+		/// <param name="name">The name of the symbol.</param>
+		/// <param name="kind">What to look for.</param>
+		/// <returns>A task that completes when the navigation ended.</returns>
+		Task NavigateToProjectSymbolAsync(DocumentViewModel from, String name, ProjectNavigationKind kind)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Lists the references of a symbol in the whole project (the files that see its definition), together with the ones the parser
+		/// already found. The default implementation does nothing.
+		/// </summary>
+		/// <param name="from">The document the symbol is used in.</param>
+		/// <param name="symbol">The symbol found in the document or its includes.</param>
+		/// <param name="name">The name of the symbol.</param>
+		/// <returns>A task that completes when the references are shown.</returns>
+		Task ShowProjectReferencesAsync(DocumentViewModel from, IScriptSymbol symbol, String name)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Deletes a procedure that nothing uses, after showing what is removed and asking for confirmation; refuses when the procedure is
+		/// still used (the uses are listed) or is a handler the game calls. The default implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <param name="name">The name of the procedure.</param>
+		/// <returns><see langword="true"/> when the procedure was deleted.</returns>
+		Task<Boolean> DeleteUnusedProcedureAsync(DocumentViewModel document, String name)
+		{
+			return Task.FromResult(false);
+		}
+
+		/// <summary>
+		/// Lists the variables of a script that are declared but never read or never used in the list of problems. The default
+		/// implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <returns>The number of variables listed.</returns>
+		Task<Int32> FindUnusedVariablesAsync(DocumentViewModel document)
+		{
+			return Task.FromResult(0);
+		}
+
+		/// <summary>
+		/// Removes the declaration of an unused variable (the fix a problem of the list offers). The default implementation does nothing.
+		/// </summary>
+		/// <param name="file">The script; it is opened when needed.</param>
+		/// <param name="line">The 1-based line of the name of the variable.</param>
+		/// <param name="column">The 1-based column of the name of the variable.</param>
+		/// <returns>A task that completes when the declaration was removed.</returns>
+		Task RemoveUnusedVariableAsync(String file, Int32 line, Int32 column)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Extracts the selected statements of a script into a new procedure (Code &gt; Extract Procedure). The default implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <returns>A task that completes when the refactoring ended.</returns>
+		Task ExtractProcedureAsync(DocumentViewModel document)
+		{
+			return Task.CompletedTask;
+		}
 	}
 }

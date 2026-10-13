@@ -282,6 +282,91 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		}
 
 		[Fact]
+		public void GetOverriddenOptions_IsEmptyWithoutAProjectOrWithoutOverrides()
+		{
+			AppSettings global = CreateGlobal();
+
+			Assert.Empty(Create(global, null).GetOverriddenOptions());
+			Assert.Empty(Create(global, new ProjectSettings { Name = "Only a name" }).GetOverriddenOptions());
+			Assert.Empty(new EffectiveSettings(global, new PreprocessorDefines(), null, new ProjectSettings { Optimization = OptimizationLevel.Full }).GetOverriddenOptions());
+		}
+
+		[Fact]
+		public void GetOverriddenOptions_ListsEveryOptionWithAValueInTheProject()
+		{
+			ProjectSettings project = new ProjectSettings
+			{
+				HeadersDirectory = @"C:\project\headers",
+				ScriptsHeaderFile = String.Empty,
+				OutputDirectory = @"C:\project\out",
+				CompileToSourceDirectory = false,
+				SearchIncludePath = false,
+				Preprocessor = PreprocessorKind.Watcom,
+				PreprocessorDefine = String.Empty,
+				Defines = new List<String> { "MODDEF" },
+				Optimization = OptimizationLevel.Full,
+				ShortCircuit = true,
+				BackwardCompatibility = true,
+				ShowWarnings = false,
+				DebugInfo = false,
+				MessageSearchDirectories = new List<String>(),
+				ScriptsListFile = @"C:\project\scripts.lst",
+			};
+
+			IReadOnlyList<String> options = Create(CreateGlobal(), project).GetOverriddenOptions();
+
+			Assert.Equal(
+				new[]
+				{
+					ProjectOptions.HeadersDirectory,
+					ProjectOptions.ScriptsHeaderFile,
+					ProjectOptions.OutputDirectory,
+					ProjectOptions.CompileToSourceDirectory,
+					ProjectOptions.SearchIncludePath,
+					ProjectOptions.Preprocessor,
+					ProjectOptions.PreprocessorDefine,
+					ProjectOptions.Defines,
+					ProjectOptions.Optimization,
+					ProjectOptions.ShortCircuit,
+					ProjectOptions.BackwardCompatibility,
+					ProjectOptions.ShowWarnings,
+					ProjectOptions.DebugInfo,
+					ProjectOptions.MessageSearchDirectories,
+					ProjectOptions.ScriptsListFile,
+				},
+				options);
+		}
+
+		[Fact]
+		public void GetOverriddenOptions_OnlyNamesTheOptionsTheProjectSets()
+		{
+			ProjectSettings project = new ProjectSettings { Optimization = OptimizationLevel.Full, OutputDirectory = @"C:\project\out" };
+
+			Assert.Equal(new[] { ProjectOptions.OutputDirectory, ProjectOptions.Optimization }, Create(CreateGlobal(), project).GetOverriddenOptions());
+		}
+
+		[Fact]
+		public void TheOptionIdentifiersAreTheNamesOfTheProjectSettingsProperties()
+		{
+			String[] constants = typeof(ProjectOptions).GetFields().Where(field => field.IsLiteral).Select(field => (String)field.GetRawConstantValue()!).ToArray();
+			String[] properties = typeof(ProjectSettings).GetProperties().Select(property => property.Name).ToArray();
+
+			Assert.All(constants, id => Assert.Contains(id, properties));
+			Assert.Equal(constants.Length, constants.Distinct(StringComparer.Ordinal).Count());
+		}
+
+		[Fact]
+		public void ProjectName_IsTheNameOfTheProjectOrOfItsFolder()
+		{
+			AppSettings global = CreateGlobal();
+
+			Assert.Equal(String.Empty, new EffectiveSettings(global, new PreprocessorDefines()).ProjectName);
+			Assert.Equal("project", Create(global, new ProjectSettings()).ProjectName);
+			Assert.Equal("Great Mod", Create(global, new ProjectSettings { Name = "Great Mod" }).ProjectName);
+			Assert.Equal("mod", new EffectiveSettings(global, new PreprocessorDefines(), @"C:\games\mod").ProjectName);
+		}
+
+		[Fact]
 		public void TheSettingsServiceHandsOutTheEffectiveSettingsOfTheActiveProject()
 		{
 			using TestFolder root = new TestFolder("effective-service");

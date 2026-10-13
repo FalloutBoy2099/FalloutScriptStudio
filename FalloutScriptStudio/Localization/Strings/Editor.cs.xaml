@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">Nebyly nalezeny žádné odkazy na „{0}“.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Editor skriptu</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Editor skriptu, druhé zobrazení</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Extrahovat proceduru...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Odstranit nepoužívanou proceduru...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Najít nepoužívané proměnné</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Odebrat nepoužívanou proměnnou</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">{0} nebylo v projektu nalezeno.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Proměnná {0} je deklarována, ale nikdy se nepoužívá.</sys:String>
 </ResourceDictionary>

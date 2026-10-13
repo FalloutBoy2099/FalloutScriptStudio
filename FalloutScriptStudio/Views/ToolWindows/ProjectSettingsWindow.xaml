@@ -172,7 +172,20 @@
                         Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" />
                 </local:SettingCard>
                 <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Folder.Title}" Description="{Binding ProjectFolder}" />
-                <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.File.Title}" Description="{Binding ProjectFilePath}" />
+                <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.File.Title}" Description="{Binding ProjectFilePath}">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button
+                            Command="{Binding ReloadFromFileCommand}"
+                            Content="{DynamicResource Str.ToolWindows.Project.Reload}"
+                            FontSize="12"
+                            ToolTip="{DynamicResource Str.ToolWindows.Project.Reload.Tip}" />
+                        <ui:Button
+                            Margin="8,0,0,0"
+                            Command="{Binding OpenProjectFileCommand}"
+                            Content="{Binding OpenFileText}"
+                            ToolTip="{DynamicResource Str.ToolWindows.Project.OpenFile.Tip}" />
+                    </StackPanel>
+                </local:SettingCard>
 
                 <Border
                     Margin="0,0,0,6"
@@ -207,7 +220,10 @@
 
                 <StackPanel IsEnabled="{Binding IsEditable}">
                     <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Page.Paths}" />
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.HeadersDir.Desc}"
+                        OptionId="HeadersDirectory">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding HeadersDirectory.ModeIndex}" />
                             <ui:TextBox
@@ -223,7 +239,10 @@
                                 ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.ScriptsH.Desc}"
+                        OptionId="ScriptsHeaderFile">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding ScriptsHeaderFile.ModeIndex}" />
                             <ui:TextBox
@@ -239,7 +258,10 @@
                                 ToolTip="{DynamicResource Str.ToolWindows.Tip.SelectFile}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.OutputDir.Title}" Description="{DynamicResource Str.ToolWindows.Opt.OutputDir.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.OutputDir.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.OutputDir.Desc}"
+                        OptionId="OutputDirectory">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding OutputDirectory.ModeIndex}" />
                             <ui:TextBox
@@ -255,7 +277,10 @@
                                 ToolTip="{DynamicResource Str.ToolWindows.Tip.ChangeFolder}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Title}" Description="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Project.Opt.ScriptsList.Desc}"
+                        OptionId="ScriptsListFile">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding ScriptsListFile.ModeIndex}" />
                             <ui:TextBox
@@ -273,7 +298,10 @@
                     </local:SettingCard>
 
                     <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Page.Compiler}" />
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.Preprocessor.Desc}"
+                        OptionId="Preprocessor">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding Preprocessor.ModeIndex}" />
                             <ComboBox
@@ -287,7 +315,10 @@
                             </ComboBox>
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.Optimization.Desc}"
+                        OptionId="Optimization">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding Optimization.ModeIndex}" />
                             <ComboBox
@@ -302,7 +333,10 @@
                             </ComboBox>
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.CompilerWarnings.Desc}"
+                        OptionId="ShowWarnings">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding ShowWarnings.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -311,7 +345,10 @@
                                 Style="{StaticResource OptionToggle}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.Debug.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.Debug.Desc}"
+                        OptionId="DebugInfo">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding DebugInfo.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -320,7 +357,10 @@
                                 Style="{StaticResource OptionToggle}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Desc}"
+                        OptionId="ShortCircuit">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding ShortCircuit.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -329,7 +369,10 @@
                                 Style="{StaticResource OptionToggle}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.Backward.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.Backward.Desc}"
+                        OptionId="BackwardCompatibility">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding BackwardCompatibility.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -338,7 +381,10 @@
                                 Style="{StaticResource OptionToggle}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}" Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.SearchIncludes.Desc}"
+                        OptionId="SearchIncludePath">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding SearchIncludePath.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -347,7 +393,10 @@
                                 Style="{StaticResource OptionToggle}" />
                         </StackPanel>
                     </local:SettingCard>
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.CompileNextToSource.Desc}"
+                        OptionId="CompileToSourceDirectory">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding CompileToSourceDirectory.ModeIndex}" />
                             <ui:ToggleSwitch
@@ -358,7 +407,10 @@
                     </local:SettingCard>
 
                     <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.PreprocessorDefines}" />
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Project.Opt.Define.Title}" Description="{DynamicResource Str.ToolWindows.Project.Opt.Define.Desc}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Project.Opt.Define.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Project.Opt.Define.Desc}"
+                        OptionId="PreprocessorDefine">
                         <StackPanel Orientation="Horizontal">
                             <local:OverrideModeBox SelectedIndex="{Binding SelectedDefine.ModeIndex}" />
                             <ComboBox
@@ -380,7 +432,8 @@
                         Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
-                        CornerRadius="4">
+                        CornerRadius="4"
+                        Tag="Defines">
                         <StackPanel>
                             <TextBlock Style="{StaticResource HelpText}" Text="{DynamicResource Str.ToolWindows.Project.Defines.Help}" />
                             <Grid Margin="0,10,0,0">
@@ -421,7 +474,10 @@
                     </Border>
 
                     <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.MessagePaths}" />
-                    <local:SettingCard Title="{DynamicResource Str.ToolWindows.Section.MessagePaths}" Description="{DynamicResource Str.ToolWindows.Project.MessagePaths.Help}">
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Section.MessagePaths}"
+                        Description="{DynamicResource Str.ToolWindows.Project.MessagePaths.Help}"
+                        OptionId="MessageSearchDirectories">
                         <local:OverrideModeBox SelectedIndex="{Binding MessagePathsMode.ModeIndex}" />
                     </local:SettingCard>
                     <Border

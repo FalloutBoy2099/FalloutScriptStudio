@@ -34,6 +34,7 @@ namespace FalloutScriptStudio.Editor
 			this.WarningUnderline = Freeze(theme.IsDark ? "Orange" : "DarkOrange");
 			this.MessageUnderline = Freeze(theme.IsDark ? "LimeGreen" : "ForestGreen");
 			this.IncludeErrorUnderline = Freeze(theme.IsDark ? "Lime" : "Blue");
+			this.UnusedUnderline = Freeze(theme.Foreground, 0x90);
 			this.IncludeHighlight = Freeze(theme.IsDark ? "DarkSlateGray" : "Beige");
 			this.ProcedureName = Freeze(theme.ProcedureName);
 		}
@@ -83,6 +84,9 @@ namespace FalloutScriptStudio.Editor
 		public Brush WarningUnderline { get; }
 
 		public Brush MessageUnderline { get; }
+
+		/// <summary>Gets the faint dotted underline of a local variable that is never used.</summary>
+		public Brush UnusedUnderline { get; }
 
 		/// <summary>Gets the underline of an error that comes from an included header (legacy <c>HighlightIncludeError</c>).</summary>
 		public Brush IncludeErrorUnderline { get; }

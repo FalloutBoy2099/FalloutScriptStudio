@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Spara</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Markera alla</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Byt namn</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Extrahera procedur</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Extrahera</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">Parametrarna är de variabler som de markerade satserna använder: {0}. Du kan ändra deras ordning.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">De markerade satserna använder ingen variabel i proceduren, så den nya proceduren har inga parametrar.</sys:String>
 </ResourceDictionary>

@@ -45,6 +45,9 @@ namespace FalloutScriptStudio.Editor
 		/// <summary>Gets a value indicating whether parser errors are underlined.</summary>
 		public Boolean HighlightParseErrors { get; init; } = true;
 
+		/// <summary>Gets a value indicating whether local variables that are never used get a faint hint mark.</summary>
+		public Boolean ShowUnusedVariables { get; init; }
+
 		/// <summary>Creates the snapshot from the persisted settings.</summary>
 		/// <param name="settings">The editor settings.</param>
 		/// <param name="showLineNumbers">Whether line numbers are shown (a view option that is not persisted in the settings).</param>
@@ -67,6 +70,7 @@ namespace FalloutScriptStudio.Editor
 				FontSizeAdjustment = settings.FontSizeAdjustment,
 				ShowLineNumbers = showLineNumbers,
 				HighlightParseErrors = highlightParseErrors,
+				ShowUnusedVariables = settings.ShowUnusedVariables,
 			};
 		}
 	}

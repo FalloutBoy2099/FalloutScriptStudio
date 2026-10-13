@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">Keine Verweise für „{0}“ gefunden.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Skripteditor</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Skripteditor, zweite Ansicht</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Prozedur extrahieren...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Nicht verwendete Prozedur löschen...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Nicht verwendete Variablen suchen</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Nicht verwendete Variable entfernen</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">{0} wurde im Projekt nicht gefunden.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Die Variable {0} ist deklariert, wird aber nie verwendet.</sys:String>
 </ResourceDictionary>

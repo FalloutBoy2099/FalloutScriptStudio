@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">Nie znaleziono odwołań do „{0}”.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Edytor skryptów</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Edytor skryptów, drugi widok</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Wyodrębnij procedurę...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Usuń nieużywaną procedurę...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Znajdź nieużywane zmienne</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Usuń nieużywaną zmienną</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">Nie znaleziono {0} w projekcie.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Zmienna {0} jest zadeklarowana, ale nigdy nie jest używana.</sys:String>
 </ResourceDictionary>

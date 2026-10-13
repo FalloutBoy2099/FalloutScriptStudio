@@ -92,14 +92,27 @@ namespace FalloutScriptStudio.Editor.Rendering
 					MarkerSeverity.Error => this._palette.ErrorUnderline,
 					MarkerSeverity.Warning => this._palette.WarningUnderline,
 					MarkerSeverity.IncludeError => this._palette.IncludeErrorUnderline,
+					MarkerSeverity.Unused => this._palette.UnusedUnderline,
 					_ => this._palette.MessageUnderline,
 				};
 				Pen pen = new Pen(brush, 1);
+				if (marker.Severity == MarkerSeverity.Unused)
+				{
+					pen.DashStyle = new DashStyle(new Double[] { 1, 2 }, 0);
+				}
+
 				pen.Freeze();
 
 				foreach (Rect rect in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
 				{
-					DrawWave(drawingContext, pen, rect);
+					if (marker.Severity == MarkerSeverity.Unused)
+					{
+						drawingContext.DrawLine(pen, new Point(rect.Left, rect.Bottom - 1), new Point(rect.Right, rect.Bottom - 1));
+					}
+					else
+					{
+						DrawWave(drawingContext, pen, rect);
+					}
 				}
 			}
 		}

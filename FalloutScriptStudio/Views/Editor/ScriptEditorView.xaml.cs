@@ -291,6 +291,10 @@ namespace FalloutScriptStudio.Views.Editor
 			menu.Items.Add(this.CreateItem(EditorCommand.GoToDefinition, SymbolRegular.Code24));
 			menu.Items.Add(this.CreateItem(EditorCommand.FindReferences, SymbolRegular.SearchSquare24));
 			menu.Items.Add(new Separator());
+			menu.Items.Add(this.CreateItem(EditorCommand.ExtractProcedure, SymbolRegular.DocumentTextExtract24));
+			menu.Items.Add(this.CreateItem(EditorCommand.RemoveUnusedVariable, SymbolRegular.TagDismiss24));
+			menu.Items.Add(this.CreateItem(EditorCommand.DeleteUnusedProcedure, SymbolRegular.Delete24));
+			menu.Items.Add(new Separator());
 			menu.Items.Add(this.CreateItem(EditorCommand.OpenInclude, SymbolRegular.FolderOpen24));
 			menu.Items.Add(new Separator());
 			menu.Items.Add(this.CreateItem(EditorCommand.ConvertHexDec, SymbolRegular.NumberSymbol24));

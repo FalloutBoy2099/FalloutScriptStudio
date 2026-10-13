@@ -33,6 +33,20 @@ namespace FalloutScriptStudio.Views.ToolWindows
 			typeof(SettingCard),
 			new PropertyMetadata(String.Empty));
 
+		/// <summary>Identifies the <see cref="OptionId"/> property.</summary>
+		public static readonly DependencyProperty OptionIdProperty = DependencyProperty.Register(
+			nameof(OptionId),
+			typeof(String),
+			typeof(SettingCard),
+			new PropertyMetadata(String.Empty));
+
+		/// <summary>Identifies the <see cref="IsOverridden"/> property.</summary>
+		public static readonly DependencyProperty IsOverriddenProperty = DependencyProperty.Register(
+			nameof(IsOverridden),
+			typeof(Boolean),
+			typeof(SettingCard),
+			new PropertyMetadata(false));
+
 		private FrameworkElement? _titleElement;
 
 		/// <summary>Gets or sets the title of the setting.</summary>
@@ -47,6 +61,23 @@ namespace FalloutScriptStudio.Views.ToolWindows
 		{
 			get => (String)this.GetValue(DescriptionProperty);
 			set => this.SetValue(DescriptionProperty, value);
+		}
+
+		/// <summary>
+		/// Gets or sets the identifier of the option the card edits (see <c>ProjectOptions</c>): the Settings window uses it to tell that the
+		/// open project overrides the option, and the project settings window to scroll to the option a link points to.
+		/// </summary>
+		public String OptionId
+		{
+			get => (String)this.GetValue(OptionIdProperty);
+			set => this.SetValue(OptionIdProperty, value);
+		}
+
+		/// <summary>Gets or sets a value indicating whether the open project overrides the option, so that the value of the card is not in effect.</summary>
+		public Boolean IsOverridden
+		{
+			get => (Boolean)this.GetValue(IsOverriddenProperty);
+			set => this.SetValue(IsOverriddenProperty, value);
 		}
 
 		/// <inheritdoc/>

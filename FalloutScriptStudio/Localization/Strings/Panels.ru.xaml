@@ -73,4 +73,6 @@
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Фильтр...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Редактировать код узла</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Показывать только выбранную процедуру: при переходе к процедуре остальные сворачиваются</sys:String>
+    <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Удалить неиспользуемую процедуру...</sys:String>
+    <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Найти неиспользуемые переменные</sys:String>
 </ResourceDictionary>

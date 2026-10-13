@@ -15,6 +15,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 	{
 		private readonly TestFolder _root = new TestFolder("project-service");
 		private readonly SettingsService _settings;
+		private readonly List<ProjectService> _services = new List<ProjectService>();
 
 		public ProjectServiceTests()
 		{
@@ -27,13 +28,20 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 
 		public void Dispose()
 		{
+			foreach (ProjectService service in this._services)
+			{
+				service.Dispose();
+			}
+
 			this._settings.Dispose();
 			this._root.Dispose();
 		}
 
 		private ProjectService CreateService()
 		{
-			return new ProjectService(this._settings, NullLogger<ProjectService>.Instance);
+			ProjectService service = new ProjectService(this._settings, NullLogger<ProjectService>.Instance, ProjectFileWatchOptions.Disabled);
+			this._services.Add(service);
+			return service;
 		}
 
 		private String MakeFolder(String name, String? projectFile = null)
@@ -352,7 +360,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 				new LegacySettingsImporter(NullLogger<LegacySettingsImporter>.Instance),
 				NullLogger<SettingsService>.Instance);
 			reloaded.Load();
-			ProjectService service = new ProjectService(reloaded, NullLogger<ProjectService>.Instance);
+			using ProjectService service = new ProjectService(reloaded, NullLogger<ProjectService>.Instance, ProjectFileWatchOptions.Disabled);
 
 			Assert.Contains(folder, service.RecentProjects);
 			Assert.Equal(folder, service.Folder);

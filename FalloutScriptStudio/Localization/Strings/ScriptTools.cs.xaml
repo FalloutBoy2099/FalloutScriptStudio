@@ -221,4 +221,8 @@
     <sys:String x:Key="Str.ScriptTools.RegBtnSave">_Uložit</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnSelectAll">_Vybrat vše</sys:String>
     <sys:String x:Key="Str.ScriptTools.MacroBtnRename">_Přejmenovat</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcTitleExtract">Extrahovat proceduru</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcOkExtract">Extrahovat</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtract">Parametry jsou proměnné, které vybrané příkazy používají: {0}. Jejich pořadí můžete změnit.</sys:String>
+    <sys:String x:Key="Str.ScriptTools.ProcHintExtractNone">Vybrané příkazy nepoužívají žádnou proměnnou procedury, takže nová procedura nemá žádný parametr.</sys:String>
 </ResourceDictionary>

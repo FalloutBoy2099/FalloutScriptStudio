@@ -38,6 +38,8 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IScriptToolService _scriptTools;
 		private readonly ILogger _logger;
 		private readonly IProblemService _problems;
+		private readonly ProjectSymbolService? _symbols;
+		private readonly CodeIntelligenceOperations? _intelligence;
 
 		private DocumentViewModel? _active;
 		private DocumentViewModel? _previousActive;
@@ -58,7 +60,9 @@ namespace FalloutScriptStudio.Workspace
 			ReferenceResultsPresenter references,
 			IScriptToolService scriptTools,
 			ILogger<WorkspaceService>? logger = null,
-			IProblemService? problems = null)
+			IProblemService? problems = null,
+			ProjectSymbolService? symbols = null,
+			CodeIntelligenceOperations? intelligence = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(parser);
@@ -89,6 +93,9 @@ namespace FalloutScriptStudio.Workspace
 			this._logger = logger ?? NullLogger<WorkspaceService>.Instance;
 			this._problems = problems ?? new ProblemService();
 			this._parser.Parsed += (_, document) => this.DocumentParsed?.Invoke(this, document);
+			this._symbols = symbols;
+			this._intelligence = intelligence;
+			this._symbols?.Attach(this);
 		}
 
 		public event EventHandler? ActiveDocumentChanged;

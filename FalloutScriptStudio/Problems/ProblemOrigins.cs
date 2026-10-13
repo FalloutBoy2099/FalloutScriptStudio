@@ -25,5 +25,14 @@ namespace FalloutScriptStudio.Problems
 
 		/// <summary>The offer to switch to the project of a script that was opened: cleared when the project changes.</summary>
 		public const String ProjectDetection = "project-detection";
+
+		/// <summary>The project file (<c>fss-project.json</c>) that was edited into something invalid: cleared when a valid content is read or the project changes.</summary>
+		public const String ProjectFile = "project-file";
+
+		/// <summary>The offer to open again the documents a project had open: cleared when they are restored or the project changes.</summary>
+		public const String ProjectSession = "project-session";
+
+		/// <summary>The unused variables listed by Code &gt; Find Unused Variables: replaced by the next run, dropped when the script is parsed again.</summary>
+		public const String UnusedVariables = "unused-variables";
 	}
 }

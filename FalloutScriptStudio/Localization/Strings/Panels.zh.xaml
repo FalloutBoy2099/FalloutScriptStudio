@@ -73,4 +73,6 @@
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">筛选...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">编辑节点代码</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">仅显示所跳转的过程：选择过程时其他过程将被折叠</sys:String>
+    <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">删除未使用的过程...</sys:String>
+    <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">查找未使用的变量</sys:String>
 </ResourceDictionary>

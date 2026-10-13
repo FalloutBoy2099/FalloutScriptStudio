@@ -12,6 +12,12 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	{
 		public ProcedureNameResult? ProcedureAnswer { get; set; }
 
+		/// <summary>Gets the answers given one after the other before <see cref="ProcedureAnswer"/> is used.</summary>
+		public Queue<ProcedureNameResult?> ProcedureAnswers { get; } = new Queue<ProcedureNameResult?>();
+
+		/// <summary>Gets every request of the procedure prompt.</summary>
+		public List<ProcedureNameRequest> Requests { get; } = new List<ProcedureNameRequest>();
+
 		public ProcedureNameRequest? LastRequest { get; private set; }
 
 		public List<String> Calls { get; } = new List<String>();
@@ -24,7 +30,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		public Task<ProcedureNameResult?> PromptProcedureAsync(ProcedureNameRequest request)
 		{
 			this.LastRequest = request;
-			return Task.FromResult(this.ProcedureAnswer);
+			this.Requests.Add(request);
+			return Task.FromResult(this.ProcedureAnswers.Count > 0 ? this.ProcedureAnswers.Dequeue() : this.ProcedureAnswer);
 		}
 
 		public Task ShowRegisterScriptAsync(DocumentViewModel? script)

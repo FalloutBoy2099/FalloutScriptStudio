@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">No references found for '{0}'.</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">Script editor</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">Script editor, second view</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">Extract Procedure...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">Delete Unused Procedure...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">Find Unused Variables</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">Remove Unused Variable</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">{0} was not found in the project.</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">Variable {0} is declared but never used.</sys:String>
 </ResourceDictionary>

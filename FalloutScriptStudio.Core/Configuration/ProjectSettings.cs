@@ -109,6 +109,41 @@ namespace FalloutScriptStudio.Core.Configuration
 		}
 
 		/// <summary>
+		/// Lists the options this project overrides: those with a value in the file (an empty text for a path is a value: "not set"), and
+		/// <see cref="ProjectOptions.Defines"/> when the project adds definitions.
+		/// </summary>
+		/// <returns>The identifiers (see <see cref="ProjectOptions"/>), in a stable order.</returns>
+		public IReadOnlyList<String> GetOverriddenOptions()
+		{
+			List<String> options = new List<String>();
+
+			void Add(String id, Boolean overridden)
+			{
+				if (overridden)
+				{
+					options.Add(id);
+				}
+			}
+
+			Add(ProjectOptions.HeadersDirectory, this.HeadersDirectory is not null);
+			Add(ProjectOptions.ScriptsHeaderFile, this.ScriptsHeaderFile is not null);
+			Add(ProjectOptions.OutputDirectory, this.OutputDirectory is not null);
+			Add(ProjectOptions.CompileToSourceDirectory, this.CompileToSourceDirectory.HasValue);
+			Add(ProjectOptions.SearchIncludePath, this.SearchIncludePath.HasValue);
+			Add(ProjectOptions.Preprocessor, this.Preprocessor.HasValue);
+			Add(ProjectOptions.PreprocessorDefine, this.PreprocessorDefine is not null);
+			Add(ProjectOptions.Defines, this.Defines is { Count: > 0 });
+			Add(ProjectOptions.Optimization, this.Optimization.HasValue);
+			Add(ProjectOptions.ShortCircuit, this.ShortCircuit.HasValue);
+			Add(ProjectOptions.BackwardCompatibility, this.BackwardCompatibility.HasValue);
+			Add(ProjectOptions.ShowWarnings, this.ShowWarnings.HasValue);
+			Add(ProjectOptions.DebugInfo, this.DebugInfo.HasValue);
+			Add(ProjectOptions.MessageSearchDirectories, this.MessageSearchDirectories is not null);
+			Add(ProjectOptions.ScriptsListFile, this.ScriptsListFile is not null);
+			return options;
+		}
+
+		/// <summary>
 		/// Creates a deep copy.
 		/// </summary>
 		/// <returns>The copy.</returns>

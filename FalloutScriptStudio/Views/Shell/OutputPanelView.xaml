@@ -35,185 +35,219 @@
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ErrorsTabViewModel}">
-            <DataGrid
-                AutoGenerateColumns="False"
-                AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabErrors}"
-                Background="Transparent"
-                BorderThickness="0"
-                CanUserAddRows="False"
-                CanUserResizeRows="False"
-                ColumnHeaderHeight="22"
-                ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
-                FontSize="12"
-                GridLinesVisibility="None"
-                HeadersVisibility="Column"
-                IsReadOnly="True"
-                ItemsSource="{Binding Output.Errors}"
-                MinRowHeight="22"
-                MouseDoubleClick="OnErrorsDoubleClick"
-                PreviewKeyDown="OnErrorsKeyDown"
-                RowHeaderWidth="0"
-                RowHeight="22"
-                SelectedItem="{Binding Output.SelectedError, Mode=TwoWay}"
-                SelectionMode="Single">
-                <DataGrid.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    Height="20"
-                                    Margin="8,2,0,0"
-                                    FontSize="12"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                    Text="{Binding Name}" />
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                        <GroupStyle.ContainerStyle>
-                            <Style TargetType="{x:Type GroupItem}">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="{x:Type GroupItem}">
-                                            <StackPanel>
-                                                <ContentPresenter />
-                                                <ItemsPresenter />
-                                            </StackPanel>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </GroupStyle.ContainerStyle>
-                    </GroupStyle>
-                </DataGrid.GroupStyle>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn
-                        Width="30"
-                        MinWidth="30"
-                        SortMemberPath="TypeText">
-                        <DataGridTemplateColumn.Header>
-                            <TextBlock
-                                AutomationProperties.Name="{DynamicResource Str.Common.Type}"
-                                Text=" "
-                                ToolTip="{DynamicResource Str.Common.Type}" />
-                        </DataGridTemplateColumn.Header>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-                                <StackPanel
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Background="Transparent"
-                                    Orientation="Horizontal"
-                                    ToolTip="{Binding TypeText}">
-                                    <ui:SymbolIcon
-                                        x:Name="TypeIcon"
-                                        FontSize="12"
-                                        Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
-                                </StackPanel>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Type}" Value="Error">
-                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="Warning">
-                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding Type}" Value="Search">
-                                        <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Width="130" Binding="{Binding FileName}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource Str.Common.File}" />
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Width="44" Binding="{Binding LineText}">
-                        <DataGridTextColumn.Header>
-                            <TextBlock Text="{DynamicResource Str.Common.Line}" />
-                        </DataGridTextColumn.Header>
-                    </DataGridTextColumn>
-                    <DataGridTemplateColumn Width="*">
-                        <DataGridTemplateColumn.Header>
-                            <TextBlock Text="{DynamicResource Str.Common.Message}" />
-                        </DataGridTemplateColumn.Header>
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
-                                <Grid ToolTip="{Binding ClipboardText}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+            <Grid>
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical"
+                    Visibility="{Binding Output.HasNoProblems, Converter={StaticResource BoolToVisibility}}">
+                    <ui:SymbolIcon
+                        HorizontalAlignment="Center"
+                        FontSize="28"
+                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                        Symbol="CheckmarkCircle24" />
+                    <TextBlock
+                        Margin="0,6,0,0"
+                        HorizontalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                        Text="{DynamicResource Str.Shell.Problems.NoProblems}" />
+                </StackPanel>
+                <DataGrid
+                    AutoGenerateColumns="False"
+                    AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabErrors}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CanUserAddRows="False"
+                    CanUserResizeRows="False"
+                    ColumnHeaderHeight="22"
+                    ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
+                    FontSize="12"
+                    GridLinesVisibility="None"
+                    HeadersVisibility="Column"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding Output.Errors}"
+                    MinRowHeight="22"
+                    MouseDoubleClick="OnErrorsDoubleClick"
+                    PreviewKeyDown="OnErrorsKeyDown"
+                    RowHeaderWidth="0"
+                    RowHeight="22"
+                    SelectedItem="{Binding Output.SelectedError, Mode=TwoWay}"
+                    SelectionMode="Single">
+                    <DataGrid.Style>
+                        <Style BasedOn="{StaticResource {x:Type DataGrid}}" TargetType="{x:Type DataGrid}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Output.HasNoProblems}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Style>
+                    <DataGrid.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
                                     <TextBlock
-                                        Margin="4,0"
-                                        VerticalAlignment="Center"
-                                        Text="{Binding Message}"
-                                        TextTrimming="CharacterEllipsis" />
-                                    <ui:HyperlinkButton
-                                        Grid.Column="1"
                                         Height="20"
-                                        Margin="0,0,6,0"
-                                        Padding="4,0"
+                                        Margin="8,2,0,0"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                        Text="{Binding Name}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <StackPanel>
+                                                    <ContentPresenter />
+                                                    <ItemsPresenter />
+                                                </StackPanel>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn
+                            Width="30"
+                            MinWidth="30"
+                            SortMemberPath="TypeText">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock
+                                    AutomationProperties.Name="{DynamicResource Str.Common.Type}"
+                                    Text=" "
+                                    ToolTip="{DynamicResource Str.Common.Type}" />
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Command="{Binding DataContext.Output.RunProblemActionCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
-                                        CommandParameter="{Binding}"
-                                        Content="{Binding ActionLabel}"
-                                        FontSize="11"
-                                        Visibility="{Binding HasAction, Converter={StaticResource BoolToVisibility}}" />
-                                </Grid>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-                <DataGrid.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding Output.CopySelectedCommand}" Header="{DynamicResource Str.Shell.Output.CopySelected}">
-                            <MenuItem.Icon>
-                                <ui:SymbolIcon Symbol="Copy24" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="{Binding Output.CopyAllCommand}" Header="{DynamicResource Str.Shell.Problems.CopyAll}" />
-                        <MenuItem Command="{Binding Output.RefreshCommand}" Header="{DynamicResource Str.Shell.Output.Refresh}">
-                            <MenuItem.Icon>
-                                <ui:SymbolIcon Symbol="ArrowSync24" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="{Binding Output.ClearAllCommand}" Header="{DynamicResource Str.Shell.Output.ClearAll}">
-                            <MenuItem.Icon>
-                                <ui:SymbolIcon Symbol="Delete24" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <Separator />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.AutoRefresh}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.AutoRefresh, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.ShowParserLog}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowParserEntries, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.ShowBuildLog}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.GroupTools}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowToolEntries, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.GroupFiles}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowFileEntries, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.GroupSettings}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowSettingsEntries, Mode=TwoWay}" />
-                        <MenuItem
-                            Header="{DynamicResource Str.Shell.Output.GroupMessages}"
-                            IsCheckable="True"
-                            IsChecked="{Binding Output.ShowMessageEntries, Mode=TwoWay}" />
-                    </ContextMenu>
-                </DataGrid.ContextMenu>
-            </DataGrid>
+                                        Background="Transparent"
+                                        Orientation="Horizontal"
+                                        ToolTip="{Binding TypeText}">
+                                        <ui:SymbolIcon
+                                            x:Name="TypeIcon"
+                                            FontSize="12"
+                                            Symbol="{Binding Type, Converter={StaticResource ErrorTypeToSymbol}}" />
+                                    </StackPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Type}" Value="Error">
+                                            <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Warning">
+                                            <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Type}" Value="Search">
+                                            <Setter TargetName="TypeIcon" Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+                            Width="130"
+                            MinWidth="110"
+                            Binding="{Binding FileName}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource Str.Common.File}" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn
+                            Width="56"
+                            MinWidth="52"
+                            Binding="{Binding LineText}">
+                            <DataGridTextColumn.Header>
+                                <TextBlock Text="{DynamicResource Str.Common.Line}" />
+                            </DataGridTextColumn.Header>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Width="*" MinWidth="200">
+                            <DataGridTemplateColumn.Header>
+                                <TextBlock Text="{DynamicResource Str.Common.Message}" />
+                            </DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate DataType="{x:Type vm:ErrorItemViewModel}">
+                                    <Grid ToolTip="{Binding ClipboardText}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Margin="4,0"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding Message}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <ui:HyperlinkButton
+                                            Grid.Column="1"
+                                            Height="20"
+                                            Margin="0,0,6,0"
+                                            Padding="4,0"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.Output.RunProblemActionCommand, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+                                            CommandParameter="{Binding}"
+                                            Content="{Binding ActionLabel}"
+                                            FontSize="11"
+                                            Visibility="{Binding HasAction, Converter={StaticResource BoolToVisibility}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding Output.CopySelectedCommand}" Header="{DynamicResource Str.Shell.Output.CopySelected}">
+                                <MenuItem.Icon>
+                                    <ui:SymbolIcon Symbol="Copy24" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Command="{Binding Output.CopyAllCommand}" Header="{DynamicResource Str.Shell.Problems.CopyAll}" />
+                            <MenuItem Command="{Binding Output.RefreshCommand}" Header="{DynamicResource Str.Shell.Output.Refresh}">
+                                <MenuItem.Icon>
+                                    <ui:SymbolIcon Symbol="ArrowSync24" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Command="{Binding Output.ClearAllCommand}" Header="{DynamicResource Str.Shell.Output.ClearAll}">
+                                <MenuItem.Icon>
+                                    <ui:SymbolIcon Symbol="Delete24" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.AutoRefresh}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.AutoRefresh, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.ShowParserLog}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowParserEntries, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.ShowBuildLog}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowBuildEntries, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.GroupTools}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowToolEntries, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.GroupFiles}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowFileEntries, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.GroupSettings}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowSettingsEntries, Mode=TwoWay}" />
+                            <MenuItem
+                                Header="{DynamicResource Str.Shell.Output.GroupMessages}"
+                                IsCheckable="True"
+                                IsChecked="{Binding Output.ShowMessageEntries, Mode=TwoWay}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </Grid>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:ResultsTabViewModel}">
@@ -276,17 +310,26 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Width="130" Binding="{Binding FileName}">
+                    <DataGridTextColumn
+                        Width="130"
+                        MinWidth="110"
+                        Binding="{Binding FileName}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.File}" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Width="44" Binding="{Binding LineText}">
+                    <DataGridTextColumn
+                        Width="56"
+                        MinWidth="52"
+                        Binding="{Binding LineText}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.Line}" />
                         </DataGridTextColumn.Header>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Width="*" Binding="{Binding Message}">
+                    <DataGridTextColumn
+                        Width="*"
+                        MinWidth="200"
+                        Binding="{Binding Message}">
                         <DataGridTextColumn.Header>
                             <TextBlock Text="{DynamicResource Str.Common.Message}" />
                         </DataGridTextColumn.Header>

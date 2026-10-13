@@ -59,5 +59,20 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		[LoggerMessage(EventId = 1217, Level = LogLevel.Warning, Message = "The file {Path} cannot be read and is not overwritten")]
 		public static partial void FileNotOverwritten(this ILogger logger, String path);
+
+		[LoggerMessage(EventId = 1218, Level = LogLevel.Information, Message = "The project file {Path} was {Change} on disk")]
+		public static partial void ProjectFileChangedOnDisk(this ILogger logger, String path, String change);
+
+		[LoggerMessage(EventId = 1219, Level = LogLevel.Warning, Message = "The project file {Path} is locked or cannot be read yet; it is tried again later ({Detail})")]
+		public static partial void ProjectFileLocked(this ILogger logger, String path, String detail);
+
+		[LoggerMessage(EventId = 1220, Level = LogLevel.Warning, Message = "The project file {Path} is not valid ({Detail}); the last valid settings stay in effect")]
+		public static partial void ProjectFileInvalid(this ILogger logger, String path, String detail);
+
+		[LoggerMessage(EventId = 1221, Level = LogLevel.Error, Message = "Watching the project file {Path} failed")]
+		public static partial void ProjectWatchFailed(this ILogger logger, Exception exception, String path);
+
+		[LoggerMessage(EventId = 1222, Level = LogLevel.Warning, Message = "The folder {Path} cannot be watched for changes; the project file is checked at intervals only")]
+		public static partial void ProjectFolderNotWatched(this ILogger logger, Exception exception, String path);
 	}
 }

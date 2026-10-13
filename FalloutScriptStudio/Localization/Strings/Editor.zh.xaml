@@ -54,4 +54,10 @@
     <sys:String x:Key="Str.Editor.Status.NoReferences">未找到“{0}”的引用。</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditor">脚本编辑器</sys:String>
     <sys:String x:Key="Str.Editor.A11y.ScriptEditorSplit">脚本编辑器（第二视图）</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ExtractProcedure">提取过程...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.DeleteUnusedProcedure">删除未使用的过程...</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.FindUnusedVariables">查找未使用的变量</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.RemoveUnusedVariable">移除未使用的变量</sys:String>
+    <sys:String x:Key="Str.Editor.Status.NotFoundInProject">在项目中找不到 {0}。</sys:String>
+    <sys:String x:Key="Str.Editor.Hint.UnusedVariable">变量 {0} 已声明但从未使用。</sys:String>
 </ResourceDictionary>

@@ -23,5 +23,8 @@ namespace FalloutScriptStudio.Workspace
 
 		[LoggerMessage(EventId = 2105, Level = LogLevel.Error, Message = "A background operation failed")]
 		public static partial void BackgroundOperationFailed(this ILogger logger, Exception exception);
+
+		[LoggerMessage(EventId = 2106, Level = LogLevel.Information, Message = "The remembered project document {Path} no longer exists and is not reopened")]
+		public static partial void RememberedDocumentSkipped(this ILogger logger, String path);
 	}
 }

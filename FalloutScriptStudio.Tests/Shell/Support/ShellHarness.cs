@@ -21,7 +21,10 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	/// <summary>The main view model with all its panels, wired to fake services and a temporary program folder.</summary>
 	internal sealed class ShellHarness : IDisposable
 	{
-		public ShellHarness()
+		/// <summary>Initializes a new instance of the <see cref="ShellHarness"/> class.</summary>
+		/// <param name="watch">How the project file is watched; by default it is not (a test that needs it passes short delays).</param>
+		/// <param name="configure">Prepares the settings before the project service reads them (a project that is already open when the program starts, remembered documents).</param>
+		public ShellHarness(ProjectFileWatchOptions? watch = null, Action<SettingsService>? configure = null)
 		{
 			this.Folder = new TempFolder();
 			this.Paths = AppPaths.FromBaseDirectory(this.Folder.Combine("app"));
@@ -34,6 +37,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 			this.Settings = new SettingsService(this.Paths, new LegacySettingsImporter(NullLogger<LegacySettingsImporter>.Instance), NullLogger<SettingsService>.Instance);
 			this.Settings.Load();
+			configure?.Invoke(this.Settings);
 			this.Shell = new FakeShellService();
 			this.FileAssociation = new FakeFileAssociationService();
 			this.Problems = new ProblemService();
@@ -63,7 +67,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Variables = new VariablesPanelViewModel(this.Workspace, this.Tracker);
 			this.Functions = new FunctionsPanelViewModel(this.Catalog, this.Tracker, this.Dialogs, this.DialogueDialogs);
 			this.Project = new ProjectExplorerViewModel(this.Settings, this.Workspace, this.Dialogs, this.Shell);
-			this.Projects = new ProjectService(this.Settings, NullLogger<ProjectService>.Instance);
+			this.Projects = new ProjectService(this.Settings, NullLogger<ProjectService>.Instance, watch ?? ProjectFileWatchOptions.Disabled);
 			this.Main = new MainViewModel(
 				this.Workspace,
 				this.Settings,
@@ -170,6 +174,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public void Dispose()
 		{
+			this.Projects.Dispose();
 			this.Tracker.Dispose();
 			this.Folder.Dispose();
 		}
