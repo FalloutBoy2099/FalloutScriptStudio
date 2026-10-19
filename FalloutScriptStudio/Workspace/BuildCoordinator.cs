@@ -7,16 +7,17 @@ namespace FalloutScriptStudio.Workspace
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ToolWindows;
+	using Core.Building;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Documents;
+	using Localization;
+	using Problems;
+	using Services;
+	using Services.ToolWindows;
 
 	/// <summary>
-	/// Runs the build commands of the main window: compile, preprocess, round trip, compile all open scripts and mass compile.
+	/// Runs the build commands of the main window: compile, preprocess, round trip, compile all open scripts, build the changed ones and mass compile.
 	/// Results are stored in the documents (<see cref="DocumentViewModel.BuildLog"/>, <see cref="DocumentViewModel.BuildErrors"/>)
 	/// and announced through the output panel, the status bar, a toast and a sound; tools that are missing or cannot be started become
 	/// <see cref="Problem"/>s with a fix hint. Every command is one cancellable operation of the <see cref="IOperationTracker"/>: only one
@@ -37,6 +38,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IToolWindowService _toolWindows;
 		private readonly IOperationTracker _operations;
 		private readonly IProblemService _problems;
+		private readonly IIncrementalBuildService _incremental;
 		private Boolean _busy;
 
 		/// <summary>Initializes the coordinator.</summary>
@@ -52,7 +54,8 @@ namespace FalloutScriptStudio.Workspace
 			ISoundService sounds,
 			IToolWindowService toolWindows,
 			IOperationTracker? operations = null,
-			IProblemService? problems = null)
+			IProblemService? problems = null,
+			IIncrementalBuildService? incremental = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(compiler);
@@ -76,6 +79,7 @@ namespace FalloutScriptStudio.Workspace
 			this._toolWindows = toolWindows;
 			this._operations = operations ?? new OperationTracker();
 			this._problems = problems ?? new ProblemService();
+			this._incremental = incremental ?? new IncrementalBuildService();
 			this._operations.Changed += (_, _) => this.UpdateBusy();
 		}
 
@@ -124,7 +128,18 @@ namespace FalloutScriptStudio.Workspace
 		}
 
 		/// <summary>Compiles every open script (menu "Compile All Open").</summary>
-		public async Task<Boolean> CompileAllOpenAsync()
+		public Task<Boolean> CompileAllOpenAsync()
+		{
+			return this.CompileOpenScriptsAsync(false);
+		}
+
+		/// <summary>Compiles the open scripts that are stale: their source, a file they include, the options or the compiler changed (menu "Build Changed").</summary>
+		public Task<Boolean> BuildChangedAsync()
+		{
+			return this.CompileOpenScriptsAsync(true);
+		}
+
+		private async Task<Boolean> CompileOpenScriptsAsync(Boolean onlyChanged)
 		{
 			List<DocumentViewModel> scripts = this._workspace.Documents.Where(document => document.Kind == DocumentKind.Script).ToList();
 			using IOperation? operation = this.Begin(OperationKind.CompileAll, String.Empty, scripts.Count);
@@ -135,14 +150,22 @@ namespace FalloutScriptStudio.Workspace
 
 			this._output.ClearErrors();
 			this._problems.ClearOrigin(ProblemOrigins.BuildTool);
-			StringBuilder full = new StringBuilder();
-			List<BuildError> allErrors = new List<BuildError>();
+			List<DocumentViewModel> toCompile = scripts;
+			List<String> upToDate = [];
+			StringBuilder full = new();
+			List<BuildError> allErrors = [];
 			Int32 compiled = 0;
 			Int32 attempted = 0;
 			Boolean cancelled = false;
 			try
 			{
-				foreach (DocumentViewModel document in scripts)
+				if (onlyChanged)
+				{
+					(toCompile, upToDate) = await this.FindStaleScriptsAsync(scripts, operation.Token);
+					operation.Report(String.Empty, 0, toCompile.Count, upToDate.Count);
+				}
+
+				foreach (DocumentViewModel document in toCompile)
 				{
 					operation.Token.ThrowIfCancellationRequested();
 					if (!this._workspace.Documents.Contains(document))
@@ -151,7 +174,7 @@ namespace FalloutScriptStudio.Workspace
 					}
 
 					attempted++;
-					operation.Report(document.FileName, attempted, scripts.Count);
+					operation.Report(document.FileName, attempted, toCompile.Count, upToDate.Count);
 					this._problems.ClearOwner(document, ProblemSource.Build, ProblemSource.Settings);
 					BuildOutcome outcome = await this.RunAsync(document, new BuildMode(false, false, false, false), operation.Token);
 					if (outcome.Success)
@@ -174,20 +197,72 @@ namespace FalloutScriptStudio.Workspace
 
 			// Like the legacy editor, the error list holds the errors of every compiled script, not only those of the active one.
 			this._output.ShowBuildErrors(allErrors);
-			this._output.SetBuildText(full.ToString());
+			this._output.SetBuildText(this.DescribeSkipped(upToDate) + full);
 			if (cancelled)
 			{
-				this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompileAllCancelled", compiled, scripts.Count));
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompileAllCancelled", compiled, toCompile.Count));
 				return false;
 			}
 
-			this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompiledAll", compiled, attempted));
+			if (onlyChanged)
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.BuildSummary", compiled, upToDate.Count, attempted - compiled));
+			}
+			else
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.CompiledAll", compiled, attempted));
+			}
+
 			if (attempted > 0 && compiled == attempted)
 			{
 				this._notifications.Show(Loc.Get("Str.Shell.Build.CompiledTitle"), Loc.Format("Str.Shell.Build.AllCompiled", attempted), NotificationKind.Success);
 			}
 
 			return compiled == attempted;
+		}
+
+		/// <summary>Splits the open scripts into the ones to compile and the ones that are up to date. A script with unsaved changes or without a file is always stale.</summary>
+		private async Task<(List<DocumentViewModel> Stale, List<String> UpToDate)> FindStaleScriptsAsync(List<DocumentViewModel> scripts, CancellationToken cancellationToken)
+		{
+			CompilerOptions options = this._settings.Effective.ToCompilerOptions(this._settings.Paths);
+			String cacheFile = this._settings.Effective.GetBuildCacheFile(this._settings.Paths);
+			List<DocumentViewModel> onDisk = scripts.Where(document => document.FilePath is not null && !document.IsModified).ToList();
+			List<BuildCandidate> candidates = onDisk.Select(document => new BuildCandidate(document.FilePath!, document.ProgramInfo?.ShortCircuitEvaluation ?? false)).ToList();
+			BuildPlan plan = await Task.Run(() => this._incremental.Plan(candidates, options, cacheFile, false, cancellationToken), cancellationToken);
+
+			HashSet<DocumentViewModel> current = [];
+			List<String> upToDate = [];
+			for (Int32 index = 0; index < onDisk.Count; index++)
+			{
+				if (plan.Decisions[index].IsUpToDate)
+				{
+					current.Add(onDisk[index]);
+					upToDate.Add(onDisk[index].FilePath!);
+				}
+			}
+
+			return (scripts.Where(document => !current.Contains(document)).ToList(), upToDate);
+		}
+
+		/// <summary>The lines of the build log about the scripts that were not compiled: their number, and their names when the option asks for them.</summary>
+		private String DescribeSkipped(IReadOnlyList<String> upToDate)
+		{
+			if (upToDate.Count == 0)
+			{
+				return String.Empty;
+			}
+
+			StringBuilder text = new();
+			text.AppendLine(Loc.Format("Str.Shell.Build.LogUpToDate", upToDate.Count));
+			if (this._settings.Effective.Settings.Compiler.ListUpToDateScripts)
+			{
+				foreach (String script in upToDate.OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+				{
+					text.Append("  ").AppendLine(Path.GetFileName(script));
+				}
+			}
+
+			return text.AppendLine().ToString();
 		}
 
 		/// <summary>Preprocesses a script and opens the preprocessed copy (menu "Preprocess", F4).</summary>
@@ -272,8 +347,9 @@ namespace FalloutScriptStudio.Workspace
 			}
 		}
 
-		/// <summary>Compiles all scripts of the project folder (or a folder chosen by the user) in a batch.</summary>
-		public async Task MassCompileAsync()
+		/// <summary>Compiles all scripts of the project folder (or a folder chosen by the user) in a batch. The ones that are up to date are skipped when the option "only changed scripts" is on.</summary>
+		/// <param name="rebuildAll">Compile every script, whatever the option says (menu "Rebuild All").</param>
+		public async Task MassCompileAsync(Boolean rebuildAll = false)
 		{
 			if (this.IsBusy)
 			{
@@ -316,13 +392,23 @@ namespace FalloutScriptStudio.Workspace
 
 			this._problems.ClearOrigin(ProblemOrigins.MassCompile);
 			this._problems.ClearOrigin(ProblemOrigins.BuildTool);
-			Progress<BatchCompileProgress> progress = new Progress<BatchCompileProgress>(
-				item => operation.Report(Path.GetFileName(item.ScriptPath), item.Completed, item.Total));
-			BatchCompileResult result = await this._toolWindows.RunBatchCompileAsync(scripts, progress, operation.Token);
+			Progress<BatchCompileProgress> progress = new(
+				item => operation.Report(Path.GetFileName(item.ScriptPath), item.Completed, item.Total, item.UpToDate));
+			BatchCompileResult result = await this._toolWindows.RunBatchCompileAsync(scripts, progress, rebuildAll, operation.Token);
 			this.ReportBatchFailures(result);
-			this._output.ReportStatus(result.Cancelled
-				? Loc.Format("Str.Shell.Build.MassCompileCancelled", result.Compiled, result.Found, result.Failed)
-				: Loc.Format("Str.Shell.Build.MassCompileStatus", result.Compiled, result.Found, result.Failed));
+			this.ReportSkipped(result);
+			if (result.Cancelled)
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.MassCompileCancelled", result.Compiled, result.Found, result.Failed));
+			}
+			else if (result.UpToDate > 0)
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.BuildSummary", result.Compiled, result.UpToDate, result.Failed));
+			}
+			else
+			{
+				this._output.ReportStatus(Loc.Format("Str.Shell.Build.MassCompileStatus", result.Compiled, result.Found, result.Failed));
+			}
 		}
 
 		private void UpdateBusy()
@@ -364,11 +450,20 @@ namespace FalloutScriptStudio.Workspace
 			this._output.ReportStatus(Loc.Format(statusKey, document.FileName));
 		}
 
+		/// <summary>Tells the build log which scripts were skipped because they are up to date.</summary>
+		private void ReportSkipped(BatchCompileResult result)
+		{
+			if (result.UpToDate > 0)
+			{
+				this._output.AppendBuildLine(this.DescribeSkipped(result.UpToDateScripts).TrimEnd());
+			}
+		}
+
 		private void ReportBatchFailures(BatchCompileResult result)
 		{
 			CompilerOptions options = this._settings.Effective.ToCompilerOptions(this._settings.Paths);
-			BuildLogParser logParser = new BuildLogParser();
-			List<Problem> reported = new List<Problem>();
+			BuildLogParser logParser = new();
+			List<Problem> reported = [];
 			foreach (BatchCompileFailure failure in result.Failures)
 			{
 				IReadOnlyList<BuildError> errors = logParser.Parse(failure.Output, failure.ScriptPath, options.Preprocessor);
@@ -442,7 +537,7 @@ namespace FalloutScriptStudio.Workspace
 			this._parser.Cancel(document);
 			document.NeedsParse = false;
 
-			CompilationRequest request = new CompilationRequest
+			CompilationRequest request = new()
 			{
 				ScriptPath = document.FilePath,
 				Options = this._settings.Effective.ToCompilerOptions(this._settings.Paths),
@@ -451,6 +546,9 @@ namespace FalloutScriptStudio.Workspace
 				PreprocessOnly = mode.Preprocess,
 			};
 
+			// The state of the script and of the files it includes is taken now: a file saved while the compiler runs is a change for the next build.
+			String cacheFile = this._settings.Effective.GetBuildCacheFile(this._settings.Paths);
+			BuildTicket? ticket = mode.Preprocess || mode.Temporary ? null : this._incremental.Begin(document.FilePath, request.Options, request.ShortCircuit, cacheFile);
 			CompilationResult result;
 			try
 			{
@@ -464,6 +562,20 @@ namespace FalloutScriptStudio.Workspace
 				{
 					_ = this._parser.ParseAsync(document, true);
 				}
+			}
+
+			if (ticket is not null)
+			{
+				if (result.Success)
+				{
+					ticket.Succeeded();
+				}
+				else
+				{
+					ticket.Failed();
+				}
+
+				_ = await Task.Run(() => this._incremental.Flush(cacheFile), CancellationToken.None);
 			}
 
 			IReadOnlyList<BuildError> errors = WithoutToolFailureEntries(result);

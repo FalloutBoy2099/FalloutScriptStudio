@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
+	using Core.Configuration;
+	using Core.Parsing;
 
 	/// <summary>Remembers the folded procedures of every script in the persisted <see cref="FoldedProcedures"/> model.</summary>
 	public sealed class SettingsCollapsedProcedureStore : ICollapsedProcedureStore

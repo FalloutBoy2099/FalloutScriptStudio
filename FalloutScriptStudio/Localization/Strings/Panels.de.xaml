@@ -72,6 +72,7 @@
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Projektordner auswählen</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtern...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Knotencode bearbeiten</sys:String>
+    <sys:String x:Key="Str.Panels.MenuPreviewDialogue">Dialogvorschau ab diesem Knoten</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Nur die angesteuerte Prozedur anzeigen: Beim Auswählen einer Prozedur werden die anderen eingeklappt</sys:String>
     <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Nicht verwendete Prozedur löschen...</sys:String>
     <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Nicht verwendete Variablen suchen</sys:String>

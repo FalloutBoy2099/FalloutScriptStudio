@@ -45,6 +45,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 		private const Int32 MaxHostStartFailures = 2;
 		private const Int32 MaxRememberedTexts = 64;
 
+		private static readonly TimeSpan StaleHostDirectoryAge = TimeSpan.FromHours(1);
 		private static readonly TimeSpan _exitWait = TimeSpan.FromSeconds(2);
 		private static readonly TimeSpan _fatalErrorGrace = TimeSpan.FromMilliseconds(500);
 		private static readonly Regex _reportedCode = new Regex(@"^0x(?<code>[0-9A-Fa-f]{8})\b", RegexOptions.Multiline | RegexOptions.CultureInvariant);
@@ -57,6 +58,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 		private IParserHostProcess? _host;
 		private String? _hostDirectory;
+		private Boolean _sweptHostFolders;
 		private Int32 _hostRequests;
 		private Boolean _hostAnswered;
 		private Int32 _startFailures;
@@ -68,7 +70,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 		private String _currentLibrary = String.Empty;
 		private String _disabledLibrary = String.Empty;
 		private DateTime _disabledLibraryStamp;
-		private readonly HashSet<String> _crashingTexts = new HashSet<String>(StringComparer.Ordinal);
+		private readonly HashSet<String> _crashingTexts = new(StringComparer.Ordinal);
 		private Boolean _disposed;
 
 		/// <summary>

@@ -4,12 +4,12 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.MessageEditor;
-	using FalloutScriptStudio.Services.ScriptTools;
+	using Core.Configuration;
+	using Documents;
+	using Localization;
+	using Services;
+	using Services.MessageEditor;
+	using Services.ScriptTools;
 
 	/// <summary>Opens the files passed on the command line, or forwarded by a second instance of the program.</summary>
 	public sealed class CommandLineHandler

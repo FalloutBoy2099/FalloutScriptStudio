@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>
 	/// One occurrence found by a rename preview (legacy <c>Refactor.PreviewMatch</c>).

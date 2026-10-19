@@ -9,19 +9,19 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	/// <summary>An output sink that records what the workspace sent to it.</summary>
 	internal sealed class FakeOutputSink : IOutputSink
 	{
-		public List<BuildError> SearchResults { get; } = new List<BuildError>();
+		public List<BuildError> SearchResults { get; } = [];
 
 		public String? SearchTitle { get; private set; }
 
-		public List<String> Statuses { get; } = new List<String>();
+		public List<String> Statuses { get; } = [];
 
-		public List<String> BuildLines { get; } = new List<String>();
+		public List<String> BuildLines { get; } = [];
 
-		public List<OutputTab> Tabs { get; } = new List<OutputTab>();
+		public List<OutputTab> Tabs { get; } = [];
 
 		public Int32 ClearedErrors { get; private set; }
 
-		public List<BuildError> AggregatedErrors { get; } = new List<BuildError>();
+		public List<BuildError> AggregatedErrors { get; } = [];
 
 		public void ShowSearchResults(IReadOnlyList<BuildError> results, String titleKey, String? titleArgument = null)
 		{

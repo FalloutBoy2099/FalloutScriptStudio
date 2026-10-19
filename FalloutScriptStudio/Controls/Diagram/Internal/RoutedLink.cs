@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Controls.Diagram.Internal
 {
 	using System;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
+	using Model;
+	using Routing;
 
 	/// <summary>
 	/// A link together with its currently computed route.

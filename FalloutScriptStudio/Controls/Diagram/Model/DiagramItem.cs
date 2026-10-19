@@ -72,7 +72,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 		}
 
 		/// <summary>Gets the bounding rectangle in world coordinates.</summary>
-		public Rect Bounds => new Rect(this._x, this._y, this._width, this._height);
+		public Rect Bounds => new(this._x, this._y, this._width, this._height);
 
 		/// <summary>Gets or sets a value indicating whether the item is excluded from rendering, hit testing and routing.</summary>
 		public Boolean IsHidden

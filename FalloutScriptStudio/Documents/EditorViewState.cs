@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Documents
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Editor.Navigation;
+	using Editor.Navigation;
 
 	/// <summary>
 	/// The view state of the editor of one document (caret, selection, scroll position, folded regions, Back / Forward

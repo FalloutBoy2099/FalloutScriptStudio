@@ -13,7 +13,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// Windows where Escape belongs to the editor inside (it dismisses the completion list and the tips), so the window is closed with
 		/// its Done button and not with Escape.
 		/// </summary>
-		private static readonly HashSet<String> _escapeBelongsToEditor = new HashSet<String>(StringComparer.Ordinal) { "NodeCodeEditorWindow.xaml" };
+		private static readonly HashSet<String> _escapeBelongsToEditor = new(StringComparer.Ordinal) { "NodeCodeEditorWindow.xaml" };
 
 		/// <summary>Finds the problems of the conventions of a window: Enter, Escape, initial focus, title.</summary>
 		public IReadOnlyList<String> FindWindowConventionViolations(String file)
@@ -25,7 +25,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		public IReadOnlyList<String> FindWindowConventionViolations(String file, XDocument document)
 		{
 			XElement root = document.Root!;
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			Boolean hasDefault = document.Descendants().Any(e => IsTrue(e, "IsDefault"));
 			Boolean hasCancel = document.Descendants().Any(e => IsTrue(e, "IsCancel"));
 			Boolean closesOnEscape = document.Descendants().Any(e => e.Attributes().Any(a => a.Name.LocalName.EndsWith("CloseOnEscape", StringComparison.Ordinal) && IsTrueText(a.Value)))
@@ -64,7 +64,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		public IReadOnlyList<String> FindLayoutProblems(String file, XDocument document)
 		{
 			XElement root = document.Root!;
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			if (!String.Equals((String?)root.Attribute("UseLayoutRounding"), "True", StringComparison.Ordinal) || !String.Equals((String?)root.Attribute("SnapsToDevicePixels"), "True", StringComparison.Ordinal))
 			{
 				findings.Add(Describe(file, root, "window without UseLayoutRounding and SnapsToDevicePixels set to True"));
@@ -91,7 +91,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Finds the windows whose Tab order does not follow the reading order of their grid cells.</summary>
 		public IReadOnlyList<String> FindReadingOrderProblems(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement grid in document.Descendants().Where(e => e.Name.LocalName == "Grid"))
 			{
 				(Int32 Row, Int32 Column)? previous = null;

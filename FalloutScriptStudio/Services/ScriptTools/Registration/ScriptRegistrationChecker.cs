@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// The checks done before a script file is registered in <c>scripts.lst</c> (legacy <c>registerScriptToolStripMenuItem_Click</c>).

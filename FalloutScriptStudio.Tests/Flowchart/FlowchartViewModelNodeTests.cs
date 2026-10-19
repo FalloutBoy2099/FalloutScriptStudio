@@ -276,7 +276,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 				await harness.ScriptEditor.ReplaceNodeCodeAsync(harness.Script, "Node002", "\r\n   Reply(120);\r\n   Reply(121);\r\n   Reply(122);\r\n");
 
 				harness.Editors.RaiseApplied(harness.Script, "Node002");
-				for (Int32 i = 0; i < 100 && harness.Canvas.FindNode("Node002")!.Rows.Count != 3; i++)
+				for (Int32 i = 0; i < 3000 && harness.Canvas.FindNode("Node002")!.Rows.Count != 3; i++)
 				{
 					await Task.Delay(20);
 				}

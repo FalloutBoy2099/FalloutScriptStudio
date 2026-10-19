@@ -12,9 +12,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 	/// </summary>
 	public sealed class DiagramNode : DiagramItem
 	{
-		private static readonly PropertyChangedEventArgs RowsChangedArgs = new PropertyChangedEventArgs(nameof(Rows));
+		private static readonly PropertyChangedEventArgs RowsChangedArgs = new(nameof(Rows));
 
-		private readonly HashSet<DiagramRow> _attachedRows = new HashSet<DiagramRow>();
+		private readonly HashSet<DiagramRow> _attachedRows = [];
 		private String _name;
 		private DiagramNodeKind _kind;
 		private Boolean _isCollapsed;
@@ -29,8 +29,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 		public DiagramNode(String name)
 		{
 			this._name = name ?? String.Empty;
-			this.Rows = new ObservableCollection<DiagramRow>();
-			this.HeaderLines = new ObservableCollection<String>();
+			this.Rows = [];
+			this.HeaderLines = [];
 			this.Rows.CollectionChanged += this.OnRowsCollectionChanged;
 			this.HeaderLines.CollectionChanged += this.OnHeaderLinesChanged;
 		}
@@ -105,7 +105,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 		/// <returns>The new row.</returns>
 		public DiagramRow AddRow(DiagramRowKind kind, String text, String? detail = null, String? linkTargetName = null)
 		{
-			DiagramRow row = new DiagramRow(kind, text, detail) { LinkTargetName = linkTargetName };
+			DiagramRow row = new(kind, text, detail) { LinkTargetName = linkTargetName };
 			this.Rows.Add(row);
 			return row;
 		}
@@ -123,8 +123,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 
 		private void OnRowsCollectionChanged(Object? sender, NotifyCollectionChangedEventArgs e)
 		{
-			HashSet<DiagramRow> current = new HashSet<DiagramRow>(this.Rows);
-			List<DiagramRow> removed = new List<DiagramRow>();
+			HashSet<DiagramRow> current = new(this.Rows);
+			List<DiagramRow> removed = [];
 			foreach (DiagramRow row in this._attachedRows)
 			{
 				if (!current.Contains(row))

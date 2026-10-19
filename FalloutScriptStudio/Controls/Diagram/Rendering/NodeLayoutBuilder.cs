@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Lays out the title bar, header lines and rows of a node at a given width.
@@ -23,7 +23,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 		/// <param name="previous">The text measurements of the previous layout of the node made with the same <paramref name="context"/>, or <see langword="null"/>.</param>
 		public static NodeLayout Build(DiagramNode node, Double width, DiagramRenderContext context, NaturalTextCache? previous = null)
 		{
-			NaturalTextCache cache = new NaturalTextCache(context.Styles, previous);
+			NaturalTextCache cache = new(context.Styles, previous);
 			NodeLayout layout;
 			if (width > 0.0)
 			{
@@ -54,15 +54,15 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			Double buttonTop = (DiagramMetrics.TitleBarHeight - buttonSize) / 2.0;
 			Double reserved = pad + buttonSize + DiagramMetrics.TitleButtonGap;
 			Rect codeButton = node.ShowCodeButton ? new Rect(pad, buttonTop, buttonSize, buttonSize) : Rect.Empty;
-			Rect collapseButton = new Rect(w - pad - buttonSize, buttonTop, buttonSize, buttonSize);
+			Rect collapseButton = new(w - pad - buttonSize, buttonTop, buttonSize, buttonSize);
 			Double titleAvail = Math.Max(10.0, w - (2.0 * reserved));
 			FormattedText title = FitSingleLine(cache, styles, DiagramTextStyles.Normalize(node.Name), styles.Title, DiagramMetrics.TitleFontSize, palette.TextPrimary, titleAvail, out Double titleNatural);
-			Point titleOrigin = new Point(reserved + ((titleAvail - title.Width) / 2.0), (DiagramMetrics.TitleBarHeight - title.Height) / 2.0);
+			Point titleOrigin = new(reserved + ((titleAvail - title.Width) / 2.0), (DiagramMetrics.TitleBarHeight - title.Height) / 2.0);
 			contentWidth = Math.Max(contentWidth, titleNatural + (2.0 * reserved));
 
 			// Header lines.
 			Double y = DiagramMetrics.TitleBarHeight;
-			List<(FormattedText Text, Point Origin)> headerLines = new List<(FormattedText, Point)>();
+			List<(FormattedText Text, Point Origin)> headerLines = [];
 			if (!context.LowDetail && node.HeaderLines.Count > 0)
 			{
 				y += 2.0;
@@ -83,7 +83,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			}
 
 			Double headerBottom = y;
-			List<RowLayout> rows = new List<RowLayout>();
+			List<RowLayout> rows = [];
 			Double height;
 			if (node.IsCollapsed)
 			{
@@ -181,7 +181,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 				Boolean trimmed = !textFits && (maxLines == 1 || text.IndexOf(' ', StringComparison.Ordinal) < 0 || natural.Width > textAvail * maxLines
 					|| styles.Create(text, face, fontSize, brush, textAvail, 1000).Height > display.Height + 0.5);
 				Double headerHeight = display.Height + (2.0 * padY);
-				Rect header = new Rect(rowX, y, rowW, headerHeight);
+				Rect header = new(rowX, y, rowW, headerHeight);
 				Double contentLeft = rowX + padX;
 				Rect toggle = Rect.Empty;
 				if (expandable)
@@ -197,7 +197,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 					contentLeft += DiagramMetrics.IconSize + DiagramMetrics.IconGap;
 				}
 
-				RowLayout layout = new RowLayout(row)
+				RowLayout layout = new(row)
 				{
 					Header = header,
 					Toggle = toggle,
@@ -217,7 +217,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 						: styles.Create(DiagramTextStyles.Normalize(row.Detail), styles.Mono, DiagramMetrics.CodeFontSize, palette.TextPrimary, detailAvail);
 					Double detailHeight = detailDisplay.Height + (2.0 * DiagramMetrics.RowPaddingY);
 					Double detailTop = rowBottom + DiagramMetrics.DetailGap;
-					Rect detail = new Rect(rowX + DiagramMetrics.DetailIndent, detailTop, rowW - DiagramMetrics.DetailIndent, detailHeight);
+					Rect detail = new(rowX + DiagramMetrics.DetailIndent, detailTop, rowW - DiagramMetrics.DetailIndent, detailHeight);
 					layout.Detail = detail;
 					layout.DetailIcon = new Rect(detail.X + DiagramMetrics.RowPaddingX, detailTop + ((detailHeight - DiagramMetrics.IconSize) / 2.0), DiagramMetrics.IconSize, DiagramMetrics.IconSize);
 					layout.DetailText = detailDisplay;

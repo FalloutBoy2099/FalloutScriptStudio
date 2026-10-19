@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		public virtual Boolean IsSymbol => false;
 
 		/// <summary>Gets the child nodes.</summary>
-		public ObservableCollection<TreeNodeViewModel> Children { get; } = new ObservableCollection<TreeNodeViewModel>();
+		public ObservableCollection<TreeNodeViewModel> Children { get; } = [];
 
 		/// <inheritdoc/>
 		String IFilterNode.FilterText => this.Title;

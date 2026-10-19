@@ -17,7 +17,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 	{
 		private readonly IWorkspace _workspace;
 		private readonly ActiveEditorTracker _tracker;
-		private readonly ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>> _expandState = new ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>>();
+		private readonly ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>> _expandState = [];
 		private DocumentViewModel? _document;
 
 		/// <summary>Initializes the panel.</summary>
@@ -40,7 +40,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		}
 
 		/// <summary>Gets the groups of the tree.</summary>
-		public ObservableCollection<TreeGroupNodeViewModel> Groups { get; } = new ObservableCollection<TreeGroupNodeViewModel>();
+		public ObservableCollection<TreeGroupNodeViewModel> Groups { get; } = [];
 
 		/// <summary>True when the active document has variable data to show.</summary>
 		[ObservableProperty]

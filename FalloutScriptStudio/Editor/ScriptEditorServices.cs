@@ -2,12 +2,14 @@ namespace FalloutScriptStudio.Editor
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.Services;
 	using Microsoft.Extensions.Logging;
+	using Core.Configuration;
+	using Core.Formatting;
+	using Core.Parsing;
+	using Core.Snippets;
+	using Documents;
+	using Highlighting;
+	using Services;
 
 	/// <summary>
 	/// The application services every editor view needs, gathered in one object (settings, theme, workspace, folding
@@ -26,7 +28,7 @@ namespace FalloutScriptStudio.Editor
 		/// <summary>The folder inside the <c>resources</c> folder where the user can put replacements of the syntax definitions.</summary>
 		public const String SyntaxDirectoryName = "syntax";
 
-		private readonly Object _opcodeGate = new Object();
+		private readonly Object _opcodeGate = new();
 		private EditorPalette? _palette;
 		private OpcodeCatalog? _opcodes;
 		private Boolean _opcodesShort;
@@ -43,6 +45,8 @@ namespace FalloutScriptStudio.Editor
 		/// <param name="viewOptions">The view toggles shared with the main window; a private instance is used when none is registered.</param>
 		/// <param name="logger">Receives the warnings about syntax files of the user that cannot be used.</param>
 		/// <param name="popups">Opens the completion list, the tooltips and the code tips; the real windows are used when none is given.</param>
+		/// <param name="snippets">The snippets of the editor; the ones of the settings folder and the project when none is given.</param>
+		/// <param name="input">The keyboard modifiers and mouse button state the handlers read; the real ones when none is given.</param>
 		public ScriptEditorServices(
 			ISettingsService settings,
 			IThemeService theme,
@@ -51,15 +55,19 @@ namespace FalloutScriptStudio.Editor
 			IUserMacroSource? userMacros = null,
 			EditorViewOptions? viewOptions = null,
 			ILogger<HighlightingProvider>? logger = null,
-			IEditorPopupPresenter? popups = null)
+			IEditorPopupPresenter? popups = null,
+			ISnippetService? snippets = null,
+			IInputState? input = null)
 		{
 			this.Settings = settings;
+			this.Snippets = snippets ?? new SnippetService(settings);
 			this.Theme = theme;
 			this.Workspace = workspace;
 			this.CollapsedProcedures = collapsedProcedures;
 			this.UserMacros = userMacros;
 			this.ViewOptions = viewOptions ?? new EditorViewOptions();
 			this.Popups = popups ?? new EditorPopupPresenter();
+			this.Input = input ?? new SystemInputState();
 			this.Highlighting = new HighlightingProvider(Path.Combine(settings.Paths.ResourcesDirectory, SyntaxDirectoryName), logger);
 			this.Options = this.CreateOptions();
 			this._zoomPercent = ReadZoom(settings);
@@ -84,6 +92,9 @@ namespace FalloutScriptStudio.Editor
 
 		public ISettingsService Settings { get; }
 
+		/// <summary>Gets the snippets: the built-in ones, the user's and the ones of the active project.</summary>
+		public ISnippetService Snippets { get; }
+
 		public IThemeService Theme { get; }
 
 		public IWorkspace Workspace { get; }
@@ -95,6 +106,9 @@ namespace FalloutScriptStudio.Editor
 
 		/// <summary>Gets the presenter that opens the completion list, the tooltips and the code tips.</summary>
 		public IEditorPopupPresenter Popups { get; }
+
+		/// <summary>Gets the keyboard modifiers and the mouse button state the handlers of the editor read.</summary>
+		public IInputState Input { get; }
 
 		/// <summary>Gets the builder of the syntax highlighting definitions.</summary>
 		public HighlightingProvider Highlighting { get; }
@@ -162,6 +176,13 @@ namespace FalloutScriptStudio.Editor
 
 				return this._opcodes;
 			}
+		}
+
+		/// <summary>Gets the options of the code formatter in effect: the style of the settings, or the one of the active project.</summary>
+		/// <returns>The options.</returns>
+		public FormatOptions GetFormatOptions()
+		{
+			return this.Settings.Effective.ToFormatOptions();
 		}
 
 		/// <summary>Creates the resolver that finds the files of <c>#include</c> directives with the current settings.</summary>

@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Text;
-	using FalloutScriptStudio.Documents;
 	using ICSharpCode.AvalonEdit.Document;
+	using Documents;
 
 	/// <summary>Creates document view models and keeps their modified flag in sync with the undo stack.</summary>
 	internal static class DocumentFactory
@@ -11,9 +11,9 @@ namespace FalloutScriptStudio.Workspace
 		/// <summary>Creates a document for a path (or an unsaved one when <paramref name="path"/> is <see langword="null"/>).</summary>
 		public static DocumentViewModel Create(String? path, String text, Encoding encoding)
 		{
-			TextDocument textDocument = new TextDocument(text);
+			TextDocument textDocument = new(text);
 			textDocument.UndoStack.ClearAll();
-			DocumentViewModel document = new DocumentViewModel(path, DocumentViewModel.KindFromPath(path), textDocument)
+			DocumentViewModel document = new(path, DocumentViewModel.KindFromPath(path), textDocument)
 			{
 				Encoding = encoding,
 			};

@@ -4,9 +4,9 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Linq;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Localization;
+	using Controls.Diagram.Model;
+	using Core.Dialogue;
+	using Localization;
 
 	/// <summary>
 	/// Converts between the data of the dialogue flowchart (<see cref="FlowchartNodeData"/>, <see cref="FlowchartDocument"/>)
@@ -34,7 +34,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 		{
 			ArgumentNullException.ThrowIfNull(data);
 
-			DiagramNode node = new DiagramNode(data.Name)
+			DiagramNode node = new(data.Name)
 			{
 				Kind = ToNodeKind(data.Kind),
 				ShowCodeRows = showCode,
@@ -97,7 +97,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 		{
 			ArgumentNullException.ThrowIfNull(node);
 
-			List<FlowchartContentState> contents = new List<FlowchartContentState>();
+			List<FlowchartContentState> contents = [];
 			Int32 block = 0;
 			foreach (DiagramRow row in node.Rows)
 			{
@@ -143,7 +143,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 				node.HasUserShowCodeSetting = true;
 			}
 
-			Dictionary<String, Boolean> collapsed = new Dictionary<String, Boolean>(StringComparer.Ordinal);
+			Dictionary<String, Boolean> collapsed = new(StringComparer.Ordinal);
 			foreach (FlowchartContentState content in state.Contents)
 			{
 				collapsed[content.Line] = content.Collapsed;
@@ -171,7 +171,8 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 		{
 			ArgumentNullException.ThrowIfNull(state);
 
-			DiagramNote note = new DiagramNote { Text = state.Text, X = state.X, Y = state.Y };
+			DiagramNote note = new()
+			{ Text = state.Text, X = state.X, Y = state.Y };
 			if (state.Width > 0)
 			{
 				note.Width = state.Width;

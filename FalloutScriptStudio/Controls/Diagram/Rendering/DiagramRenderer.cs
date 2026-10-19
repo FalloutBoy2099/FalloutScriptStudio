@@ -4,10 +4,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
-	using FalloutScriptStudio.Localization;
+	using Internal;
+	using Model;
 
 	/// <summary>
 	/// Draws the items, links and interaction overlay of a <see cref="DiagramScene"/> in world coordinates.
@@ -15,8 +13,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	internal sealed partial class DiagramRenderer
 	{
 		private readonly DiagramScene _scene;
-		private readonly Dictionary<DiagramItem, CachedItemDrawing> _cache = new Dictionary<DiagramItem, CachedItemDrawing>();
-		private readonly Dictionary<DiagramNode, Drawing> _contentCache = new Dictionary<DiagramNode, Drawing>();
+		private readonly Dictionary<DiagramItem, CachedItemDrawing> _cache = [];
+		private readonly Dictionary<DiagramNode, Drawing> _contentCache = [];
 
 		public DiagramRenderer(DiagramScene scene)
 		{
@@ -69,7 +67,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 				}
 			}
 
-			Pen gripPen = new Pen(palette.Accent, 1.25 / zoom);
+			Pen gripPen = new(palette.Accent, 1.25 / zoom);
 			gripPen.Freeze();
 			foreach (DiagramItem item in this._scene.Selection)
 			{
@@ -94,7 +92,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 			if (!rubberBand.IsEmpty)
 			{
-				Pen bandPen = new Pen(palette.Accent, 1.0 / zoom);
+				Pen bandPen = new(palette.Accent, 1.0 / zoom);
 				bandPen.Freeze();
 				dc.DrawRectangle(palette.AccentSoft, bandPen, rubberBand);
 			}
@@ -102,14 +100,14 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		private static TranslateTransform FrozenTranslate(Double x, Double y)
 		{
-			TranslateTransform transform = new TranslateTransform(x, y);
+			TranslateTransform transform = new(x, y);
 			transform.Freeze();
 			return transform;
 		}
 
 		private static RectangleGeometry FrozenRoundedRect(Rect rect, Double radius)
 		{
-			RectangleGeometry geometry = new RectangleGeometry(rect, radius, radius);
+			RectangleGeometry geometry = new(rect, radius, radius);
 			geometry.Freeze();
 			return geometry;
 		}
@@ -168,7 +166,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 				return cached.Drawing;
 			}
 
-			DrawingGroup group = new DrawingGroup();
+			DrawingGroup group = new();
 			using (DrawingContext dc = group.Open())
 			{
 				if (item is DiagramNode node)

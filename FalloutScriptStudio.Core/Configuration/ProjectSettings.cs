@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Core.Configuration
 	using System.Linq;
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// The options a mod (a project folder) overrides: the content of <c>fss-project.json</c>. A <see langword="null"/> value means
@@ -52,7 +52,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		public String? PreprocessorDefine { get; set; }
 
 		/// <summary>Gets or sets the definitions of the project; they are offered in the toolbar in addition to the global ones.</summary>
-		public List<String> Defines { get; set; } = new List<String>();
+		public List<String> Defines { get; set; } = [];
 
 		/// <summary>Gets or sets the optimization level.</summary>
 		public OptimizationLevel? Optimization { get; set; }
@@ -74,6 +74,15 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>Gets or sets the path of <c>scripts.lst</c>; when not set it is looked for in the output folder.</summary>
 		public String? ScriptsListFile { get; set; }
+
+		/// <summary>Gets or sets the compile profiles of the project; they are offered in addition to the global ones (a profile of the same name replaces the global one).</summary>
+		public List<CompileProfile> CompileProfiles { get; set; } = [];
+
+		/// <summary>Gets or sets the name of the active compile profile (an empty text selects none), or <see langword="null"/> to inherit the global choice.</summary>
+		public String? ActiveCompileProfile { get; set; }
+
+		/// <summary>Gets or sets the style of the code formatter for this project (all its options as a group), or <see langword="null"/> to inherit the global style.</summary>
+		public FormatSettings? Formatting { get; set; }
 
 		/// <summary>Gets or sets the properties of the file this version does not know (kept when the file is written again).</summary>
 		[JsonExtensionData]
@@ -115,7 +124,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The identifiers (see <see cref="ProjectOptions"/>), in a stable order.</returns>
 		public IReadOnlyList<String> GetOverriddenOptions()
 		{
-			List<String> options = new List<String>();
+			List<String> options = [];
 
 			void Add(String id, Boolean overridden)
 			{
@@ -140,6 +149,9 @@ namespace FalloutScriptStudio.Core.Configuration
 			Add(ProjectOptions.DebugInfo, this.DebugInfo.HasValue);
 			Add(ProjectOptions.MessageSearchDirectories, this.MessageSearchDirectories is not null);
 			Add(ProjectOptions.ScriptsListFile, this.ScriptsListFile is not null);
+			Add(ProjectOptions.CompileProfiles, this.CompileProfiles is { Count: > 0 });
+			Add(ProjectOptions.ActiveCompileProfile, this.ActiveCompileProfile is not null);
+			Add(ProjectOptions.Formatting, this.Formatting is not null);
 			return options;
 		}
 
@@ -150,8 +162,10 @@ namespace FalloutScriptStudio.Core.Configuration
 		public ProjectSettings Clone()
 		{
 			ProjectSettings copy = (ProjectSettings)this.MemberwiseClone();
-			copy.Defines = (this.Defines ?? new List<String>()).ToList();
+			copy.Defines = (this.Defines ?? []).ToList();
 			copy.MessageSearchDirectories = this.MessageSearchDirectories?.ToList();
+			copy.CompileProfiles = (this.CompileProfiles ?? []).Select(profile => profile.Clone()).ToList();
+			copy.Formatting = this.Formatting?.Clone();
 			copy.UnknownProperties = this.UnknownProperties?.ToDictionary(pair => pair.Key, pair => pair.Value.Clone(), StringComparer.Ordinal);
 			return copy;
 		}
@@ -163,11 +177,15 @@ namespace FalloutScriptStudio.Core.Configuration
 		{
 			this.Version = Math.Max(this.Version, CurrentVersion);
 			this.Name = String.IsNullOrWhiteSpace(this.Name) ? null : this.Name.Trim();
-			this.Defines = (this.Defines ?? new List<String>())
+			this.Defines = (this.Defines ?? [])
 				.Where(PreprocessorDefines.IsValidDefinition)
 				.Select(item => item.Trim())
 				.Distinct(StringComparer.Ordinal)
 				.ToList();
+
+			this.CompileProfiles = CompileProfile.Normalize(this.CompileProfiles);
+			this.ActiveCompileProfile = this.ActiveCompileProfile?.Trim();
+			this.Formatting?.Normalize();
 
 			if (this.PreprocessorDefine is not null)
 			{

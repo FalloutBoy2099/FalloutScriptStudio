@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Default <see cref="IProcedureTextService"/>, built on <see cref="ProcedureLocator"/> and <see cref="InternalParser"/>.

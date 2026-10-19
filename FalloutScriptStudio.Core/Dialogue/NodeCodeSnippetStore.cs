@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Configuration;
 
 	/// <summary>
 	/// <see cref="INodeCodeSnippetStore"/> that keeps the snippets in a text file, one <c>name|code</c> line per snippet.

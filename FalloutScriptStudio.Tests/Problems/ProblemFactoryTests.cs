@@ -40,12 +40,34 @@ namespace FalloutScriptStudio.Tests.Problems
 			yield return ProblemFactory.FromSettings(new SettingsProblem(SettingsProblemKind.SaveFailed, @"C:\app\settings\settings.json", "disk full"));
 			yield return ProblemFactory.ExternalEditorFailed(@"C:\tools\editor.exe");
 			yield return ProblemFactory.OperationFailed("it broke");
+			yield return ProblemFactory.FormatFileChanged(@"C:\s\a.ssl");
+			yield return ProblemFactory.FormatFileChanged("Untitled.ssl");
+			yield return ProblemFactory.FormatReadOnly(@"C:\s\a.ssl");
+			yield return ProblemFactory.FormatFailed(@"C:\s\a.ssl", "access denied");
 			yield return ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("'}' is invalid after a property name", 3, 7));
 			yield return ProblemFactory.ProjectFileInvalid(@"C:\mods\a\fss-project.json", new ProjectFileError("The file does not contain a settings object"));
 			yield return ProblemFactory.ProjectDocumentsAvailable(@"C:\mods\a", "Great Mod", 4);
 			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Local, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.Unused, "start", 10, 3, 5, 1, true), @"C:\s\a.ssl", owner);
 			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Local, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.WriteOnly, "start", 10, 3, 5, 1, false), @"C:\s\a.ssl", owner);
 			yield return ProblemFactory.UnusedVariable(new FalloutScriptStudio.Core.Analysis.UnusedVariable("x", FalloutScriptStudio.Core.Analysis.VariableDeclarationKind.Parameter, FalloutScriptStudio.Core.Analysis.UnusedVariableStatus.Unused, "start", 10, 3, 5, 1, false), @"C:\s\a.ssl", owner);
+			foreach (FalloutScriptStudio.Core.Analysis.ScriptDiagnosticRule rule in FalloutScriptStudio.Core.Analysis.ScriptDiagnosticCodes.All)
+			{
+				yield return ProblemFactory.ScriptDiagnostic(new FalloutScriptStudio.Core.Analysis.ScriptDiagnostic(rule.Code, rule.Severity, rule.MessageKey, new[] { "a", "b", "c", "d" }, 5, 3, 2, 1) { Fix = new FalloutScriptStudio.Core.Analysis.ScriptQuickFix(FalloutScriptStudio.Core.Analysis.ScriptQuickFix.RenameId, "other", 5, 3) }, @"C:\s\a.ssl", owner);
+			}
+
+			foreach (FalloutScriptStudio.Core.Dialogue.ScriptMessageFindingKind kind in Enum.GetValues<FalloutScriptStudio.Core.Dialogue.ScriptMessageFindingKind>())
+			{
+				yield return ProblemFactory.ScriptMessage(new FalloutScriptStudio.Core.Dialogue.ScriptMessageFinding(kind, FalloutScriptStudio.Core.Dialogue.ScriptMessageSeverity.Info, 101, FalloutScriptStudio.Core.Dialogue.ScriptMessageUsage.OwnFile, true, 5, 3, 3, 4), @"C:\s\a.ssl", @"C:\s\a.msg", new[] { 101 }, 1000, owner);
+			}
+
+			yield return ProblemFactory.ScriptMessage(new FalloutScriptStudio.Core.Dialogue.ScriptMessageFinding(FalloutScriptStudio.Core.Dialogue.ScriptMessageFindingKind.MissingMessage, FalloutScriptStudio.Core.Dialogue.ScriptMessageSeverity.Error, 7, 124, true, 5, 3, 1), @"C:\s\a.ssl", null, Array.Empty<Int32>(), 1000, owner);
+
+			foreach (FalloutScriptStudio.Services.ScriptTools.Replace.ReplaceFailureReason reason in Enum.GetValues<FalloutScriptStudio.Services.ScriptTools.Replace.ReplaceFailureReason>())
+			{
+				yield return ProblemFactory.ReplaceFileSkipped(@"C:\mods\a\scripts\a.ssl", reason, 3, "access denied");
+			}
+
+			yield return ProblemFactory.ReplaceFileSkipped("<unsaved>", FalloutScriptStudio.Services.ScriptTools.Replace.ReplaceFailureReason.Closed, 2, String.Empty);
 		}
 
 		[Fact]

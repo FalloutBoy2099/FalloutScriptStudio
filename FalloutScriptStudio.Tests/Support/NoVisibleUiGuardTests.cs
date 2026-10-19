@@ -44,7 +44,7 @@ namespace FalloutScriptStudio.Tests.Support
 		public void TheTests_NeverShowARealWindowOrPopupByThemselves()
 		{
 			String root = Path.Combine(TestFiles.RepositoryRoot, "FalloutScriptStudio.Tests");
-			List<String> offenders = new List<String>();
+			List<String> offenders = [];
 
 			foreach (String file in Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
 			{

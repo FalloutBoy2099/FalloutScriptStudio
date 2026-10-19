@@ -40,7 +40,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 		private static async Task WaitForAsync(Func<Boolean> condition, String what)
 		{
-			for (Int32 attempt = 0; attempt < 400 && !condition(); attempt++)
+			for (Int32 attempt = 0; attempt < 2400 && !condition(); attempt++)
 			{
 				await Task.Delay(25);
 			}

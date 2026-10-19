@@ -4,11 +4,11 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System.ComponentModel;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
 	using ICSharpCode.AvalonEdit;
+	using FalloutScriptStudio.Editor.Highlighting;
+	using Localization;
+	using Services;
+	using ViewModels.MessageEditor;
 
 	/// <summary>Keeps the details editor below the grid in sync with the text of the selected row.</summary>
 	internal sealed class MessageDetailsPane

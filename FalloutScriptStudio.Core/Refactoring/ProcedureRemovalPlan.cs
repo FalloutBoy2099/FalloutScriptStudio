@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>What removing a procedure from a script would do.</summary>
 	/// <param name="Name">The name of the procedure as written.</param>

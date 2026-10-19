@@ -51,9 +51,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public Int32 LineCount => this._document.LineCount;
 
-		public List<String> Calls { get; } = new List<String>();
+		public List<String> Calls { get; } = [];
 
-		public List<TextSpan> Matches { get; } = new List<TextSpan>();
+		public List<TextSpan> Matches { get; } = [];
 
 		public TextSpan? InsertedHighlight { get; private set; }
 

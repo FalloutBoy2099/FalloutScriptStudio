@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Indentation and white space operations of the editor menu: decrease indent, align to the first line, tab/space

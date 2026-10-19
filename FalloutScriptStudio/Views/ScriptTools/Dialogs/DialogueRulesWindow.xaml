@@ -21,6 +21,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <Style x:Key="HelpTerm" TargetType="TextBlock">
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -331,4 +332,5 @@
                 IsCancel="True" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

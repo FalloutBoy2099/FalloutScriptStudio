@@ -1,11 +1,10 @@
 namespace FalloutScriptStudio.Services.ScriptTools
 {
-	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Functions;
-	using FalloutScriptStudio.Core.Refactoring;
-	using FalloutScriptStudio.Services.ScriptTools.Dialogs;
+	using Core.Functions;
+	using Core.Refactoring;
+	using Dialogs;
 
 	/// <summary>
 	/// Small modal dialogs shared by the function tree, the flowchart and the rename refactoring.

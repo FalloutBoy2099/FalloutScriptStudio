@@ -18,6 +18,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <ui:FluentWindow.Resources>
         <local:NodeTemplateNameConverter x:Key="TemplateNameConverter" />
     </ui:FluentWindow.Resources>
@@ -112,4 +113,5 @@
             </StackPanel>
         </Grid>
     </Grid>
+
 </ui:FluentWindow>

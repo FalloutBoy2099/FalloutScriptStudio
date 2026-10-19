@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		public String Folder { get; set; } = String.Empty;
 
 		/// <summary>Gets or sets the open documents in tab order, relative to the project folder.</summary>
-		public List<String> Documents { get; set; } = new List<String>();
+		public List<String> Documents { get; set; } = [];
 
 		/// <summary>Gets or sets the active document (one of <see cref="Documents"/>), or <see langword="null"/>.</summary>
 		public String? ActiveDocument { get; set; }
@@ -33,7 +33,7 @@ namespace FalloutScriptStudio.Core.Configuration
 			ArgumentNullException.ThrowIfNull(openDocuments);
 
 			String folder = ProjectLocator.Normalize(projectFolder);
-			List<String> documents = new List<String>();
+			List<String> documents = [];
 			foreach (String path in openDocuments)
 			{
 				if (IsInside(folder, path))
@@ -59,7 +59,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The paths in tab order.</returns>
 		public IReadOnlyList<String> GetDocumentPaths()
 		{
-			return (this.Documents ?? new List<String>()).Select(this.Resolve).ToList();
+			return (this.Documents ?? []).Select(this.Resolve).ToList();
 		}
 
 		/// <summary>Gets the full path of the remembered active document.</summary>
@@ -67,6 +67,16 @@ namespace FalloutScriptStudio.Core.Configuration
 		public String? GetActiveDocumentPath()
 		{
 			return String.IsNullOrEmpty(this.ActiveDocument) ? null : this.Resolve(this.ActiveDocument);
+		}
+
+		/// <summary>Determines whether a file is inside a project folder (a session only remembers such documents).</summary>
+		/// <param name="projectFolder">The project folder.</param>
+		/// <param name="path">The full path of the file.</param>
+		/// <returns><see langword="true"/> when the file is in the folder or one of its sub folders.</returns>
+		public static Boolean IsInsideProject(String projectFolder, String path)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(projectFolder);
+			return IsInside(ProjectLocator.Normalize(projectFolder), path);
 		}
 
 		private static Boolean IsInside(String folder, String path)

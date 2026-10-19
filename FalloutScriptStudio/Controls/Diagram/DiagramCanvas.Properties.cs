@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System.Collections.ObjectModel;
 	using System.Linq;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	// Dependency properties and state accessors of the canvas.
 	public sealed partial class DiagramCanvas

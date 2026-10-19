@@ -52,5 +52,14 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>The path of <c>scripts.lst</c>.</summary>
 		public const String ScriptsListFile = nameof(ProjectSettings.ScriptsListFile);
+
+		/// <summary>The compile profiles the project adds to the global ones.</summary>
+		public const String CompileProfiles = nameof(ProjectSettings.CompileProfiles);
+
+		/// <summary>The active compile profile.</summary>
+		public const String ActiveCompileProfile = nameof(ProjectSettings.ActiveCompileProfile);
+
+		/// <summary>The style of the code formatter.</summary>
+		public const String Formatting = nameof(ProjectSettings.Formatting);
 	}
 }

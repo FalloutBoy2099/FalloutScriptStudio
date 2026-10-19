@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Views.ScriptTools
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.ViewModels.ScriptTools;
 	using Wpf.Ui.Controls;
+	using ViewModels.ScriptTools;
 
 	/// <summary>
 	/// The procedure name dialog.

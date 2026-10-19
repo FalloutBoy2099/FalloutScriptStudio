@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Dialogs
 {
 	using System;
-	using FalloutScriptStudio.Core.Functions;
+	using Core.Functions;
 
 	/// <summary>
 	/// The outcome of the add / edit user function dialog.

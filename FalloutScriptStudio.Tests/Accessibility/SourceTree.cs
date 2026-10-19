@@ -62,7 +62,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Reads all the strings of a language (every area).</summary>
 		public static Dictionary<String, String> LoadStrings(String language)
 		{
-			Dictionary<String, String> strings = new Dictionary<String, String>(StringComparer.Ordinal);
+			Dictionary<String, String> strings = new(StringComparer.Ordinal);
 			foreach (String area in Loc.Areas)
 			{
 				String file = Path.Combine(AppFolder, "Localization", "Strings", $"{area}.{language}.xaml");

@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Rendering;
 
 	/// <summary>Renders a whole scene (not just the visible part) to a bitmap.</summary>
 	internal static class DiagramBitmapExporter
@@ -58,9 +58,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 			Rect bounds = GetBounds(scene);
 			(Int32 pixelWidth, Int32 pixelHeight) = CalculateSize(bounds.Width + (2.0 * margin), bounds.Height + (2.0 * margin), scale, out Double s);
 
-			DrawingVisual visual = new DrawingVisual();
+			DrawingVisual visual = new();
 			TextOptions.SetTextFormattingMode(visual, TextFormattingMode.Ideal);
-			DiagramRenderer renderer = new DiagramRenderer(scene);
+			DiagramRenderer renderer = new(scene);
 			using (DrawingContext dc = visual.RenderOpen())
 			{
 				dc.DrawRectangle(scene.Context.Palette.Background, null, new Rect(0, 0, pixelWidth, pixelHeight));
@@ -72,7 +72,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 				dc.Pop();
 			}
 
-			RenderTargetBitmap bitmap = new RenderTargetBitmap(pixelWidth, pixelHeight, 96.0, 96.0, PixelFormats.Pbgra32);
+			RenderTargetBitmap bitmap = new(pixelWidth, pixelHeight, 96.0, 96.0, PixelFormats.Pbgra32);
 			bitmap.Render(visual);
 			bitmap.Freeze();
 			return bitmap;

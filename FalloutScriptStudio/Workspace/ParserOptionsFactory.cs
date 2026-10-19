@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
+	using Core.Configuration;
+	using Core.Parsing;
 
 	/// <summary>Builds the immutable parser options from the user settings.</summary>
 	public static class ParserOptionsFactory

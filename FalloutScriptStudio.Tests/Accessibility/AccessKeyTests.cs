@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	public sealed class AccessKeyTests
 	{
 		/// <summary>The Alt+letter shortcuts that are always on in the main window; a menu must not take these letters.</summary>
-		private static readonly HashSet<Char> _alwaysOnAltLetters = new HashSet<Char> { 'E', 'R', 'L', 'P', 'M' };
+		private static readonly HashSet<Char> _alwaysOnAltLetters = ['E', 'R', 'L', 'P', 'M'];
 
 		/// <summary>The Latin key of the Cyrillic letters on a Russian keyboard: Alt+key is read by key, not by the letter it types.</summary>
 		private static readonly Dictionary<Char, Char> _russianLayout = "ЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬ".Zip("QWERTYUIOPASDFGHJKLZXCVBNM").ToDictionary(pair => pair.First, pair => pair.Second);
@@ -99,8 +99,8 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		public void NoAccessKeyIsUsedTwiceInAWindowOrAMenu(String language, String relativePath)
 		{
 			XDocument document = SourceTree.Load(Path.Combine(SourceTree.AppFolder, relativePath));
-			List<String> duplicates = new List<String>();
-			Dictionary<(XElement? Scope, Char Key), List<String>> used = new Dictionary<(XElement? Scope, Char Key), List<String>>();
+			List<String> duplicates = [];
+			Dictionary<(XElement? Scope, Char Key), List<String>> used = [];
 
 			foreach (XElement element in document.Descendants())
 			{
@@ -120,7 +120,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				(XElement?, Char) id = (scope, key);
 				if (!used.TryGetValue(id, out List<String>? owners))
 				{
-					used[id] = owners = new List<String>();
+					used[id] = owners = [];
 				}
 
 				owners.Add(text!);
@@ -139,7 +139,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		{
 			HashSet<String> english = _strings.Value["en"].Where(pair => IsLabel(pair.Value) && AccessKeyOf(pair.Value) is not null).Select(pair => pair.Key).ToHashSet(StringComparer.Ordinal);
 			Assert.NotEmpty(english);
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			foreach ((String language, Dictionary<String, String> strings) in _strings.Value.Where(pair => pair.Key != "en"))
 			{
 				HashSet<String> marked = strings.Where(pair => IsLabel(_strings.Value["en"][pair.Key]) && IsLabel(pair.Value) && AccessKeyOf(pair.Value) is not null).Select(pair => pair.Key).ToHashSet(StringComparer.Ordinal);
@@ -154,7 +154,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		public void ATextWithAnAccessKeyIsOnlyShownWhereTheKeyIsRecognized()
 		{
 			HashSet<String> marked = _strings.Value["en"].Where(pair => IsLabel(pair.Value) && AccessKeyOf(pair.Value) is not null).Select(pair => pair.Key).ToHashSet(StringComparer.Ordinal);
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			foreach (String file in Directory.EnumerateFiles(SourceTree.AppFolder, "*.*", SearchOption.AllDirectories)
 				.Where(path => (path.EndsWith(".xaml", StringComparison.Ordinal) || path.EndsWith(".cs", StringComparison.Ordinal))

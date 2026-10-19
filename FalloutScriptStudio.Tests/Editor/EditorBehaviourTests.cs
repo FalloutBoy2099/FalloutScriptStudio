@@ -112,6 +112,26 @@ namespace FalloutScriptStudio.Tests.Editor
 			});
 		}
 
+		[Theory]
+		[InlineData(true, false)]
+		[InlineData(false, true)]
+		public void Caret_MovedWhileExtendingTheSelectionOrDraggingWithTheMouse_LeavesThePlaceholderAlone(Boolean shift, Boolean mouse)
+		{
+			UiThread.Run(() =>
+			{
+				using EditorTestEnvironment env = new EditorTestEnvironment();
+				DocumentViewModel document = env.CreateDocument(Script);
+				using EditorSession session = env.StartSession(document);
+				Int32 inside = document.TextDocument.Text.IndexOf("{cond}", StringComparison.Ordinal) + 3;
+				env.Input.Modifiers = shift ? System.Windows.Input.ModifierKeys.Shift : System.Windows.Input.ModifierKeys.None;
+				env.Input.IsLeftButtonPressed = mouse;
+
+				session.Context.TextArea.Caret.Offset = inside;
+
+				Assert.Equal(String.Empty, session.Context.Editor.SelectedText);
+			});
+		}
+
 		[Fact]
 		public void Caret_AtTheOpeningBraceAndBeforeTheClosingOne_SelectsThePlaceholder()
 		{

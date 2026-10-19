@@ -1,10 +1,9 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
-	using System.Linq;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Core.Parsing;
+	using Compilation;
+	using Messages;
+	using Parsing;
 
 	/// <summary>
 	/// Builds the immutable options of the other Core services from the user settings.

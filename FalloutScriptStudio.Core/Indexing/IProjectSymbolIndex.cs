@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
+	using Analysis;
+	using Parsing;
 
 	/// <summary>
 	/// The symbols (procedures, macros and script level variables) of every script and header of the project, found without opening the

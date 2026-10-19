@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Tests.Startup
 	/// <summary>The ordered record of everything the fakes of a start-up test were asked to do.</summary>
 	internal sealed class StartupEvents
 	{
-		private readonly List<String> _items = new List<String>();
+		private readonly List<String> _items = [];
 
 		public IReadOnlyList<String> Items => this._items;
 

@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	public sealed class TextEditBuilder
 	{
 		private readonly String _original;
-		private readonly List<Piece> _pieces = new List<Piece>();
+		private readonly List<Piece> _pieces = [];
 		private Int32 _length;
 
 		/// <summary>

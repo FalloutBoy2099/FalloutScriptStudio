@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+
     <UserControl.Resources>
         <HierarchicalDataTemplate DataType="{x:Type vm:TreeGroupNodeViewModel}" ItemsSource="{Binding Children}">
             <TextBlock
@@ -92,6 +93,15 @@
                             FontWeight="Bold"
                             Header="{DynamicResource Str.Panels.MenuEditNodeCode}"
                             IsEnabled="{Binding PlacementTarget.DataContext.CanEditNodeCode, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.PreviewDialogueCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Panels.MenuPreviewDialogue}"
+                            IsEnabled="{Binding PlacementTarget.DataContext.CanPreviewDialogue, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="Play24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <Separator />
                         <MenuItem
                             Command="{Binding PlacementTarget.Tag.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
@@ -284,4 +294,5 @@
             TextWrapping="Wrap"
             Visibility="{Binding HasData, Converter={StaticResource InvertedBoolToVisibility}}" />
     </Grid>
+
 </UserControl>

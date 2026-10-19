@@ -32,7 +32,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		public Action<FakeParserHost, String> OnRequest { get; }
 
 		/// <summary>Gets the request lines received so far.</summary>
-		public List<String> Requests { get; } = new List<String>();
+		public List<String> Requests { get; } = [];
 
 		/// <summary>Gets or sets a value indicating whether writing a request throws an <see cref="IOException"/> (broken pipe).</summary>
 		public Boolean FailWrites { get; set; }

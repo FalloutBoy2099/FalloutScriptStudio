@@ -19,6 +19,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterScreen">
+
     <ui:FluentWindow.InputBindings>
         <KeyBinding Command="{Binding UndoCommand}" Gesture="Ctrl+Z" />
         <KeyBinding Command="{Binding RedoCommand}" Gesture="Ctrl+Y" />
@@ -312,4 +313,5 @@
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
+
 </ui:FluentWindow>

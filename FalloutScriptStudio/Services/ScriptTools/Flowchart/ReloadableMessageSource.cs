@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Dialogue;
+	using Core.Dialogue;
 
 	/// <summary>
 	/// A message source that forwards to another source which can be replaced at any time. A long-lived tool window keeps one of

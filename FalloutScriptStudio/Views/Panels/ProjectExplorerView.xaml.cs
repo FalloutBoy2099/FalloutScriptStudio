@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Views.Panels
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.Panels;
+	using ViewModels.Panels;
 
 	/// <summary>The "Solution" tab: the project folder as a tree.</summary>
 	public partial class ProjectExplorerView : UserControl

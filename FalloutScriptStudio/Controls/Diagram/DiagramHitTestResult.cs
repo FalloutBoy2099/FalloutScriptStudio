@@ -1,6 +1,6 @@
 namespace FalloutScriptStudio.Controls.Diagram
 {
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Result of <see cref="DiagramCanvas.HitTest"/>.

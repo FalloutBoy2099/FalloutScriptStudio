@@ -66,7 +66,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		public void Decompiler_TheBuiltInOneIsTheDefault_AndTheExternalOptionsApplyOnlyToTheExternalOne()
 		{
 			SettingsViewModel viewModel = this.Create();
-			List<String> changed = new List<String>();
+			List<String> changed = [];
 			((INotifyPropertyChanged)viewModel).PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 
 			Assert.Equal(DecompilerKind.BuiltIn, viewModel.Decompiler);
@@ -110,7 +110,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		[Fact]
 		public void MessagePaths_AddInsertsAtTheTopAndIgnoresDuplicates()
 		{
-			this._settings.Settings.Paths.MessageSearchDirectories = new List<String> { @"C:\a", @"C:\b" };
+			this._settings.Settings.Paths.MessageSearchDirectories = [@"C:\a", @"C:\b"];
 			SettingsViewModel viewModel = this.Create();
 
 			this._dialogs.FolderAnswers.Enqueue(@"C:\new");
@@ -127,7 +127,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		[Fact]
 		public void MessagePaths_MoveAndRemove()
 		{
-			this._settings.Settings.Paths.MessageSearchDirectories = new List<String> { @"C:\a", @"C:\b", @"C:\c" };
+			this._settings.Settings.Paths.MessageSearchDirectories = [@"C:\a", @"C:\b", @"C:\c"];
 			SettingsViewModel viewModel = this.Create();
 
 			Assert.False(viewModel.RemoveMessagePathCommand.CanExecute(null));

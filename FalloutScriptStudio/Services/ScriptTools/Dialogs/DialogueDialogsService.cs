@@ -5,11 +5,11 @@ namespace FalloutScriptStudio.Services.ScriptTools.Dialogs
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Functions;
-	using FalloutScriptStudio.Core.Refactoring;
-	using FalloutScriptStudio.ViewModels.ScriptTools.Dialogs;
-	using FalloutScriptStudio.Views.ScriptTools.Dialogs;
 	using Microsoft.Extensions.DependencyInjection;
+	using Core.Functions;
+	using Core.Refactoring;
+	using ViewModels.ScriptTools.Dialogs;
+	using Views.ScriptTools.Dialogs;
 
 	/// <inheritdoc />
 	public sealed class DialogueDialogsService : IDialogueDialogsService

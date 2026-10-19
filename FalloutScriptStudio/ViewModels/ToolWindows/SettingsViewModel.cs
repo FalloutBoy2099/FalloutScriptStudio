@@ -23,6 +23,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		private readonly IThemeService _themeService;
 		private readonly IDialogService _dialogService;
 		private readonly IFileAssociationService _fileAssociation;
+		private readonly IToolWindowService? _toolWindows;
 		private readonly AppTheme _initialTheme;
 
 		[ObservableProperty]
@@ -36,12 +37,14 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <param name="dialogService">Shows the folder and file pickers.</param>
 		/// <param name="fileAssociation">Registers the file types.</param>
 		/// <param name="fontCatalog">Lists the bundled editor fonts.</param>
+		/// <param name="toolWindows">Opens the snippet manager, or <see langword="null"/> when the window has no way to open it.</param>
 		public SettingsViewModel(
 			ISettingsService settingsService,
 			IThemeService themeService,
 			IDialogService dialogService,
 			IFileAssociationService fileAssociation,
-			IEditorFontCatalog fontCatalog)
+			IEditorFontCatalog fontCatalog,
+			IToolWindowService? toolWindows = null)
 		{
 			ArgumentNullException.ThrowIfNull(settingsService);
 			ArgumentNullException.ThrowIfNull(themeService);
@@ -53,6 +56,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this._themeService = themeService;
 			this._dialogService = dialogService;
 			this._fileAssociation = fileAssociation;
+			this._toolWindows = toolWindows;
 
 			this.Draft = settingsService.Settings.Clone();
 			this.Draft.Normalize();
@@ -65,17 +69,17 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 				this.Draft.Editor.FontIndex = 0;
 			}
 
-			this.MessagePaths = new ObservableCollection<String>(this.Draft.Paths.MessageSearchDirectories);
-			this.PreprocessorDefineItems = new ObservableCollection<String>(settingsService.PreprocessorDefines.Items.Where(PreprocessorDefines.IsValidDefinition).Select(item => item.Trim()));
+			this.MessagePaths = new(this.Draft.Paths.MessageSearchDirectories);
+			this.PreprocessorDefineItems = new(settingsService.PreprocessorDefines.Items.Where(PreprocessorDefines.IsValidDefinition).Select(item => item.Trim()));
 			this.Pages = new List<SettingsPageItem>
 			{
-				new SettingsPageItem(SettingsPage.Appearance, Loc.Get("Str.ToolWindows.Page.Appearance"), SymbolRegular.PaintBrush24),
-				new SettingsPageItem(SettingsPage.Editor, Loc.Get("Str.ToolWindows.Page.Editor"), SymbolRegular.TextEditStyle24),
-				new SettingsPageItem(SettingsPage.Parser, Loc.Get("Str.ToolWindows.Page.Parser"), SymbolRegular.BracesVariable24),
-				new SettingsPageItem(SettingsPage.Compiler, Loc.Get("Str.ToolWindows.Page.Compiler"), SymbolRegular.Wrench24),
-				new SettingsPageItem(SettingsPage.Paths, Loc.Get("Str.ToolWindows.Page.Paths"), SymbolRegular.FolderOpen24),
-				new SettingsPageItem(SettingsPage.Messages, Loc.Get("Str.ToolWindows.Page.Messages"), SymbolRegular.Chat24),
-				new SettingsPageItem(SettingsPage.Flowchart, Loc.Get("Str.ToolWindows.Page.Flowchart"), SymbolRegular.Flowchart24),
+				new(SettingsPage.Appearance, Loc.Get("Str.ToolWindows.Page.Appearance"), SymbolRegular.PaintBrush24),
+				new(SettingsPage.Editor, Loc.Get("Str.ToolWindows.Page.Editor"), SymbolRegular.TextEditStyle24),
+				new(SettingsPage.Parser, Loc.Get("Str.ToolWindows.Page.Parser"), SymbolRegular.BracesVariable24),
+				new(SettingsPage.Compiler, Loc.Get("Str.ToolWindows.Page.Compiler"), SymbolRegular.Wrench24),
+				new(SettingsPage.Paths, Loc.Get("Str.ToolWindows.Page.Paths"), SymbolRegular.FolderOpen24),
+				new(SettingsPage.Messages, Loc.Get("Str.ToolWindows.Page.Messages"), SymbolRegular.Chat24),
+				new(SettingsPage.Flowchart, Loc.Get("Str.ToolWindows.Page.Flowchart"), SymbolRegular.Flowchart24),
 			};
 			this._selectedPageItem = this.Pages[0];
 
@@ -138,6 +142,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 			Normalize(settings, this.MessagePaths, this.FontChoices.Count);
 			this.CommitPreprocessorDefines();
+			this.CommitProfiles();
 
 			// Only the options of this window are copied into the live settings: values written meanwhile by other components survive.
 			this._settingsService.Update(live => SettingsDialogMerge.CopyOwnedOptions(live, settings));

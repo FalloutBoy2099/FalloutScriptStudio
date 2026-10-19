@@ -11,7 +11,7 @@ namespace FalloutScriptStudio.Core.Configuration
 	public sealed class FoldedProcedures
 	{
 		/// <summary>Gets the names of the folded procedures by script name.</summary>
-		public Dictionary<String, HashSet<String>> Scripts { get; } = new Dictionary<String, HashSet<String>>(StringComparer.OrdinalIgnoreCase);
+		public Dictionary<String, HashSet<String>> Scripts { get; } = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>Marks a procedure as folded.</summary>
 		/// <param name="scriptName">The script name.</param>
@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		{
 			if (!this.Scripts.TryGetValue(scriptName, out HashSet<String>? procedures))
 			{
-				procedures = new HashSet<String>(StringComparer.Ordinal);
+				procedures = new(StringComparer.Ordinal);
 				this.Scripts.Add(scriptName, procedures);
 			}
 

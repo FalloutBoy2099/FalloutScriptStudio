@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Views.Panels
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.Panels;
+	using ViewModels.Panels;
 
 	/// <summary>The "Variables" tab: tree interaction (double-click and Ctrl+click).</summary>
 	public partial class VariablesPanelView : UserControl

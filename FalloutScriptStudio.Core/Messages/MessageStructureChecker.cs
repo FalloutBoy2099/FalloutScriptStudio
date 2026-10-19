@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Messages
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// <see cref="IMessageStructureChecker"/> implementation. It tracks the curly braces of the
@@ -32,10 +32,10 @@ namespace FalloutScriptStudio.Core.Messages
 			Boolean onlyOnce = false;
 			Boolean newLine = false;
 
-			HashSet<Int32> usedNumbers = new HashSet<Int32>();
-			List<(BuildErrorType Type, String Message, Int32 Offset, Int32 Length)> numberIssues = new List<(BuildErrorType, String, Int32, Int32)>();
-			List<(String Message, Int32 Offset)> hints = new List<(String, Int32)>();
-			List<Int32> missingCommentMarks = new List<Int32>();
+			HashSet<Int32> usedNumbers = [];
+			List<(BuildErrorType Type, String Message, Int32 Offset, Int32 Length)> numberIssues = [];
+			List<(String Message, Int32 Offset)> hints = [];
+			List<Int32> missingCommentMarks = [];
 
 			for (Int32 offset = 0; offset < text.Length; offset++)
 			{
@@ -170,7 +170,7 @@ namespace FalloutScriptStudio.Core.Messages
 			List<Int32> missingCommentMarks)
 		{
 			TextPositionMap map = new TextPositionMap(text);
-			List<MessageStructureIssue> issues = new List<MessageStructureIssue>();
+			List<MessageStructureIssue> issues = [];
 
 			foreach ((BuildErrorType type, String message, Int32 offset, Int32 length) in numberIssues)
 			{

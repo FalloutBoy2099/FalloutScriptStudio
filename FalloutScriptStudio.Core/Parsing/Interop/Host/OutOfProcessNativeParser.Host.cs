@@ -83,7 +83,15 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 			}
 
 			String root = this._options.WorkingDirectoryRoot ?? Path.GetTempPath();
-			String directory = Path.Combine(root, "FalloutScriptStudio", "parser-host-" + Guid.NewGuid().ToString("N"));
+			String hostsFolder = Path.Combine(root, "FalloutScriptStudio");
+			if (!this._sweptHostFolders)
+			{
+				// A host whose program was killed (a crash, the task manager) never removed its working folder.
+				this._sweptHostFolders = true;
+				SweepStaleHostDirectories(hostsFolder, this._timeProvider.GetUtcNow().UtcDateTime - StaleHostDirectoryAge);
+			}
+
+			String directory = Path.Combine(hostsFolder, "parser-host-" + Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(directory);
 
 			IParserHostProcess host;
@@ -131,6 +139,27 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 				this._unavailableMessage = "The native parser host keeps failing before it answers, so it is not used for "
 					+ this._options.StartFailureBackoff.TotalSeconds.ToString("0.###", CultureInfo.InvariantCulture)
 					+ " seconds. Last problem: " + message;
+			}
+		}
+
+		/// <summary>Deletes the working folders of hosts that ended long ago; a folder that a running host (of another instance) uses cannot be deleted and stays.</summary>
+		/// <param name="hostsFolder">The folder that holds the working folders.</param>
+		/// <param name="olderThan">The folders last written before this time (UTC) are deleted.</param>
+		internal static void SweepStaleHostDirectories(String hostsFolder, DateTime olderThan)
+		{
+			try
+			{
+				foreach (String directory in Directory.EnumerateDirectories(hostsFolder, "parser-host-*"))
+				{
+					if (Directory.GetLastWriteTimeUtc(directory) < olderThan)
+					{
+						TryDeleteDirectory(directory);
+					}
+				}
+			}
+			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			{
+				// The folder does not exist yet or cannot be listed: nothing to sweep.
 			}
 		}
 

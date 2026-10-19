@@ -72,6 +72,7 @@
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Select the project folder</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filter...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Edit node code</sys:String>
+    <sys:String x:Key="Str.Panels.MenuPreviewDialogue">Preview dialogue from this node</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Show only the procedure you go to: the other procedures are collapsed when a procedure is selected</sys:String>
     <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Delete Unused Procedure...</sys:String>
     <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Find Unused Variables</sys:String>

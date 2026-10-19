@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 {
 	using System;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>
 	/// Describes a change of the node code editors of a script.

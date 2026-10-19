@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 
 		public Int32 OpenWindowCount => 0;
 
-		public List<MessageEditorOpenOptions> Requests { get; } = new List<MessageEditorOpenOptions>();
+		public List<MessageEditorOpenOptions> Requests { get; } = [];
 
 		/// <summary>Gets or sets the message the user "sends" from the editor, or <see langword="null"/> to send nothing.</summary>
 		public Int32? SendMessageId { get; set; }

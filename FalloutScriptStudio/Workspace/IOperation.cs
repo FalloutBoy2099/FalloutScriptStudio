@@ -13,6 +13,7 @@ namespace FalloutScriptStudio.Workspace
 		/// <param name="subject">The file name.</param>
 		/// <param name="index">The 1-based position of the file in the run, or 0.</param>
 		/// <param name="total">The number of files of the run, or 0.</param>
-		void Report(String subject, Int32 index = 0, Int32 total = 0);
+		/// <param name="upToDate">The number of scripts the run skipped because they are up to date.</param>
+		void Report(String subject, Int32 index = 0, Int32 total = 0, Int32 upToDate = 0);
 	}
 }

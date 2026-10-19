@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Everything a rename needs, supplied explicitly by the caller.

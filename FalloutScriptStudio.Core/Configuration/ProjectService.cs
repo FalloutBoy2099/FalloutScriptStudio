@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		public Boolean CanCreateSettings => this._folder is not null && this._project is null && this._status is ProjectFileStatus.Missing or ProjectFileStatus.Damaged;
 
 		/// <inheritdoc/>
-		public IReadOnlyList<String> RecentProjects => (this._settings.Recent.Projects ?? new List<String>()).AsEnumerable().Reverse().ToList();
+		public IReadOnlyList<String> RecentProjects => (this._settings.Recent.Projects ?? []).AsEnumerable().Reverse().ToList();
 
 		/// <inheritdoc/>
 		public Boolean Open(String folder)

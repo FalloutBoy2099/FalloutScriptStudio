@@ -11,7 +11,7 @@ namespace FalloutScriptStudio.Tests.Diagram
 		public void AddRow_SetsOwnerAndRaisesRowsChanged()
 		{
 			DiagramNode node = new DiagramNode("node001");
-			List<String?> changed = new List<String?>();
+			List<String?> changed = [];
 			node.PropertyChanged += (s, e) => changed.Add(e.PropertyName);
 
 			DiagramRow row = node.AddRow(DiagramRowKind.Reply, "Hello", "Reply(1);");

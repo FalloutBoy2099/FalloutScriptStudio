@@ -1,6 +1,6 @@
 namespace FalloutScriptStudio.Workspace
 {
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>Moves the caret of a document to the position requested by <see cref="OpenDocumentOptions"/>.</summary>
 	internal static class DocumentNavigation

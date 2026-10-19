@@ -77,7 +77,7 @@ namespace FalloutScriptStudio.Tests.Localization
 				text.AppendLine("* **" + language.Key + "**: " + String.Join("; ", language.Value.Select(forbidden => (forbidden.Text is not null ? Code(forbidden.Text) : "characters " + Code(forbidden.Chars ?? String.Empty)) + " (" + forbidden.Reason + ")")) + ".");
 			}
 
-			return text.ToString().Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal);
+			return text.ToString().Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal).TrimEnd('\r', '\n');
 		}
 
 		private static String Forbidden(Glossary.Term term, IEnumerable<String> languages)

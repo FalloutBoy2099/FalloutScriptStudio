@@ -33,7 +33,7 @@ namespace FalloutScriptStudio.Services
 					return;
 				}
 
-				SoundPlayer player = new SoundPlayer(info.Stream);
+				SoundPlayer player = new(info.Stream);
 				player.Load();
 				player.Play();
 			}

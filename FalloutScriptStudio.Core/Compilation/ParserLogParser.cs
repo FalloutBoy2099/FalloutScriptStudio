@@ -25,8 +25,8 @@ namespace FalloutScriptStudio.Core.Compilation
 		/// <returns>The prepared text and the entries.</returns>
 		public ParserLogResult Parse(String log, String scriptFileName, Boolean includeWarnings, DateTime parseTime)
 		{
-			List<BuildError> errors = new List<BuildError>();
-			List<BuildError> includeNotes = new List<BuildError>();
+			List<BuildError> errors = [];
+			List<BuildError> includeNotes = [];
 			StringBuilder sb = new StringBuilder();
 			sb.Append("------ Script: ").Append(scriptFileName)
 				.Append(" < Parse Time: ").Append(parseTime.ToString("HH:mm:ss", CultureInfo.InvariantCulture))

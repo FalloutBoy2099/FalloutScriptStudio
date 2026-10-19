@@ -7,14 +7,14 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	/// <summary>A shell service that records what it was asked to do.</summary>
 	internal sealed class FakeShellService : IShellService
 	{
-		public List<String> Revealed { get; } = new List<String>();
+		public List<String> Revealed { get; } = [];
 
-		public List<String> Folders { get; } = new List<String>();
+		public List<String> Folders { get; } = [];
 
-		public List<String> Programs { get; } = new List<String>();
+		public List<String> Programs { get; } = [];
 
 		/// <summary>Gets the files, folders and addresses opened with their associated program.</summary>
-		public List<String> Opened { get; } = new List<String>();
+		public List<String> Opened { get; } = [];
 
 		/// <summary>Gets or sets the answer of <see cref="OpenWithShell"/>.</summary>
 		public Boolean OpenWithShellResult { get; set; } = true;

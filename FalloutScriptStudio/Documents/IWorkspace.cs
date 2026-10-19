@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Documents
 	using System.Collections.Generic;
 	using System.Collections.ObjectModel;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
+	using Core.Parsing;
 
 	/// <summary>
 	/// The set of open documents plus the application-level operations that editors, panels and tool windows
@@ -89,6 +89,17 @@ namespace FalloutScriptStudio.Documents
 		void ReportStatus(String message);
 
 		/// <summary>
+		/// Shows the list of snippets the user can insert (Insert Snippet) or surround the selection with (Surround With), and waits for the choice.
+		/// The default implementation chooses nothing.
+		/// </summary>
+		/// <param name="request">The snippets to offer.</param>
+		/// <returns>The chosen snippet, or <see langword="null"/> when the list was cancelled.</returns>
+		Task<FalloutScriptStudio.Core.Snippets.Snippet?> PickSnippetAsync(FalloutScriptStudio.Services.ToolWindows.SnippetPickerRequest request)
+		{
+			return Task.FromResult<FalloutScriptStudio.Core.Snippets.Snippet?>(null);
+		}
+
+		/// <summary>
 		/// Reports that something failed: the message goes to the status bar and, in the main window, also to the list of problems of the
 		/// Errors tab (where it stays until it is cleared). The default implementation only writes to the status bar.
 		/// </summary>
@@ -167,6 +178,66 @@ namespace FalloutScriptStudio.Documents
 		/// <param name="column">The 1-based column of the name of the variable.</param>
 		/// <returns>A task that completes when the declaration was removed.</returns>
 		Task RemoveUnusedVariableAsync(String file, Int32 line, Int32 column)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Applies the quick fix of the finding of the semantic analysis at a place of a script (the fix a problem of the list offers). The
+		/// script is analysed again first, so a fix is never applied to a text it was not made for. The default implementation does nothing.
+		/// </summary>
+		/// <param name="file">The script; it is opened when needed.</param>
+		/// <param name="line">The 1-based line of the finding.</param>
+		/// <param name="column">The 1-based column of the finding.</param>
+		/// <returns>A task that completes when the fix was applied.</returns>
+		Task ApplyQuickFixAsync(String file, Int32 line, Int32 column)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Applies the quick fix of the finding of the semantic analysis under an offset of a script (the Quick Fix command of the editor).
+		/// The default implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <param name="offset">The offset, usually of the caret.</param>
+		/// <returns><see langword="true"/> when a fix was applied.</returns>
+		Task<Boolean> ApplyQuickFixAtAsync(DocumentViewModel document, Int32 offset)
+		{
+			return Task.FromResult(false);
+		}
+
+		/// <summary>
+		/// Opens the dialogue preview of a script at a dialogue node (Preview Dialogue From This Node); a window that is already open for the
+		/// script is moved to that node. The default implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <param name="nodeName">The name of the node procedure.</param>
+		/// <returns>A task that completes when the preview is shown.</returns>
+		Task PreviewDialogueFromNodeAsync(DocumentViewModel document, String nodeName)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Appends the message numbers a script uses and its message file lacks to the message file (the fix of a missing message), then checks
+		/// the script again. The default implementation does nothing.
+		/// </summary>
+		/// <param name="scriptPath">The script.</param>
+		/// <param name="numbers">The message numbers to add.</param>
+		/// <returns>A task that completes when the messages are added.</returns>
+		Task AddMissingMessagesAsync(String scriptPath, IReadOnlyList<Int32> numbers)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Finds or creates the message file of a script and associates it with the script (the fix of a script that uses messages and has no
+		/// message file). The default implementation does nothing.
+		/// </summary>
+		/// <param name="scriptPath">The script.</param>
+		/// <returns>A task that completes when the file is associated.</returns>
+		Task CreateMessageFileAsync(String scriptPath)
 		{
 			return Task.CompletedTask;
 		}

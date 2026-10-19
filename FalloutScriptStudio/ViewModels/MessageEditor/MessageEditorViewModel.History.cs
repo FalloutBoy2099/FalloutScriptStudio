@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 
 		private EditorSnapshot CaptureSnapshot()
 		{
-			List<RowState> states = new List<RowState>(this._rows.Count);
+			List<RowState> states = new(this._rows.Count);
 			foreach (MessageRowViewModel row in this._rows)
 			{
 				states.Add(row.CaptureState());

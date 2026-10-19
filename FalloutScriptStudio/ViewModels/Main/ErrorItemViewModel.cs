@@ -114,7 +114,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		{
 			get
 			{
-				StringBuilder line = new StringBuilder();
+				StringBuilder line = new();
 				if (this.HasFile)
 				{
 					line.Append(this.Error.FileName);

@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Tests.ScriptToolsDialogs
 	{
 		public FakeDialogueRulesService(params DialogueFunctionRule[] userRules)
 		{
-			this.Stored = new List<DialogueFunctionRule>(userRules);
+			this.Stored = new(userRules);
 		}
 
 		public event EventHandler? Changed;

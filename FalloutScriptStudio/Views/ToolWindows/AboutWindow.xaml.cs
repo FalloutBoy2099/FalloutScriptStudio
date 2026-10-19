@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Views.ToolWindows
 {
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The About window.

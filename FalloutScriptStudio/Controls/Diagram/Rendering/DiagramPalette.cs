@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Immutable snapshot of every brush and pen the diagram draws with. It is resolved from the WPF-UI Fluent theme
@@ -190,7 +190,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		public static Pen MakeLinkPen(Brush brush, Double thickness)
 		{
-			Pen pen = new Pen(brush, thickness)
+			Pen pen = new(brush, thickness)
 			{
 				StartLineCap = PenLineCap.Round,
 				EndLineCap = PenLineCap.Round,
@@ -254,7 +254,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		private static Pen MakePen(Color color, Double thickness, Boolean roundCaps = false)
 		{
-			Pen pen = new Pen(Freeze(new SolidColorBrush(color)), thickness);
+			Pen pen = new(Freeze(new SolidColorBrush(color)), thickness);
 			if (roundCaps)
 			{
 				pen.StartLineCap = PenLineCap.Round;
@@ -268,7 +268,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		private void SetKind(DiagramNodeKind kind, Color tint, Color border, Boolean dashed)
 		{
-			Pen pen = new Pen(Freeze(new SolidColorBrush(border)), kind == DiagramNodeKind.Default ? 1.0 : 1.5);
+			Pen pen = new(Freeze(new SolidColorBrush(border)), kind == DiagramNodeKind.Default ? 1.0 : 1.5);
 			if (dashed)
 			{
 				pen.DashStyle = new DashStyle(_linkDashes, 0.0);

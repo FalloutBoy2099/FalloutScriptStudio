@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 				return Array.Empty<String>();
 			}
 
-			HashSet<String> names = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> names = new(StringComparer.OrdinalIgnoreCase);
 			foreach (String file in Directory.EnumerateFiles(fontsDirectory, "*.ttf"))
 			{
 				String? name = TryReadFamilyName(file);
@@ -37,7 +37,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		{
 			try
 			{
-				GlyphTypeface typeface = new GlyphTypeface(new Uri(Path.GetFullPath(file)));
+				GlyphTypeface typeface = new(new Uri(Path.GetFullPath(file)));
 				IDictionary<CultureInfo, String> names = typeface.FamilyNames;
 				if (names.TryGetValue(CultureInfo.GetCultureInfo("en-US"), out String? english))
 				{

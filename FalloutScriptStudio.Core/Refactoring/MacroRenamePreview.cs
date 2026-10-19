@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// The occurrences of a macro name in a set of files, to be reviewed before a (global) macro is renamed.

@@ -321,7 +321,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 
 				return new ProcessRunResult(1, "failed\r\n");
 			};
-			List<String> lines = new List<String>();
+			List<String> lines = [];
 
 			DecompilationResult result = await this.CreateCompiler().DecompileAsync(
 				new DecompilationRequest { ScriptPath = intFile, Options = this._workspace.CreateOptions() with { Decompiler = DecompilerKind.ExternalInt2Ssl } },
@@ -387,7 +387,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 			RecordingDecompiler decompiler = new RecordingDecompiler();
 			ScriptCompiler compiler = new ScriptCompiler(this._runner, NullLogger<ScriptCompiler>.Instance, new FixedTimeProvider(), decompiler);
 			DecompilationRequest request = new DecompilationRequest { ScriptPath = "a.int", Options = this._workspace.CreateOptions(), TemporaryOutput = true };
-			SynchronousProgress progress = new SynchronousProgress(new List<String>());
+			SynchronousProgress progress = new SynchronousProgress([]);
 
 			DecompilationResult result = await compiler.DecompileAsync(request, progress);
 

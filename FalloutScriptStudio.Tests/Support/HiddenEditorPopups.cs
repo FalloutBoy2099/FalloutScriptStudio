@@ -14,13 +14,13 @@ namespace FalloutScriptStudio.Tests.Support
 	public sealed class HiddenEditorPopups : IEditorPopupPresenter
 	{
 		/// <summary>Gets the completion lists the editor asked to open.</summary>
-		public List<CompletionWindow> CompletionWindows { get; } = new List<CompletionWindow>();
+		public List<CompletionWindow> CompletionWindows { get; } = [];
 
 		/// <summary>Gets the tooltips the editor asked to open.</summary>
-		public List<ToolTip> ToolTips { get; } = new List<ToolTip>();
+		public List<ToolTip> ToolTips { get; } = [];
 
 		/// <summary>Gets the popups the editor asked to open.</summary>
-		public List<Popup> Popups { get; } = new List<Popup>();
+		public List<Popup> Popups { get; } = [];
 
 		/// <inheritdoc/>
 		public void Show(CompletionWindow window)

@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Services.ToolWindows
 	using System.Collections.Generic;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
+	using Core.Compilation;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// Opens the small Fluent tool windows of the application: settings, About, Go to line, the batch compiler and the headers picker.
@@ -49,6 +49,35 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <summary>
+		/// Shows "Format Project": the preview of the files that formatting would change, with their differences, and the button that formats
+		/// the ones the user checked. The window closes when the user is done.
+		/// </summary>
+		/// <returns>A task that completes when the window is closed. The default implementation shows nothing.</returns>
+		Task ShowFormatProjectAsync()
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Shows the list of snippets with a filter box (Insert Snippet, Surround With).
+		/// </summary>
+		/// <param name="request">The snippets to offer.</param>
+		/// <returns>The chosen snippet, or <see langword="null"/> when the list was cancelled. The default implementation chooses nothing.</returns>
+		Task<FalloutScriptStudio.Core.Snippets.Snippet?> PickSnippetAsync(SnippetPickerRequest request)
+		{
+			return Task.FromResult<FalloutScriptStudio.Core.Snippets.Snippet?>(null);
+		}
+
+		/// <summary>
+		/// Shows the manager of the snippets (add, edit, duplicate, delete, disable, import, export) modally.
+		/// </summary>
+		/// <returns>A task that completes when the window is closed. The default implementation shows nothing.</returns>
+		Task ShowSnippetManagerAsync()
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
 		/// Shows the About window modally.
 		/// </summary>
 		void ShowAbout();
@@ -85,6 +114,20 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <summary>
+		/// Compiles scripts in a batch like <see cref="RunBatchCompileAsync(IReadOnlyList{String}, IProgress{BatchCompileProgress}, CancellationToken)"/>
+		/// and says whether the scripts that are up to date are compiled again.
+		/// </summary>
+		/// <param name="scriptPaths">The scripts to compile.</param>
+		/// <param name="progress">Receives a notification for every finished script, or <see langword="null"/>.</param>
+		/// <param name="rebuildAll"><see langword="true"/> to compile every script (Rebuild All); otherwise the option "only changed scripts" of the settings decides.</param>
+		/// <param name="cancellationToken">Cancels the run, like the Cancel button of the window.</param>
+		/// <returns>The summary of the run.</returns>
+		Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, Boolean rebuildAll, CancellationToken cancellationToken)
+		{
+			return this.RunBatchCompileAsync(scriptPaths, progress, cancellationToken);
+		}
+
+		/// <summary>
 		/// Lets the user pick one of the header files of the configured headers folder.
 		/// </summary>
 		/// <param name="chooseAndKeepOpen">
@@ -103,6 +146,17 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		Task<FalloutScriptStudio.Core.Indexing.IndexedSymbol?> PickSymbolAsync(SymbolPickerRequest request)
 		{
 			return Task.FromResult<FalloutScriptStudio.Core.Indexing.IndexedSymbol?>(null);
+		}
+
+		/// <summary>
+		/// Shows the command palette: a list of every command of the application with a filter box. The palette closes before the command
+		/// that was chosen runs.
+		/// </summary>
+		/// <param name="request">What to show.</param>
+		/// <returns>The chosen command, or <see langword="null"/> when the palette was cancelled. The default implementation chooses nothing.</returns>
+		Task<FalloutScriptStudio.Commands.CommandEntry?> PickCommandAsync(CommandPaletteRequest request)
+		{
+			return Task.FromResult<FalloutScriptStudio.Commands.CommandEntry?>(null);
 		}
 	}
 }

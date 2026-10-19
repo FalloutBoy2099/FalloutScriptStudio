@@ -3,15 +3,16 @@ namespace FalloutScriptStudio.Editor
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Controllers;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Editing;
+	using Core.Analysis;
+	using Core.Dialogue;
+	using Core.Parsing;
+	using Core.TextTools;
+	using Documents;
+	using Controllers;
+	using Text;
 
 	/// <summary>
 	/// Executes the text commands of <see cref="EditorCommand"/> on an editor and tells whether they are available.
@@ -26,7 +27,7 @@ namespace FalloutScriptStudio.Editor
 		private readonly CompletionController _completion;
 		private readonly Action _toggleSplit;
 		private readonly BracketController? _brackets;
-		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new FalloutScriptStudio.Core.TextTools.CodeFormatter();
+		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new();
 		private ITextSourceVersion? _unusedVersion;
 		private IReadOnlyList<UnusedVariable> _unused = Array.Empty<UnusedVariable>();
 
@@ -117,6 +118,14 @@ namespace FalloutScriptStudio.Editor
 					return script && this._navigation.CurrentProcedure is not null;
 				case EditorCommand.RemoveUnusedVariable:
 					return script && this.FindUnusedVariableAtCaret() is { CanRemove: true };
+				case EditorCommand.PreviewDialogueFromNode:
+					return script && this.GetNodeAtCaret() is not null;
+				case EditorCommand.QuickFix:
+					return script && ScriptDiagnostics.FindAt(this._context.DocumentModel.LiveDiagnostics, this._context.TextArea.Caret.Offset, true) is not null;
+				case EditorCommand.InsertSnippet:
+					return script && this._completion.Snippets is not null;
+				case EditorCommand.SurroundWith:
+					return script && this._completion.Snippets is not null && !this._context.TextArea.Selection.IsEmpty;
 				default:
 					return false;
 			}
@@ -161,7 +170,7 @@ namespace FalloutScriptStudio.Editor
 					this.FormatDocument();
 					break;
 				case EditorCommand.FormatSelection:
-					this.Replace(this._formatter.FormatSelectionOrLine(document.Text, this.GetSelectionSpan()));
+					this.FormatSelection();
 					break;
 				case EditorCommand.CapitalizeWord:
 					this.ConvertTarget(CaseTools.Capitalize);
@@ -253,6 +262,21 @@ namespace FalloutScriptStudio.Editor
 				case EditorCommand.RemoveUnusedVariable:
 					this.RemoveUnusedVariable();
 					break;
+				case EditorCommand.PreviewDialogueFromNode:
+					this.PreviewDialogueFromNode();
+					break;
+				case EditorCommand.QuickFix:
+					this.RunOnDocument(workspace => workspace.ApplyQuickFixAtAsync(this._context.DocumentModel, this._context.TextArea.Caret.Offset));
+					break;
+				case EditorCommand.InsertSnippet:
+				case EditorCommand.SurroundWith:
+					if (this._completion.Snippets is { } snippets)
+					{
+						Boolean surround = command == EditorCommand.SurroundWith;
+						this._context.RunInBackground(() => snippets.InsertChosenAsync(surround));
+					}
+
+					break;
 				default:
 					break;
 			}
@@ -280,7 +304,22 @@ namespace FalloutScriptStudio.Editor
 		private void FormatDocument()
 		{
 			String text = this._context.Document.Text;
-			this.Replace(TextEditApplier.CreateDiff(text, this._formatter.Format(text)));
+			DocumentEdits.Apply(this._context.Document, this._formatter.GetDocumentEdits(text, this._context.Services.GetFormatOptions()));
+		}
+
+		/// <summary>Formats the selected lines, or the line of the caret, in the style of the settings (the style of the project when it has one).</summary>
+		private void FormatSelection()
+		{
+			String text = this._context.Document.Text;
+			IReadOnlyList<TextEdit> edits = this._formatter.GetSelectionEdits(text, this.GetSelectionSpan(), this._context.Services.GetFormatOptions());
+			if (edits.Count == 1)
+			{
+				this.Replace(edits[0]);
+			}
+			else
+			{
+				DocumentEdits.Apply(this._context.Document, edits);
+			}
 		}
 
 		private Boolean SelectionSpansLines()
@@ -337,6 +376,21 @@ namespace FalloutScriptStudio.Editor
 			{
 				String name = procedure.Name;
 				this.RunOnDocument(workspace => workspace.DeleteUnusedProcedureAsync(this._context.DocumentModel, name));
+			}
+		}
+
+		/// <summary>Gets the procedure that contains the caret when it is a dialogue node (its name contains "node", or it is <c>talk_p_proc</c>).</summary>
+		private ScriptProcedure? GetNodeAtCaret()
+		{
+			return this._navigation.CurrentProcedure is { } procedure && DialogueNodeRule.IsNode(procedure.Name) ? procedure : null;
+		}
+
+		private void PreviewDialogueFromNode()
+		{
+			if (this.GetNodeAtCaret() is { } node)
+			{
+				String name = node.Name;
+				this.RunOnDocument(workspace => workspace.PreviewDialogueFromNodeAsync(this._context.DocumentModel, name));
 			}
 		}
 

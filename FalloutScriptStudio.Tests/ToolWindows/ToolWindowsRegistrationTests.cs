@@ -26,8 +26,8 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 			foreach (Type type in new[]
 			{
-				typeof(SettingsViewModel), typeof(AboutViewModel), typeof(GoToLineViewModel), typeof(BatchCompileViewModel), typeof(HeadersViewModel), typeof(ProjectSettingsViewModel),
-				typeof(SettingsWindow), typeof(AboutWindow), typeof(GoToLineWindow), typeof(BatchCompileWindow), typeof(HeadersWindow), typeof(ProjectSettingsWindow),
+				typeof(SettingsViewModel), typeof(AboutViewModel), typeof(GoToLineViewModel), typeof(BatchCompileViewModel), typeof(HeadersViewModel), typeof(ProjectSettingsViewModel), typeof(SnippetPickerViewModel), typeof(SnippetManagerViewModel),
+				typeof(SettingsWindow), typeof(AboutWindow), typeof(GoToLineWindow), typeof(BatchCompileWindow), typeof(HeadersWindow), typeof(ProjectSettingsWindow), typeof(SnippetPickerWindow), typeof(SnippetManagerWindow),
 			})
 			{
 				ServiceDescriptor descriptor = Assert.Single(services, d => d.ServiceType == type);

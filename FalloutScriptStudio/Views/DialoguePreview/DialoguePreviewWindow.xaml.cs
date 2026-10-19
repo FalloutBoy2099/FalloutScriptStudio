@@ -5,8 +5,8 @@ namespace FalloutScriptStudio.Views.DialoguePreview
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
-	using FalloutScriptStudio.ViewModels.DialoguePreview;
 	using Wpf.Ui.Controls;
+	using ViewModels.DialoguePreview;
 
 	/// <summary>
 	/// The dialogue preview window: the replies and options of one dialogue node, like the player sees them in the game.

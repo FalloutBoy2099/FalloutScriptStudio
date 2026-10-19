@@ -134,7 +134,7 @@ namespace FalloutScriptStudio.Tests.Diagram
 		[Fact]
 		public void Arrange_HonoursOrigin()
 		{
-			List<Size> sizes = new List<Size> { new Size(100, 60) };
+			List<Size> sizes = [new Size(100, 60)];
 
 			IReadOnlyList<Point> p = this._layout.Arrange(sizes, new List<ArrangeEdge>(), new DiagramArrangeOptions { OriginX = 5, OriginY = 7 });
 

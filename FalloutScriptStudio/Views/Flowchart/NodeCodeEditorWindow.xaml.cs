@@ -8,15 +8,15 @@ namespace FalloutScriptStudio.Views.Flowchart
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.Flowchart;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Editing;
 	using Wpf.Ui.Controls;
 	using MenuItem = System.Windows.Controls.MenuItem;
+	using Core.Dialogue;
+	using Documents;
+	using FalloutScriptStudio.Editor;
+	using Localization;
+	using ViewModels.Flowchart;
 
 	/// <summary>
 	/// The window that edits the code of one dialogue node: a code editor with the highlighting of the script, and the grid of the
@@ -24,7 +24,7 @@ namespace FalloutScriptStudio.Views.Flowchart
 	/// </summary>
 	public partial class NodeCodeEditorWindow : FluentWindow, IDisposable
 	{
-		private static readonly Regex PlaceholderPattern = new Regex(@"\{[^{}:,\r\n]+\}", RegexOptions.Compiled);
+		private static readonly Regex PlaceholderPattern = new(@"\{[^{}:,\r\n]+\}", RegexOptions.Compiled);
 
 		private readonly ScriptEditorServices _editorServices;
 		private NodeCodeEditorSession? _session;
@@ -227,7 +227,8 @@ namespace FalloutScriptStudio.Views.Flowchart
 		private void FillMacroMenu(MenuItem menu)
 		{
 			menu.Items.Clear();
-			MenuItem custom = new MenuItem { Header = Loc.Get("Str.Flowchart.Menu.Custom"), IsEnabled = this.ViewModel.Snippets.Count > 0 };
+			MenuItem custom = new()
+			{ Header = Loc.Get("Str.Flowchart.Menu.Custom"), IsEnabled = this.ViewModel.Snippets.Count > 0 };
 			foreach (NodeCodeSnippet snippet in this.ViewModel.Snippets)
 			{
 				custom.Items.Add(new MenuItem { Header = snippet.Name, Command = this.ViewModel.InsertTextCommand, CommandParameter = snippet.Code });

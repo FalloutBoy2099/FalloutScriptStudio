@@ -161,7 +161,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			}
 
 			List<MessageRowViewModel> rows = this._rows.Where(this.PassesFilter).ToList();
-			List<MessageGridColumn> columns = new List<MessageGridColumn> { MessageGridColumn.Line, MessageGridColumn.Text, MessageGridColumn.Comment };
+			List<MessageGridColumn> columns = [MessageGridColumn.Line, MessageGridColumn.Text, MessageGridColumn.Comment];
 			if (this._showLipColumn)
 			{
 				columns.Add(MessageGridColumn.Sound);

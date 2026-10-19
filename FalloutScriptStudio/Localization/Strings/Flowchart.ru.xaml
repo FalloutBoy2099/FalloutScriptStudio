@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Изменить узел: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Переименовать узел</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Переименовать узел: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Просмотр диалога с этого узла</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Просмотр диалога с узла: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Переход от: --- к</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Переход от: {0} к</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Скрыть узел</sys:String>

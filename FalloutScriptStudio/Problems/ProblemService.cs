@@ -10,8 +10,8 @@ namespace FalloutScriptStudio.Problems
 		/// <summary>The number of problems after which the oldest ones are dropped (a mass compilation of a big project can report thousands).</summary>
 		public const Int32 MaxProblems = 2000;
 
-		private readonly Object _gate = new Object();
-		private readonly List<Problem> _problems = new List<Problem>();
+		private readonly Object _gate = new();
+		private readonly List<Problem> _problems = [];
 
 		/// <inheritdoc />
 		public event EventHandler? Changed;

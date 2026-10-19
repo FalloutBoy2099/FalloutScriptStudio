@@ -2,9 +2,9 @@ namespace FalloutScriptStudio.Editor.Rendering
 {
 	using System;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Editor.Text;
 
 	/// <summary>Highlights the two brackets of a matching pair.</summary>
 	public sealed class BracketHighlightRenderer : IBackgroundRenderer
@@ -52,7 +52,8 @@ namespace FalloutScriptStudio.Editor.Rendering
 				return;
 			}
 
-			BackgroundGeometryBuilder builder = new BackgroundGeometryBuilder { CornerRadius = 2, AlignToWholePixels = true };
+			BackgroundGeometryBuilder builder = new()
+			{ CornerRadius = 2, AlignToWholePixels = true };
 			builder.AddSegment(textView, new TextSegment { StartOffset = pair.OpenOffset, Length = 1 });
 			builder.CloseFigure();
 			builder.AddSegment(textView, new TextSegment { StartOffset = pair.CloseOffset, Length = 1 });

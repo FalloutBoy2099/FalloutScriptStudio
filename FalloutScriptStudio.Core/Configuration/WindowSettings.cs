@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Core.Configuration
 	public sealed class WindowSettings
 	{
 		/// <summary>Gets or sets the remembered placement of each window.</summary>
-		public Dictionary<WindowKind, WindowPlacement> Placements { get; set; } = new Dictionary<WindowKind, WindowPlacement>();
+		public Dictionary<WindowKind, WindowPlacement> Placements { get; set; } = [];
 
 		/// <summary>Gets or sets the position of the splitter between the editor and the log panels, or -1 for the default.</summary>
 		public Int32 SplitterPosition { get; set; } = -1;

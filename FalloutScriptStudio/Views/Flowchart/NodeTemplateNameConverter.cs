@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Views.Flowchart
 	using System;
 	using System.Globalization;
 	using System.Windows.Data;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// Turns the name of a code template of the new node dialog (which comes from the core library, in English) into the text in the

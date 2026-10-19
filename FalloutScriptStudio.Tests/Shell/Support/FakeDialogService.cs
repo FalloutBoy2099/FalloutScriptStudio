@@ -20,9 +20,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public String? PromptAnswer { get; set; }
 
-		public List<String> Messages { get; } = new List<String>();
+		public List<String> Messages { get; } = [];
 
-		public List<String> Confirmations { get; } = new List<String>();
+		public List<String> Confirmations { get; } = [];
 
 		public Task ShowInfoAsync(String title, String message)
 		{

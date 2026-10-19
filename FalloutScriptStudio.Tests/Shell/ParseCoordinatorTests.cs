@@ -25,7 +25,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		{
 			ShellStaRunner.Run(async () =>
 			{
-				using WorkspaceHarness harness = new WorkspaceHarness(TimeSpan.FromMilliseconds(120));
+				using WorkspaceHarness harness = new WorkspaceHarness(TimeSpan.FromMilliseconds(600));
 				DocumentViewModel document = CreateScript(ScriptA);
 				harness.Coordinator.Attach(document);
 
@@ -35,7 +35,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				Assert.True(document.NeedsParse);
 
 				Assert.True(await Eventually.TrueAsync(() => document.ProgramInfo is not null));
-				await Task.Delay(250);
+				await Task.Delay(1000);
 
 				Assert.Equal(1, harness.Parser.Started);
 				Assert.StartsWith("// 3", harness.Parser.Texts[0], StringComparison.Ordinal);
@@ -49,14 +49,16 @@ namespace FalloutScriptStudio.Tests.Shell
 			ShellStaRunner.Run(async () =>
 			{
 				using WorkspaceHarness harness = new WorkspaceHarness(TimeSpan.FromMilliseconds(10));
-				harness.Parser.Delay = TimeSpan.FromMilliseconds(300);
+				TaskCompletionSource release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+				harness.Parser.Gate = release.Task;
 				DocumentViewModel document = CreateScript(ScriptA);
 				harness.Coordinator.Attach(document);
 
 				Task first = harness.Coordinator.ParseAsync(document, true);
-				await Task.Delay(60);
+				await harness.Parser.WaitForStartAsync();
 				document.TextDocument.Text = ScriptB;
 				await first;
+				release.SetResult();
 				Assert.True(await Eventually.TrueAsync(() => !harness.Coordinator.IsPending(document)));
 
 				Assert.NotNull(document.ProgramInfo);

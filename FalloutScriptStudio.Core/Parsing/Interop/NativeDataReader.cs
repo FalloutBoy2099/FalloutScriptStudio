@@ -31,7 +31,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop
 			}
 
 			Int32 variableCount = library.NumVars();
-			variables = new List<ScriptVariable>(variableCount);
+			variables = new(variableCount);
 			for (Int32 i = 0; i < variableCount; i++)
 			{
 				library.GetVar(i, out VariableData data);
@@ -40,7 +40,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop
 			}
 
 			Int32 procedureCount = library.NumProcs();
-			procedures = new List<ScriptProcedure>(procedureCount);
+			procedures = new(procedureCount);
 			for (Int32 i = 0; i < procedureCount; i++)
 			{
 				procedures.Add(ReadProcedure(library, i, names, strings, scriptLines));

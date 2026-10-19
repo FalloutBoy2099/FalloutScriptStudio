@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Search
 {
 	using System;
-	using FalloutScriptStudio.Core.Compilation;
+	using Core.Compilation;
 
 	/// <summary>
 	/// A line that contains a match.

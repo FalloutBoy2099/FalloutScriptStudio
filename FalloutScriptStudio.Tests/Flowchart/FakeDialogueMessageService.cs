@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	{
 		private MessageDocument _messages = FlowchartSamples.Messages();
 
-		public List<(String Path, Int32 Id, String Text)> Updates { get; } = new List<(String, Int32, String)>();
+		public List<(String Path, Int32 Id, String Text)> Updates { get; } = [];
 
 		public Int32 SourcesCreated { get; private set; }
 
@@ -24,7 +24,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		public Boolean LoadOnAnotherThread { get; set; }
 
 		/// <summary>Gets the other message files (by file number) that new sources report as not found, with the path they were expected at.</summary>
-		public Dictionary<Int32, String> MissingFiles { get; } = new Dictionary<Int32, String>();
+		public Dictionary<Int32, String> MissingFiles { get; } = [];
 
 		/// <summary>Replaces the messages that new sources serve.</summary>
 		public void SetMessages(MessageDocument messages)

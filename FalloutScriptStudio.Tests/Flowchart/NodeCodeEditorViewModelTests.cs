@@ -248,7 +248,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			{
 				using FlowchartHarness harness = new FlowchartHarness();
 				NodeCodeEditorViewModel editor = await OpenAsync(harness);
-				List<String> inserted = new List<String>();
+				List<String> inserted = [];
 				editor.InsertTextRequested += (_, text) => inserted.Add(text);
 				harness.MessageEditor.SendMessageId = 105;
 
@@ -374,7 +374,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 				FakeNodeCodeSnippetStore store = new FakeNodeCodeSnippetStore();
 				NodeCodeEditorViewModel editor = await OpenAsync(harness, "Node001", store);
 				Int32 uiThread = Environment.CurrentManagedThreadId;
-				List<Int32> notifiedOn = new List<Int32>();
+				List<Int32> notifiedOn = [];
 				editor.Snippets.CollectionChanged += (_, _) => notifiedOn.Add(Environment.CurrentManagedThreadId);
 				store.Snippets = new[] { new NodeCodeSnippet("greeting", "Reply(100);") };
 
@@ -426,7 +426,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			{
 				using FlowchartHarness harness = new FlowchartHarness();
 				NodeCodeEditorViewModel editor = await OpenAsync(harness);
-				List<String> inserted = new List<String>();
+				List<String> inserted = [];
 				editor.InsertTextRequested += (_, text) => inserted.Add(text);
 
 				editor.InsertText("call {node};");
@@ -496,7 +496,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 			{
 				using FlowchartHarness harness = new FlowchartHarness();
 				NodeCodeEditorViewModel editor = await OpenAsync(harness);
-				List<String> inserted = new List<String>();
+				List<String> inserted = [];
 				editor.InsertTextRequested += (_, text) => inserted.Add(text);
 
 				editor.NodeChoiceCommitted(true);

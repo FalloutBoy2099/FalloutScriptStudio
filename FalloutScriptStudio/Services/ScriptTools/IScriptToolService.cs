@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Services.ScriptTools
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Services.ScriptTools.Procedures;
+	using Documents;
+	using Procedures;
 
 	/// <summary>
 	/// Script-aware tool windows opened from the main window and from the editor: procedure name prompt,
@@ -34,11 +34,50 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		/// <summary>Opens the advanced "search in files" window; results are sent to the workspace output list.</summary>
 		Task ShowAdvancedSearchAsync(String? initialText);
 
+		/// <summary>
+		/// Opens the advanced search window ready for "Replace in Files" (the folder scope is chosen when a folder is known). The default
+		/// implementation opens the plain search window.
+		/// </summary>
+		/// <param name="initialText">The text to look for, or <see langword="null"/>.</param>
+		/// <returns>A task that completes when the window is shown.</returns>
+		Task ShowReplaceInFilesAsync(String? initialText)
+		{
+			return this.ShowAdvancedSearchAsync(initialText);
+		}
+
+		/// <summary>
+		/// Puts back what the last "Replace in Files" replaced, in every file that was not changed since. The default implementation does nothing.
+		/// </summary>
+		/// <returns>A task that completes when the files are restored.</returns>
+		Task UndoReplaceInFilesAsync()
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>Gets a value indicating whether the last "Replace in Files" can be undone. The default implementation says there is nothing to undo.</summary>
+		Boolean CanUndoReplaceInFiles => false;
+
+		/// <summary>Raised when <see cref="CanUndoReplaceInFiles"/> changed (a replacement was made, or it was undone). The default implementation never raises it.</summary>
+		event EventHandler? UndoReplaceInFilesStateChanged
+		{
+			add { }
+			remove { }
+		}
+
 		/// <summary>Opens the dialogue nodes flowchart of a script.</summary>
 		Task ShowFlowchartAsync(DocumentViewModel script);
 
 		/// <summary>Opens the dialogue preview / testing window of a script.</summary>
 		Task ShowDialoguePreviewAsync(DocumentViewModel script);
+
+		/// <summary>
+		/// Opens the dialogue preview / testing window of a script at a given node; a window that is already open for the script is moved
+		/// to that node and brought to the front.
+		/// </summary>
+		/// <param name="script">The script.</param>
+		/// <param name="options">How to open the window.</param>
+		/// <returns>A task that completes when the window is shown.</returns>
+		Task ShowDialoguePreviewAsync(DocumentViewModel script, DialoguePreviewOpenOptions options);
 
 		/// <summary>Opens the dialogue function rules configuration.</summary>
 		Task ShowFunctionRulesAsync();

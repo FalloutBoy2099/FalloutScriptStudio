@@ -1,15 +1,15 @@
 namespace FalloutScriptStudio.Editor
 {
 	using System;
-	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Editing;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using System.Collections.Generic;
+	using Core.Parsing;
+	using Core.TextTools;
+	using Documents;
+	using Text;
 
 	/// <summary>
 	/// The <see cref="IEditorSurface"/> of an editor session: what the rest of the application may ask of the text editor.

@@ -45,7 +45,7 @@ namespace FalloutScriptStudio.Localization
 			ArgumentNullException.ThrowIfNull(target);
 			ArgumentNullException.ThrowIfNull(onLanguageChanged);
 
-			LanguageChangedSubscription subscription = new LanguageChangedSubscription(target, instance => onLanguageChanged((T)instance));
+			LanguageChangedSubscription subscription = new(target, instance => onLanguageChanged((T)instance));
 			Loc.LanguageChanged += subscription.OnLanguageChanged;
 			return subscription;
 		}
@@ -72,7 +72,7 @@ namespace FalloutScriptStudio.Localization
 		{
 			ArgumentNullException.ThrowIfNull(onLanguageChanged);
 
-			LanguageChangedSubscription subscription = new LanguageChangedSubscription(onLanguageChanged);
+			LanguageChangedSubscription subscription = new(onLanguageChanged);
 			Loc.LanguageChanged += subscription.OnLanguageChanged;
 			return subscription;
 		}

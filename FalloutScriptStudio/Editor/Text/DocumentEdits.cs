@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Editor.Text
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.TextTools;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.TextTools;
 
 	/// <summary>
 	/// Applies the edit lists of <c>Core.TextTools</c> to an AvalonEdit document as one undoable change and provides the
@@ -52,7 +52,7 @@ namespace FalloutScriptStudio.Editor.Text
 				return;
 			}
 
-			List<TextEdit> edits = new List<TextEdit>();
+			List<TextEdit> edits = [];
 			Int32 offset = edit.Offset;
 			for (Int32 i = 0; i < oldLines.Length; i++)
 			{
@@ -74,9 +74,9 @@ namespace FalloutScriptStudio.Editor.Text
 		/// <returns>One insertion per line.</returns>
 		public static IReadOnlyList<TextEdit> IncreaseIndent(String text, TextSpan selection, String indentation)
 		{
-			TextLineMap map = new TextLineMap(text);
+			TextLineMap map = new(text);
 			FalloutScriptStudio.Core.Parsing.LineRange lines = map.GetSelectedLines(selection);
-			List<TextEdit> edits = new List<TextEdit>();
+			List<TextEdit> edits = [];
 			for (Int32 line = lines.StartLine; line <= lines.EndLine; line++)
 			{
 				if (!map.IsBlank(line))
@@ -94,7 +94,7 @@ namespace FalloutScriptStudio.Editor.Text
 		/// <returns>The edits.</returns>
 		public static IReadOnlyList<TextEdit> ToggleLineComment(String text, TextSpan selection)
 		{
-			TextLineMap map = new TextLineMap(text);
+			TextLineMap map = new(text);
 			FalloutScriptStudio.Core.Parsing.LineRange lines = map.GetSelectedLines(selection);
 			Boolean allCommented = true;
 			for (Int32 line = lines.StartLine; line <= lines.EndLine; line++)

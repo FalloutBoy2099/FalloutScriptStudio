@@ -35,8 +35,8 @@ namespace FalloutScriptStudio.Tests.Localization
 				["en"] = english,
 				["de"] = de,
 				["sv"] = sv,
-				["pt"] = pt ?? new Dictionary<String, String>(),
-				["zh"] = zh ?? new Dictionary<String, String>(),
+				["pt"] = pt ?? [],
+				["zh"] = zh ?? [],
 			};
 			return GlossaryChecker.Check(_glossary, texts);
 		}
@@ -116,8 +116,8 @@ namespace FalloutScriptStudio.Tests.Localization
 		{
 			IReadOnlyList<GlossaryChecker.Violation> violations = Check(
 				new Dictionary<String, String> { ["Str.A.One"] = "Open file", ["Str.A.Two"] = "Open file" },
-				new Dictionary<String, String>(),
-				new Dictionary<String, String>(),
+				[],
+				[],
 				new Dictionary<String, String> { ["Str.A.One"] = "Abrir ficheiro", ["Str.A.Two"] = "Abrir arquivo" },
 				new Dictionary<String, String> { ["Str.A.One"] = "打开檔案", ["Str.A.Two"] = "打开文件" });
 

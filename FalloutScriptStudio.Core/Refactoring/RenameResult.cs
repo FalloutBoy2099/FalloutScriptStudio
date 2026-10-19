@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Outcome of a rename: the edits to apply to each file.

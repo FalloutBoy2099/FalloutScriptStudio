@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.TextTools
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Text level procedure operations of the editor: get and replace a procedure body, delete, insert and move procedures

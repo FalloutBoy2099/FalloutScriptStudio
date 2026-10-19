@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Builds the nodes and links of the dialogue flowchart from a script (the data part of the legacy <c>NodeDiagram</c>).

@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Parsing
 	using System;
 	using System.IO;
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// Reads script and header files, detecting the encoding the way the legacy editor did:
@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Core.Parsing
 		/// <returns>The decoded text.</returns>
 		internal static String ReadAllText(String path)
 		{
-			return Decode(File.ReadAllBytes(path));
+			return Decode(SharedFile.ReadAllBytes(path));
 		}
 
 		/// <summary>Decodes the content of a text file.</summary>

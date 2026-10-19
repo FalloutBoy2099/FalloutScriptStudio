@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>Procedure operations, delegated to <see cref="ProcedureOperations"/>.</summary>
 	public sealed partial class WorkspaceService

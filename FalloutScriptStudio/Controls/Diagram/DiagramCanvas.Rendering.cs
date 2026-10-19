@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
-	using FalloutScriptStudio.Localization;
+	using Rendering;
+	using Localization;
 
 	// Theme, DPI and language handling: keeps the render context of the scene up to date.
 	public sealed partial class DiagramCanvas
@@ -44,7 +44,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 		private DiagramRenderContext CreateContext()
 		{
 			DiagramPalette palette = DiagramPalette.Resolve(this);
-			DiagramTextStyles styles = new DiagramTextStyles(this.FontFamily, VisualTreeHelper.GetDpi(this).PixelsPerDip);
+			DiagramTextStyles styles = new(this.FontFamily, VisualTreeHelper.GetDpi(this).PixelsPerDip);
 			return new DiagramRenderContext(palette, styles, this.LowDetail, this.HighQuality);
 		}
 

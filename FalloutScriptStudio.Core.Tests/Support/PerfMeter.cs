@@ -53,7 +53,7 @@ namespace FalloutScriptStudio.TestSupport
 		public Double Measure(String name, Double budgetMilliseconds, Action action, Int32 iterations = 5)
 		{
 			action();
-			List<Double> times = new List<Double>(iterations);
+			List<Double> times = new(iterations);
 			for (Int32 i = 0; i < iterations; i++)
 			{
 				Stopwatch watch = Stopwatch.StartNew();
@@ -74,7 +74,7 @@ namespace FalloutScriptStudio.TestSupport
 		public async Task<Double> MeasureAsync(String name, Double budgetMilliseconds, Func<Task> action, Int32 iterations = 5)
 		{
 			await action();
-			List<Double> times = new List<Double>(iterations);
+			List<Double> times = new(iterations);
 			for (Int32 i = 0; i < iterations; i++)
 			{
 				Stopwatch watch = Stopwatch.StartNew();
@@ -96,7 +96,7 @@ namespace FalloutScriptStudio.TestSupport
 			Stopwatch watch = Stopwatch.StartNew();
 			action();
 			watch.Stop();
-			return this.Report(name, budgetMilliseconds, new List<Double> { watch.Elapsed.TotalMilliseconds });
+			return this.Report(name, budgetMilliseconds, [watch.Elapsed.TotalMilliseconds]);
 		}
 
 		/// <summary>Prints a free line of the report.</summary>

@@ -12,8 +12,8 @@ namespace FalloutScriptStudio.Core.Analysis
 	{
 		private static readonly String[] _modifiers = { "import", "export", "inline", "pure", "critical" };
 
-		private readonly List<SslProcedureModel> _procedures = new List<SslProcedureModel>();
-		private readonly List<VariableDeclaration> _declarations = new List<VariableDeclaration>();
+		private readonly List<SslProcedureModel> _procedures = [];
+		private readonly List<VariableDeclaration> _declarations = [];
 
 		private SslScriptModel(SslTokenStream tokens)
 		{

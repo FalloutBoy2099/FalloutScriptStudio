@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Reads the dialogue statements (replies, messages, options, calls) of the nodes of a script (legacy <c>DialogueParser</c>).

@@ -21,7 +21,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		/// <returns>The masks without duplicates; <see cref="AllScriptFiles"/> when the text is empty.</returns>
 		public static IReadOnlyList<String> Parse(String? masks)
 		{
-			List<String> result = new List<String>();
+			List<String> result = [];
 			String text = String.IsNullOrWhiteSpace(masks) ? AllScriptFiles : masks;
 			foreach (String token in text.Split(_separators, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
 			{

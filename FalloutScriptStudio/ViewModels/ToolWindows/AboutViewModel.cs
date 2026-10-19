@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 	using System.Collections.Generic;
 	using System.Reflection;
 	using CommunityToolkit.Mvvm.Input;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// View model of the About window.
@@ -62,21 +62,21 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the third-party components and original works that are credited.</summary>
 		public IReadOnlyList<AboutCredit> Credits { get; } = new List<AboutCredit>
 		{
-			new AboutCredit("Sfall Script Editor", Loc.Get("Str.ToolWindows.About.Credit.SfallScriptEditor")),
-			new AboutCredit("sslc, sfall edition", Loc.Get("Str.ToolWindows.About.Credit.Sslc")),
-			new AboutCredit("mcpp 2.7.2 (BCD)", Loc.Get("Str.ToolWindows.About.Credit.Mcpp")),
-			new AboutCredit("Open Watcom C32 2.0 beta (01/11/2017)", Loc.Get("Str.ToolWindows.About.Credit.Watcom")),
-			new AboutCredit("int2ssl 8.4.6", Loc.Get("Str.ToolWindows.About.Credit.Int2ssl")),
-			new AboutCredit("AvalonEdit", Loc.Get("Str.ToolWindows.About.Credit.AvalonEdit")),
-			new AboutCredit("WPF-UI", Loc.Get("Str.ToolWindows.About.Credit.WpfUi")),
-			new AboutCredit("CommunityToolkit.Mvvm", Loc.Get("Str.ToolWindows.About.Credit.Mvvm")),
+			new("Sfall Script Editor", Loc.Get("Str.ToolWindows.About.Credit.SfallScriptEditor")),
+			new("sslc, sfall edition", Loc.Get("Str.ToolWindows.About.Credit.Sslc")),
+			new("mcpp 2.7.2 (BCD)", Loc.Get("Str.ToolWindows.About.Credit.Mcpp")),
+			new("Open Watcom C32 2.0 beta (01/11/2017)", Loc.Get("Str.ToolWindows.About.Credit.Watcom")),
+			new("int2ssl 8.4.6", Loc.Get("Str.ToolWindows.About.Credit.Int2ssl")),
+			new("AvalonEdit", Loc.Get("Str.ToolWindows.About.Credit.AvalonEdit")),
+			new("WPF-UI", Loc.Get("Str.ToolWindows.About.Credit.WpfUi")),
+			new("CommunityToolkit.Mvvm", Loc.Get("Str.ToolWindows.About.Credit.Mvvm")),
 		};
 
 		/// <summary>Gets the web links.</summary>
 		public IReadOnlyList<AboutLink> Links { get; } = new List<AboutLink>
 		{
-			new AboutLink("GNU General Public License v3", new Uri("https://www.gnu.org/licenses/gpl-3.0.html")),
-			new AboutLink("sfall", new Uri("https://github.com/sfall-team/sfall")),
+			new("GNU General Public License v3", new Uri("https://www.gnu.org/licenses/gpl-3.0.html")),
+			new("sfall", new Uri("https://github.com/sfall-team/sfall")),
 		};
 
 		/// <summary>

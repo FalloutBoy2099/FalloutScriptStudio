@@ -30,7 +30,7 @@ namespace FalloutScriptStudio.Core.Indexing
 					all[index++] = symbol;
 					if (!byName.TryGetValue(symbol.Name, out List<IndexedSymbol>? list))
 					{
-						list = new List<IndexedSymbol>(1);
+						list = new(1);
 						byName.Add(symbol.Name, list);
 					}
 
@@ -48,7 +48,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			this._sorted = new Lazy<IndexedSymbol[]>(this.Sort, true);
 		}
 
-		internal static IndexSnapshot Empty { get; } = new IndexSnapshot(new Dictionary<String, IndexedFile>(StringComparer.OrdinalIgnoreCase), false);
+		internal static IndexSnapshot Empty { get; } = new IndexSnapshot(new(StringComparer.OrdinalIgnoreCase), false);
 
 		/// <summary>Gets the indexed files by full path.</summary>
 		internal Dictionary<String, IndexedFile> Files { get; }

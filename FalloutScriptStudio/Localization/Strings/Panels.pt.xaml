@@ -72,6 +72,7 @@
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Selecione a pasta do projeto</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtrar...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Editar o código do nó</sys:String>
+    <sys:String x:Key="Str.Panels.MenuPreviewDialogue">Pré-visualizar o diálogo a partir deste nó</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Mostrar apenas o procedimento de destino: os outros são recolhidos ao selecionar um procedimento</sys:String>
     <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Excluir procedimento não usado...</sys:String>
     <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Localizar variáveis não usadas</sys:String>

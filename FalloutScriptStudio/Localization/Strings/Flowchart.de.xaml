@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Knoten bearbeiten: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Knoten umbenennen</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Knoten umbenennen: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Dialogvorschau ab diesem Knoten</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Dialogvorschau ab Knoten: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Springen von: --- nach</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Springen von: {0} nach</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Knoten ausblenden</sys:String>

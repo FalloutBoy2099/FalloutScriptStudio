@@ -8,7 +8,7 @@ namespace FalloutScriptStudio.Core.Messages
 	/// </summary>
 	internal sealed class TextPositionMap
 	{
-		private readonly List<Int32> _lineStarts = new List<Int32> { 0 };
+		private readonly List<Int32> _lineStarts = [0];
 		private readonly Int32 _length;
 
 		public TextPositionMap(String text)

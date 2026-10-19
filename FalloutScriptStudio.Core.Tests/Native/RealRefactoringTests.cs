@@ -88,7 +88,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			String sources = this.CopySources();
 			Int32 extracted = 0;
-			List<String> failures = new List<String>();
+			List<String> failures = [];
 			foreach (String script in Directory.GetFiles(sources, "gl_g_*.ssl").OrderBy(f => f, StringComparer.OrdinalIgnoreCase).Take(27))
 			{
 				if (!(await CompileAsync(script)).Success)
@@ -138,7 +138,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			String sources = this.CopySources();
 			Int32 removed = 0;
-			List<String> failures = new List<String>();
+			List<String> failures = [];
 			foreach (String script in Directory.GetFiles(sources, "gl_g_*.ssl").OrderBy(f => f, StringComparer.OrdinalIgnoreCase))
 			{
 				if (!(await CompileAsync(script)).Success)
@@ -172,7 +172,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			String sources = this.CopySources();
 			Int32 deleted = 0;
-			List<String> failures = new List<String>();
+			List<String> failures = [];
 			foreach (String script in Directory.GetFiles(sources, "gl_g_*.ssl").OrderBy(f => f, StringComparer.OrdinalIgnoreCase).Take(10))
 			{
 				if (!(await CompileAsync(script)).Success)

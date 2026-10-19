@@ -7,9 +7,9 @@ namespace FalloutScriptStudio.Core.Decompilation
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Compilation;
 
 	/// <summary>
 	/// <see cref="IScriptDecompiler"/> implementation that runs an external <c>int2ssl.exe</c>.
@@ -68,7 +68,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 				}
 			}
 
-			List<String> programs = new List<String>();
+			List<String> programs = [];
 			if (!options.UseLegacyDecompiler)
 			{
 				programs.Add(Path.Combine(directory, primary));
@@ -99,7 +99,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 			}
 
 			Boolean succeeded = false;
-			List<ToolFailure> toolFailures = new List<ToolFailure>();
+			List<ToolFailure> toolFailures = [];
 			foreach (String exePath in GetPrograms(options))
 			{
 				if (!File.Exists(exePath))

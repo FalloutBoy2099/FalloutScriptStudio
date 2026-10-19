@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Core.Tests.Archives
 	/// </summary>
 	internal sealed class DatTestArchiveBuilder
 	{
-		private readonly List<TestFile> _files = new List<TestFile>();
+		private readonly List<TestFile> _files = [];
 
 		/// <summary>Adds a file stored without compression.</summary>
 		public DatTestArchiveBuilder AddStored(String path, Byte[] content)
@@ -157,7 +157,7 @@ namespace FalloutScriptStudio.Core.Tests.Archives
 		/// <summary>Builds a Fallout 1 archive: header, directory names, directory contents, data. Numbers are big endian.</summary>
 		public Byte[] BuildFallout1()
 		{
-			SortedDictionary<String, List<TestFile>> directories = new SortedDictionary<String, List<TestFile>>(StringComparer.OrdinalIgnoreCase);
+			SortedDictionary<String, List<TestFile>> directories = new(StringComparer.OrdinalIgnoreCase);
 			foreach (TestFile entry in this._files)
 			{
 				String path = entry.Path.Replace('/', '\\');
@@ -165,7 +165,7 @@ namespace FalloutScriptStudio.Core.Tests.Archives
 				String directory = separator < 0 ? "." : path.Substring(0, separator);
 				if (!directories.TryGetValue(directory, out List<TestFile>? list))
 				{
-					list = new List<TestFile>();
+					list = [];
 					directories.Add(directory, list);
 				}
 

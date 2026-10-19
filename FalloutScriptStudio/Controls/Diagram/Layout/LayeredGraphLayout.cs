@@ -41,11 +41,11 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 			List<Int32>[] ins = new List<Int32>[n];
 			for (Int32 i = 0; i < n; i++)
 			{
-				outs[i] = new List<Int32>();
-				ins[i] = new List<Int32>();
+				outs[i] = [];
+				ins[i] = [];
 			}
 
-			HashSet<Int64> seen = new HashSet<Int64>();
+			HashSet<Int64> seen = [];
 			foreach (ArrangeEdge edge in edges)
 			{
 				if (edge.From < 0 || edge.From >= n || edge.To < 0 || edge.To >= n || edge.From == edge.To)
@@ -60,8 +60,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 				}
 			}
 
-			List<Int32> connected = new List<Int32>();
-			List<Int32> unlinked = new List<Int32>();
+			List<Int32> connected = [];
+			List<Int32> unlinked = [];
 			for (Int32 i = 0; i < n; i++)
 			{
 				if (outs[i].Count + ins[i].Count > 0)
@@ -102,11 +102,11 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 		{
 			Int32 n = sizes.Count;
 			Int32[] discovery = new Int32[n];
-			List<Int32> postOrder = new List<Int32>(connected.Count);
-			HashSet<Int64> backEdges = new HashSet<Int64>();
+			List<Int32> postOrder = new(connected.Count);
+			HashSet<Int64> backEdges = [];
 			Int32[] state = new Int32[n];
 
-			List<Int32> starts = new List<Int32>();
+			List<Int32> starts = [];
 			foreach (Int32 v in connected)
 			{
 				if (ins[v].Count == 0)
@@ -124,7 +124,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 					continue;
 				}
 
-				Stack<(Int32 Node, Int32 NextChild)> stack = new Stack<(Int32, Int32)>();
+				Stack<(Int32 Node, Int32 NextChild)> stack = new();
 				state[start] = 1;
 				discovery[start] = discoveryCounter++;
 				stack.Push((start, 0));
@@ -181,7 +181,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 			List<Int32>[] layers = new List<Int32>[maxLayer + 1];
 			for (Int32 i = 0; i <= maxLayer; i++)
 			{
-				layers[i] = new List<Int32>();
+				layers[i] = [];
 			}
 
 			foreach (Int32 v in connected)
@@ -282,7 +282,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Layout
 				barycenter[v] = count > 0 ? sum / count : (Double)position[v] / (layer.Count - 1);
 			}
 
-			List<Int32> ordered = new List<Int32>(layer);
+			List<Int32> ordered = new(layer);
 			ordered.Sort((a, b) =>
 			{
 				Int32 c = barycenter[a].CompareTo(barycenter[b]);

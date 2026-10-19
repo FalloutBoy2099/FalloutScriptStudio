@@ -28,8 +28,8 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 		public Int32 TimeValue { get; set; }
 
-		public List<HostVariableDto> Variables { get; set; } = new List<HostVariableDto>();
+		public List<HostVariableDto> Variables { get; set; } = [];
 
-		public List<HostReferenceDto> References { get; set; } = new List<HostReferenceDto>();
+		public List<HostReferenceDto> References { get; set; } = [];
 	}
 }

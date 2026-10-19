@@ -32,7 +32,7 @@ namespace FalloutScriptStudio.Core.Configuration
 
 			if (baseline is JsonObject baseObject && ours is JsonObject ourObject && theirs is JsonObject theirObject)
 			{
-				JsonObject merged = new JsonObject();
+				JsonObject merged = [];
 				foreach (String key in ourObject.Select(pair => pair.Key).Concat(theirObject.Select(pair => pair.Key)).Distinct(StringComparer.Ordinal))
 				{
 					JsonNode? value = MergeNodes(baseObject[key], ourObject[key], theirObject[key]);
@@ -135,15 +135,15 @@ namespace FalloutScriptStudio.Core.Configuration
 			settings.IsFirstRunCompleted = true;
 			settings.Version = AppSettings.CurrentVersion;
 
-			return new List<(String Path, Byte[] Content)>
-			{
+			return
+			[
 				(paths.SettingsFile, JsonSerializer.SerializeToUtf8Bytes(settings, SettingsJson.Options)),
 				(paths.RecentFilesFile, JsonSerializer.SerializeToUtf8Bytes(recent, SettingsJson.Options)),
 				(paths.ScriptPositionsFile, JsonSerializer.SerializeToUtf8Bytes(positions, SettingsJson.Options)),
 				(paths.FoldingFile, JsonSerializer.SerializeToUtf8Bytes(folding, SettingsJson.Options)),
 				(paths.SearchHistoryFile, JsonSerializer.SerializeToUtf8Bytes(history, SettingsJson.Options)),
 				(paths.PreprocessorDefinesFile, JsonSerializer.SerializeToUtf8Bytes(defines, SettingsJson.Options)),
-			};
+			];
 		}
 
 		private enum SaveAction

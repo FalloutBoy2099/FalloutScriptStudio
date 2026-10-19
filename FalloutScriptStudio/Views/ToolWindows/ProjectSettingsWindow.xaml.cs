@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Views.ToolWindows
 	using System;
 	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The project settings window: for each option a project can override, the choice between the global setting and a value of the project.

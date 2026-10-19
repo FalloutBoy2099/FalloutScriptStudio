@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Resources.Converters
 	using System;
 	using System.Globalization;
 	using System.Windows.Data;
-	using FalloutScriptStudio.Core.Compilation;
 	using Wpf.Ui.Controls;
+	using Core.Compilation;
 
 	/// <summary>Maps the kind of an error list entry to its glyph.</summary>
 	public sealed class ErrorTypeToSymbolConverter : IValueConverter

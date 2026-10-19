@@ -21,10 +21,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly CompletionController _completion;
 		private readonly TipController _tips;
 		private readonly SslIndentationStrategy _indentation;
-		private readonly List<TextAnchor> _pairAnchors = new List<TextAnchor>();
-		private readonly KeywordExpander _expander = new KeywordExpander();
-		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new FalloutScriptStudio.Core.TextTools.CodeFormatter();
-		private readonly KeyBinding _undoBinding = new KeyBinding(ApplicationCommands.Undo, Key.Back, ModifierKeys.Alt);
+		private readonly List<TextAnchor> _pairAnchors = [];
+		private readonly KeywordExpander _expander = new();
+		private readonly SnippetController _snippets;
+		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new();
+		private readonly KeyBinding _undoBinding = new(ApplicationCommands.Undo, Key.Back, ModifierKeys.Alt);
 		private Boolean _editing;
 		private Boolean _selectingPlaceholder;
 		private Boolean _attached;
@@ -35,11 +36,17 @@ namespace FalloutScriptStudio.Editor.Controllers
 			this._completion = completion;
 			this._tips = tips;
 			this._indentation = indentation;
+			this._snippets = new SnippetController(context, completion);
+			completion.Snippets = this._snippets;
 		}
+
+		/// <summary>Gets the controller of the snippets (Tab expansion, tab stops, Insert Snippet, Surround With).</summary>
+		public SnippetController Snippets => this._snippets;
 
 		public void Attach()
 		{
 			this._attached = true;
+			this._snippets.Attach();
 			TextArea area = this._context.TextArea;
 			area.PreviewKeyDown += this.OnPreviewKeyDown;
 			area.PreviewTextInput += this.OnPreviewTextInput;
@@ -62,6 +69,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		public void Dispose()
 		{
 			this._attached = false;
+			this._snippets.Dispose();
 			TextArea area = this._context.TextArea;
 			area.PreviewKeyDown -= this.OnPreviewKeyDown;
 			area.PreviewTextInput -= this.OnPreviewTextInput;
@@ -94,7 +102,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 				return false;
 			}
 
-			KeywordExpansionOptions options = new KeywordExpansionOptions
+			KeywordExpansionOptions options = new()
 			{
 				TabSize = this._context.Options.TabSize,
 				ConvertTabsToSpaces = this._context.Editor.Options.ConvertTabsToSpaces,
@@ -161,8 +169,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 				|| this._selectingPlaceholder
 				|| !this._context.IsScript
 				|| this._context.TextArea.Selection.Length > 0
-				|| (Keyboard.Modifiers & ModifierKeys.Shift) != 0
-				|| Mouse.LeftButton == MouseButtonState.Pressed)
+				|| (this._context.Services.Input.Modifiers & ModifierKeys.Shift) != 0
+				|| this._context.Services.Input.IsLeftButtonPressed)
 			{
 				return;
 			}
@@ -184,9 +192,19 @@ namespace FalloutScriptStudio.Editor.Controllers
 		{
 			this._tips.OnPreviewKeyDown(e);
 
-			if (e.Key == Key.Tab && Keyboard.Modifiers == ModifierKeys.None && this.TryCompleteBlock())
+			if (this._snippets.TryHandleKey(e))
+			{
+				this._tips.HideAll();
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Tab && this._context.Services.Input.Modifiers == ModifierKeys.None && this.TryCompleteBlock())
 			{
 				this._completion.Close();
+				this._tips.HideAll();
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Tab && this._context.Services.Input.Modifiers == ModifierKeys.None && this._snippets.TryExpandTrigger())
+			{
 				this._tips.HideAll();
 				e.Handled = true;
 			}
@@ -361,7 +379,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private void FormatLineAfterSemicolon(TextDocument document, Int32 caret)
 		{
-			SmartFormatResult? result = this._formatter.FormatSmart(document.Text, caret);
+			SmartFormatResult? result = this._formatter.FormatSmart(document.Text, caret, this._context.Services.GetFormatOptions());
 			if (result is not null)
 			{
 				DocumentEdits.Apply(document, new[] { result.Edit });
@@ -385,7 +403,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private void OnPreviewMouseLeftButtonUp(Object sender, MouseButtonEventArgs e)
 		{
-			if (!this._context.IsScript || this._context.TextArea.Selection.Length > 0 || Keyboard.Modifiers != ModifierKeys.None)
+			if (!this._context.IsScript || this._context.TextArea.Selection.Length > 0 || this._context.Services.Input.Modifiers != ModifierKeys.None)
 			{
 				return;
 			}

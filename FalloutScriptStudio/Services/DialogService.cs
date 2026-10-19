@@ -7,12 +7,11 @@ namespace FalloutScriptStudio.Services
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Localization;
 	using Microsoft.Win32;
-	using Wpf.Ui.Controls;
 	using MessageBox = Wpf.Ui.Controls.MessageBox;
 	using MessageBoxResult = Wpf.Ui.Controls.MessageBoxResult;
 	using TextBox = System.Windows.Controls.TextBox;
+	using Localization;
 
 	/// <inheritdoc />
 	public sealed class DialogService : IDialogService
@@ -50,7 +49,7 @@ namespace FalloutScriptStudio.Services
 
 		public async Task<String?> PromptAsync(String title, String message, String defaultValue = "")
 		{
-			TextBox input = new TextBox
+			TextBox input = new()
 			{
 				Text = defaultValue,
 				MinWidth = 360,
@@ -62,7 +61,7 @@ namespace FalloutScriptStudio.Services
 				input.SelectAll();
 			};
 
-			StackPanel content = new StackPanel();
+			StackPanel content = new();
 			content.Children.Add(new System.Windows.Controls.TextBlock { Text = message, TextWrapping = TextWrapping.Wrap });
 			content.Children.Add(input);
 
@@ -73,25 +72,26 @@ namespace FalloutScriptStudio.Services
 
 		public String? PickOpenFile(String title, String filter, String? initialDirectory = null)
 		{
-			OpenFileDialog dialog = new OpenFileDialog { Title = title, Filter = filter, InitialDirectory = initialDirectory ?? String.Empty };
+			OpenFileDialog dialog = new()
+			{ Title = title, Filter = filter, InitialDirectory = initialDirectory ?? String.Empty };
 			return dialog.ShowDialog(GetOwner()) == true ? dialog.FileName : null;
 		}
 
 		public IReadOnlyList<String> PickOpenFiles(String title, String filter, String? initialDirectory = null)
 		{
-			OpenFileDialog dialog = new OpenFileDialog
+			OpenFileDialog dialog = new()
 			{
 				Title = title,
 				Filter = filter,
 				Multiselect = true,
 				InitialDirectory = initialDirectory ?? String.Empty,
 			};
-			return dialog.ShowDialog(GetOwner()) == true ? dialog.FileNames.ToList() : new List<String>();
+			return dialog.ShowDialog(GetOwner()) == true ? dialog.FileNames.ToList() : [];
 		}
 
 		public String? PickSaveFile(String title, String filter, String? initialDirectory = null, String? fileName = null)
 		{
-			SaveFileDialog dialog = new SaveFileDialog
+			SaveFileDialog dialog = new()
 			{
 				Title = title,
 				Filter = filter,
@@ -103,7 +103,8 @@ namespace FalloutScriptStudio.Services
 
 		public String? PickFolder(String title, String? initialDirectory = null)
 		{
-			OpenFolderDialog dialog = new OpenFolderDialog { Title = title, InitialDirectory = initialDirectory ?? String.Empty };
+			OpenFolderDialog dialog = new()
+			{ Title = title, InitialDirectory = initialDirectory ?? String.Empty };
 			return dialog.ShowDialog(GetOwner()) == true ? dialog.FolderName : null;
 		}
 
@@ -126,7 +127,7 @@ namespace FalloutScriptStudio.Services
 
 		private static MessageBox CreateBox(String title, Object content, String? primary, String? secondary, String? close)
 		{
-			MessageBox box = new MessageBox
+			MessageBox box = new()
 			{
 				Title = title,
 				Content = content,

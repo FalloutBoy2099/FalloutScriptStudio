@@ -75,8 +75,8 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		/// <returns>The lines without line breaks.</returns>
 		internal static List<String> SplitLines(String text)
 		{
-			List<String> lines = new List<String>();
-			using StringReader reader = new StringReader(text);
+			List<String> lines = [];
+			using StringReader reader = new(text);
 			String? line;
 			while ((line = reader.ReadLine()) != null)
 			{
@@ -91,7 +91,7 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		/// <returns>The text.</returns>
 		internal static String JoinLines(IEnumerable<String> lines)
 		{
-			StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new();
 			foreach (String line in lines)
 			{
 				builder.Append(line).Append("\r\n");

@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 	using System.Diagnostics;
 	using System.IO;
 	using System.Media;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
+	using ViewModels.MessageEditor;
 
 	/// <summary>
 	/// <see cref="IMessageEditorPlatform"/> implementation for Windows.
@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 		{
 			try
 			{
-				FileInfo info = new FileInfo(path);
+				FileInfo info = new(path);
 				return info.Exists ? new FileStamp(info.LastWriteTimeUtc, info.Length) : null;
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException)
@@ -34,7 +34,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 		/// <inheritdoc/>
 		public void StartEditor(String programPath, String filePath)
 		{
-			ProcessStartInfo start = new ProcessStartInfo(programPath) { UseShellExecute = false };
+			ProcessStartInfo start = new(programPath) { UseShellExecute = false };
 			start.ArgumentList.Add(filePath);
 			using Process? process = Process.Start(start);
 		}

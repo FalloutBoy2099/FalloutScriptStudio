@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Model;
+	using Rendering;
 
 	/// <summary>
 	/// Position of the resize handles of a selected item. Handles keep a constant on-screen size, so their world size depends on the zoom.

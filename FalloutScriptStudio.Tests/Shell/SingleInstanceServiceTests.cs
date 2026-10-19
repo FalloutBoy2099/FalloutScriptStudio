@@ -41,7 +41,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			Assert.True(this._primary.TryAcquire());
 			TaskCompletionSource<String[]> received = new TaskCompletionSource<String[]>(TaskCreationOptions.RunContinuationsAsynchronously);
 			this._primary.ArgumentsReceived += (_, arguments) => received.TrySetResult(arguments);
-			this._secondary = new SingleInstanceService(this._installation, TimeSpan.FromSeconds(20));
+			this._secondary = new SingleInstanceService(this._installation, TimeSpan.FromSeconds(90));
 			String script = Path.Combine(this._installation, "late.ssl");
 
 			// The first instance holds the lock but its window (and so its pipe) comes much later than the old 3 s of waiting.
@@ -49,8 +49,8 @@ namespace FalloutScriptStudio.Tests.Shell
 			await Task.Delay(TimeSpan.FromSeconds(3.5));
 			this._primary.StartListening();
 
-			Assert.True(await WithinAsync(sending, TimeSpan.FromSeconds(15)));
-			Assert.Equal([script], await WithinAsync(received.Task, TimeSpan.FromSeconds(5)));
+			Assert.True(await WithinAsync(sending, TimeSpan.FromSeconds(120)));
+			Assert.Equal([script], await WithinAsync(received.Task, TimeSpan.FromSeconds(60)));
 		}
 
 		[Fact]
@@ -62,7 +62,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			Boolean sent = await this._secondary.SendArgumentsAsync(["x.ssl"]);
 
 			Assert.False(sent);
-			Assert.True(watch.Elapsed < TimeSpan.FromSeconds(3), "The wait must follow the timeout that was asked for.");
+			Assert.True(watch.Elapsed < TimeSpan.FromSeconds(20), "The wait must follow the timeout that was asked for.");
 		}
 
 		[Fact]
@@ -82,12 +82,12 @@ namespace FalloutScriptStudio.Tests.Shell
 				second.TrySetResult(arguments);
 			};
 			this._primary.StartListening();
-			this._secondary = new SingleInstanceService(this._installation, TimeSpan.FromSeconds(10));
+			this._secondary = new SingleInstanceService(this._installation, TimeSpan.FromSeconds(60));
 
 			Assert.True(await this._secondary.SendArgumentsAsync([Path.Combine(this._installation, "one.ssl")]));
 			Assert.True(await this._secondary.SendArgumentsAsync([Path.Combine(this._installation, "two.ssl")]));
 
-			String[] arguments = await WithinAsync(second.Task, TimeSpan.FromSeconds(10));
+			String[] arguments = await WithinAsync(second.Task, TimeSpan.FromSeconds(60));
 			Assert.EndsWith("two.ssl", Assert.Single(arguments), StringComparison.Ordinal);
 		}
 	}

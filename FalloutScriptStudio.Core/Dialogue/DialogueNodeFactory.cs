@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Core.Dialogue
 {
 	using System;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// Creates new dialogue nodes: checks the name and builds the script change that adds the procedure

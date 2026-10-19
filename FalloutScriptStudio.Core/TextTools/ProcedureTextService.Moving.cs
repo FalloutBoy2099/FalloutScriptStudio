@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>Moving a procedure (and its forward declaration) before another one.</summary>
 	public sealed partial class ProcedureTextService

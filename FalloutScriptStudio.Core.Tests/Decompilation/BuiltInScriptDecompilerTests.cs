@@ -105,7 +105,7 @@ namespace FalloutScriptStudio.Core.Tests.Decompilation
 		public async Task Decompile_ReportsProgressAndTheMessagesInTheOutput()
 		{
 			String intFile = this.WriteScript(CompiledScriptSamples.Sample);
-			List<String> lines = new List<String>();
+			List<String> lines = [];
 
 			DecompilationResult result = await new BuiltInScriptDecompiler().DecompileAsync(this.CreateRequest(intFile), new SynchronousProgress(lines));
 

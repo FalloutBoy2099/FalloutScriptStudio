@@ -38,11 +38,15 @@ Use Release for numbers you want to compare; Debug is several times slower (the 
 (collection `Performance`), and the numbers are noisy when other builds run on the machine: compare medians of several runs.
 
 * `FalloutScriptStudio.Core.Tests\Performance\CorePerformanceTests.cs`: parser, macros, search, refactoring, messages, dialogue model, archives, mass compile.
+* `FalloutScriptStudio.Core.Tests\Performance\BuildPerformanceTests.cs`: the staleness check of the incremental build (5 000 scripts, 300 headers, warm cache).
 * `FalloutScriptStudio.Tests\Performance\EditorPerformanceTests.cs`: opening, typing, highlighting, folding, completion, tips, bracket matching, memory.
 * `...\SearchPerformanceTests.cs`: folder search, project explorer, symbol trees and filters, global rename preview.
 * `...\MessageEditorPerformanceTests.cs`: loading and editing a 30 000 line `.msg`.
 * `...\DiagramPerformanceTests.cs`: the flowchart of 200 nodes.
 * `FalloutScriptStudio.Core.Tests\Performance\IntelligencePerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\IntelligencePerformanceTests.cs`: the project symbol index (5 000 files, from scratch / unchanged / one saved file / cancellation / memory), the symbol search and the references, the tokenizer, the unused variables, the removal of a procedure and the extraction on a 20 000 line script, the unused variable marks of the editor, typing in the symbol list.
+* `FalloutScriptStudio.Core.Tests\Performance\DiagnosticsPerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\DiagnosticsPerformanceTests.cs`: the semantic diagnostics (valid and damaged scripts of 5 000 and 20 000 lines made of copies of the real samples, the environment of a script, the underlines of 500 findings, the Quick Fix command).
+* `FalloutScriptStudio.Tests\Performance\ReplaceInFilesPerformanceTests.cs`: the preview over 5 000 files (four kinds of search), its memory, the cancellation, and the replacement and undo of 500 files (compared byte for byte with the originals).
+* `FalloutScriptStudio.Core.Tests\Performance\FormatPerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\FormatProjectPerformanceTests.cs`: the formatter on the generated scripts of 5 000 and 20 000 lines (stable, only white space changes, every option set), and Format Project over the 5 000 file project (preview, memory, cancellation, formatting of 500 files).
 * Equivalence tests for the optimised pieces (they compare with a full recomputation on random or large inputs):
   `LexicalMapIncrementalTests`, `BracketMatcherLargeTextTests`, `FoldingRedrawTests`, `DiagramCachedRenderingTests`, `MessageEditorLargeFileTests`,
   `FunctionsTreeFilterTests`, `ProceduresPanelSyncTests`, `MacroRegistryCacheTests`.
@@ -100,6 +104,7 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
 | Search over 5 000 files (plain, whole word, regex) | 350 to 430 ms, cancelled within 1 to 13 ms |
 | `.dat` archive of 30 000 entries: open / 30 000 lookups | 30 ms / 6 ms |
 | Mass compile scheduling of 5 000 scripts | 1 to 6 ms of overhead |
+| Incremental build: stale check of 5 000 scripts that share 300 headers (up to 30 files each), warm cache and include graph | about 75 to 150 ms (budget 1 s) |
 | Open a 5 000 / 20 000 line script in the editor (read, session, layout) | 150 to 180 ms / 230 to 310 ms |
 | Project symbol index of 5 000 files (4 250 scripts and headers, 54 000 symbols), from scratch / nothing changed / one saved script | 260 ms (4 threads) / 17 ms / 22 ms |
 | Symbol search over 54 000 symbols (prefix, substring, letters in order, two words, no match) | 1.5 to 3.4 ms |
@@ -108,6 +113,19 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
 | Tokenizer / script model / unused variables / procedure removal plan / extraction analysis, 20 000 lines | 3.5 ms / 4.3 ms / 18 ms / 5 ms / 4.5 ms |
 | Unused variable marks of the editor, 20 000 lines (after each parse; off: nothing) | 18 ms |
 | Ten keystrokes in the Go to Symbol list (200 rows each) over 54 000 symbols | 72 ms (about 6.5 ms each) |
+| Semantic diagnostics (`ScriptDiagnostics.Analyze`), 20 000 lines of valid script: from the text (tokenizer included) / tokens ready with an include of 2 000 macros | 50 to 70 ms / 45 to 50 ms (budget 100 ms) |
+| Semantic diagnostics, 5 000 lines / 20 000 lines with about 3 000 findings (every finding comes with a suggestion) | 10 to 12 ms / 55 ms |
+| Environment of a script (`ScriptEnvironmentBuilder.Build`) when the headers are cached | 0.3 ms |
+| Drawing 500 semantic findings in the editor (`DiagnosticsController.Update`), the Quick Fix command (analysis of the text again) on 20 000 lines | 1 ms, about 100 ms in Debug |
+| Command palette: ranking of 5 000 names (`FuzzyMatcher.Rank`) / filtering 1 000 commands in the view model | under 1 s (budget) / under 0.5 s (budget), a few ms in practice |
+| Replace in Files, preview over 5 000 files (plain / whole word / regex with groups / no match; 4 000 replacements) | 470 ms / 390 ms / 390 ms / 320 ms (Release) |
+| Replace in Files, cancelling the preview | 2.5 ms |
+| Replace in Files, applying 500 replacements in 500 files (atomic writes) / undoing them | 1.4 s / 1.3 s (about 3 ms per file, dominated by the flush of the temporary file) |
+| Replace in Files, ticking / unticking 50 000 replacements of the preview | under 3 s (budget); counted once, not once per replacement |
+| Formatter, 20 000 lines: default options / every option on (Release) | 23 ms / 175 ms (budgets 400 ms / 1.5 s) |
+| Lines that change when a 20 000 line script is formatted in K&R style (`LineDiff`) | 2.4 ms |
+| Format Project, preview over 5 000 files (4 000 scripts and headers all changing, up to four threads): time / managed memory kept / cancellation | 1.1 s / 3 MB / stops 130 ms after the request (Release; Debug 2.4 s) |
+| Format Project, formatting 500 files (atomic writes) and a second preview that finds nothing | 1.6 s |
 
 ### Memory
 
@@ -116,6 +134,7 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
   parse results) with 2 full collections.
 * Search over 5 000 files with 4 000 hits: the files are read one at a time (streaming); managed memory grows by 3 to 4 MB, the peak working set of the test
   process stays at about 74 MB (72 MB before). Cancellation stops the search about 1 to 13 ms after the request.
+* Replace in Files over 5 000 files with 4 000 replacements: the files are read one at a time and only the matches are kept (a few strings per replacement, at most 50 000 listed); managed memory does not grow, the peak working set of the test process stays at about 87 MB. The undo record holds the reverse edits and a hash per file, never a file content.
 * Project symbol index: 12 MB of managed memory for 54 000 symbols in 4 250 files (only names, kinds, files and lines are kept, never the text; the index stops at 300 000 symbols, about 36 MB, for the 2 to 4 GB of an x86 process).
 * `.msg` of 30 000 lines: 17 MB managed after loading, 22 MB after 30 edits (undo history 4 MB).
 

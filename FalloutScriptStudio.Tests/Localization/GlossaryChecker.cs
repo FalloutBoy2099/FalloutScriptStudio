@@ -81,7 +81,7 @@ namespace FalloutScriptStudio.Tests.Localization
 		/// <returns>The findings, ordered by key and language.</returns>
 		public static IReadOnlyList<Violation> Check(Glossary glossary, IReadOnlyDictionary<String, IReadOnlyDictionary<String, String>> texts)
 		{
-			List<Violation> violations = new List<Violation>();
+			List<Violation> violations = [];
 			IReadOnlyDictionary<String, String> english = texts[English];
 			Dictionary<String, String> englishNormalized = english.ToDictionary(entry => entry.Key, entry => NormalizeEnglish(entry.Value, glossary.Ignore), StringComparer.Ordinal);
 			Dictionary<String, Dictionary<String, String>> normalized = texts.Where(entry => entry.Key != English)
@@ -131,8 +131,8 @@ namespace FalloutScriptStudio.Tests.Localization
 		public static IReadOnlyList<Violation> Apply(IEnumerable<Violation> violations, IEnumerable<GlossaryExceptions.Entry> exceptions, out IReadOnlyList<GlossaryExceptions.Entry> stale)
 		{
 			GlossaryExceptions.Entry[] entries = exceptions.ToArray();
-			HashSet<GlossaryExceptions.Entry> used = new HashSet<GlossaryExceptions.Entry>();
-			List<Violation> remaining = new List<Violation>();
+			HashSet<GlossaryExceptions.Entry> used = [];
+			List<Violation> remaining = [];
 			foreach (Violation violation in violations)
 			{
 				GlossaryExceptions.Entry[] matching = entries.Where(entry => Matches(entry, violation)).ToArray();

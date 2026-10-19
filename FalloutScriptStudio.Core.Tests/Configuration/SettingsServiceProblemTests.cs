@@ -50,7 +50,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Directory.CreateDirectory(this.Paths.SettingsDirectory);
 			File.WriteAllText(this.Paths.SettingsFile, "{ this is not json");
 			SettingsService service = this.CreateService();
-			List<SettingsProblem> raised = new List<SettingsProblem>();
+			List<SettingsProblem> raised = [];
 			service.ProblemRaised += (_, problem) => raised.Add(problem);
 
 			service.Load();

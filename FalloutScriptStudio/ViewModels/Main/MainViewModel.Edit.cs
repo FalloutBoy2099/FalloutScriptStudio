@@ -18,7 +18,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 	public sealed partial class MainViewModel
 	{
 		/// <summary>Gets the procedures offered by the "Go to procedure" popup.</summary>
-		public ObservableCollection<ScriptProcedure> GoToProcedureItems { get; } = new ObservableCollection<ScriptProcedure>();
+		public ObservableCollection<ScriptProcedure> GoToProcedureItems { get; } = [];
 
 		/// <summary>True while the "Go to procedure" popup is open.</summary>
 		[ObservableProperty]

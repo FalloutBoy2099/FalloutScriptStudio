@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	/// </remarks>
 	public sealed class ProcedureHandlerCatalog
 	{
-		private static readonly HashSet<String> _overrideHandlers = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _overrideHandlers = new(StringComparer.Ordinal)
 		{
 			"look_at_p_proc",
 			"description_p_proc",
@@ -84,7 +84,7 @@ namespace FalloutScriptStudio.Core.TextTools
 				if (line.StartsWith("<m>", StringComparison.Ordinal))
 				{
 					CloseGroup();
-					group = new List<ProcedureHandlerEntry>();
+					group = [];
 					Int32 d = line.IndexOf("<d>", StringComparison.Ordinal);
 					groupName = d == -1 ? line.Substring(3) : line.Substring(3, d - 3);
 					groupDescription = d == -1 ? String.Empty : line.Substring(d + 3);

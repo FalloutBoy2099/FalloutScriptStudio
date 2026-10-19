@@ -21,7 +21,7 @@
     ]
   },
   "groups": [
-    {"name": "Fallout and SSL", "terms": ["script", "procedure", "function", "variable", "macro", "definition", "declaration", "header", "include", "message", "dialogue", "node", "flowchart", "player", "opcode", "register", "template", "archive"]},
+    {"name": "Fallout and SSL", "terms": ["script", "procedure", "function", "variable", "macro", "definition", "declaration", "header", "include", "message", "dialogue", "node", "flowchart", "player", "opcode", "register", "template", "archive", "snippet"]},
     {"name": "Tools", "terms": ["compile", "compiler", "decompile", "preprocess", "roundtrip", "parser", "native", "builtin", "external"]},
     {"name": "Editor and interface", "terms": ["project", "problem", "settings", "theme", "language", "editor", "folder", "encoding", "log", "reference", "rename", "associate", "collapse", "expand", "comment", "indent", "caret", "find", "replace", "matchcase", "wholeword", "regex", "reload", "unsaved", "save", "cancel", "delete", "remove", "undo", "redo", "warning", "error"]}
   ],
@@ -384,6 +384,26 @@
         "ru": {"canonical": "архив", "accept": ["архив"], "forbid": []},
         "sv": {"canonical": "arkiv", "accept": ["arkiv"], "forbid": []},
         "zh": {"canonical": "档案", "accept": ["档案"], "forbid": ["存档"]}
+      }
+    },
+    {
+      "id": "snippet",
+      "english": "Snippet",
+      "group": "Fallout and SSL",
+      "en": ["snippet", "snippets"],
+      "enForbid": [],
+      "notes": "A piece of code the editor inserts from a trigger word or a list (Insert Snippet, Surround With), with tab stops. Not the same as a template (a whole script or a node).",
+      "languages": {
+        "cs": {"canonical": "úryvek kódu", "accept": ["úryv"], "forbid": []},
+        "de": {"canonical": "Codeschnipsel", "accept": ["schnipsel"], "forbid": []},
+        "es": {"canonical": "fragmento de código", "accept": ["fragmento"], "forbid": []},
+        "fr": {"canonical": "extrait de code", "accept": ["extrait"], "forbid": []},
+        "it": {"canonical": "frammento di codice", "accept": ["frammento", "frammenti"], "forbid": []},
+        "pl": {"canonical": "fragment kodu", "accept": ["fragment"], "forbid": []},
+        "pt": {"canonical": "trecho de código", "accept": ["trecho"], "forbid": []},
+        "ru": {"canonical": "фрагмент кода", "accept": ["фрагмент"], "forbid": []},
+        "sv": {"canonical": "kodsnutt", "accept": ["kodsnutt"], "forbid": []},
+        "zh": {"canonical": "代码片段", "accept": ["代码片段"], "forbid": []}
       }
     },
     {

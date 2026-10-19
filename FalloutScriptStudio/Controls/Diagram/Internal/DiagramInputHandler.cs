@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// The pointer state machine of the canvas: selection, item dragging, resizing, rubber band, panning, hover and clicks.
@@ -18,8 +18,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 		private readonly DiagramScene _scene;
 		private readonly DiagramSurface _surface;
 		private readonly ScrollViewer _scroll;
-		private readonly Dictionary<DiagramItem, Point> _dragStarts = new Dictionary<DiagramItem, Point>();
-		private readonly HashSet<DiagramItem> _bandBase = new HashSet<DiagramItem>();
+		private readonly Dictionary<DiagramItem, Point> _dragStarts = [];
+		private readonly HashSet<DiagramItem> _bandBase = [];
 		private PointerMode _mode;
 		private Point _downWorld;
 		private Point _downSurface;
@@ -389,7 +389,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 
 		private void UpdateRubberBand(Point world)
 		{
-			Rect band = new Rect(this._downWorld, world);
+			Rect band = new(this._downWorld, world);
 			this._surface.RubberBand = band;
 			this._canvas.BeginUpdate();
 			try

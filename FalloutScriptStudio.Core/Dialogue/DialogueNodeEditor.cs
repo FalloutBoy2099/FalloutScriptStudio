@@ -7,8 +7,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Text.RegularExpressions;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// Data logic of the node code editor (legacy <c>FlowchartTE</c>): lists the messages the code of a node uses and changes the

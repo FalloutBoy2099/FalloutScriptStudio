@@ -20,5 +20,14 @@ namespace FalloutScriptStudio.Problems
 
 		/// <summary>Removes the declaration of an unused variable from its script.</summary>
 		RemoveUnusedVariable = 5,
+
+		/// <summary>Applies the quick fix of a finding of the semantic analysis of a script (a rename, a forward declaration, the removal of a duplicate).</summary>
+		ApplyQuickFix = 8,
+
+		/// <summary>Creates (or finds) the message file of a script and associates it with the script.</summary>
+		CreateMessageFile = 6,
+
+		/// <summary>Appends the message numbers a script uses and its message file lacks to the message file.</summary>
+		AddMissingMessages = 7,
 	}
 }

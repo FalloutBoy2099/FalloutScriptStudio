@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				using TempFolder folder = new TempFolder();
 				FakeDialogService dialogs = new FakeDialogService();
 				DocumentViewModel document = CreateDocument(folder.Write("a.ssl", "// text"));
-				List<DocumentViewModel> reloaded = new List<DocumentViewModel>();
+				List<DocumentViewModel> reloaded = [];
 
 				await new ExternalChangeDetector(dialogs).CheckAsync(new[] { document }, d => { reloaded.Add(d); return Task.FromResult(true); });
 
@@ -46,7 +46,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				String path = folder.Write("a.ssl", "// text");
 				DocumentViewModel document = CreateDocument(path);
 				File.SetLastWriteTimeUtc(path, DateTime.UtcNow.AddMinutes(5));
-				List<DocumentViewModel> reloaded = new List<DocumentViewModel>();
+				List<DocumentViewModel> reloaded = [];
 				ExternalChangeDetector detector = new ExternalChangeDetector(dialogs);
 
 				dialogs.ConfirmAnswer = false;

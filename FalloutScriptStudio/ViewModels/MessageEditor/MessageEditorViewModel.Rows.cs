@@ -142,7 +142,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			}
 
 			HashSet<Int32> used = this._rows.Where(row => row.IsMessage).Select(row => row.Entry.Id).ToHashSet();
-			List<MessageRowViewModel> copies = new List<MessageRowViewModel>();
+			List<MessageRowViewModel> copies = [];
 			foreach (Int32 index in indexes)
 			{
 				MessageEntry entry = MessageRowViewModel.CloneEntry(this._rows[index].Entry);
@@ -322,7 +322,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 				return this._selectedRows.ToList();
 			}
 
-			return this.SelectedRow is null ? new List<MessageRowViewModel>() : new List<MessageRowViewModel> { this.SelectedRow };
+			return this.SelectedRow is null ? [] : [this.SelectedRow];
 		}
 
 		/// <summary>
@@ -364,8 +364,8 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			}
 
 			List<MessageRowViewModel> moving = indexes.Select(index => this._rows[index]).ToList();
-			HashSet<Int32> positions = new HashSet<Int32>(indexes);
-			List<(Int32 From, Int32 To)> moves = new List<(Int32, Int32)>();
+			HashSet<Int32> positions = new(indexes);
+			List<(Int32 From, Int32 To)> moves = [];
 
 			IEnumerable<Int32> order = direction < 0 ? indexes : indexes.AsEnumerable().Reverse();
 			foreach (Int32 index in order)

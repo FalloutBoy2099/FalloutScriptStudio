@@ -28,7 +28,7 @@ namespace FalloutScriptStudio.Tests.Localization
 		public void TheGlossaryIsWellFormed()
 		{
 			Glossary glossary = Glossary.Load();
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			String[] languages = Loc.Languages.Select(language => language.Code).Where(code => code != GlossaryChecker.English).OrderBy(code => code, StringComparer.Ordinal).ToArray();
 
 			if (glossary.Version != 1)
@@ -125,7 +125,7 @@ namespace FalloutScriptStudio.Tests.Localization
 			GlossaryExceptions exceptions = GlossaryExceptions.Load();
 			IReadOnlyDictionary<String, String> english = _texts.Value[GlossaryChecker.English];
 			String[] languages = Loc.Languages.Select(language => language.Code).Append("*").ToArray();
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			if (exceptions.Exceptions.Length > MaxExceptions)
 			{
@@ -163,7 +163,7 @@ namespace FalloutScriptStudio.Tests.Localization
 		[Fact]
 		public void TheGlossaryFilesAreUtf8WithoutBomAndCrlf()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			foreach (String file in new[] { Glossary.Path, GlossaryExceptions.Path, GlossaryDocument })
 			{
 				Byte[] bytes = File.ReadAllBytes(file);
@@ -193,7 +193,7 @@ namespace FalloutScriptStudio.Tests.Localization
 		[Fact]
 		public void TheDocumentationLinksTheGlossary()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			foreach (String file in new[] { "README.md", Path.Combine("docs", "CONVENTIONS.md"), Path.Combine("docs", "HOW_TO.md") })
 			{
 				if (!File.ReadAllText(Path.Combine(TestFiles.RepositoryRoot, file)).Contains("GLOSSARY.md", StringComparison.Ordinal))
@@ -218,7 +218,7 @@ namespace FalloutScriptStudio.Tests.Localization
 
 		private static IReadOnlyDictionary<String, IReadOnlyDictionary<String, String>> LoadTexts()
 		{
-			Dictionary<String, IReadOnlyDictionary<String, String>> texts = new Dictionary<String, IReadOnlyDictionary<String, String>>(StringComparer.Ordinal);
+			Dictionary<String, IReadOnlyDictionary<String, String>> texts = new(StringComparer.Ordinal);
 			foreach (String code in SourceTree.LanguageCodes())
 			{
 				texts[code] = SourceTree.LoadStrings(code);

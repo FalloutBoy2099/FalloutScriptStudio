@@ -72,6 +72,7 @@
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Wybierz folder projektu</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtruj...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Edytuj kod węzła</sys:String>
+    <sys:String x:Key="Str.Panels.MenuPreviewDialogue">Podgląd dialogu od tego węzła</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Pokaż tylko wybraną procedurę: pozostałe procedury są zwijane po wybraniu procedury</sys:String>
     <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Usuń nieużywaną procedurę...</sys:String>
     <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Znajdź nieużywane zmienne</sys:String>

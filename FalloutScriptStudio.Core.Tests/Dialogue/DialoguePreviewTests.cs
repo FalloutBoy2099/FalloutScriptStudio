@@ -56,6 +56,66 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 		}
 
 		[Fact]
+		public async Task Start_AtANode_WinsOverTheCaretAndTheTalkProcedure()
+		{
+			DialoguePreview preview = Create();
+			String text = DialogueSamples.Script();
+
+			Boolean ready = await preview.StartAsync(text, DialogueSamples.CreateInfo(text), DialogueSamples.Messages(), 33, default, "node002");
+
+			Assert.True(ready);
+			Assert.Equal("Node002", preview.CurrentNode);
+			Assert.False(preview.CanGoBack);
+			Assert.Equal(120, preview.Rows[0].MessageNumber);
+		}
+
+		[Fact]
+		public async Task Start_AtAnUnknownNode_FallsBackToTheCaretAndThenToTheTalkProcedure()
+		{
+			DialoguePreview preview = Create();
+			String text = DialogueSamples.Script();
+
+			await preview.StartAsync(text, DialogueSamples.CreateInfo(text), DialogueSamples.Messages(), 33, default, "NoSuchNode");
+			Assert.Equal("Node001", preview.CurrentNode);
+
+			await preview.StartAsync(text, DialogueSamples.CreateInfo(text), DialogueSamples.Messages(), 1, default, "NoSuchNode");
+			Assert.Equal("talk_p_proc", preview.CurrentNode);
+		}
+
+		[Fact]
+		public async Task GoToNode_AddsTheNodeToTheHistorySoBackReturnsToThePreviousOne()
+		{
+			DialoguePreview preview = await StartAsync();
+
+			Assert.True(await preview.GoToNodeAsync("Node777"));
+
+			Assert.Equal("Node777", preview.CurrentNode);
+			Assert.Equal(130, preview.Rows[0].MessageNumber);
+			Assert.True(preview.CanGoBack);
+			Assert.True(await preview.GoBackAsync());
+			Assert.Equal("talk_p_proc", preview.CurrentNode);
+			Assert.True(preview.CanGoForward);
+		}
+
+		[Fact]
+		public async Task GoToNode_DropsTheForwardHistory_AndIgnoresTheNodeBeingShownAndUnknownNodes()
+		{
+			DialoguePreview preview = await StartAsync();
+			await preview.GoToNodeAsync("Node001");
+			await preview.GoBackAsync();
+			Assert.True(preview.CanGoForward);
+
+			Assert.True(await preview.GoToNodeAsync("talk_p_proc"));
+			Assert.True(preview.CanGoForward);
+			Assert.False(await preview.GoToNodeAsync("NoSuchNode"));
+			Assert.Equal("talk_p_proc", preview.CurrentNode);
+
+			Assert.True(await preview.GoToNodeAsync("Node999"));
+			Assert.False(preview.CanGoForward);
+			Assert.Equal("Node999", preview.CurrentNode);
+		}
+
+		[Fact]
 		public async Task Start_WithoutDialogue_IsNotReady()
 		{
 			DialoguePreview preview = Create();

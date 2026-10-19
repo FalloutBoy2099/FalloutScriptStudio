@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Editor
 {
 	using System;
-	using FalloutScriptStudio.Editor.Controllers;
+	using Controllers;
 
 	/// <summary>
 	/// The controllers that belong to one text area of an editor view: the single pane of a normal view, or one of the two panes of a

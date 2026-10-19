@@ -148,7 +148,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		}
 
 		/// <summary>The dialogs that deliberately reuse a gesture of the main window, because they offer the same action in their own context.</summary>
-		private static readonly HashSet<String> AllowedReuse = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> AllowedReuse = new(StringComparer.Ordinal)
 		{
 			// The message editor is a document editor of its own, with the file shortcuts of the main window.
 			"Message editor window|Ctrl+N", "Message editor window|Ctrl+O", "Message editor window|Ctrl+S", "Message editor window|Ctrl+Shift+S",
@@ -175,7 +175,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				("NodeCodeEditorWindow.xaml", "Del", "NodeCodeEditorWindow.xaml", "ApplicationCommands.Delete"),
 			};
 			String[] clipboard = { "Ctrl+X", "Ctrl+C", "Ctrl+V", "Ctrl+Z", "Ctrl+Y", "Ctrl+A", "Alt+F4" };
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			foreach (String file in SourceTree.ViewFiles())
 			{

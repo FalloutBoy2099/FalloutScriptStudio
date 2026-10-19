@@ -46,7 +46,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				"MainWindow", "SettingsWindow", "ProjectSettingsWindow", "AboutWindow", "GoToLineWindow", "BatchCompileWindow", "HeadersWindow",
 				"ProcedureNameWindow", "RegisterScriptWindow", "AdvancedSearchWindow", "MessageEditorWindow", "NodeCodeEditorWindow",
 				"FlowchartWindow", "DialoguePreviewWindow", "MessageTextWindow", "NewNodeWindow", "DialogueRulesWindow", "UserFunctionWindow",
-				"MacroRenamePreviewWindow",
+				"MacroRenamePreviewWindow", "SymbolPickerWindow", "CommandPaletteWindow", "ReplacePreviewWindow", "FormatProjectWindow", "SnippetPickerWindow", "SnippetManagerWindow",
 			};
 			String[] windows = SourceTree.ViewFiles().Select(Path.GetFileNameWithoutExtension).Select(name => name!).ToArray();
 			String[] panels =

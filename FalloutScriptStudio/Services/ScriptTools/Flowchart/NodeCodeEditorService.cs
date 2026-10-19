@@ -5,17 +5,17 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.ViewModels.Flowchart;
-	using FalloutScriptStudio.Views.Flowchart;
-	using FalloutScriptStudio.Views.ScriptTools;
 	using Microsoft.Extensions.DependencyInjection;
+	using Documents;
+	using ViewModels.Flowchart;
+	using Views.Flowchart;
+	using Views.ScriptTools;
 
 	/// <inheritdoc />
 	public sealed class NodeCodeEditorService : INodeCodeEditorService
 	{
 		private readonly IServiceProvider _services;
-		private readonly List<Entry> _editors = new List<Entry>();
+		private readonly List<Entry> _editors = [];
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NodeCodeEditorService"/> class.
@@ -71,7 +71,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 			IServiceScope scope = this._services.CreateScope();
 			NodeCodeEditorWindow window = scope.ServiceProvider.GetRequiredService<NodeCodeEditorWindow>();
 			Window? owner = ScriptToolWindowHelper.FindOwner(window);
-			Entry entry = new Entry(script, window, fromFlowchart, nodeName);
+			Entry entry = new(script, window, fromFlowchart, nodeName);
 			window.ViewModel.CloseOnDone = fromFlowchart;
 			this._editors.Add(entry);
 			window.ViewModel.CodeApplied += (_, _) => this.CodeApplied?.Invoke(this, new NodeEditorEventArgs(script, window.ViewModel.NodeName));

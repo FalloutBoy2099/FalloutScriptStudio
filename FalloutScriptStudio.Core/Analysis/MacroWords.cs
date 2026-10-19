@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Analysis
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>Collects the words that the bodies of macros mention (a macro can use a variable of the procedure it is expanded in).</summary>
 	public static class MacroWords

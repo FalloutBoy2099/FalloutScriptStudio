@@ -10,8 +10,8 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using CommunityToolkit.Mvvm.Input;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Localization;
+	using Core.Compilation;
+	using Localization;
 
 	/// <summary>
 	/// View model of the batch compiler window: runs a mass compilation and reports its progress, the failed scripts and their output.
@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 	public sealed partial class BatchCompileViewModel : ToolWindowViewModelBase
 	{
 		private readonly IBatchCompileService _batchCompileService;
-		private readonly StringBuilder _log = new StringBuilder();
+		private readonly StringBuilder _log = new();
 		private CancellationTokenSource? _cancellation;
 		private String _statusKey = "Str.ToolWindows.Batch.Status.Ready";
 		private Object?[] _statusArguments = Array.Empty<Object?>();
@@ -39,6 +39,11 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		[NotifyPropertyChangedFor(nameof(CompiledText))]
 		[NotifyPropertyChangedFor(nameof(FailedText))]
 		private Int32 _failed;
+
+		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasUpToDate))]
+		[NotifyPropertyChangedFor(nameof(UpToDateText))]
+		private Int32 _upToDate;
 
 		[ObservableProperty]
 		[NotifyPropertyChangedFor(nameof(Title))]
@@ -76,7 +81,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		}
 
 		/// <summary>Gets the scripts that failed to compile.</summary>
-		public ObservableCollection<BatchCompileFailureItem> Failures { get; } = new ObservableCollection<BatchCompileFailureItem>();
+		public ObservableCollection<BatchCompileFailureItem> Failures { get; } = [];
 
 		/// <summary>Gets the number of scripts that compiled successfully so far.</summary>
 		public Int32 Compiled => this.Completed - this.Failed;
@@ -92,6 +97,12 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		/// <summary>Gets the caption of the number of scripts that failed.</summary>
 		public String FailedText => Loc.Format("Str.ToolWindows.Batch.FailedCount", this.Failed);
+
+		/// <summary>Gets a value indicating whether scripts were skipped because they are up to date.</summary>
+		public Boolean HasUpToDate => this.UpToDate > 0;
+
+		/// <summary>Gets the caption of the number of scripts that were skipped because they are up to date.</summary>
+		public String UpToDateText => Loc.Format("Str.ToolWindows.Batch.UpToDateCount", this.UpToDate);
 
 		/// <summary>Gets the window title.</summary>
 		public String Title => this.Threads > 1
@@ -119,9 +130,9 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.SetStatus("Str.ToolWindows.Batch.Status.Compiling");
 			this.IsRunning = true;
 
-			using CancellationTokenSource cancellation = new CancellationTokenSource();
+			using CancellationTokenSource cancellation = new();
 			this._cancellation = cancellation;
-			Progress<BatchCompileProgress> progress = new Progress<BatchCompileProgress>(item =>
+			Progress<BatchCompileProgress> progress = new(item =>
 			{
 				this.ReportProgress(item);
 				observer?.Report(item);
@@ -196,12 +207,13 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.Total = progress.Total;
 			this.Completed = progress.Completed;
 			this.Failed = progress.Failed;
+			this.UpToDate = progress.UpToDate;
 			this.CurrentFile = Path.GetFileName(progress.ScriptPath);
 			this.SetStatus("Str.ToolWindows.Batch.Status.Progress", progress.Completed, progress.Total);
 
 			if (!progress.Succeeded && !this.Failures.Any(item => PathEquals(item.ScriptPath, progress.ScriptPath)))
 			{
-				BatchCompileFailureItem failure = new BatchCompileFailureItem(progress.ScriptPath, String.Empty);
+				BatchCompileFailureItem failure = new(progress.ScriptPath, String.Empty);
 				this.Failures.Add(failure);
 				this.SelectedFailure ??= failure;
 				this.AppendLog(Loc.Format("Str.ToolWindows.Batch.Log.Failed", Path.GetFileName(progress.ScriptPath)));
@@ -222,6 +234,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.Total = total;
 			this.Completed = 0;
 			this.Failed = 0;
+			this.UpToDate = 0;
 			this.CurrentFile = String.Empty;
 			this.IsCancelling = false;
 			this.IsFinished = false;
@@ -244,7 +257,8 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 				}
 			}
 
-			this.Total = result.Found;
+			this.UpToDate = result.UpToDate;
+			this.Total = result.Found - result.UpToDate;
 			this.Failed = result.Failed;
 			this.Completed = result.Compiled + result.Failed;
 
@@ -256,6 +270,11 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.AppendLog("--------------------");
 			this.AppendLog(Loc.Format("Str.ToolWindows.Batch.Log.Compiled", result.Compiled));
 			this.AppendLog(Loc.Format("Str.ToolWindows.Batch.Log.FailedToCompile", result.Failed));
+			if (result.UpToDate > 0)
+			{
+				this.AppendLog(Loc.Format("Str.ToolWindows.Batch.Log.UpToDate", result.UpToDate));
+			}
+
 			this.AppendLog(Loc.Format("Str.ToolWindows.Batch.Log.Skipped", result.Cancelled ? result.Skipped : 0));
 
 			this.SetStatus(result.Cancelled
@@ -274,6 +293,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this.OnPropertyChanged(nameof(this.ProgressText));
 			this.OnPropertyChanged(nameof(this.CompiledText));
 			this.OnPropertyChanged(nameof(this.FailedText));
+			this.OnPropertyChanged(nameof(this.UpToDateText));
 		}
 
 		private void SetStatus(String key, params Object?[] arguments)

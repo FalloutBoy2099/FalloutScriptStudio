@@ -52,7 +52,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		{
 			SettingsViewModel viewModel = this.Create();
 			Assert.True(viewModel.IsAppearancePage);
-			List<String> changed = new List<String>();
+			List<String> changed = [];
 			((INotifyPropertyChanged)viewModel).PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 
 			viewModel.SelectedPageItem = viewModel.Pages.Single(page => page.Page == SettingsPage.Compiler);
@@ -68,7 +68,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		public void EnableParser_ControlsTheParserWarningsOption()
 		{
 			SettingsViewModel viewModel = this.Create();
-			List<String> changed = new List<String>();
+			List<String> changed = [];
 			((INotifyPropertyChanged)viewModel).PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 
 			viewModel.EnableParser = false;
@@ -112,7 +112,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		public void OutputDirectory_IsDisabledWhileCompilingNextToTheSources()
 		{
 			SettingsViewModel viewModel = this.Create();
-			List<String> changed = new List<String>();
+			List<String> changed = [];
 			((INotifyPropertyChanged)viewModel).PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 
 			Assert.True(viewModel.CompileToSourceDirectory);
@@ -155,6 +155,23 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 					if (expected is List<String> expectedList)
 					{
 						Assert.Equal(expectedList, (List<String>)actual!);
+					}
+					else if (expected is List<CompileProfile> expectedProfiles)
+					{
+						// The profiles are copied, not shared with the window.
+						List<CompileProfile> copied = (List<CompileProfile>)actual!;
+						Assert.Equal(expectedProfiles.Select(profile => profile.Name), copied.Select(profile => profile.Name));
+						Assert.All(copied, profile => Assert.DoesNotContain(profile, expectedProfiles));
+					}
+					else if (expected is FormatSettings expectedStyle)
+					{
+						// The formatting style is copied, not shared with the window.
+						FormatSettings copiedStyle = (FormatSettings)actual!;
+						Assert.NotSame(expectedStyle, copiedStyle);
+						foreach (System.Reflection.PropertyInfo option in typeof(FormatSettings).GetProperties().Where(p => p.CanWrite))
+						{
+							Assert.True(Equals(option.GetValue(expectedStyle), option.GetValue(copiedStyle)), section + "." + property.Name + "." + option.Name + " must be copied");
+						}
 					}
 					else
 					{

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Controls.Diagram.Internal
 {
 	using System;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	internal sealed class SceneChangedEventArgs : EventArgs
 	{

@@ -3,13 +3,13 @@ namespace FalloutScriptStudio.Workspace
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.IO;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
+	using Core.Configuration;
+	using Core.IO;
+	using Core.TextTools;
+	using Documents;
+	using Localization;
+	using Problems;
+	using Services;
 
 	/// <summary>Opening and creating documents.</summary>
 	public sealed partial class WorkspaceService
@@ -155,7 +155,7 @@ namespace FalloutScriptStudio.Workspace
 				return text;
 			}
 
-			return new CodeFormatter().Format(text);
+			return new CodeFormatter().Format(text, this._settings.Effective.ToFormatOptions());
 		}
 
 		/// <summary>Tells the user (as a note in the Errors tab) that a file was not UTF-8 and was read with the code page of the settings.</summary>

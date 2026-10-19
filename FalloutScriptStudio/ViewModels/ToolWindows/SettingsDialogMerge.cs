@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 	using System.Reflection;
 	using FalloutScriptStudio.Core.Configuration;
 
@@ -22,6 +23,8 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			"Paths.LastSearchDirectory",
 			"Paths.SolutionFolder",
 			"Compiler.PreprocessorDefine",
+			"Compiler.ActiveProfile",
+			"Compiler.MassCompileOnlyChanged",
 			"Editor.SearchIgnoreCase",
 			"Editor.SearchWholeWord",
 			"Editor.ZoomPercent",
@@ -60,6 +63,14 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 				if (value is List<String> list)
 				{
 					value = new List<String>(list);
+				}
+				else if (value is List<CompileProfile> profiles)
+				{
+					value = profiles.Select(profile => profile.Clone()).ToList();
+				}
+				else if (value is FormatSettings formatting)
+				{
+					value = formatting.Clone();
 				}
 
 				property.SetValue(live, value);

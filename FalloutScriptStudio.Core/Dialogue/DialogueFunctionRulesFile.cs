@@ -46,8 +46,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 		{
 			ArgumentNullException.ThrowIfNull(rules);
 
-			Dictionary<String, DialogueFunctionRule> pending = new Dictionary<String, DialogueFunctionRule>(StringComparer.OrdinalIgnoreCase);
-			List<DialogueFunctionRule> ordered = new List<DialogueFunctionRule>();
+			Dictionary<String, DialogueFunctionRule> pending = new(StringComparer.OrdinalIgnoreCase);
+			List<DialogueFunctionRule> ordered = [];
 			foreach (DialogueFunctionRule rule in rules.Where(r => !r.IsDefault))
 			{
 				if (pending.TryAdd(rule.Name, rule))
@@ -57,7 +57,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			}
 
 			var lines = new List<String> { HeaderLine };
-			HashSet<String> written = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> written = new(StringComparer.OrdinalIgnoreCase);
 			foreach (String raw in existingLines ?? Enumerable.Empty<String>())
 			{
 				if (String.Equals(raw, HeaderLine, StringComparison.Ordinal))

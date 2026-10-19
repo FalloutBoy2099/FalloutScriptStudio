@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 {
 	using System;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>Works out message numbers and message file numbers from expressions: literals, macros, sums, <c>message_str</c> and <c>random</c>.</summary>
 	internal sealed partial class DialogueLineBuilder

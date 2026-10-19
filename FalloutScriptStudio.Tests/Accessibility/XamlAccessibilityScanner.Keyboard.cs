@@ -8,7 +8,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	/// <content>Rules: keyboard reachability, focus visuals and shortcut gestures.</content>
 	internal sealed partial class XamlAccessibilityScanner
 	{
-		private static readonly HashSet<String> _mouseOnlyHosts = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _mouseOnlyHosts = new(StringComparer.Ordinal)
 		{
 			"TextBlock", "Border", "Grid", "StackPanel", "Image", "Rectangle", "SymbolIcon", "Ellipse", "DockPanel", "WrapPanel",
 		};
@@ -28,7 +28,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public IReadOnlyList<String> FindUnreachableControls(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement element in document.Descendants())
 			{
 				if (InsideControlTemplate(element))
@@ -62,7 +62,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// </summary>
 		public IReadOnlyList<String> FindMouseOnlyLists(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			Boolean hasDefaultButton = document.Descendants().Any(e => IsTrue(e, "IsDefault"));
 			foreach (XElement element in document.Descendants().Where(e => e.Name.LocalName is "TreeView" or "DataGrid" or "ListBox" or "ListView"))
 			{
@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public IReadOnlyList<String> FindHiddenFocusVisuals(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement element in document.Descendants())
 			{
 				XAttribute? attribute = element.Attribute("FocusVisualStyle");
@@ -114,7 +114,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// </summary>
 		public IReadOnlyList<String> FindStylesWithoutFocusVisual(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement style in document.Descendants().Where(e => e.Name.LocalName == "Style"))
 			{
 				String target = TargetTypeName((String?)style.Attribute("TargetType"));
@@ -143,7 +143,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public static IReadOnlyList<String> FindDuplicateGestures(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (IGrouping<String, XElement> group in document.Descendants()
 				.Where(e => e.Name.LocalName == "KeyBinding")
 				.GroupBy(e => GestureOf(e) + "@" + ScopeOf(e), StringComparer.Ordinal)

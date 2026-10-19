@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>
 	/// Opens and tracks the node code editor windows. There is at most one editor per node of a script.

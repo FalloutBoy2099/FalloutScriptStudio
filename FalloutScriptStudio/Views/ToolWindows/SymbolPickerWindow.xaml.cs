@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Views.ToolWindows
 	using System;
 	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The symbol list: "Go to symbol" with a filter box that is typed into while the arrow keys move in the list, and the list of the

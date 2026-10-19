@@ -48,7 +48,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 
 		public MessageEditorViewModel Editor { get; }
 
-		public List<RowFocusRequestedEventArgs> FocusRequests { get; } = new List<RowFocusRequestedEventArgs>();
+		public List<RowFocusRequestedEventArgs> FocusRequests { get; } = [];
 
 		public IReadOnlyList<MessageRowViewModel> Rows => this.Editor.Rows;
 
@@ -71,8 +71,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 		/// <summary>Imitates the view: selects the rows and the column.</summary>
 		public void Select(Int32 index, MessageGridColumn column = MessageGridColumn.Text, params Int32[] more)
 		{
-			List<MessageRowViewModel> selected = new List<MessageRowViewModel> { this.Rows[index] };
-			selected.AddRange(more.Select(extra => this.Rows[extra]));
+			List<MessageRowViewModel> selected = [this.Rows[index], .. more.Select(extra => this.Rows[extra])];
 			this.Editor.UpdateSelection(this.Rows[index], selected, column);
 		}
 

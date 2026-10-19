@@ -7,9 +7,9 @@ namespace FalloutScriptStudio.Core.Messages
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.IO;
 	using Microsoft.Extensions.Logging;
+	using Configuration;
+	using IO;
 
 	/// <summary>
 	/// <see cref="IMessageFileService"/> implementation working on the file system.
@@ -147,6 +147,31 @@ namespace FalloutScriptStudio.Core.Messages
 
 			await WriteLinesAsync(path, lines, encoding, cancellationToken).ConfigureAwait(false);
 			return true;
+		}
+
+		/// <inheritdoc/>
+		public async Task<IReadOnlyList<Int32>> AppendMessagesAsync(String path, IEnumerable<Int32> numbers, Encoding encoding, CancellationToken cancellationToken = default)
+		{
+			ArgumentException.ThrowIfNullOrEmpty(path);
+			ArgumentNullException.ThrowIfNull(numbers);
+
+			List<String> lines = (await this.ReadLinesAsync(path, encoding, cancellationToken).ConfigureAwait(false)).ToList();
+			MessageDocument existing = MessageDocument.Parse(lines);
+			List<Int32> added = numbers.Where(number => number > 0).Distinct().Order().Where(number => existing.FindMessage(number) is null).ToList();
+			if (added.Count == 0)
+			{
+				return added;
+			}
+
+			Int32 insertAt = lines.Count;
+			while (insertAt > 0 && lines[insertAt - 1].Trim().Length == 0)
+			{
+				insertAt--;
+			}
+
+			lines.InsertRange(insertAt, added.Select(number => MessageEntry.CreateMessage(number).Format()));
+			await WriteLinesAsync(path, lines, encoding, cancellationToken).ConfigureAwait(false);
+			return added;
 		}
 
 		private static async Task WriteLinesAsync(String path, IReadOnlyList<String> lines, Encoding encoding, CancellationToken cancellationToken)

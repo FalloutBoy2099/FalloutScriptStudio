@@ -2,37 +2,37 @@ namespace FalloutScriptStudio.Startup
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Core.Archives;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Decompilation;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Core.Functions;
-	using FalloutScriptStudio.Core.Indexing;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.Parsing.Interop.Host;
-	using FalloutScriptStudio.Core.Refactoring;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.MessageEditor;
-	using FalloutScriptStudio.Services.ScriptTools;
-	using FalloutScriptStudio.Services.ScriptTools.Dialogs;
-	using FalloutScriptStudio.Services.ScriptTools.Flowchart;
-	using FalloutScriptStudio.Services.ToolWindows;
-	using FalloutScriptStudio.ViewModels.Main;
-	using FalloutScriptStudio.ViewModels.Panels;
-	using FalloutScriptStudio.Views.Editor;
-	using FalloutScriptStudio.Views.Panels;
-	using FalloutScriptStudio.Views.Shell;
-	using FalloutScriptStudio.Workspace;
-	using FalloutScriptStudio.Workspace.Functions;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
+	using Core.Archives;
+	using Core.Building;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Core.Decompilation;
+	using Core.Dialogue;
+	using Core.Functions;
+	using Core.Indexing;
+	using Core.Messages;
+	using Core.Parsing;
+	using Core.Parsing.Interop.Host;
+	using Core.Refactoring;
+	using Core.Snippets;
+	using Core.TextTools;
+	using Documents;
+	using Editor;
+	using Problems;
+	using Services;
+	using Services.MessageEditor;
+	using Services.ScriptTools;
+	using Services.ScriptTools.Dialogs;
+	using Services.ScriptTools.Flowchart;
+	using Services.ToolWindows;
+	using ViewModels.Main;
+	using ViewModels.Panels;
+	using Views.Shell;
+	using Workspace;
+	using Workspace.Formatting;
+	using Workspace.Functions;
 
 	/// <summary>The registrations of the services, view models and windows of the application (the composition root).</summary>
 	public static class AppServices
@@ -51,6 +51,7 @@ namespace FalloutScriptStudio.Startup
 			// Core: settings.
 			services.AddSingleton<LegacySettingsImporter>();
 			services.AddSingleton<ISettingsService, SettingsService>();
+			services.AddSingleton<ISnippetService, SnippetService>();
 			services.AddSingleton<IProjectService, ProjectService>();
 
 			// Core: parsing. The persisted fold store replaces the in-memory default.
@@ -68,6 +69,7 @@ namespace FalloutScriptStudio.Startup
 			// Core: compilation, messages, archives.
 			services.AddSingleton<IProcessRunner, ProcessRunner>();
 			services.AddSingleton<IScriptCompiler, ScriptCompiler>();
+			services.AddSingleton<IIncrementalBuildService, IncrementalBuildService>();
 			services.AddSingleton<IBatchCompileService, BatchCompileService>();
 			services.AddSingleton<IMessageFileService, MessageFileService>();
 			services.AddSingleton<IMessageStructureChecker, MessageStructureChecker>();
@@ -104,6 +106,8 @@ namespace FalloutScriptStudio.Startup
 			services.AddSingleton<ArchiveScriptExtractor>();
 			services.AddSingleton<ExternalChangeDetector>();
 			services.AddSingleton<MessageAssociationService>();
+			services.AddSingleton<MessageConsistencyService>();
+			services.AddSingleton<LiveDiagnosticsService>();
 			services.AddSingleton<ProcedureOperations>();
 			services.AddSingleton<ReferenceResultsPresenter>();
 			services.AddSingleton<ProjectSymbolService>();
@@ -115,6 +119,7 @@ namespace FalloutScriptStudio.Startup
 			services.AddSingleton<ActiveEditorTracker>();
 			services.AddSingleton<CommandLineHandler>();
 			services.AddSingleton<ProjectSessionService>();
+			services.AddSingleton<IProjectFormatService, ProjectFormatService>();
 
 			// View models, dialogs and windows.
 			services.AddSingleton<SearchBarViewModel>();

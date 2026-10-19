@@ -59,7 +59,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		public void The_old_decompiler_option_is_only_available_with_the_external_decompiler()
 		{
 			using ShellHarness harness = new ShellHarness();
-			List<String?> changed = new List<String?>();
+			List<String?> changed = [];
 			harness.Main.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
 			harness.Settings.Update(settings => settings.Compiler.Decompiler = DecompilerKind.BuiltIn);

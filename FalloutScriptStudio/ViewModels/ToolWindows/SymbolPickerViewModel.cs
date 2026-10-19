@@ -18,7 +18,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 	public sealed partial class SymbolPickerViewModel : ToolWindowViewModelBase, IDisposable
 	{
 		private readonly SynchronizationContext? _context = SynchronizationContext.Current;
-		private SymbolPickerRequest _request = new SymbolPickerRequest();
+		private SymbolPickerRequest _request = new();
 		private IProjectSymbolIndex? _subscribedIndex;
 		private Boolean _disposed;
 
@@ -30,7 +30,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		private SymbolListItem? _selectedItem;
 
 		/// <summary>Gets the symbols that match the filter, the best match first.</summary>
-		public ObservableCollection<SymbolListItem> Items { get; } = new ObservableCollection<SymbolListItem>();
+		public ObservableCollection<SymbolListItem> Items { get; } = [];
 
 		/// <summary>Gets a value indicating whether the list has a filter box (the search, not the choice between definitions).</summary>
 		public Boolean IsFilterVisible => this._request.Mode == SymbolPickerMode.Search;

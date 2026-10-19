@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>
 	/// Writes a document through a temporary file that replaces the target, so a failure never leaves a truncated script behind.

@@ -5,8 +5,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// The state of the dialogue preview window (legacy <c>DialogPreview</c>): the node being shown, the replies, messages and options
@@ -23,7 +23,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 		private readonly IDialogueNodeParser _parser;
 		private readonly IProcedureTextService _procedures;
-		private readonly List<String> _history = new List<String>();
+		private readonly List<String> _history = [];
 		private IDialogueMessageSource? _messages;
 		private String _scriptText = String.Empty;
 		private ProgramInfo? _info;
@@ -80,8 +80,9 @@ namespace FalloutScriptStudio.Core.Dialogue
 		/// <param name="messages">The message files of the script.</param>
 		/// <param name="caretLine">The 1-based caret line of the editor: when it is inside a node, that node is shown first.</param>
 		/// <param name="cancellationToken">Cancels the operation.</param>
+		/// <param name="startNode">The node to start at ("Preview Dialogue From This Node"); it wins over the caret line and <c>talk_p_proc</c>. A name that is not a procedure of the script is ignored.</param>
 		/// <returns><c>false</c> when the script has no dialogue to show (no node at the caret and no <c>talk_p_proc</c>).</returns>
-		public async Task<Boolean> StartAsync(String scriptText, ProgramInfo info, IDialogueMessageSource messages, Int32 caretLine, CancellationToken cancellationToken = default)
+		public async Task<Boolean> StartAsync(String scriptText, ProgramInfo info, IDialogueMessageSource messages, Int32 caretLine, CancellationToken cancellationToken = default, String? startNode = null)
 		{
 			ArgumentNullException.ThrowIfNull(scriptText);
 			ArgumentNullException.ThrowIfNull(info);
@@ -96,7 +97,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 			this._rows = Array.Empty<DialoguePreviewRow>();
 
 			ScriptProcedure? current = info.GetProcedureFromPosition(caretLine);
-			String? start = current is not null && this.ContainsNode(current.Name)
+			String? start = startNode is null ? null : this.FindNodeName(startNode);
+			start ??= current is not null && this.ContainsNode(current.Name)
 				? current.Name
 				: info.GetProcedure(TalkProcedure)?.Name;
 			if (start is null)
@@ -130,6 +132,39 @@ namespace FalloutScriptStudio.Core.Dialogue
 			this._history.Clear();
 			this._history.Add(name);
 			this._historyIndex = 0;
+			await this.BuildRowsAsync(cancellationToken);
+			return true;
+		}
+
+		/// <summary>
+		/// Moves the window to a node the user asked for ("Preview Dialogue From This Node" on a window that is already open): the node is added to
+		/// the navigation history after the current position (the part after it is dropped), so Back returns to where the preview was.
+		/// </summary>
+		/// <param name="nodeName">The node name.</param>
+		/// <param name="cancellationToken">Cancels the operation.</param>
+		/// <returns><c>false</c> when the node does not exist; <c>true</c> otherwise, also when it is the node being shown.</returns>
+		public async Task<Boolean> GoToNodeAsync(String nodeName, CancellationToken cancellationToken = default)
+		{
+			ArgumentNullException.ThrowIfNull(nodeName);
+
+			String? name = this.FindNodeName(nodeName);
+			if (name is null)
+			{
+				return false;
+			}
+
+			if (String.Equals(name, this.CurrentNode, StringComparison.Ordinal))
+			{
+				return true;
+			}
+
+			if (this._historyIndex + 1 < this._history.Count)
+			{
+				this._history.RemoveRange(this._historyIndex + 1, this._history.Count - this._historyIndex - 1);
+			}
+
+			this._history.Add(name);
+			this._historyIndex++;
 			await this.BuildRowsAsync(cancellationToken);
 			return true;
 		}

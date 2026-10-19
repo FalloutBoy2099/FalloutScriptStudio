@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
 	using System.Text.RegularExpressions;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>
 	/// Keeps the value of a <c>#define</c> aligned when its name changes length (legacy <c>DefineMacroAdjustSpaces</c>).

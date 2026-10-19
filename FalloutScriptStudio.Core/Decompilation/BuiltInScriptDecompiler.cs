@@ -5,9 +5,9 @@ namespace FalloutScriptStudio.Core.Decompilation
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Compilation;
 
 	/// <summary>
 	/// <see cref="IScriptDecompiler"/> implementation written in C#: it needs no external program.

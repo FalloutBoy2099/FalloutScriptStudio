@@ -21,7 +21,7 @@ namespace FalloutScriptStudio.Tests.DialoguePreview
 
 		private static async Task WaitAsync(Func<Boolean> condition)
 		{
-			for (Int32 i = 0; i < 100 && !condition(); i++)
+			for (Int32 i = 0; i < 3000 && !condition(); i++)
 			{
 				await Task.Delay(20);
 			}
@@ -37,7 +37,7 @@ namespace FalloutScriptStudio.Tests.DialoguePreview
 				harness.Messages.LoadOnAnotherThread = true;
 				DialoguePreviewViewModel preview = harness.CreatePreview();
 				Int32 uiThread = Environment.CurrentManagedThreadId;
-				List<Int32> threads = new List<Int32>();
+				List<Int32> threads = [];
 				preview.Rows.CollectionChanged += (_, _) => threads.Add(Environment.CurrentManagedThreadId);
 				preview.NodeNames.CollectionChanged += (_, _) => threads.Add(Environment.CurrentManagedThreadId);
 

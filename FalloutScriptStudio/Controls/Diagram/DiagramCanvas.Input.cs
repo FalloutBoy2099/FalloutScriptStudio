@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	// Keyboard handling and the callbacks used by the mouse input handler.
 	public sealed partial class DiagramCanvas

@@ -5,8 +5,8 @@ namespace FalloutScriptStudio.Core.Configuration
 	using System.Diagnostics.CodeAnalysis;
 	using System.IO;
 	using System.Text;
-	using FalloutScriptStudio.Core.Compilation;
 	using Microsoft.Extensions.Logging;
+	using Compilation;
 
 	/// <summary>
 	/// Reads the binary files of the old editor (<c>settings.dat</c>, <c>recent.dat</c>, <c>folding.dat</c>) and its
@@ -39,7 +39,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		{
 			ArgumentNullException.ThrowIfNull(paths);
 
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			AppSettings? settings = null;
 			RecentFiles? recent = null;
 			ScriptPositions? positions = null;
@@ -359,7 +359,7 @@ namespace FalloutScriptStudio.Core.Configuration
 
 			try
 			{
-				List<String> lines = new List<String>();
+				List<String> lines = [];
 				foreach (String line in File.ReadAllLines(path))
 				{
 					if (line.Length > 0)

@@ -21,6 +21,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
@@ -137,4 +138,5 @@
                 IsDefault="True" />
         </DockPanel>
     </Grid>
+
 </ui:FluentWindow>

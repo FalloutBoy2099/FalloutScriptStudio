@@ -20,6 +20,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -136,4 +137,5 @@
                 IsDefault="True" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

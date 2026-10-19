@@ -118,7 +118,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		/// <summary>Determines whether no two nodes of a list have the same key (only then can the nodes be paired by key).</summary>
 		private static Boolean HasUniqueKeys(ObservableCollection<TreeNodeViewModel> nodes)
 		{
-			HashSet<String> keys = new HashSet<String>(nodes.Count, StringComparer.Ordinal);
+			HashSet<String> keys = new(nodes.Count, StringComparer.Ordinal);
 			foreach (TreeNodeViewModel node in nodes)
 			{
 				if (!keys.Add(node.Key))

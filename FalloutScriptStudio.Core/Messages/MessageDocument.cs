@@ -11,7 +11,7 @@ namespace FalloutScriptStudio.Core.Messages
 	public sealed class MessageDocument
 	{
 		/// <summary>Gets the entries of the file in their original order.</summary>
-		public List<MessageEntry> Entries { get; } = new List<MessageEntry>();
+		public List<MessageEntry> Entries { get; } = [];
 
 		/// <summary>
 		/// Parses the physical lines of a message file.
@@ -43,7 +43,7 @@ namespace FalloutScriptStudio.Core.Messages
 		/// <returns>The formatted entries.</returns>
 		public IReadOnlyList<String> Format()
 		{
-			List<String> lines = new List<String>(this.Entries.Count);
+			List<String> lines = new(this.Entries.Count);
 			foreach (MessageEntry entry in this.Entries)
 			{
 				lines.Add(entry.Format());
@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Core.Messages
 		/// <returns>The lookup.</returns>
 		public Dictionary<Int32, String> BuildTextMap()
 		{
-			Dictionary<Int32, String> map = new Dictionary<Int32, String>();
+			Dictionary<Int32, String> map = [];
 			foreach (MessageEntry entry in this.Entries)
 			{
 				if (entry.Kind == MessageLineKind.Message)

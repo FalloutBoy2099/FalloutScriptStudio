@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Editor.Text
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
+	using Core.Analysis;
+	using Core.Parsing;
 
 	/// <summary>Finds the unused variables of a script with what the parser knows about the macros of its headers.</summary>
 	public static class UnusedVariableScan
@@ -19,9 +19,9 @@ namespace FalloutScriptStudio.Editor.Text
 		{
 			ArgumentNullException.ThrowIfNull(text);
 
-			Lazy<HashSet<String>> words = new Lazy<HashSet<String>>(() =>
+			Lazy<HashSet<String>> words = new(() =>
 			{
-				HashSet<String> set = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+				HashSet<String> set = new(StringComparer.OrdinalIgnoreCase);
 				if (info is not null)
 				{
 					MacroWords.Collect(info.ScriptMacros.Values, set);

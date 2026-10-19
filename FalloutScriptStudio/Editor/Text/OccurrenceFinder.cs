@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Editor.Text
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.TextTools;
+	using Core.TextTools;
 
 	/// <summary>Finds all occurrences of a word or of a piece of text, for the "highlight selected text" command.</summary>
 	public static class OccurrenceFinder
@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.Editor.Text
 		/// <returns>The ranges in document order.</returns>
 		public static IReadOnlyList<TextSpan> Find(String document, String needle, Boolean wholeWord)
 		{
-			List<TextSpan> result = new List<TextSpan>();
+			List<TextSpan> result = [];
 			if (needle.Length == 0)
 			{
 				return result;

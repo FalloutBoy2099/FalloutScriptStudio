@@ -77,5 +77,17 @@ namespace FalloutScriptStudio.Documents
 
 		/// <summary>Remove the declaration of the unused variable under the caret.</summary>
 		RemoveUnusedVariable,
+
+		/// <summary>Open the dialogue preview at the dialogue node (the procedure) that contains the caret (Ctrl+Shift+P).</summary>
+		PreviewDialogueFromNode,
+
+		/// <summary>Apply the quick fix of the finding of the semantic analysis under the caret: the nearest name of a typo, a forward declaration, the removal of a duplicate (Ctrl+.).</summary>
+		QuickFix,
+
+		/// <summary>Choose a snippet in a list and insert it at the caret (Ctrl+J).</summary>
+		InsertSnippet,
+
+		/// <summary>Choose a snippet that uses the selected text and surround the selection with it (Ctrl+Shift+J).</summary>
+		SurroundWith,
 	}
 }

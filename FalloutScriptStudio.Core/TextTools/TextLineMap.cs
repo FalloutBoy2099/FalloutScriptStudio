@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	using System;
 	using System.Buffers;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// An index of the lines of a text (line terminators: <c>\r\n</c>, <c>\n</c> and a lone <c>\r</c>).
@@ -17,9 +17,9 @@ namespace FalloutScriptStudio.Core.TextTools
 
 		private static readonly SearchValues<Char> _lineBreakChars = SearchValues.Create("\r\n");
 
-		private readonly List<Int32> _starts = new List<Int32>();
-		private readonly List<Int32> _lengths = new List<Int32>();
-		private readonly List<Int32> _terminators = new List<Int32>();
+		private readonly List<Int32> _starts = [];
+		private readonly List<Int32> _lengths = [];
+		private readonly List<Int32> _terminators = [];
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TextLineMap"/> class.

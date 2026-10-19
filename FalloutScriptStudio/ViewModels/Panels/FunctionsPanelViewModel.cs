@@ -42,10 +42,10 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		}
 
 		/// <summary>Gets the top level nodes.</summary>
-		public ObservableCollection<FunctionNodeViewModel> Roots { get; } = new ObservableCollection<FunctionNodeViewModel>();
+		public ObservableCollection<FunctionNodeViewModel> Roots { get; } = [];
 
 		/// <summary>Gets the top level nodes that pass the filter, the ones the tree shows.</summary>
-		public ObservableCollection<FunctionNodeViewModel> VisibleRoots { get; } = new ObservableCollection<FunctionNodeViewModel>();
+		public ObservableCollection<FunctionNodeViewModel> VisibleRoots { get; } = [];
 
 		/// <summary>The selected node.</summary>
 		[ObservableProperty]
@@ -85,7 +85,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		/// <summary>Rebuilds the tree from the catalog, keeping the expanded categories and the selection.</summary>
 		public void Reload()
 		{
-			HashSet<String> expanded = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> expanded = new(StringComparer.Ordinal);
 			CollectExpanded(this.Roots, expanded);
 			String? selectedKey = this._keyToSelect ?? this.SelectedNode?.Key;
 			this._keyToSelect = null;

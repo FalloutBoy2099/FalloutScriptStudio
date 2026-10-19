@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Core.Compilation
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// <see cref="IProcessRunner"/> that starts real operating system processes without a console window. Cancelling ends the whole

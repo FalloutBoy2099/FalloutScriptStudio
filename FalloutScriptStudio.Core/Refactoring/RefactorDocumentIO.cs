@@ -1,13 +1,14 @@
 namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Configuration;
 
 	/// <summary>
 	/// Reads project files into <see cref="RefactorDocument"/> objects and writes the result of a refactoring back to files that are
@@ -37,7 +38,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 				String text;
 				try
 				{
-					text = File.ReadAllText(path, encoding);
+					text = SharedFile.ReadAllText(path, encoding);
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{

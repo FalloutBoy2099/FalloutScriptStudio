@@ -100,7 +100,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 			public Boolean HidesWhenFiltering => this.Separator;
 
-			public List<TestNode> Children { get; } = new List<TestNode>();
+			public List<TestNode> Children { get; } = [];
 
 			public IEnumerable<IFilterNode> FilterChildren => this.Children;
 		}

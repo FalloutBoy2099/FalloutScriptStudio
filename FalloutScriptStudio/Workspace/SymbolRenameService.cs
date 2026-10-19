@@ -1,18 +1,19 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Text;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.Refactoring;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ScriptTools;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Core.Refactoring;
+	using Documents;
+	using Localization;
+	using Services;
+	using Services.ScriptTools;
 
 	/// <summary>
 	/// The rename refactoring of the main window: asks for the new name, lets the Core refactoring service compute the edits
@@ -190,7 +191,7 @@ namespace FalloutScriptStudio.Workspace
 
 			try
 			{
-				documents.Add(new RefactorDocument(path, DocumentTextCodec.Decode(File.ReadAllBytes(full), this._settings.Settings.Editor.FileEncoding.ToEncoding()).Text, false));
+				documents.Add(new RefactorDocument(path, DocumentTextCodec.Decode(SharedFile.ReadAllBytes(full), this._settings.Settings.Editor.FileEncoding.ToEncoding()).Text, false));
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
@@ -248,8 +249,8 @@ namespace FalloutScriptStudio.Workspace
 		/// <param name="projectToken">The name of the global macro: the project files are read for it (on worker threads, and only the files that contain the name are kept, the others cannot change); <see langword="null"/> to leave the project out.</param>
 		private async Task<List<RefactorDocument>> CollectDocumentsAsync(IWorkspaceManager workspace, DocumentViewModel current, String? projectToken)
 		{
-			List<RefactorDocument> documents = new List<RefactorDocument>();
-			HashSet<String> seen = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			List<RefactorDocument> documents = [];
+			HashSet<String> seen = new(StringComparer.OrdinalIgnoreCase);
 			foreach ((String path, String text) in workspace.GetOpenDocumentTexts())
 			{
 				if (seen.Add(path))
@@ -277,7 +278,7 @@ namespace FalloutScriptStudio.Workspace
 			Encoding fallback = this._settings.Settings.Editor.FileEncoding.ToEncoding();
 			RefactorDocument?[] read = await Task.Run(() =>
 			{
-				List<String> files = new List<String>();
+				List<String> files = [];
 				foreach (String file in EnumerateProjectFiles(folder))
 				{
 					String full = GetFullPath(file);
@@ -292,7 +293,7 @@ namespace FalloutScriptStudio.Workspace
 				{
 					try
 					{
-						String text = DocumentTextCodec.Decode(File.ReadAllBytes(files[index]), fallback).Text;
+						String text = DocumentTextCodec.Decode(SharedFile.ReadAllBytes(files[index]), fallback).Text;
 						if (text.Contains(projectToken, StringComparison.Ordinal))
 						{
 							result[index] = new RefactorDocument(files[index], text, false);
@@ -328,15 +329,15 @@ namespace FalloutScriptStudio.Workspace
 		{
 			// The edits are offsets into the texts the rename was computed on (before the dialogs); any file that is not exactly
 			// that text any more would be corrupted, so everything is checked before the first file is touched.
-			Dictionary<String, String> computedOn = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, String> computedOn = new(StringComparer.OrdinalIgnoreCase);
 			foreach (RefactorDocument source in documents)
 			{
 				computedOn.TryAdd(source.Path, source.Text);
 			}
 
 			Encoding fallback = this._settings.Settings.Editor.FileEncoding.ToEncoding();
-			List<(FileEdits File, DocumentViewModel? Open, DecodedText? Disk)> plan = new List<(FileEdits, DocumentViewModel?, DecodedText?)>();
-			List<String> problems = new List<String>();
+			List<(FileEdits File, DocumentViewModel? Open, DecodedText? Disk)> plan = [];
+			List<String> problems = [];
 			foreach (FileEdits file in result.Files)
 			{
 				computedOn.TryGetValue(file.Path, out String? expected);
@@ -354,7 +355,7 @@ namespace FalloutScriptStudio.Workspace
 
 				try
 				{
-					DecodedText decoded = DocumentTextCodec.Decode(await File.ReadAllBytesAsync(file.Path), fallback);
+					DecodedText decoded = DocumentTextCodec.Decode(await SharedFile.ReadAllBytesAsync(file.Path), fallback);
 					if (expected is not null && !String.Equals(decoded.Text, expected, StringComparison.Ordinal))
 					{
 						problems.Add(Loc.Format("Str.Shell.Dlg.RenameFileChanged", file.Path));
@@ -374,8 +375,8 @@ namespace FalloutScriptStudio.Workspace
 				return 0;
 			}
 
-			List<String> modified = new List<String>();
-			List<DocumentViewModel> touched = new List<DocumentViewModel>();
+			List<String> modified = [];
+			List<DocumentViewModel> touched = [];
 			foreach ((FileEdits file, DocumentViewModel? open, DecodedText? disk) in plan)
 			{
 				if (open is not null)

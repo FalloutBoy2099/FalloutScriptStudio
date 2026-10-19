@@ -178,7 +178,7 @@ namespace FalloutScriptStudio.Tests.Editor
 
 		private sealed class ListLogger : ILogger
 		{
-			public List<LogLevel> Levels { get; } = new List<LogLevel>();
+			public List<LogLevel> Levels { get; } = [];
 
 			public IDisposable? BeginScope<TState>(TState state)
 				where TState : notnull

@@ -2,12 +2,12 @@ namespace FalloutScriptStudio.Views.Flowchart
 {
 	using System;
 	using System.ComponentModel;
-	using FalloutScriptStudio.Documents;
+	using ICSharpCode.AvalonEdit;
+	using ICSharpCode.AvalonEdit.Document;
+	using Documents;
 	using FalloutScriptStudio.Editor;
 	using FalloutScriptStudio.Editor.Controllers;
 	using FalloutScriptStudio.Editor.Text;
-	using ICSharpCode.AvalonEdit;
-	using ICSharpCode.AvalonEdit.Document;
 
 	/// <summary>
 	/// Makes an AvalonEdit control the code editor of one dialogue node: SSL highlighting with the names of the script, brackets,

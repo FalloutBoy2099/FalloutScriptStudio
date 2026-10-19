@@ -71,7 +71,7 @@ namespace FalloutScriptStudio.Tests.Diagram
 				DiagramNode b = CreateNode("b");
 				canvas.AddItem(a);
 				canvas.AddItem(b);
-				List<String> log = new List<String>();
+				List<String> log = [];
 				canvas.ItemSelected += (s, e) => log.Add("sel:" + e.Node?.Name);
 				canvas.ItemUnselected += (s, e) => log.Add("unsel:" + e.Node?.Name);
 				canvas.SelectionChanged += (s, e) => log.Add("changed");

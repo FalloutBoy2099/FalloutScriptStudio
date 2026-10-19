@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Views.Panels
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.Panels;
+	using ViewModels.Panels;
 
 	/// <summary>The functions tree: Ctrl+click or double-click inserts the code of a function.</summary>
 	public partial class FunctionsPanelView : UserControl

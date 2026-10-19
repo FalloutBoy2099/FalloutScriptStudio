@@ -185,7 +185,7 @@ namespace FalloutScriptStudio.Core.Tests.Performance
 
 		private sealed class TextLineLookup
 		{
-			private readonly List<Int32> _starts = new List<Int32> { 0 };
+			private readonly List<Int32> _starts = [0];
 
 			public TextLineLookup(String text)
 			{

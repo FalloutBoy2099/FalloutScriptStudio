@@ -26,7 +26,7 @@ namespace FalloutScriptStudio.Core.Compilation
 		/// <returns>The entries in the order they appear in the output.</returns>
 		public IReadOnlyList<BuildError> Parse(String output, String sourceFile, PreprocessorKind preprocessor)
 		{
-			List<BuildError> errors = new List<BuildError>();
+			List<BuildError> errors = [];
 			if (String.IsNullOrEmpty(output))
 			{
 				return errors;

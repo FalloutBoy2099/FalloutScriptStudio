@@ -67,7 +67,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 				XElement? position = element.Element("Position");
 				var contents = element.Element("Contents")?.Elements("Content")
 					.Select(c => new FlowchartContentState((String?)c.Attribute("Line") ?? String.Empty, ReadBoolean(c, "Collapsed")))
-					.ToList() ?? new List<FlowchartContentState>();
+					.ToList() ?? [];
 				String? showCode = (String?)element.Attribute("ShowCode");
 
 				nodes.Add(new FlowchartNodeState(name)

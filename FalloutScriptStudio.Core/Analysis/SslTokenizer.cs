@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Core.Analysis
 		{
 			ArgumentNullException.ThrowIfNull(text);
 
-			List<SslToken> tokens = new List<SslToken>((text.Length / 5) + 16);
+			List<SslToken> tokens = new((text.Length / 5) + 16);
 			Int32 length = text.Length;
 			Int32 i = 0;
 			Int32 line = 1;

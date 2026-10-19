@@ -136,7 +136,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		/// <returns>The matches in order.</returns>
 		public IReadOnlyList<LineMatch> FindAll(String line)
 		{
-			List<LineMatch> matches = new List<LineMatch>();
+			List<LineMatch> matches = [];
 			Int32 position = 0;
 			while (position <= line.Length)
 			{
@@ -162,7 +162,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		{
 			ArgumentNullException.ThrowIfNull(text);
 
-			TextLineMap map = new TextLineMap(text);
+			TextLineMap map = new(text);
 			Int32 startLine = map.GetLineFromOffset(Math.Clamp(start, 0, text.Length));
 			for (Int32 line = startLine; line <= map.LineCount; line++)
 			{
@@ -202,8 +202,8 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 			ArgumentNullException.ThrowIfNull(text);
 			ArgumentNullException.ThrowIfNull(replacement);
 
-			List<TextEdit> edits = new List<TextEdit>();
-			TextLineMap map = new TextLineMap(text);
+			List<TextEdit> edits = [];
+			TextLineMap map = new(text);
 			for (Int32 line = 1; line <= map.LineCount; line++)
 			{
 				String lineText = map.GetLineText(line);

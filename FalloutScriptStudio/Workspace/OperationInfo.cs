@@ -10,6 +10,9 @@ namespace FalloutScriptStudio.Workspace
 	/// <param name="IsCancelling">Whether the user asked to cancel and the operation is stopping.</param>
 	public sealed record OperationInfo(OperationKind Kind, String Subject, Int32 Index, Int32 Total, Boolean IsCancelling)
 	{
+		/// <summary>Gets the number of scripts the run skipped because they are up to date (they are not part of <see cref="Total"/>).</summary>
+		public Int32 UpToDate { get; init; }
+
 		/// <summary>Gets the progress from 0 to 1, or -1 when the run has no count.</summary>
 		public Double Fraction => this.Total > 0 ? Math.Clamp((Double)this.Index / this.Total, 0, 1) : -1;
 	}

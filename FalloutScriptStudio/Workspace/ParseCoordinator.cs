@@ -6,14 +6,13 @@ namespace FalloutScriptStudio.Workspace
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Documents;
+	using Problems;
 
 	/// <summary>
 	/// Keeps the parse data of open scripts up to date: re-parses a document a short time after its last edit, cancels
@@ -28,9 +27,9 @@ namespace FalloutScriptStudio.Workspace
 		private readonly ISettingsService _settings;
 		private readonly ILogger _logger;
 		private readonly IProblemService _problems;
-		private readonly ParserLogParser _logParser = new ParserLogParser();
-		private readonly Dictionary<DocumentViewModel, CancellationTokenSource> _pending = new Dictionary<DocumentViewModel, CancellationTokenSource>();
-		private readonly Dictionary<DocumentViewModel, EventHandler> _textHandlers = new Dictionary<DocumentViewModel, EventHandler>();
+		private readonly ParserLogParser _logParser = new();
+		private readonly Dictionary<DocumentViewModel, CancellationTokenSource> _pending = [];
+		private readonly Dictionary<DocumentViewModel, EventHandler> _textHandlers = [];
 
 		/// <summary>Initializes the coordinator.</summary>
 		public ParseCoordinator(IScriptParser parser, ISettingsService settings, ILogger<ParseCoordinator>? logger = null, TimeSpan? debounce = null, IProblemService? problems = null)
@@ -116,7 +115,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			this.Cancel(document);
-			CancellationTokenSource source = new CancellationTokenSource();
+			CancellationTokenSource source = new();
 			this._pending[document] = source;
 			Boolean parserEnabled = this._settings.Settings.Editor.EnableParser;
 			document.NeedsParse = true;
@@ -134,7 +133,7 @@ namespace FalloutScriptStudio.Workspace
 					document.ParserStatus = new ParserStatus(ParserStatusKind.Running);
 				}
 
-				ParseRequest request = new ParseRequest(document.TextDocument.Text)
+				ParseRequest request = new(document.TextDocument.Text)
 				{
 					FilePath = document.FilePath,
 					PreviousInfo = document.ProgramInfo,
@@ -232,7 +231,7 @@ namespace FalloutScriptStudio.Workspace
 		private void Apply(DocumentViewModel document, ParseResult result, Boolean parserEnabled)
 		{
 			Boolean includeWarnings = this._settings.Settings.Editor.ParserWarnings;
-			List<BuildError> errors = new List<BuildError>();
+			List<BuildError> errors = [];
 			String logText = result.LogText;
 
 			if (result.Outcome is ParseOutcome.NativeSucceeded or ParseOutcome.NativeReportedErrors)

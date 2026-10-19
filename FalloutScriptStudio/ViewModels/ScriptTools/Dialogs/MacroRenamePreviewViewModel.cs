@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 	/// </summary>
 	public sealed partial class MacroRenamePreviewViewModel : DialogueDialogViewModelBase
 	{
-		private readonly List<MacroRenameNodeViewModel> _matchNodes = new List<MacroRenameNodeViewModel>();
+		private readonly List<MacroRenameNodeViewModel> _matchNodes = [];
 		private Int32 _selectedCount;
 
 		/// <summary>Gets the title of the window.</summary>
@@ -80,8 +80,8 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 
 			MacroRenameNodeViewModel? open = null;
 			MacroRenameNodeViewModel? project = null;
-			Dictionary<String, MacroRenameNodeViewModel> files = new Dictionary<String, MacroRenameNodeViewModel>(StringComparer.OrdinalIgnoreCase);
-			List<MacroRenameNodeViewModel> sections = new List<MacroRenameNodeViewModel>();
+			Dictionary<String, MacroRenameNodeViewModel> files = new(StringComparer.OrdinalIgnoreCase);
+			List<MacroRenameNodeViewModel> sections = [];
 			for (Int32 index = 0; index < preview.Matches.Count; index++)
 			{
 				PreviewMatch match = preview.Matches[index];

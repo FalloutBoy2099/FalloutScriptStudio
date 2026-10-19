@@ -24,7 +24,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		private readonly ActiveEditorTracker _tracker;
 		private readonly IDialogService _dialogs;
 		private readonly INodeCodeEditorService _nodeEditors;
-		private readonly ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>> _expandState = new ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>>();
+		private readonly ConditionalWeakTable<DocumentViewModel, Dictionary<String, Boolean>> _expandState = [];
 		private DocumentViewModel? _document;
 
 		/// <summary>Initializes the panel.</summary>
@@ -56,7 +56,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		}
 
 		/// <summary>Gets the groups of the tree.</summary>
-		public ObservableCollection<TreeGroupNodeViewModel> Groups { get; } = new ObservableCollection<TreeGroupNodeViewModel>();
+		public ObservableCollection<TreeGroupNodeViewModel> Groups { get; } = [];
 
 		/// <summary>Gets the menu of standard handlers that can be created.</summary>
 		public IReadOnlyList<HandlerMenuItemViewModel> Handlers { get; }
@@ -240,6 +240,18 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			_ = this._nodeEditors.Open(document, node.Procedure.Name, false);
 		}
 
+		/// <summary>Opens the dialogue preview of the script at a dialogue node procedure ("Preview Dialogue From This Node"); a window that is already open is moved to the node.</summary>
+		[RelayCommand]
+		public async Task PreviewDialogueAsync(ProcedureNodeViewModel? node)
+		{
+			if (node is not { CanPreviewDialogue: true } || this._workspace.ActiveDocument is not { } document)
+			{
+				return;
+			}
+
+			await this._workspace.PreviewDialogueFromNodeAsync(document, node.Procedure.Name);
+		}
+
 		/// <summary>Renames a procedure everywhere it is used.</summary>
 		[RelayCommand]
 		public async Task RenameAsync(ProcedureNodeViewModel? node)
@@ -402,7 +414,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 		private TreeNodeViewModel? FindNode(String key)
 		{
-			Stack<TreeNodeViewModel> pending = new Stack<TreeNodeViewModel>(this.Groups);
+			Stack<TreeNodeViewModel> pending = new(this.Groups);
 			while (pending.Count > 0)
 			{
 				TreeNodeViewModel node = pending.Pop();

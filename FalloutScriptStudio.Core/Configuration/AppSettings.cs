@@ -55,11 +55,13 @@ namespace FalloutScriptStudio.Core.Configuration
 			this.Paths ??= new PathSettings();
 			this.Compiler ??= new CompilerSettings();
 			this.Editor ??= new EditorSettings();
+			this.Editor.Formatting ??= new FormatSettings();
+			this.Editor.Formatting.Normalize();
 			this.Messages ??= new MessageSettings();
 			this.Flowchart ??= new FlowchartSettings();
 			this.Window ??= new WindowSettings();
-			this.Paths.MessageSearchDirectories ??= new List<String>();
-			this.Window.Placements ??= new Dictionary<WindowKind, WindowPlacement>();
+			this.Paths.MessageSearchDirectories ??= [];
+			this.Window.Placements ??= [];
 
 			if (String.IsNullOrEmpty(this.Messages.Language))
 			{
@@ -70,6 +72,9 @@ namespace FalloutScriptStudio.Core.Configuration
 			{
 				this.Compiler.PreprocessorDefine = null;
 			}
+
+			this.Compiler.Profiles = CompileProfile.Normalize(this.Compiler.Profiles);
+			this.Compiler.ActiveProfile = String.IsNullOrWhiteSpace(this.Compiler.ActiveProfile) ? null : this.Compiler.ActiveProfile.Trim();
 
 			if (this.Editor.TabSize < EditorSettings.MinTabSize || this.Editor.TabSize > EditorSettings.MaxTabSize)
 			{
@@ -82,6 +87,10 @@ namespace FalloutScriptStudio.Core.Configuration
 			}
 
 			this.Editor.ZoomPercent = Math.Clamp(this.Editor.ZoomPercent, EditorSettings.MinZoomPercent, EditorSettings.MaxZoomPercent);
+			if (!Enum.IsDefined(this.Editor.LiveDiagnostics))
+			{
+				this.Editor.LiveDiagnostics = LiveDiagnosticsLevel.ErrorsAndWarnings;
+			}
 		}
 	}
 }

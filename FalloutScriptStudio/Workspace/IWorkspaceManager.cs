@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>The application-level document operations of the main window, on top of <see cref="IWorkspace"/>.</summary>
 	public interface IWorkspaceManager : IWorkspace
@@ -12,6 +12,12 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>Raised after a document was removed from the tab strip.</summary>
 		event EventHandler<DocumentViewModel>? DocumentClosed;
+
+		/// <summary>
+		/// Raised after a document was written to disk, and after the Message Editor saved the message file of a script (the document is then
+		/// the script). The check of the messages of a script follows it.
+		/// </summary>
+		event EventHandler<DocumentViewModel>? DocumentSaved;
 
 		/// <summary>Opens a file with detailed options.</summary>
 		Task<DocumentViewModel?> OpenAsync(String filePath, OpenDocumentOptions options);
@@ -92,6 +98,17 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>Reloads the macros of the headers folder (after a header was saved or the folder setting changed).</summary>
 		Task ReloadGlobalMacrosAsync();
+
+		/// <summary>
+		/// Compares a script with its message file and lists the differences as problems (Dialogue &gt; Check Messages). The default
+		/// implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <returns>The number of problems found.</returns>
+		Task<Int32> CheckMessagesAsync(DocumentViewModel document)
+		{
+			return Task.FromResult(0);
+		}
 
 		/// <summary>
 		/// Opens the "Go to symbol" list: the procedures, macros and variables of the whole project, filtered while the user types; the

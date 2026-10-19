@@ -154,7 +154,7 @@ namespace FalloutScriptStudio.Tests.Performance
 			UiThread.Run(() =>
 			{
 				using EditorTestEnvironment env = new EditorTestEnvironment();
-				List<Double> times = new List<Double>();
+				List<Double> times = [];
 				for (Int32 i = 0; i < 3; i++)
 				{
 					Stopwatch watch = Stopwatch.StartNew();

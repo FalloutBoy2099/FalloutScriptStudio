@@ -34,5 +34,17 @@ namespace FalloutScriptStudio.Problems
 
 		/// <summary>The unused variables listed by Code &gt; Find Unused Variables: replaced by the next run, dropped when the script is parsed again.</summary>
 		public const String UnusedVariables = "unused-variables";
+
+		/// <summary>The findings of the semantic analysis of a script (see <c>LiveDiagnosticsService</c>): replaced by the next analysis of the script, dropped when the script is closed.</summary>
+		public const String LiveDiagnostics = "live-diagnostics";
+
+		/// <summary>The inconsistencies between a script and its message file (Dialogue &gt; Check Messages, and after a save): replaced by the next check of the same script, dropped when the script is closed.</summary>
+		public const String MessageConsistency = "message-consistency";
+
+		/// <summary>The files that "Replace in Files" left unchanged: replaced by the next run.</summary>
+		public const String ReplaceInFiles = "replace-in-files";
+
+		/// <summary>The files that "Format Project" left alone: replaced by the next preview or run.</summary>
+		public const String FormatProject = "format-project";
 	}
 }

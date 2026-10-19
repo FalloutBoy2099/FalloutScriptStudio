@@ -48,7 +48,7 @@ namespace FalloutScriptStudio.Core.Tests.Decompilation
 
 				return new ProcessRunResult(1, "failed\r\n");
 			};
-			List<String> lines = new List<String>();
+			List<String> lines = [];
 
 			DecompilationResult result = await this.CreateDecompiler().DecompileAsync(
 				new DecompilationRequest { ScriptPath = intFile, Options = this.Options() },

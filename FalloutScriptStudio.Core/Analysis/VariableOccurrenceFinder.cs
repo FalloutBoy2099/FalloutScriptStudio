@@ -18,21 +18,21 @@ namespace FalloutScriptStudio.Core.Analysis
 			ArgumentNullException.ThrowIfNull(model);
 
 			SslTokenStream tokens = model.Tokens;
-			List<VariableOccurrence> result = new List<VariableOccurrence>();
+			List<VariableOccurrence> result = [];
 			if (model.Declarations.Count == 0)
 			{
 				return result;
 			}
 
-			Dictionary<String, List<VariableDeclaration>> byName = new Dictionary<String, List<VariableDeclaration>>(StringComparer.OrdinalIgnoreCase);
-			Dictionary<String, VariableDeclaration> globals = new Dictionary<String, VariableDeclaration>(StringComparer.OrdinalIgnoreCase);
-			HashSet<Int32> declarationTokens = new HashSet<Int32>();
+			Dictionary<String, List<VariableDeclaration>> byName = new(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, VariableDeclaration> globals = new(StringComparer.OrdinalIgnoreCase);
+			HashSet<Int32> declarationTokens = [];
 			foreach (VariableDeclaration declaration in model.Declarations)
 			{
 				declarationTokens.Add(declaration.TokenIndex);
 				if (!byName.TryGetValue(declaration.Name, out List<VariableDeclaration>? list))
 				{
-					list = new List<VariableDeclaration>(1);
+					list = new(1);
 					byName.Add(declaration.Name, list);
 				}
 
@@ -143,7 +143,7 @@ namespace FalloutScriptStudio.Core.Analysis
 
 		private static Dictionary<String, VariableDeclaration> BuildLocals(SslProcedureModel procedure)
 		{
-			Dictionary<String, VariableDeclaration> locals = new Dictionary<String, VariableDeclaration>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, VariableDeclaration> locals = new(StringComparer.OrdinalIgnoreCase);
 			foreach (VariableDeclaration declaration in procedure.Declarations)
 			{
 				locals.TryAdd(declaration.Name, declaration);

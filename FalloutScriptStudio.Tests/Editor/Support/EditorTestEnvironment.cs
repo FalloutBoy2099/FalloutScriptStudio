@@ -37,13 +37,17 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			this.Workspace = workspace;
 			this.Recorder = recorder;
 			this.CollapsedStore = new InMemoryCollapsedProcedureStore();
-			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros, popups: this.Popups);
+			this.Input = new FakeInputState();
+			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros, popups: this.Popups, input: this.Input);
 		}
 
 		public SettingsService SettingsService { get; }
 
 		/// <summary>Gets the presenter that records the popups of the editors instead of opening them.</summary>
 		public HiddenEditorPopups Popups { get; }
+
+		/// <summary>Gets the keyboard modifiers and mouse button state the editors read: nothing is down unless a test says so.</summary>
+		public FakeInputState Input { get; }
 
 		public FixedThemeService Theme { get; }
 

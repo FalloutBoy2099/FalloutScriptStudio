@@ -3,9 +3,9 @@ namespace FalloutScriptStudio.Resources.Converters
 	using System;
 	using System.Globalization;
 	using System.Windows.Data;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.ViewModels.Panels;
 	using Wpf.Ui.Controls;
+	using Documents;
+	using ViewModels.Panels;
 
 	/// <summary>Maps a node of the project explorer to its glyph.</summary>
 	public sealed class ProjectNodeToSymbolConverter : IValueConverter

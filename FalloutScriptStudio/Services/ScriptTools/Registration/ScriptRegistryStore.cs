@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 	using System.Globalization;
 	using System.IO;
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using Core.IO;
 
 	/// <summary>
 	/// Reads and writes the files of the script registration: <c>scripts.lst</c> (script ids), <c>scrname.msg</c>
@@ -37,7 +37,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 			ArgumentNullException.ThrowIfNull(messageEncoding);
 
 			ScriptTextFile.DecodedText list = ScriptTextFile.Decode(File.ReadAllBytes(paths.ListPath), TextEncodings.Ansi);
-			ScriptRegistry registry = new ScriptRegistry(list.Encoding);
+			ScriptRegistry registry = new(list.Encoding);
 			foreach (String line in ScriptTextFile.SplitLines(list.Text))
 			{
 				registry.Entries.Add(ScriptListEntry.Parse(line));
@@ -99,7 +99,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 			ArgumentNullException.ThrowIfNull(paths);
 			ArgumentNullException.ThrowIfNull(messageEncoding);
 
-			List<String> lines = new List<String>(registry.Entries.Count);
+			List<String> lines = new(registry.Entries.Count);
 			foreach (ScriptListEntry entry in registry.Entries)
 			{
 				lines.Add(entry.ToListLine());
@@ -110,7 +110,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 			if (paths.NameMessagePath is not null)
 			{
 				Boolean replaceCyrillicHa = messageEncoding.CodePage == 866;
-				List<String> messageLines = new List<String> { MessageFileHeader };
+				List<String> messageLines = [MessageFileHeader];
 				for (Int32 i = 0; i < registry.Entries.Count; i++)
 				{
 					messageLines.Add(registry.Entries[i].ToMessageLine(i, replaceCyrillicHa));

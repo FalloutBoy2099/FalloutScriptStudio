@@ -15,10 +15,10 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		}
 
 		/// <summary>Gets the hosts started so far, in order.</summary>
-		public List<FakeParserHost> Started { get; } = new List<FakeParserHost>();
+		public List<FakeParserHost> Started { get; } = [];
 
 		/// <summary>Gets the working directories the hosts were started in.</summary>
-		public List<String> WorkingDirectories { get; } = new List<String>();
+		public List<String> WorkingDirectories { get; } = [];
 
 		/// <summary>Gets or sets an exception thrown by <see cref="Start"/> instead of starting a host.</summary>
 		public Exception? StartException { get; set; }

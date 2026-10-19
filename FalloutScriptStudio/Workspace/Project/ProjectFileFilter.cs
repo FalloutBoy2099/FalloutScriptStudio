@@ -99,7 +99,7 @@ namespace FalloutScriptStudio.Workspace.Project
 		/// <returns>At most <see cref="MaxSearchResults"/> paths, in the order of <paramref name="files"/>.</returns>
 		public static IReadOnlyList<String> FilterByName(IEnumerable<String> files, String text)
 		{
-			List<String> found = new List<String>();
+			List<String> found = [];
 			foreach (String file in files)
 			{
 				if (Path.GetFileName(file).Contains(text, StringComparison.OrdinalIgnoreCase))
@@ -117,7 +117,7 @@ namespace FalloutScriptStudio.Workspace.Project
 
 		private IEnumerable<String> EnumerateTree(String root, CancellationToken cancellationToken)
 		{
-			Stack<String> pending = new Stack<String>();
+			Stack<String> pending = new();
 			pending.Push(root);
 			while (pending.Count > 0)
 			{

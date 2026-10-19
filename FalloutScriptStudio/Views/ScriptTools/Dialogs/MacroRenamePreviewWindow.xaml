@@ -22,6 +22,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <DataTemplate x:Key="SectionTemplate" DataType="{x:Type vm:MacroRenameNodeViewModel}">
             <StackPanel Orientation="Horizontal">
@@ -292,4 +293,5 @@
                 IsCancel="True" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

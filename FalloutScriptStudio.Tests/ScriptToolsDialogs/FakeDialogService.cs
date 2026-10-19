@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Tests.ScriptToolsDialogs
 
 	internal sealed class FakeDialogService : IDialogService
 	{
-		public List<String> Errors { get; } = new List<String>();
+		public List<String> Errors { get; } = [];
 
 		public Boolean ConfirmAnswer { get; set; } = true;
 

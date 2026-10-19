@@ -36,7 +36,7 @@ namespace FalloutScriptStudio.Tests.Editor
 		public void ApplyLineWise_OnlyChangedLinesAreReplaced()
 		{
 			TextDocument document = new TextDocument("a:=1;\r\nkeep\r\nb:=2;");
-			List<Int32> changedOffsets = new List<Int32>();
+			List<Int32> changedOffsets = [];
 			document.Changing += (_, e) => changedOffsets.Add(e.Offset);
 
 			DocumentEdits.ApplyLineWise(document, new TextEdit(0, document.TextLength, "a := 1;\r\nkeep\r\nb := 2;"));

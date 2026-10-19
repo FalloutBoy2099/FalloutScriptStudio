@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			ArgumentNullException.ThrowIfNull(results);
 			ArgumentException.ThrowIfNullOrEmpty(titleKey);
 
-			ResultsTabViewModel tab = new ResultsTabViewModel(this, titleKey, titleArgument, results);
+			ResultsTabViewModel tab = new(this, titleKey, titleArgument, results);
 			this.Tabs.Add(tab);
 			this.SelectedTab = this.Tabs.Count - 1;
 			this.StatusMessage = Loc.Format("Str.Shell.Output.SearchStatus", tab.Title, results.Count);

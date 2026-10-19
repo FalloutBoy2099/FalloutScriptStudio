@@ -7,8 +7,8 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
+	using Localization;
+	using ViewModels.MessageEditor;
 
 	/// <summary>
 	/// Connects the message grid to the view model: pushes the selection, executes focus requests, decides which cells may be

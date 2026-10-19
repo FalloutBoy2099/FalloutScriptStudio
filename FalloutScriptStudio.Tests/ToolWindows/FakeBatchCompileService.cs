@@ -12,6 +12,8 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public IReadOnlyList<BatchCompileFailure> Failures { get; set; } = Array.Empty<BatchCompileFailure>();
 
+		public IReadOnlyList<String> UpToDate { get; set; } = Array.Empty<String>();
+
 		public Boolean Started { get; private set; }
 
 		public BatchCompileOptions? ReceivedOptions { get; private set; }
@@ -45,7 +47,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 				return new BatchCompileResult(scripts.Count, 0, Array.Empty<BatchCompileFailure>(), true, 1);
 			}
 
-			return new BatchCompileResult(scripts.Count, scripts.Count - this.Failures.Count, this.Failures, false, 1);
+			return new BatchCompileResult(scripts.Count, scripts.Count - this.Failures.Count - this.UpToDate.Count, this.Failures, false, 1) { UpToDateScripts = this.UpToDate };
 		}
 	}
 }

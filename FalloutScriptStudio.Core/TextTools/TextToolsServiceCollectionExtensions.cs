@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Core.TextTools
 {
 	using System;
-	using FalloutScriptStudio.Core.Parsing;
 	using Microsoft.Extensions.DependencyInjection;
+	using Parsing;
 
 	/// <summary>
 	/// Dependency injection registration of the text tools.

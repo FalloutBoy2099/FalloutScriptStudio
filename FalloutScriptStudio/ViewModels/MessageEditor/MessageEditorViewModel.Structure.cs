@@ -60,7 +60,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			this._structureCheckTimer?.Stop();
 			Int32 count = this._rows.Count;
 			Int32[] firstLine = new Int32[count];
-			StringBuilder text = new StringBuilder();
+			StringBuilder text = new();
 			Int32 line = 1;
 			for (Int32 i = 0; i < count; i++)
 			{
@@ -146,7 +146,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		}
 
 		/// <summary>The messages of the structure checker (English, from Core) and the keys of their translations.</summary>
-		private static readonly Dictionary<String, String> _issueKeys = new Dictionary<String, String>(StringComparer.Ordinal)
+		private static readonly Dictionary<String, String> _issueKeys = new(StringComparer.Ordinal)
 		{
 			["Wrong structure of the paired curves brackets."] = "Str.MessageEditor.Issue.Brackets",
 			["A new line without a white space character."] = "Str.MessageEditor.Issue.NewLineSpace",
@@ -173,7 +173,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 
 		private static String DescribeIssueCounts(Int32 errors, Int32 warnings, Int32 hints)
 		{
-			List<String> parts = new List<String>();
+			List<String> parts = [];
 			if (errors > 0)
 			{
 				parts.Add(Loc.Format(errors == 1 ? "Str.MessageEditor.Issue.ErrorOne" : "Str.MessageEditor.Issue.ErrorMany", errors));
@@ -199,7 +199,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 				severities[index] = severity;
 			}
 
-			messages[index] ??= new List<String>();
+			messages[index] ??= [];
 			if (!messages[index]!.Contains(message))
 			{
 				messages[index]!.Add(message);

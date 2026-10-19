@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// Turns a compiled <c>.int</c> script back into <c>.ssl</c> source.

@@ -4,14 +4,15 @@ namespace FalloutScriptStudio.Views.Editor
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor;
-	using FalloutScriptStudio.Localization;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Editing;
 	using ICSharpCode.AvalonEdit.Rendering;
 	using Wpf.Ui.Controls;
+	using Core.Dialogue;
+	using Core.Parsing;
+	using Documents;
+	using FalloutScriptStudio.Editor;
+	using Localization;
 
 	/// <summary>
 	/// The script text editor: a Fluent themed AvalonEdit control for one <see cref="DocumentViewModel"/> (the
@@ -281,12 +282,17 @@ namespace FalloutScriptStudio.Views.Editor
 
 		private ContextMenu BuildContextMenu(TextEditor owner)
 		{
-			ContextMenu menu = new ContextMenu();
+			ContextMenu menu = new();
 			System.Windows.Controls.MenuItem highlightItem = this.CreateItem(EditorCommand.HighlightWord, SymbolRegular.Highlight24);
 			System.Windows.Controls.MenuItem renameItem = this.CreateItem(EditorCommand.RenameSymbol, SymbolRegular.Rename24);
+			System.Windows.Controls.MenuItem previewItem = this.CreateItem(EditorCommand.PreviewDialogueFromNode, SymbolRegular.Play24);
+			Separator previewSeparator = new();
+			menu.Items.Add(this.CreateItem(EditorCommand.QuickFix, SymbolRegular.Lightbulb24));
 			menu.Items.Add(highlightItem);
 			menu.Items.Add(renameItem);
 			menu.Items.Add(new Separator());
+			menu.Items.Add(previewItem);
+			menu.Items.Add(previewSeparator);
 			menu.Items.Add(this.CreateItem(EditorCommand.GoToDeclaration, SymbolRegular.ArrowRight24));
 			menu.Items.Add(this.CreateItem(EditorCommand.GoToDefinition, SymbolRegular.Code24));
 			menu.Items.Add(this.CreateItem(EditorCommand.FindReferences, SymbolRegular.SearchSquare24));
@@ -296,6 +302,9 @@ namespace FalloutScriptStudio.Views.Editor
 			menu.Items.Add(this.CreateItem(EditorCommand.DeleteUnusedProcedure, SymbolRegular.Delete24));
 			menu.Items.Add(new Separator());
 			menu.Items.Add(this.CreateItem(EditorCommand.OpenInclude, SymbolRegular.FolderOpen24));
+			menu.Items.Add(new Separator());
+			menu.Items.Add(this.CreateItem(EditorCommand.InsertSnippet, SymbolRegular.CodeBlock24));
+			menu.Items.Add(this.CreateItem(EditorCommand.SurroundWith, SymbolRegular.CodeBlock24));
 			menu.Items.Add(new Separator());
 			menu.Items.Add(this.CreateItem(EditorCommand.ConvertHexDec, SymbolRegular.NumberSymbol24));
 			menu.Items.Add(new Separator());
@@ -311,13 +320,14 @@ namespace FalloutScriptStudio.Views.Editor
 			menu.Items.Add(this.CreateItem(EditorCommand.AlignSelectionLeft, SymbolRegular.TextAlignLeft24));
 			menu.Items.Add(this.CreateItem(EditorCommand.FormatSelection, SymbolRegular.TextEditStyle24));
 			menu.Opened += (_, _) => this.UpdateContextMenu(owner, highlightItem, renameItem);
+			menu.Opened += (_, _) => this.UpdatePreviewItem(owner, previewItem, previewSeparator);
 			return menu;
 		}
 
 		private System.Windows.Controls.MenuItem CreateItem(EditorCommand command, SymbolRegular symbol)
 		{
 			RoutedUICommand routed = EditorCommands.Get(command);
-			System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem
+			System.Windows.Controls.MenuItem item = new()
 			{
 				Command = routed,
 				CommandTarget = this,
@@ -329,7 +339,7 @@ namespace FalloutScriptStudio.Views.Editor
 
 		private static System.Windows.Controls.MenuItem CreateClipboardItem(RoutedUICommand command, SymbolRegular symbol, String headerKey, TextEditor owner)
 		{
-			System.Windows.Controls.MenuItem item = new System.Windows.Controls.MenuItem
+			System.Windows.Controls.MenuItem item = new()
 			{
 				Command = command,
 				CommandTarget = owner.TextArea,
@@ -337,6 +347,14 @@ namespace FalloutScriptStudio.Views.Editor
 			};
 			item.SetResourceReference(HeaderedItemsControl.HeaderProperty, headerKey);
 			return item;
+		}
+
+		/// <summary>The "Preview Dialogue From This Node" item is only offered while the caret is inside a dialogue node procedure.</summary>
+		private void UpdatePreviewItem(TextEditor owner, System.Windows.Controls.MenuItem previewItem, Separator separator)
+		{
+			Boolean offered = this._session?.FindPane(owner) is { } pane && this._session.Context.IsScript && pane.Navigation.CurrentProcedure is { } procedure && DialogueNodeRule.IsNode(procedure.Name);
+			previewItem.Visibility = offered ? Visibility.Visible : Visibility.Collapsed;
+			separator.Visibility = offered ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private void UpdateContextMenu(TextEditor owner, System.Windows.Controls.MenuItem highlightItem, System.Windows.Controls.MenuItem renameItem)

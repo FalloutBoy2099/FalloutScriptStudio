@@ -256,7 +256,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 				return cached;
 			}
 
-			RowState state = new RowState(CloneEntry(this.Entry), this._isLineChanged, this._isTextChanged, this._isCommentChanged, this._isSoundChanged);
+			RowState state = new(CloneEntry(this.Entry), this._isLineChanged, this._isTextChanged, this._isCommentChanged, this._isSoundChanged);
 			this._capturedState = state;
 			return state;
 		}

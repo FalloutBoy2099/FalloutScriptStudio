@@ -28,15 +28,15 @@ namespace FalloutScriptStudio.Core.Analysis
 			ArgumentNullException.ThrowIfNull(model);
 
 			UnusedVariableOptions settings = options ?? new UnusedVariableOptions();
-			Dictionary<VariableDeclaration, Int32> reads = new Dictionary<VariableDeclaration, Int32>();
-			Dictionary<VariableDeclaration, Int32> writes = new Dictionary<VariableDeclaration, Int32>();
+			Dictionary<VariableDeclaration, Int32> reads = [];
+			Dictionary<VariableDeclaration, Int32> writes = [];
 			foreach (VariableOccurrence occurrence in VariableOccurrenceFinder.Find(model))
 			{
 				Dictionary<VariableDeclaration, Int32> target = occurrence.IsWrite ? writes : reads;
 				target[occurrence.Declaration] = target.GetValueOrDefault(occurrence.Declaration) + 1;
 			}
 
-			List<UnusedVariable> result = new List<UnusedVariable>();
+			List<UnusedVariable> result = [];
 			foreach (VariableDeclaration declaration in model.Declarations)
 			{
 				if (!IsReported(declaration, settings))

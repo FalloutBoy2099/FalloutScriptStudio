@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Editor.Tips
 {
 	using System;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Localization;
+	using Core.Parsing;
+	using Localization;
 
 	/// <summary>
 	/// Decides which tooltip belongs to a word and builds its content (legacy <c>ToolTipRequest</c> and the code tips of

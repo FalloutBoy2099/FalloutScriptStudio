@@ -324,7 +324,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			{
 				using ShellHarness harness = new ShellHarness();
 				harness.Problems.Report(Tool("compile.exe is missing", action: ProblemAction.OpenSettings(SettingsPage.Compiler)));
-				List<SettingsPage> pages = new List<SettingsPage>();
+				List<SettingsPage> pages = [];
 				harness.Output.OpenSettingsHandler = page =>
 				{
 					pages.Add(page);
@@ -422,7 +422,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			ShellStaRunner.Run(() =>
 			{
 				using ShellHarness harness = new ShellHarness();
-				List<String> changed = new List<String>();
+				List<String> changed = [];
 				harness.Output.PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 				Assert.True(harness.Output.HasNoProblems);
 
@@ -447,7 +447,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			ShellStaRunner.Run(async () =>
 			{
 				using ShellHarness harness = new ShellHarness();
-				List<String> restored = new List<String>();
+				List<String> restored = [];
 				harness.Output.RestoreDocumentsHandler = folder =>
 				{
 					restored.Add(folder);

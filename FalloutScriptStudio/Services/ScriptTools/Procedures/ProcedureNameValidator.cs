@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Procedures
 	using System.Collections.Generic;
 	using System.Globalization;
 	using System.Linq;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// Pure validation of the text typed into the procedure name dialog (legacy <c>ProcForm</c> closing checks),
@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Procedures
 
 		private static readonly SearchValues<Char> _parentheses = SearchValues.Create("()");
 
-		private static readonly HashSet<String> ReservedWords = new HashSet<String>(StringComparer.OrdinalIgnoreCase)
+		private static readonly HashSet<String> ReservedWords = new(StringComparer.OrdinalIgnoreCase)
 		{
 			"procedure", "variable", "import", "export", "in", "when", "pure", "inline", "begin", "end", "exit", "detach",
 			"fork", "spawn", "callstart", "exec", "noop", "wait", "call", "cancel", "cancelall", "if", "then", "else",
@@ -165,7 +165,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Procedures
 				return new ProcedureNameValidation(true, null, name, name + "()");
 			}
 
-			List<String> arguments = new List<String>();
+			List<String> arguments = [];
 			foreach (String part in inner.Split(','))
 			{
 				String argument = StripVariableKeyword(part.Trim());

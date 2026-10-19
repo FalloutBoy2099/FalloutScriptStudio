@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System;
 	using System.IO;
 	using System.Windows.Media.Imaging;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
+	using Internal;
 
 	// Rendering the diagram to a bitmap or a PNG file.
 	public sealed partial class DiagramCanvas
@@ -39,7 +39,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 		public void SaveToPng(Stream destination, Double scale = 1.0)
 		{
 			ArgumentNullException.ThrowIfNull(destination);
-			PngBitmapEncoder encoder = new PngBitmapEncoder();
+			PngBitmapEncoder encoder = new();
 			encoder.Frames.Add(BitmapFrame.Create(this.RenderToBitmap(scale)));
 			encoder.Save(destination);
 		}
@@ -56,7 +56,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 		public void SaveToPng(String path, Double scale = 1.0)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(path);
-			using (MemoryStream buffer = new MemoryStream())
+			using (MemoryStream buffer = new())
 			{
 				this.SaveToPng(buffer, scale);
 				AtomicFile.WriteAllBytes(path, buffer.ToArray());

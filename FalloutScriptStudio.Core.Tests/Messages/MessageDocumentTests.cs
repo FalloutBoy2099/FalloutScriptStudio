@@ -145,7 +145,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		[Fact]
 		public void MessageTextEditor_ReplacesOnlyTheTextOfOneMessage()
 		{
-			List<String> lines = new List<String> { "# c", "{100}{snd}{old text} # keep", "{101}{}{other}" };
+			List<String> lines = ["# c", "{100}{snd}{old text} # keep", "{101}{}{other}"];
 
 			Boolean replaced = MessageTextEditor.TryReplaceText(lines, 100, "new text");
 
@@ -156,7 +156,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		[Fact]
 		public void MessageTextEditor_CollapsesAMultiLineMessageWithoutDamagingTheNextLine()
 		{
-			List<String> lines = new List<String> { "{100}{}{first", "second", "third} # d", "{101}{}{next}" };
+			List<String> lines = ["{100}{}{first", "second", "third} # d", "{101}{}{next}"];
 
 			Boolean replaced = MessageTextEditor.TryReplaceText(lines, 100, "single");
 
@@ -167,7 +167,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		[Fact]
 		public void MessageTextEditor_ReturnsFalseForAnUnknownMessage()
 		{
-			List<String> lines = new List<String> { "{100}{}{a}" };
+			List<String> lines = ["{100}{}{a}"];
 
 			Assert.False(MessageTextEditor.TryReplaceText(lines, 7, "x"));
 			Assert.Equal(new[] { "{100}{}{a}" }, lines);
@@ -176,7 +176,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		[Fact]
 		public void MessageTextEditor_ReplacesTheTextEvenWhenTheDescriptionContainsABrace()
 		{
-			List<String> lines = new List<String> { "{100}{}{Hi} # x{y}", "\t{101}{snd}{Bye} {note}" };
+			List<String> lines = ["{100}{}{Hi} # x{y}", "\t{101}{snd}{Bye} {note}"];
 
 			Assert.True(MessageTextEditor.TryReplaceText(lines, 100, "Hello"));
 			Assert.True(MessageTextEditor.TryReplaceText(lines, 101, "See you"));
@@ -193,7 +193,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		[InlineData("{}")]
 		public void MessageTextEditor_RejectsATextWithBraces(String text)
 		{
-			List<String> lines = new List<String> { "{100}{}{old} # d" };
+			List<String> lines = ["{100}{}{old} # d"];
 
 			Assert.True(MessageTextEditor.ContainsBraces(text));
 			Assert.False(MessageTextEditor.TryReplaceText(lines, 100, text));

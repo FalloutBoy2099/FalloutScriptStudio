@@ -1,11 +1,11 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 {
 	using System;
-	using FalloutScriptStudio.ViewModels.DialoguePreview;
-	using FalloutScriptStudio.ViewModels.Flowchart;
-	using FalloutScriptStudio.Views.DialoguePreview;
-	using FalloutScriptStudio.Views.Flowchart;
 	using Microsoft.Extensions.DependencyInjection;
+	using ViewModels.DialoguePreview;
+	using ViewModels.Flowchart;
+	using Views.DialoguePreview;
+	using Views.Flowchart;
 
 	/// <summary>
 	/// Registers the dialogue flowchart, the node code editor and the dialogue preview.

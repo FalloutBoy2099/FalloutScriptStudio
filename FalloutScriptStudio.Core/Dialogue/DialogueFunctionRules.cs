@@ -30,8 +30,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 		/// </param>
 		public DialogueFunctionRules(IEnumerable<DialogueFunctionRule>? userRules = null)
 		{
-			this._rules = new List<DialogueFunctionRule>();
-			this._byName = new Dictionary<String, DialogueFunctionRule>(StringComparer.OrdinalIgnoreCase);
+			this._rules = [];
+			this._byName = new(StringComparer.OrdinalIgnoreCase);
 
 			foreach (DialogueFunctionRule rule in _builtIn)
 			{

@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Services
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Startup;
+	using Startup;
 
 	/// <summary>
 	/// Makes the application single-instance per installation folder. A second instance forwards its
@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Services
 		private readonly String _name;
 		private readonly TimeSpan _sendTimeout;
 		private readonly Action<String>? _diagnostics;
-		private readonly CancellationTokenSource _cancellation = new CancellationTokenSource();
+		private readonly CancellationTokenSource _cancellation = new();
 		private Mutex? _mutex;
 
 		/// <summary>Initializes the service for the installation folder <paramref name="baseDirectory"/>.</summary>
@@ -83,9 +83,9 @@ namespace FalloutScriptStudio.Services
 				{
 					TimeSpan remaining = this._sendTimeout - elapsed.Elapsed;
 					TimeSpan attempt = remaining < _connectAttempt ? remaining : _connectAttempt;
-					await using NamedPipeClientStream client = new NamedPipeClientStream(".", this._name, PipeDirection.Out);
+					await using NamedPipeClientStream client = new(".", this._name, PipeDirection.Out);
 					await client.ConnectAsync(Math.Max(1, (Int32)attempt.TotalMilliseconds), cancellationToken).ConfigureAwait(false);
-					await using StreamWriter writer = new StreamWriter(client, Encoding.UTF8);
+					await using StreamWriter writer = new(client, Encoding.UTF8);
 					foreach (String argument in arguments)
 					{
 						String full = Path.IsPathRooted(argument) ? argument : Path.GetFullPath(argument);
@@ -169,9 +169,9 @@ namespace FalloutScriptStudio.Services
 					try
 					{
 						await server.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
-						using StreamReader reader = new StreamReader(server, Encoding.UTF8);
+						using StreamReader reader = new(server, Encoding.UTF8);
 
-						List<String> lines = new List<String>();
+						List<String> lines = [];
 						String? line;
 						while ((line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false)) is not null)
 						{

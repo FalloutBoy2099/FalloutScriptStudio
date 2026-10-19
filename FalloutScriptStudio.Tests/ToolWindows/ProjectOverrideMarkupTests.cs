@@ -30,6 +30,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 			ProjectOptions.BackwardCompatibility,
 			ProjectOptions.SearchIncludePath,
 			ProjectOptions.CompileToSourceDirectory,
+			ProjectOptions.Formatting,
 		};
 
 		private static String Read(String name)

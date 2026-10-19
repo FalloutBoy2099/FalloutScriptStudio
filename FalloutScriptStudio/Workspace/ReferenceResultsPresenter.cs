@@ -1,16 +1,17 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Text;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Localization;
+	using Services;
 
 	/// <summary>Turns the references of a symbol into search results of the Errors tab (with the text of every reference line).</summary>
 	public sealed class ReferenceResultsPresenter
@@ -46,8 +47,8 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			Encoding fileEncoding = this._settings.Settings.Editor.FileEncoding.ToEncoding();
-			Dictionary<String, String[]> lineCache = new Dictionary<String, String[]>(StringComparer.OrdinalIgnoreCase);
-			List<BuildError> results = new List<BuildError>();
+			Dictionary<String, String[]> lineCache = new(StringComparer.OrdinalIgnoreCase);
+			List<BuildError> results = [];
 			Int32 lastLine = 0;
 			Int32 nextColumn = 0;
 			foreach (SourceReference reference in references)
@@ -86,7 +87,7 @@ namespace FalloutScriptStudio.Workspace
 			{
 				try
 				{
-					text = DocumentTextCodec.Decode(File.ReadAllBytes(full), fallback).Text;
+					text = DocumentTextCodec.Decode(SharedFile.ReadAllBytes(full), fallback).Text;
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{

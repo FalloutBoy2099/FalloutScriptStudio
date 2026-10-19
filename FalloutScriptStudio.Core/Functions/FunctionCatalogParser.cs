@@ -172,7 +172,7 @@ namespace FalloutScriptStudio.Core.Functions
 
 			internal String Code { get; init; } = String.Empty;
 
-			internal List<Builder> Children { get; } = new List<Builder>();
+			internal List<Builder> Children { get; } = [];
 
 			internal FunctionNode Build(FunctionSource source)
 			{

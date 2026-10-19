@@ -16,11 +16,11 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 
 		public Boolean CanOpenAsText { get; set; } = true;
 
-		public List<(Int32 Id, String Text)> Received { get; } = new List<(Int32, String)>();
+		public List<(Int32 Id, String Text)> Received { get; } = [];
 
-		public List<(String Path, MessageDocument Document)> Updates { get; } = new List<(String, MessageDocument)>();
+		public List<(String Path, MessageDocument Document)> Updates { get; } = [];
 
-		public List<String> OpenedAsText { get; } = new List<String>();
+		public List<String> OpenedAsText { get; } = [];
 
 		public void AcceptMessageLine(Int32 messageId, String messageText)
 		{

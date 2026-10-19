@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Edit Node: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Rename Node</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Rename Node: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Preview Dialogue From This Node</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Preview Dialogue From Node: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Jump from: --- to</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Jump from: {0} to</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Hide Node</sys:String>

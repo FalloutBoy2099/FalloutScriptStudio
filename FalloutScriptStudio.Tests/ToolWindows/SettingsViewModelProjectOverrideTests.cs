@@ -133,8 +133,8 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		{
 			this.OpenProject("{ \"optimization\": \"full\" }");
 			SettingsViewModel viewModel = this.Create();
-			List<String> asked = new List<String>();
-			List<String> changed = new List<String>();
+			List<String> asked = [];
+			List<String> changed = [];
 			viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName ?? String.Empty);
 			viewModel.EditProjectSettingHandler = optionId =>
 			{

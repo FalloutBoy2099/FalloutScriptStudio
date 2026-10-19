@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Problems
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Localization;
+	using Core.Compilation;
+	using Localization;
 
 	/// <summary>
 	/// The one model of everything that can go wrong in the editor: a parser or compiler message, a missing tool, a file that cannot be

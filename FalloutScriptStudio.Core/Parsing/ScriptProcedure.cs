@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.Core.Parsing
 	/// </remarks>
 	public sealed class ScriptProcedure : IScriptSymbol
 	{
-		private static readonly HashSet<String> _standardHandlers = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _standardHandlers = new(StringComparer.Ordinal)
 		{
 			"combat_is_over_p_proc",
 			"combat_is_starting_p_proc",
@@ -107,6 +107,15 @@ namespace FalloutScriptStudio.Core.Parsing
 
 		/// <inheritdoc />
 		public Boolean IsStandard => _standardHandlers.Contains(this.NormalizedName);
+
+		/// <summary>Determines whether a name is one of the standard handlers the game engine calls in a script (<c>start</c>, <c>talk_p_proc</c>...).</summary>
+		/// <param name="name">The name; the case is ignored.</param>
+		/// <returns><see langword="true"/> for a standard handler.</returns>
+		public static Boolean IsStandardHandlerName(String name)
+		{
+			ArgumentNullException.ThrowIfNull(name);
+			return _standardHandlers.Contains(name.ToLowerInvariant());
+		}
 
 		/// <summary>Gets a value indicating whether the script has a forward declaration that is distinct from the body.</summary>
 		public Boolean HasForwardDeclaration => this.DeclaredLine > 0 && this.DeclaredLine != this.StartLine;

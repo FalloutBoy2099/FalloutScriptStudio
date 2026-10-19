@@ -13,7 +13,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 	/// </summary>
 	public sealed partial class ProcedureNameViewModel : ScriptToolViewModelBase
 	{
-		private ProcedureNameRequest _request = new ProcedureNameRequest();
+		private ProcedureNameRequest _request = new();
 
 		/// <summary>Gets or sets the window title.</summary>
 		[ObservableProperty]

@@ -4,12 +4,12 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Core.Parsing;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Localization;
+	using Problems;
+	using Services;
 
 	/// <summary>Decompiles compiled scripts for the workspace: runs the decompiler, fixes the result and asks where to save it.</summary>
 	public sealed class ScriptDecompilationService
@@ -62,7 +62,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			this._output.ShowTab(OutputTab.Build);
-			Progress<String> progress = new Progress<String>(line => this._output.AppendBuildLine(line));
+			Progress<String> progress = new(line => this._output.AppendBuildLine(line));
 
 			// A round trip hands over the token of its own operation; opening a compiled script is an operation of its own that the user can cancel.
 			IOperation? own = options.CancellationToken.CanBeCanceled ? null : this._operations.TryBegin(OperationKind.Decompile, Path.GetFileName(path));

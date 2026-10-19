@@ -4,9 +4,9 @@ namespace FalloutScriptStudio.Views.ToolWindows
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using Core.Configuration;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The headers picker: a searchable list of the header files. Like the popup of the old editor it remembers its size

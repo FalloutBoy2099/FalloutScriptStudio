@@ -22,6 +22,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
@@ -473,6 +474,41 @@
                         </StackPanel>
                     </Border>
 
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.CompileProfiles}" />
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Opt.ActiveProfile.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Opt.ActiveProfile.Desc}"
+                        OptionId="ActiveCompileProfile">
+                        <StackPanel Orientation="Horizontal">
+                            <local:OverrideModeBox SelectedIndex="{Binding ActiveProfile.ModeIndex}" />
+                            <ComboBox
+                                IsEnabled="{Binding ActiveProfile.IsOverridden}"
+                                ItemsSource="{Binding ActiveProfileChoices}"
+                                SelectedValue="{Binding ActiveProfile.Value, Mode=TwoWay}"
+                                SelectedValuePath="Value"
+                                Style="{StaticResource OptionComboBox}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Caption}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </local:SettingCard>
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Project.Profiles.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Project.Profiles.Desc}"
+                        OptionId="CompileProfiles" />
+                    <Border
+                        Margin="0,0,0,6"
+                        Padding="16,12"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <local:CompileProfilesEditor DataContext="{Binding ProfileEditor}" />
+                    </Border>
+
                     <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.MessagePaths}" />
                     <local:SettingCard
                         Title="{DynamicResource Str.ToolWindows.Section.MessagePaths}"
@@ -520,6 +556,23 @@
                             </StackPanel>
                         </Grid>
                     </Border>
+
+                    <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Formatting}" />
+                    <local:SettingCard
+                        Title="{DynamicResource Str.ToolWindows.Fmt.Title}"
+                        Description="{DynamicResource Str.ToolWindows.Project.Formatting.Help}"
+                        OptionId="Formatting">
+                        <local:OverrideModeBox SelectedIndex="{Binding FormattingMode.ModeIndex}" />
+                    </local:SettingCard>
+                    <Border
+                        Padding="16,12"
+                        Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        IsEnabled="{Binding FormattingMode.IsOverridden}">
+                        <local:FormattingOptionsEditor DataContext="{Binding FormattingEditor}" />
+                    </Border>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
@@ -544,4 +597,5 @@
                 IsCancel="True" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

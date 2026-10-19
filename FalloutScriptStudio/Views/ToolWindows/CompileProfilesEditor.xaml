@@ -1,0 +1,210 @@
+<UserControl
+    x:Class="FalloutScriptStudio.Views.ToolWindows.CompileProfilesEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:FalloutScriptStudio.Views.ToolWindows"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+
+        <Style x:Key="RowLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,12,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="EmptyHint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasSelection}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="local:OverrideModeBox">
+            <Setter Property="Margin" Value="0,3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ListBox
+                x:Name="ProfileList"
+                Height="190"
+                AutomationProperties.Name="{DynamicResource Str.ToolWindows.Section.CompileProfiles}"
+                ItemsSource="{Binding Profiles}"
+                SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Margin="2,2" Text="{Binding Name}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <WrapPanel Grid.Row="1" Margin="0,6,0,0">
+                <ui:Button
+                    Margin="0,0,6,4"
+                    Command="{Binding AddProfileCommand}"
+                    Content="{DynamicResource Str.ToolWindows.Profiles.Add}" />
+                <ui:Button
+                    Margin="0,0,0,4"
+                    Command="{Binding DeleteProfileCommand}"
+                    Content="{DynamicResource Str.ToolWindows.Profiles.Delete}" />
+            </WrapPanel>
+        </Grid>
+
+        <TextBlock
+            Grid.Column="2"
+            Style="{StaticResource EmptyHint}"
+            Text="{DynamicResource Str.ToolWindows.Profiles.Empty}" />
+
+        <Grid Grid.Column="2" Visibility="{Binding HasSelection, Converter={StaticResource BoolToVisibility}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                x:Name="NameLabel"
+                Grid.Row="0"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Profiles.Name}" />
+            <ui:TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,6"
+                AutomationProperties.LabeledBy="{Binding ElementName=NameLabel}"
+                MaxLength="40"
+                Text="{Binding SelectedProfile.Name, UpdateSourceTrigger=LostFocus}" />
+
+            <TextBlock
+                x:Name="OptimizationLabel"
+                Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Opt.Optimization.Title}" />
+            <local:OverrideModeBox
+                Grid.Row="1"
+                Grid.Column="1"
+                AutomationProperties.LabeledBy="{Binding ElementName=OptimizationLabel}"
+                SelectedIndex="{Binding SelectedProfile.Optimization.ModeIndex}" />
+            <ComboBox
+                Grid.Row="1"
+                Grid.Column="2"
+                MinWidth="180"
+                Margin="8,0,0,0"
+                HorizontalAlignment="Left"
+                AutomationProperties.LabeledBy="{Binding ElementName=OptimizationLabel}"
+                DisplayMemberPath="Text"
+                IsEnabled="{Binding SelectedProfile.Optimization.IsOverridden}"
+                ItemsSource="{Binding OptimizationChoices}"
+                SelectedValue="{Binding SelectedProfile.Optimization.Value, Mode=TwoWay}"
+                SelectedValuePath="Value" />
+
+            <TextBlock
+                x:Name="ShortCircuitLabel"
+                Grid.Row="2"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Opt.ShortCircuit.Title}" />
+            <local:OverrideModeBox
+                Grid.Row="2"
+                Grid.Column="1"
+                AutomationProperties.LabeledBy="{Binding ElementName=ShortCircuitLabel}"
+                SelectedIndex="{Binding SelectedProfile.ShortCircuit.ModeIndex}" />
+            <ui:ToggleSwitch
+                Grid.Row="2"
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                AutomationProperties.LabeledBy="{Binding ElementName=ShortCircuitLabel}"
+                IsChecked="{Binding SelectedProfile.ShortCircuit.Value, Mode=TwoWay}"
+                IsEnabled="{Binding SelectedProfile.ShortCircuit.IsOverridden}" />
+
+            <TextBlock
+                x:Name="BackwardLabel"
+                Grid.Row="3"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Opt.Backward.Title}" />
+            <local:OverrideModeBox
+                Grid.Row="3"
+                Grid.Column="1"
+                AutomationProperties.LabeledBy="{Binding ElementName=BackwardLabel}"
+                SelectedIndex="{Binding SelectedProfile.BackwardCompatibility.ModeIndex}" />
+            <ui:ToggleSwitch
+                Grid.Row="3"
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                AutomationProperties.LabeledBy="{Binding ElementName=BackwardLabel}"
+                IsChecked="{Binding SelectedProfile.BackwardCompatibility.Value, Mode=TwoWay}"
+                IsEnabled="{Binding SelectedProfile.BackwardCompatibility.IsOverridden}" />
+
+            <TextBlock
+                x:Name="DebugLabel"
+                Grid.Row="4"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Opt.Debug.Title}" />
+            <local:OverrideModeBox
+                Grid.Row="4"
+                Grid.Column="1"
+                AutomationProperties.LabeledBy="{Binding ElementName=DebugLabel}"
+                SelectedIndex="{Binding SelectedProfile.DebugInfo.ModeIndex}" />
+            <ui:ToggleSwitch
+                Grid.Row="4"
+                Grid.Column="2"
+                Margin="8,0,0,0"
+                AutomationProperties.LabeledBy="{Binding ElementName=DebugLabel}"
+                IsChecked="{Binding SelectedProfile.DebugInfo.Value, Mode=TwoWay}"
+                IsEnabled="{Binding SelectedProfile.DebugInfo.IsOverridden}" />
+
+            <TextBlock
+                x:Name="DefineLabel"
+                Grid.Row="5"
+                Grid.Column="0"
+                Style="{StaticResource RowLabel}"
+                Text="{DynamicResource Str.ToolWindows.Profiles.Define}" />
+            <local:OverrideModeBox
+                Grid.Row="5"
+                Grid.Column="1"
+                AutomationProperties.LabeledBy="{Binding ElementName=DefineLabel}"
+                SelectedIndex="{Binding SelectedProfile.PreprocessorDefine.ModeIndex}" />
+            <ComboBox
+                Grid.Row="5"
+                Grid.Column="2"
+                MinWidth="180"
+                Margin="8,0,0,0"
+                HorizontalAlignment="Left"
+                AutomationProperties.LabeledBy="{Binding ElementName=DefineLabel}"
+                IsEditable="True"
+                IsEnabled="{Binding SelectedProfile.PreprocessorDefine.IsOverridden}"
+                ItemsSource="{Binding DefineChoices}"
+                Text="{Binding SelectedProfile.PreprocessorDefine.Value, UpdateSourceTrigger=LostFocus}" />
+        </Grid>
+    </Grid>
+
+</UserControl>

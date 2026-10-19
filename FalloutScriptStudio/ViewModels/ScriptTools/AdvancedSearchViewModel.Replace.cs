@@ -6,11 +6,11 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 	using System.Text.RegularExpressions;
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.Input;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services.ScriptTools.Search;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.TextTools;
+	using Documents;
+	using Localization;
+	using Services.ScriptTools.Search;
 
 	/// <summary>Replacing in the current script, the open scripts and (for a single script) one match at a time.</summary>
 	public sealed partial class AdvancedSearchViewModel
@@ -49,7 +49,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 				return;
 			}
 
-			List<(DocumentViewModel Document, IReadOnlyList<TextEdit> Edits)> plans = new List<(DocumentViewModel, IReadOnlyList<TextEdit>)>();
+			List<(DocumentViewModel Document, IReadOnlyList<TextEdit> Edits)> plans = [];
 			foreach (DocumentViewModel document in documents)
 			{
 				IReadOnlyList<TextEdit> edits;
@@ -100,7 +100,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		{
 			if (this.Scope == SearchScope.CurrentScript)
 			{
-				return this._workspace.ActiveDocument is null ? new List<DocumentViewModel>() : new List<DocumentViewModel> { this._workspace.ActiveDocument };
+				return this._workspace.ActiveDocument is null ? [] : [this._workspace.ActiveDocument];
 			}
 
 			return this._workspace.Documents.ToList();

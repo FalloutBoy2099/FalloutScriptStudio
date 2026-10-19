@@ -39,7 +39,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 		}
 
 		/// <summary>Gets the user's rules, in the order they are saved.</summary>
-		public ObservableCollection<DialogueRuleItemViewModel> Rules { get; } = new ObservableCollection<DialogueRuleItemViewModel>();
+		public ObservableCollection<DialogueRuleItemViewModel> Rules { get; } = [];
 
 		/// <summary>Gets or sets the selected row.</summary>
 		[ObservableProperty]
@@ -110,7 +110,8 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 		[RelayCommand]
 		private void AddRule()
 		{
-			DialogueRuleItemViewModel item = new DialogueRuleItemViewModel { Kind = "Option", TotalArgs = 3, MessageArg = 1, NodeArg = 2, IqArg = 3 };
+			DialogueRuleItemViewModel item = new()
+			{ Kind = "Option", TotalArgs = 3, MessageArg = 1, NodeArg = 2, IqArg = 3 };
 			this.AttachItem(item);
 			this.SelectedRule = item;
 			this.Revalidate();
@@ -204,7 +205,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 		/// <summary>Checks every row, including the names against each other, and updates <see cref="ErrorMessage"/>.</summary>
 		private void Revalidate()
 		{
-			HashSet<String> names = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> names = new(StringComparer.OrdinalIgnoreCase);
 			String? first = null;
 			for (Int32 index = 0; index < this.Rules.Count; index++)
 			{

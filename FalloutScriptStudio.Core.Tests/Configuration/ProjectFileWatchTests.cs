@@ -32,9 +32,22 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			SettleAttempts = 3,
 		};
 
+		/// <summary>
+		/// Like <see cref="Fast"/> but a file that is missing is looked at again for about five seconds before it counts as deleted: a test that deletes a file and
+		/// writes it again must not depend on how long the machine takes between the two, which is what a loaded machine changes.
+		/// </summary>
+		private static readonly ProjectFileWatchOptions Patient = new ProjectFileWatchOptions
+		{
+			Debounce = Fast.Debounce,
+			PollInterval = Fast.PollInterval,
+			RetryDelay = Fast.RetryDelay,
+			ReadAttempts = Fast.ReadAttempts,
+			SettleAttempts = 8,
+		};
+
 		private readonly TestFolder _root = new TestFolder("project-watch");
 		private readonly SettingsService _settings;
-		private readonly List<IDisposable> _disposables = new List<IDisposable>();
+		private readonly List<IDisposable> _disposables = [];
 
 		public ProjectFileWatchTests()
 		{
@@ -182,7 +195,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		public async Task AnEditorThatDeletesAndRecreatesTheFile_IsAModification_NotADeletion()
 		{
 			String folder = this.MakeProject();
-			(ProjectService service, Recorder events) = this.Open(folder);
+			(ProjectService service, Recorder events) = this.Open(folder, Patient);
 			String file = Path.Combine(folder, ProjectSettings.FileName);
 
 			File.Delete(file);
@@ -200,7 +213,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		public async Task AHalfWrittenFile_IsNeverApplied_TheCompletedFileIs()
 		{
 			String folder = this.MakeProject();
-			(ProjectService service, Recorder events) = this.Open(folder, Fast with { RetryDelay = TimeSpan.FromMilliseconds(60), SettleAttempts = 4 });
+			(ProjectService service, Recorder events) = this.Open(folder, Fast with { RetryDelay = TimeSpan.FromMilliseconds(60), SettleAttempts = 7 });
 			String file = Path.Combine(folder, ProjectSettings.FileName);
 
 			using (FileStream stream = new FileStream(file, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))

@@ -4,15 +4,15 @@ namespace FalloutScriptStudio.Views.Shell
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.ViewModels.Main;
+	using Documents;
+	using ViewModels.Main;
 
 	/// <summary>The strip of document tabs: selection, close buttons, drag to reorder and the list of all tabs.</summary>
 	public partial class DocumentTabStrip : UserControl
 	{
 		private const String DragFormat = "FalloutScriptStudio.DocumentTab";
 
-		private readonly ContextMenu _allTabsMenu = new ContextMenu();
+		private readonly ContextMenu _allTabsMenu = new();
 		private Point _dragStart;
 		private DocumentViewModel? _dragCandidate;
 
@@ -110,7 +110,8 @@ namespace FalloutScriptStudio.Views.Shell
 			this._allTabsMenu.Items.Clear();
 			foreach (DocumentViewModel document in viewModel.Documents)
 			{
-				MenuItem item = new MenuItem { Header = document.Title, IsChecked = document.IsActive, Tag = document };
+				MenuItem item = new()
+				{ Header = document.Title, IsChecked = document.IsActive, Tag = document };
 				item.Click += (_, _) => viewModel.ActiveDocument = document;
 				this._allTabsMenu.Items.Add(item);
 			}

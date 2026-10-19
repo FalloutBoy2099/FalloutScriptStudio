@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Functions
 {
 	using System;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>
 	/// Extracts the highlighted keyword from the code of a user function (legacy <c>Functions.GetKeyWord</c>).

@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		public void TheNodesThatStayAreNotRecreated_OnlyTheChangedOnesAreInsertedOrRemoved()
 		{
 			List<FunctionNodeViewModel> roots = CreateRoots();
-			List<NotifyCollectionChangedEventArgs> changes = new List<NotifyCollectionChangedEventArgs>();
+			List<NotifyCollectionChangedEventArgs> changes = [];
 			roots[0].VisibleChildren.CollectionChanged += (_, e) => changes.Add(e);
 			TreeFilter.Apply(roots, "obj_");
 			changes.Clear();

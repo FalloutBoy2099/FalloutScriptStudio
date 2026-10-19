@@ -96,7 +96,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void ReadSettings_MapsEveryFieldInTheLegacyOrder()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			AppSettings settings = this._importer.ReadSettings(new MemoryStream(CreateLegacySettings()), problems);
 
@@ -166,7 +166,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void ReadSettings_TruncatedFileKeepsTheValuesReadSoFar()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			AppSettings settings = this._importer.ReadSettings(new MemoryStream(CreateLegacySettings(true)), problems);
 
@@ -179,7 +179,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void ReadSettings_EmptyOrGarbageStreamsNeverThrow()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			AppSettings empty = this._importer.ReadSettings(new MemoryStream(), problems);
 			AppSettings garbage = this._importer.ReadSettings(new MemoryStream(new Byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }), problems);
@@ -196,7 +196,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			bytes[5] = 255; // optimize
 			bytes[3] = 9;   // highlight
 
-			AppSettings settings = this._importer.ReadSettings(new MemoryStream(bytes), new List<String>());
+			AppSettings settings = this._importer.ReadSettings(new MemoryStream(bytes), []);
 
 			Assert.Equal(OptimizationLevel.Basic, settings.Compiler.Optimization);
 			Assert.Equal(HighlightTheme.Dark, settings.Editor.Theme);
@@ -207,7 +207,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		{
 			PreprocessorKind Read(Boolean watcom, Boolean mcpp)
 			{
-				return this._importer.ReadSettings(new MemoryStream(CreateLegacySettings(false, watcom, mcpp)), new List<String>()).Compiler.Preprocessor;
+				return this._importer.ReadSettings(new MemoryStream(CreateLegacySettings(false, watcom, mcpp)), []).Compiler.Preprocessor;
 			}
 
 			Assert.Equal(PreprocessorKind.Builtin, Read(false, false));
@@ -235,7 +235,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			}
 
 			stream.Position = 0;
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			(RecentFiles recent, ScriptPositions positions) = this._importer.ReadRecent(stream, problems);
 
@@ -258,7 +258,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			}
 
 			stream.Position = 0;
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			(RecentFiles recent, _) = this._importer.ReadRecent(stream, problems);
 
@@ -285,7 +285,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			}
 
 			stream.Position = 0;
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			FoldedProcedures folding = this._importer.ReadFolding(stream, problems);
 
@@ -300,7 +300,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void ReadFolding_EmptyFileMeansNothingIsFolded()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 
 			FoldedProcedures folding = this._importer.ReadFolding(new MemoryStream(), problems);
 

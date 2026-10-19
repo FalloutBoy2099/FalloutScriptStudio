@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Tests.Startup
 			UiThread.Run(() =>
 			{
 				ServiceCollection services = this.CreateCollection(out SingleInstanceService singleInstance);
-				List<String> failures = new List<String>();
+				List<String> failures = [];
 
 				using (singleInstance)
 				using (ServiceProvider provider = services.BuildServiceProvider(_strict))
@@ -121,7 +121,7 @@ namespace FalloutScriptStudio.Tests.Startup
 					.Where(type => type.Namespace is not null && type.Namespace.StartsWith("FalloutScriptStudio", StringComparison.Ordinal))
 					.Where(type => type.Name.EndsWith("ViewModel", StringComparison.Ordinal) || typeof(Window).IsAssignableFrom(type))
 					.ToList();
-				List<String> failures = new List<String>();
+				List<String> failures = [];
 
 				using (singleInstance)
 				using (ServiceProvider provider = services.BuildServiceProvider(_strict))

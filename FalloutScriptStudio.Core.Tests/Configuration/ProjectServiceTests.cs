@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 	{
 		private readonly TestFolder _root = new TestFolder("project-service");
 		private readonly SettingsService _settings;
-		private readonly List<ProjectService> _services = new List<ProjectService>();
+		private readonly List<ProjectService> _services = [];
 
 		public ProjectServiceTests()
 		{
@@ -250,7 +250,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		{
 			String folder = this.MakeFolder("mod", "{ not json");
 			ProjectService service = this.CreateService();
-			List<SettingsProblem> problems = new List<SettingsProblem>();
+			List<SettingsProblem> problems = [];
 			service.ProblemRaised += (_, problem) => problems.Add(problem);
 
 			service.Open(folder);
@@ -275,7 +275,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			String folder = this.MakeFolder("mod", "{ \"name\": \"Keep\" }");
 			String file = Path.Combine(folder, ProjectSettings.FileName);
 			ProjectService service = this.CreateService();
-			List<SettingsProblem> problems = new List<SettingsProblem>();
+			List<SettingsProblem> problems = [];
 			service.ProblemRaised += (_, problem) => problems.Add(problem);
 
 			using (new FileStream(file, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
@@ -298,7 +298,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			String file = Path.Combine(folder, ProjectSettings.FileName);
 			ProjectService service = this.CreateService();
 			service.Open(folder);
-			List<SettingsProblem> problems = new List<SettingsProblem>();
+			List<SettingsProblem> problems = [];
 			service.ProblemRaised += (_, problem) => problems.Add(problem);
 
 			using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None))

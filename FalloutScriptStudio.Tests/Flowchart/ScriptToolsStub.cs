@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	/// <summary>A stand-in for <see cref="IScriptToolService"/> that records the calls; it keeps compiling when members are added.</summary>
 	public class ScriptToolsStub : DispatchProxy
 	{
-		public List<String> Calls { get; } = new List<String>();
+		public List<String> Calls { get; } = [];
 
 		public static (IScriptToolService Service, ScriptToolsStub Recorder) Create()
 		{

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Editor
 {
 	using System;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>An immutable snapshot of the editor options that influence the text editor control.</summary>
 	public sealed record EditorOptions

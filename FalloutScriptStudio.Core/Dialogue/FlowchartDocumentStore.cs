@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Configuration;
 
 	/// <summary>
 	/// <see cref="IFlowchartDocumentStore"/> working on the file system.

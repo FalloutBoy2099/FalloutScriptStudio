@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Editor.Navigation
 	/// </summary>
 	public sealed class CaretHistory
 	{
-		private readonly List<CaretLocation> _positions = new List<CaretLocation>();
+		private readonly List<CaretLocation> _positions = [];
 		private Int32 _current = -1;
 		private Int32 _end = -1;
 		private Int32 _previousLine;

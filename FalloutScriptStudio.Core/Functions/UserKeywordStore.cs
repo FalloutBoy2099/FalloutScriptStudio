@@ -8,8 +8,8 @@ namespace FalloutScriptStudio.Core.Functions
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Xml.Linq;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.TextTools;
+	using Configuration;
+	using TextTools;
 
 	/// <summary>
 	/// <see cref="IUserKeywordStore"/> that keeps the keywords in a small JSON file.
@@ -185,7 +185,7 @@ namespace FalloutScriptStudio.Core.Functions
 			{
 				String json = await File.ReadAllTextAsync(this._filePath, cancellationToken).ConfigureAwait(false);
 				KeywordFile? file = JsonSerializer.Deserialize<KeywordFile>(json, SettingsJson.Options);
-				return (file?.Keywords ?? new List<String>())
+				return (file?.Keywords ?? [])
 					.Select(k => (k ?? String.Empty).Trim())
 					.Where(IsValidKeyword)
 					.Distinct(StringComparer.Ordinal)
@@ -205,7 +205,7 @@ namespace FalloutScriptStudio.Core.Functions
 
 		private sealed class KeywordFile
 		{
-			public List<String> Keywords { get; set; } = new List<String>();
+			public List<String> Keywords { get; set; } = [];
 		}
 
 		/// <summary>Releases the lock of the service.</summary>

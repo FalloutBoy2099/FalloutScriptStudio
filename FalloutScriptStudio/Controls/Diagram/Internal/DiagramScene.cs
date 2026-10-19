@@ -4,9 +4,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	using System.Collections.Generic;
 	using System.ComponentModel;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
+	using Model;
+	using Rendering;
+	using Routing;
 
 	/// <summary>
 	/// The WPF-visual-free state of a diagram: ordered items, selection, hover, computed node layouts, resolved links and
@@ -14,15 +14,15 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	/// </summary>
 	internal sealed partial class DiagramScene
 	{
-		private readonly List<DiagramItem> _items = new List<DiagramItem>();
-		private readonly HashSet<DiagramItem> _itemSet = new HashSet<DiagramItem>();
-		private readonly List<DiagramItem> _selection = new List<DiagramItem>();
-		private readonly Dictionary<DiagramNode, NodeLayout> _layouts = new Dictionary<DiagramNode, NodeLayout>();
-		private readonly HashSet<DiagramNode> _dirtyLayouts = new HashSet<DiagramNode>();
-		private readonly List<DiagramLink> _links = new List<DiagramLink>();
-		private readonly List<RoutedLink> _routes = new List<RoutedLink>();
-		private readonly Dictionary<String, DiagramNode> _byName = new Dictionary<String, DiagramNode>(StringComparer.OrdinalIgnoreCase);
-		private readonly ConnectorRouter _router = new ConnectorRouter();
+		private readonly List<DiagramItem> _items = [];
+		private readonly HashSet<DiagramItem> _itemSet = [];
+		private readonly List<DiagramItem> _selection = [];
+		private readonly Dictionary<DiagramNode, NodeLayout> _layouts = [];
+		private readonly HashSet<DiagramNode> _dirtyLayouts = [];
+		private readonly List<DiagramLink> _links = [];
+		private readonly List<RoutedLink> _routes = [];
+		private readonly Dictionary<String, DiagramNode> _byName = new(StringComparer.OrdinalIgnoreCase);
+		private readonly ConnectorRouter _router = new();
 		private DiagramRenderContext _context;
 		private DiagramHitTestResult _hover = DiagramHitTestResult.Nothing;
 		private Boolean _namesDirty = true;
@@ -156,7 +156,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 
 		public void Clear()
 		{
-			List<DiagramItem> all = new List<DiagramItem>(this._items);
+			List<DiagramItem> all = new(this._items);
 			foreach (DiagramItem item in all)
 			{
 				this.Remove(item);
@@ -211,7 +211,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 				return;
 			}
 
-			List<DiagramNode> dirty = new List<DiagramNode>(this._dirtyLayouts);
+			List<DiagramNode> dirty = new(this._dirtyLayouts);
 			this._dirtyLayouts.Clear();
 			this._applyingLayout++;
 			try

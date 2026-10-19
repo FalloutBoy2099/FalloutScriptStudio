@@ -3,11 +3,11 @@ namespace FalloutScriptStudio.Workspace
 	using System;
 	using System.IO;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Archives;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
+	using Core.Archives;
+	using Core.Configuration;
+	using Localization;
+	using Problems;
+	using Services;
 
 	/// <summary>Extracts scripts from Fallout game archives (<c>.dat</c>) and remembers the archive that was used last.</summary>
 	public sealed class ArchiveScriptExtractor

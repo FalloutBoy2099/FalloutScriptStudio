@@ -62,6 +62,41 @@ namespace FalloutScriptStudio.Tests.Editor
 		}
 
 		[Fact]
+		public void CtrlClick_OnANameOnlyTheProjectKnows_NavigatesThroughTheProject()
+		{
+			UiThread.Run(() =>
+			{
+				using EditorTestEnvironment env = new EditorTestEnvironment();
+				DocumentViewModel script = env.CreateDocument(Script);
+				using EditorSession session = env.StartSession(script);
+				Int32 offset = OffsetOf(script, "remote_proc");
+
+				Assert.False(session.Navigation.TryNavigateAt(offset));
+				Assert.DoesNotContain(env.Recorder.Calls, call => call.StartsWith("NavigateToProjectSymbolAsync(", StringComparison.Ordinal));
+
+				env.Recorder.ProjectSymbols.Add("remote_proc");
+				Assert.True(session.Navigation.TryNavigateAt(offset));
+				Assert.Contains(env.Recorder.Calls, call => call.StartsWith("NavigateToProjectSymbolAsync(", StringComparison.Ordinal) && call.EndsWith("remote_proc, Definition)", StringComparison.Ordinal));
+			});
+		}
+
+		[Fact]
+		public void CtrlClick_OnAKeywordOrAWordInAString_NavigatesNowhereEvenIfTheProjectKnowsTheWord()
+		{
+			UiThread.Run(() =>
+			{
+				using EditorTestEnvironment env = new EditorTestEnvironment();
+				DocumentViewModel script = env.CreateDocument(Script);
+				using EditorSession session = env.StartSession(script);
+				env.Recorder.ProjectSymbols.Add("x");
+				Int32 insideString = script.TextDocument.Text.IndexOf("\"x\"", StringComparison.Ordinal) + 1;
+
+				Assert.False(session.Navigation.TryNavigateAt(insideString));
+				Assert.DoesNotContain(env.Recorder.Calls, call => call.StartsWith("NavigateToProjectSymbolAsync(", StringComparison.Ordinal));
+			});
+		}
+
+		[Fact]
 		public void GoToDefinition_OfAMacroUnknownToTheDocument_UsesTheProject()
 		{
 			UiThread.Run(() =>

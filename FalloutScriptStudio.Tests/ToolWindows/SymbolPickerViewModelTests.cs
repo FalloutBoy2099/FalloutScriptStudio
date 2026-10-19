@@ -232,7 +232,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 			LanguageCollection.CollectGarbage();
 			SymbolPickerViewModel viewModel = CreateSearch(CreateIndex());
 			viewModel.Filter = "max";
-			List<String?> changed = new List<String?>();
+			List<String?> changed = [];
 			viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 			try
 			{

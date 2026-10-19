@@ -5,15 +5,15 @@ namespace FalloutScriptStudio.Views.Flowchart
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Controls.Diagram;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.Flowchart;
-	using FalloutScriptStudio.Views.ToolWindows;
 	using Wpf.Ui.Controls;
 	using MenuItem = System.Windows.Controls.MenuItem;
+	using Controls.Diagram;
+	using Core.Configuration;
+	using Core.Dialogue;
+	using Documents;
+	using Localization;
+	using ViewModels.Flowchart;
+	using ToolWindows;
 
 	/// <summary>
 	/// The dialogue flowchart window: a toolbar, the diagram canvas and the context menu of the nodes.
@@ -227,7 +227,8 @@ namespace FalloutScriptStudio.Views.Flowchart
 			menu.Items.Clear();
 			foreach (String name in this.ViewModel.HiddenNodeNames)
 			{
-				MenuItem item = new MenuItem { Header = name, Command = this.ViewModel.UnhideNodeCommand, CommandParameter = name };
+				MenuItem item = new()
+				{ Header = name, Command = this.ViewModel.UnhideNodeCommand, CommandParameter = name };
 				menu.Items.Add(item);
 			}
 
@@ -241,7 +242,8 @@ namespace FalloutScriptStudio.Views.Flowchart
 
 		private MenuItem CreateJumpItem(FlowchartJumpTarget target, String brushKey)
 		{
-			MenuItem item = new MenuItem { Header = target.Name, Command = this.ViewModel.JumpToNodeCommand, CommandParameter = target.Name };
+			MenuItem item = new()
+			{ Header = target.Name, Command = this.ViewModel.JumpToNodeCommand, CommandParameter = target.Name };
 			item.SetResourceReference(Control.ForegroundProperty, target.IsHidden ? "TextFillColorDisabledBrush" : brushKey);
 			return item;
 		}

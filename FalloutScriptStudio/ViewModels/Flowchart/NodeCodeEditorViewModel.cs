@@ -112,13 +112,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		public TextDocument Code { get; }
 
 		/// <summary>Gets the messages the code uses.</summary>
-		public ObservableCollection<NodeMessageRowViewModel> Rows { get; } = new ObservableCollection<NodeMessageRowViewModel>();
+		public ObservableCollection<NodeMessageRowViewModel> Rows { get; } = [];
 
 		/// <summary>Gets the saved code snippets.</summary>
-		public ObservableCollection<NodeCodeSnippet> Snippets { get; } = new ObservableCollection<NodeCodeSnippet>();
+		public ObservableCollection<NodeCodeSnippet> Snippets { get; } = [];
 
 		/// <summary>Gets the names offered by the node list, <see cref="NoNodeChoice"/> first.</summary>
-		public ObservableCollection<String> NodeChoices { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> NodeChoices { get; } = [];
 
 		/// <summary>Gets a value indicating whether code snippets can be saved.</summary>
 		public Boolean CanStoreSnippets => this._snippets is not null;

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+
     <UserControl.Resources>
         <HierarchicalDataTemplate DataType="{x:Type vm:ProjectNodeViewModel}" ItemsSource="{Binding Children}">
             <StackPanel Orientation="Horizontal">
@@ -64,6 +65,11 @@
                             Header="{DynamicResource Str.Panels.MenuCopyPath}">
                             <MenuItem.Icon>
                                 <ui:SymbolIcon Symbol="Copy24" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Command="{Binding PlacementTarget.Tag.FormatProjectCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" Header="{DynamicResource Str.Shell.Menu.FormatProject}">
+                            <MenuItem.Icon>
+                                <ui:SymbolIcon Symbol="TextEditStyle24" />
                             </MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
@@ -146,4 +152,5 @@
                 Content="{DynamicResource Str.Panels.ChooseFolderButton}" />
         </StackPanel>
     </Grid>
+
 </UserControl>

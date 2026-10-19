@@ -23,7 +23,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 				this.Children.Add(new FunctionNodeViewModel(child, this));
 			}
 
-			this.VisibleChildren = new ObservableCollection<FunctionNodeViewModel>(this.Children);
+			this.VisibleChildren = new(this.Children);
 		}
 
 		/// <summary>Gets the catalog node.</summary>
@@ -36,7 +36,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		public String Key { get; }
 
 		/// <summary>Gets the child nodes.</summary>
-		public ObservableCollection<FunctionNodeViewModel> Children { get; } = new ObservableCollection<FunctionNodeViewModel>();
+		public ObservableCollection<FunctionNodeViewModel> Children { get; } = [];
 
 		/// <summary>
 		/// Gets the child nodes that pass the filter of the panel, in the same order. The tree shows this list: a node that is filtered out

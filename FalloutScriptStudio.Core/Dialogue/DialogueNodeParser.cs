@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text.RegularExpressions;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Default <see cref="IDialogueNodeParser"/>.
@@ -24,8 +24,6 @@ namespace FalloutScriptStudio.Core.Dialogue
 	/// </remarks>
 	public sealed class DialogueNodeParser : IDialogueNodeParser
 	{
-		private const String TalkProcedure = "talk_p_proc";
-		private const String NodeKeyword = "node";
 		private const Int32 TabWidth = 3;
 
 		private static readonly Regex _callRegex = new Regex(@"\bcall\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
@@ -137,7 +135,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 
 		private static Boolean IsNodeName(String lowerCaseName)
 		{
-			return lowerCaseName.Contains(NodeKeyword, StringComparison.Ordinal) || lowerCaseName == TalkProcedure;
+			return DialogueNodeRule.IsNode(lowerCaseName);
 		}
 
 		/// <summary>Puts <c>else</c> that follows a statement on the same line on a line of its own, with the indentation of the statement.</summary>

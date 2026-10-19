@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			ArgumentNullException.ThrowIfNull(model);
 			ArgumentNullException.ThrowIfNull(source);
 
-			List<String> paths = new List<String>();
+			List<String> paths = [];
 			foreach (FlowchartContentLine line in model.Nodes.SelectMany(node => node.Content))
 			{
 				if (line.MessageFileNumber <= 0 || line.MessageNumber <= 0 || !line.Opcode.HasMessage())

@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.TextTools;
+	using Analysis;
+	using TextTools;
 
 	/// <summary>
 	/// "Extract Procedure": turns a block of complete statements of a procedure into a new procedure that is placed in front of the
@@ -128,7 +128,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 			StringBuilder procedureText = new StringBuilder();
 			String header = arguments.Count == 0 && declaration.Replace(" ", String.Empty, StringComparison.Ordinal).EndsWith("()", StringComparison.Ordinal) ? parsed.Name + "()" : parsed.Declaration;
 			procedureText.Append("procedure ").Append(header).Append(" begin").Append(newLine);
-			List<String> locals = new List<String>(analysis.MovedLocals);
+			List<String> locals = new(analysis.MovedLocals);
 			if (analysis.ResultVariable is not null && analysis.ResultIsLocal)
 			{
 				locals.Add(analysis.ResultVariable);
@@ -157,12 +157,12 @@ namespace FalloutScriptStudio.Core.Refactoring
 			Int32 insertOffset = map.GetLineStart(procedureLine);
 			String prefix = procedureLine > 1 && !map.IsBlank(procedureLine - 1) ? newLine : String.Empty;
 
-			List<TextEdit> edits = new List<TextEdit>
-			{
+			List<TextEdit> edits =
+			[
 				TextEdit.Insert(insertOffset, prefix + procedureText + newLine + newLine),
 				new TextEdit(blockStart, blockEnd - blockStart, call),
-			};
-			edits.AddRange(CreateMovedDeclarationEdits(text, analysis));
+				.. CreateMovedDeclarationEdits(text, analysis),
+			];
 
 			IReadOnlyList<TextEdit> ordered = TextEditApplier.Normalize(edits);
 			String newText = TextEditApplier.Apply(text, ordered);
@@ -179,7 +179,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 		{
 			ArgumentNullException.ThrowIfNull(declaration);
 
-			List<String> names = new List<String>();
+			List<String> names = [];
 			Int32 open = declaration.IndexOf('(');
 			Int32 close = declaration.LastIndexOf(')');
 			if (open < 0 || close < open)
@@ -289,7 +289,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 
 		private static ExtractFailure CheckFlow(SslTokenStream tokens, Int32 first, Int32 last)
 		{
-			List<(Int32 Start, Int32 End, Boolean IsSwitch)> loops = new List<(Int32 Start, Int32 End, Boolean IsSwitch)>();
+			List<(Int32 Start, Int32 End, Boolean IsSwitch)> loops = [];
 			for (Int32 i = first; i <= last; i++)
 			{
 				if (tokens[i].Kind != SslTokenKind.Identifier)
@@ -330,7 +330,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 		private static ExtractAnalysis AnalyzeVariables(ExtractAnalysis analysis, SslScriptModel model, SslProcedureModel procedure, Int32 first, Int32 last)
 		{
 			SslTokenStream tokens = model.Tokens;
-			HashSet<VariableDeclaration> owned = new HashSet<VariableDeclaration>(procedure.Declarations);
+			HashSet<VariableDeclaration> owned = new(procedure.Declarations);
 			ILookup<VariableDeclaration, VariableOccurrence> occurrences = VariableOccurrenceFinder.Find(model)
 				.Where(o => owned.Contains(o.Declaration))
 				.ToLookup(o => o.Declaration);
@@ -350,8 +350,8 @@ namespace FalloutScriptStudio.Core.Refactoring
 				}
 			}
 
-			List<(Int32 Position, VariableDeclaration Declaration)> parameters = new List<(Int32 Position, VariableDeclaration Declaration)>();
-			List<VariableDeclaration> results = new List<VariableDeclaration>();
+			List<(Int32 Position, VariableDeclaration Declaration)> parameters = [];
+			List<VariableDeclaration> results = [];
 			Boolean resultIsLocal = false;
 			foreach (VariableDeclaration declaration in procedure.Declarations)
 			{
@@ -426,7 +426,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 		}
 
 		/// <summary>Determines whether the first of some occurrences only assigns the variable: <c>x = 1;</c>, but not <c>x = x + 1;</c>, which reads it first.</summary>
-		private static Boolean FirstAccessIsWrite(SslTokenStream tokens, IReadOnlyList<VariableOccurrence> occurrences)
+		private static Boolean FirstAccessIsWrite(SslTokenStream tokens, List<VariableOccurrence> occurrences)
 		{
 			VariableOccurrence first = occurrences[0];
 			if (!first.IsWrite)
@@ -489,8 +489,8 @@ namespace FalloutScriptStudio.Core.Refactoring
 		{
 			Int32 firstLine = map.GetLineFromOffset(blockStart);
 			Int32 lastLine = map.GetLineFromOffset(Math.Max(blockEnd - 1, blockStart));
-			List<String> lines = new List<String>();
-			List<String> indents = new List<String>();
+			List<String> lines = [];
+			List<String> indents = [];
 			for (Int32 line = firstLine; line <= lastLine; line++)
 			{
 				Int32 lineStart = map.GetLineStart(line);

@@ -21,6 +21,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -196,4 +197,5 @@
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             Text="{Binding StatusText}" />
     </Grid>
+
 </ui:FluentWindow>

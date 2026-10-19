@@ -1,11 +1,10 @@
 namespace FalloutScriptStudio.Controls.Diagram.Internal
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
+	using Model;
+	using Rendering;
+	using Routing;
 
 	/// <summary>Lazy resolution of the node names, the links and their routes.</summary>
 	internal sealed partial class DiagramScene
@@ -77,12 +76,12 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 
 				NodeLayout sourceLayout = this._layouts[link.Source];
 				NodeLayout targetLayout = this._layouts[link.Target];
-				Rect sourceRect = new Rect(link.Source.X, link.Source.Y, sourceLayout.Width, sourceLayout.Height);
-				Rect targetRect = new Rect(link.Target.X, link.Target.Y, targetLayout.Width, targetLayout.Height);
+				Rect sourceRect = new(link.Source.X, link.Source.Y, sourceLayout.Width, sourceLayout.Height);
+				Rect targetRect = new(link.Target.X, link.Target.Y, targetLayout.Width, targetLayout.Height);
 
 				RowLayout? rowLayout = link.Source.IsCollapsed ? null : sourceLayout.FindRow(link.SourceRow);
 				Double anchor = rowLayout?.AnchorY ?? sourceLayout.DefaultSourceAnchorOffset;
-				Point start = new Point(sourceRect.Right, sourceRect.Top + anchor);
+				Point start = new(sourceRect.Right, sourceRect.Top + anchor);
 				ConnectorRoute route = this._router.Route(start, sourceRect, targetRect, targetLayout.TargetAnchorOffset);
 				this._routes.Add(new RoutedLink(link, route, rowLayout != null));
 			}

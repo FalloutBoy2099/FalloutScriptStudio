@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	/// </summary>
 	internal sealed partial class XamlAccessibilityScanner
 	{
-		private readonly List<XDocument> _resourceDocuments = new List<XDocument>();
+		private readonly List<XDocument> _resourceDocuments = [];
 
 		/// <summary>Initializes a new instance of the <see cref="XamlAccessibilityScanner"/> class.</summary>
 		public XamlAccessibilityScanner()

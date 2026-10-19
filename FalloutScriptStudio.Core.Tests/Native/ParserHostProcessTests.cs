@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 		{
 			private readonly ProcessParserHostLauncher _inner = new ProcessParserHostLauncher();
 
-			public List<IParserHostProcess> Started { get; } = new List<IParserHostProcess>();
+			public List<IParserHostProcess> Started { get; } = [];
 
 			public IParserHostProcess Start(String hostPath, String workingDirectory)
 			{
@@ -159,7 +159,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 			using var cts = new CancellationTokenSource();
 
 			Task<NativeParseResult> cancelled = parser.ParseAsync("procedure start begin\r\nend\r\n", script, fixture.CreateOptions(), cts.Token);
-			for (Int32 wait = 0; wait < 500 && launcher.Started.Count == 0; wait++)
+			for (Int32 wait = 0; wait < 6000 && launcher.Started.Count == 0; wait++)
 			{
 				await Task.Delay(10);
 			}

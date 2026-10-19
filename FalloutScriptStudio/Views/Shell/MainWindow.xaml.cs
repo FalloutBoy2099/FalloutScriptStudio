@@ -7,16 +7,15 @@ namespace FalloutScriptStudio.Views.Shell
 	using System.Windows.Automation;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using System.Windows.Media;
 	using System.Windows.Media.Animation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.ViewModels.Main;
-	using FalloutScriptStudio.Views.Accessibility;
 	using Wpf.Ui.Controls;
 	using MenuItem = System.Windows.Controls.MenuItem;
+	using Accessibility;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Localization;
+	using Services;
+	using ViewModels.Main;
 
 	/// <summary>The main window: menu, toolbar, document area, side panels, output panel and status bar.</summary>
 	public partial class MainWindow : FluentWindow
@@ -44,6 +43,7 @@ namespace FalloutScriptStudio.Views.Shell
 			this.DataContext = viewModel;
 			this.InitializeComponent();
 			this.OutputPanel.DataContext = viewModel;
+			viewModel.GestureSource = new WindowGestureSource(this.InputBindings, this.MainMenu);
 			this.RightPanel.DataContext = viewModel;
 
 			this.RestorePlacement();
@@ -118,8 +118,8 @@ namespace FalloutScriptStudio.Views.Shell
 				return;
 			}
 
-			Rect screen = new Rect(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
-			Rect bounds = new Rect(placement.X, placement.Y, Math.Max(placement.Width, this.MinWidth), Math.Max(placement.Height, this.MinHeight));
+			Rect screen = new(SystemParameters.VirtualScreenLeft, SystemParameters.VirtualScreenTop, SystemParameters.VirtualScreenWidth, SystemParameters.VirtualScreenHeight);
+			Rect bounds = new(placement.X, placement.Y, Math.Max(placement.Width, this.MinWidth), Math.Max(placement.Height, this.MinHeight));
 			if (!screen.IntersectsWith(bounds) || bounds.Left + 60 > screen.Right || bounds.Top + 30 > screen.Bottom)
 			{
 				this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -244,7 +244,7 @@ namespace FalloutScriptStudio.Views.Shell
 					break;
 			}
 
-			DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames();
+			DoubleAnimationUsingKeyFrames animation = new();
 			animation.KeyFrames.Add(new LinearDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
 			animation.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(150))));
 			animation.KeyFrames.Add(new LinearDoubleKeyFrame(1, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(1400))));
@@ -339,13 +339,15 @@ namespace FalloutScriptStudio.Views.Shell
 
 			foreach (String path in this._viewModel.RecentFiles.Take(20))
 			{
-				MenuItem item = new MenuItem { Header = path.Replace("_", "__", StringComparison.Ordinal), ToolTip = path };
+				MenuItem item = new()
+				{ Header = path.Replace("_", "__", StringComparison.Ordinal), ToolTip = path };
 				item.Click += (_, _) => this._viewModel.OpenRecentCommand.Execute(path);
 				this.RecentMenu.Items.Add(item);
 			}
 
 			this.RecentMenu.Items.Add(new Separator());
-			MenuItem clear = new MenuItem { Header = Loc.Get("Str.Shell.Menu.ClearRecent") };
+			MenuItem clear = new()
+			{ Header = Loc.Get("Str.Shell.Menu.ClearRecent") };
 			clear.Click += (_, _) => this._viewModel.ClearRecentCommand.Execute(null);
 			this.RecentMenu.Items.Add(clear);
 		}
@@ -366,13 +368,15 @@ namespace FalloutScriptStudio.Views.Shell
 
 			foreach (String folder in this._viewModel.RecentProjects)
 			{
-				MenuItem item = new MenuItem { Header = folder.Replace("_", "__", StringComparison.Ordinal), ToolTip = folder };
+				MenuItem item = new()
+				{ Header = folder.Replace("_", "__", StringComparison.Ordinal), ToolTip = folder };
 				item.Click += (_, _) => this._viewModel.OpenRecentProjectCommand.Execute(folder);
 				this.RecentProjectsMenu.Items.Add(item);
 			}
 
 			this.RecentProjectsMenu.Items.Add(new Separator());
-			MenuItem clear = new MenuItem { Header = Loc.Get("Str.Shell.Menu.ClearRecentProjects") };
+			MenuItem clear = new()
+			{ Header = Loc.Get("Str.Shell.Menu.ClearRecentProjects") };
 			clear.Click += (_, _) => this._viewModel.ClearRecentProjectsCommand.Execute(null);
 			this.RecentProjectsMenu.Items.Add(clear);
 		}
@@ -393,7 +397,8 @@ namespace FalloutScriptStudio.Views.Shell
 
 			foreach (TemplateItem template in this._viewModel.Templates)
 			{
-				MenuItem item = new MenuItem { Header = template.Name.Replace("_", "__", StringComparison.Ordinal), ToolTip = template.Path };
+				MenuItem item = new()
+				{ Header = template.Name.Replace("_", "__", StringComparison.Ordinal), ToolTip = template.Path };
 				item.Click += (_, _) => this._viewModel.NewFromTemplateCommand.Execute(template);
 				this.TemplatesMenu.Items.Add(item);
 			}

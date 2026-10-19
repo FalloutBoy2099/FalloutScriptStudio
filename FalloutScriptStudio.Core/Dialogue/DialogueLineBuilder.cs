@@ -3,8 +3,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
 
 	/// <summary>
 	/// Reads one dialogue statement out of a line of code (the body of the legacy <c>DialogueParser</c> constructor and its helpers).

@@ -49,6 +49,16 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 				return new List<String> { "changed-" + property.Name };
 			}
 
+			if (type == typeof(FormatSettings))
+			{
+				return new FormatSettings { Reindent = true, Begin = FalloutScriptStudio.Core.Formatting.BeginPlacement.NextLine, MaxLineLength = 120, FormatOnSave = true };
+			}
+
+			if (type == typeof(List<CompileProfile>))
+			{
+				return new List<CompileProfile> { new CompileProfile { Name = "changed-" + property.Name, Optimization = FalloutScriptStudio.Core.Compilation.OptimizationLevel.Full } };
+			}
+
 			throw new NotSupportedException("Unsupported option type " + type + " for " + property.Name);
 		}
 

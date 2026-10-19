@@ -11,7 +11,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	{
 		private static HashSet<String> LabelTargets(XDocument document)
 		{
-			HashSet<String> targets = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> targets = new(StringComparer.Ordinal);
 			foreach (XElement label in document.Descendants().Where(e => e.Name.LocalName == "Label"))
 			{
 				String? target = (String?)label.Attribute("Target");
@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 
 		private static Dictionary<String, XElement> KeyedStyles(XDocument document)
 		{
-			Dictionary<String, XElement> styles = new Dictionary<String, XElement>(StringComparer.Ordinal);
+			Dictionary<String, XElement> styles = new(StringComparer.Ordinal);
 			foreach (XElement style in document.Descendants().Where(e => e.Name.LocalName == "Style"))
 			{
 				String? key = (String?)style.Attribute(SourceTree.Xaml + "Key");
@@ -42,7 +42,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 
 		private static Dictionary<String, XElement> ImplicitStyles(XDocument document)
 		{
-			Dictionary<String, XElement> styles = new Dictionary<String, XElement>(StringComparer.Ordinal);
+			Dictionary<String, XElement> styles = new(StringComparer.Ordinal);
 			foreach (XElement style in document.Descendants().Where(e => e.Name.LocalName == "Style" && e.Attribute(SourceTree.Xaml + "Key") is null))
 			{
 				String target = TargetTypeName((String?)style.Attribute("TargetType"));

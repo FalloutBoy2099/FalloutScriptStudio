@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Computed geometry and text of one visible <see cref="DiagramRow"/>. All rectangles are relative to the node's top-left corner.

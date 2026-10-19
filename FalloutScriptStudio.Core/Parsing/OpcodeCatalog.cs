@@ -21,8 +21,8 @@ namespace FalloutScriptStudio.Core.Parsing
 
 		private static readonly Regex _opcodeLine = new Regex(@"^[\w\|]+\*?\s+(\w+).*", RegexOptions.CultureInvariant);
 
-		private readonly Dictionary<String, String> _descriptions = new Dictionary<String, String>(StringComparer.Ordinal);
-		private readonly SortedDictionary<String, String> _namesByLowerCase = new SortedDictionary<String, String>(StringComparer.Ordinal);
+		private readonly Dictionary<String, String> _descriptions = new(StringComparer.Ordinal);
+		private readonly SortedDictionary<String, String> _namesByLowerCase = new(StringComparer.Ordinal);
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpcodeCatalog"/> class.

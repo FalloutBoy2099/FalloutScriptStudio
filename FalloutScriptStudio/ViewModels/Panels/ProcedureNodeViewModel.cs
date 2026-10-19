@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 {
 	using System;
 	using CommunityToolkit.Mvvm.ComponentModel;
+	using FalloutScriptStudio.Core.Dialogue;
 	using FalloutScriptStudio.Core.Parsing;
 
 	/// <summary>A procedure in the procedures tree.</summary>
@@ -29,6 +30,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 					this._procedure = value;
 					this.OnPropertyChanged();
 					this.OnPropertyChanged(nameof(this.CanEditNodeCode));
+					this.OnPropertyChanged(nameof(this.CanPreviewDialogue));
 					this.OnPropertyChanged(nameof(this.IsStandard));
 				}
 			}
@@ -47,9 +49,10 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		/// Gets a value indicating whether the node code editor can be opened for the procedure: a procedure of this script that is a
 		/// dialogue node (its name contains <c>node</c>) or <c>talk_p_proc</c>.
 		/// </summary>
-		public Boolean CanEditNodeCode => this.IsLocal
-			&& (this.Procedure.Name.Contains("node", StringComparison.OrdinalIgnoreCase)
-				|| String.Equals(this.Procedure.Name, "talk_p_proc", StringComparison.OrdinalIgnoreCase));
+		public Boolean CanEditNodeCode => this.IsLocal && DialogueNodeRule.IsNode(this.Procedure.Name);
+
+		/// <summary>Gets a value indicating whether the dialogue can be previewed from the procedure: the same procedures as <see cref="CanEditNodeCode"/>.</summary>
+		public Boolean CanPreviewDialogue => this.CanEditNodeCode;
 
 		/// <summary>Gets a value indicating whether the procedure is one of the standard handlers (<c>talk_p_proc</c>…).</summary>
 		public Boolean IsStandard => this.Procedure.IsStandard;

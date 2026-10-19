@@ -6,7 +6,7 @@ namespace FalloutScriptStudio.Core.Analysis
 	/// <summary>A <c>variable a, b := 1;</c> declaration: one or several variables introduced by one <c>variable</c> keyword.</summary>
 	public sealed class DeclarationStatement
 	{
-		private readonly List<VariableDeclaration> _items = new List<VariableDeclaration>();
+		private readonly List<VariableDeclaration> _items = [];
 
 		/// <summary>Initializes a new instance of the <see cref="DeclarationStatement"/> class.</summary>
 		/// <param name="offset">The offset of the first token (a modifier such as <c>export</c>, or the <c>variable</c> keyword).</param>

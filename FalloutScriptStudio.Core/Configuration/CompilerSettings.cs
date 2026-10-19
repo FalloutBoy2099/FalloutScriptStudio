@@ -1,7 +1,9 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
-	using FalloutScriptStudio.Core.Compilation;
+	using System.Collections.Generic;
+	using System.Linq;
+	using Compilation;
 
 	/// <summary>
 	/// Compilation, preprocessing and decompilation options.
@@ -56,11 +58,25 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets or sets a value indicating whether only the old external decompiler (<c>int2ssl_v35.exe</c>) is used. It has no effect on the built-in decompiler.</summary>
 		public Boolean UseLegacyDecompiler { get; set; }
 
+		/// <summary>Gets or sets a value indicating whether a mass compilation skips the scripts that are up to date.</summary>
+		public Boolean MassCompileOnlyChanged { get; set; } = true;
+
+		/// <summary>Gets or sets a value indicating whether the build log lists every script that was skipped because it is up to date (otherwise only their number).</summary>
+		public Boolean ListUpToDateScripts { get; set; }
+
+		/// <summary>Gets or sets the named sets of compiler options (the "Debug" and "Release" profiles to begin with).</summary>
+		public List<CompileProfile> Profiles { get; set; } = CompileProfile.CreateDefaults();
+
+		/// <summary>Gets or sets the name of the active compile profile, or <see langword="null"/> for none. The profile is applied on top of the options above.</summary>
+		public String? ActiveProfile { get; set; }
+
 		/// <summary>Creates a copy that can be changed without touching this instance.</summary>
 		/// <returns>The copy.</returns>
 		internal CompilerSettings Copy()
 		{
-			return (CompilerSettings)this.MemberwiseClone();
+			CompilerSettings copy = (CompilerSettings)this.MemberwiseClone();
+			copy.Profiles = (this.Profiles ?? []).Select(profile => profile.Clone()).ToList();
+			return copy;
 		}
 	}
 }

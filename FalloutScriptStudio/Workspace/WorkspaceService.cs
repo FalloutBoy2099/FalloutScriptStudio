@@ -5,15 +5,15 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.ObjectModel;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ScriptTools;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Documents;
+	using Localization;
+	using Problems;
+	using Services;
+	using Services.ScriptTools;
 
 	/// <summary>
 	/// The set of open documents and the application-level operations on them: opening (including decompilation of compiled
@@ -40,6 +40,8 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IProblemService _problems;
 		private readonly ProjectSymbolService? _symbols;
 		private readonly CodeIntelligenceOperations? _intelligence;
+		private readonly MessageConsistencyService? _consistency;
+		private readonly LiveDiagnosticsService? _diagnostics;
 
 		private DocumentViewModel? _active;
 		private DocumentViewModel? _previousActive;
@@ -62,7 +64,9 @@ namespace FalloutScriptStudio.Workspace
 			ILogger<WorkspaceService>? logger = null,
 			IProblemService? problems = null,
 			ProjectSymbolService? symbols = null,
-			CodeIntelligenceOperations? intelligence = null)
+			CodeIntelligenceOperations? intelligence = null,
+			MessageConsistencyService? consistency = null,
+			LiveDiagnosticsService? diagnostics = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(parser);
@@ -96,6 +100,10 @@ namespace FalloutScriptStudio.Workspace
 			this._symbols = symbols;
 			this._intelligence = intelligence;
 			this._symbols?.Attach(this);
+			this._consistency = consistency;
+			this._consistency?.Attach(this);
+			this._diagnostics = diagnostics;
+			this._diagnostics?.Attach(this);
 		}
 
 		public event EventHandler? ActiveDocumentChanged;
@@ -106,7 +114,9 @@ namespace FalloutScriptStudio.Workspace
 
 		public event EventHandler<DocumentViewModel>? DocumentClosed;
 
-		public ObservableCollection<DocumentViewModel> Documents { get; } = new ObservableCollection<DocumentViewModel>();
+		public event EventHandler<DocumentViewModel>? DocumentSaved;
+
+		public ObservableCollection<DocumentViewModel> Documents { get; } = [];
 
 		public DocumentViewModel? ActiveDocument
 		{
@@ -177,7 +187,7 @@ namespace FalloutScriptStudio.Workspace
 			List<DocumentViewModel> targets = this.Documents.Reverse().Where(d => !ReferenceEquals(d, except)).ToList();
 
 			// Every question comes first: a "Cancel" at any point must leave all the tabs (and their unsaved text) untouched.
-			List<DocumentViewModel> toSave = new List<DocumentViewModel>();
+			List<DocumentViewModel> toSave = [];
 			foreach (DocumentViewModel document in targets)
 			{
 				if (!this.Documents.Contains(document))
@@ -326,7 +336,7 @@ namespace FalloutScriptStudio.Workspace
 
 		public IReadOnlyDictionary<String, String> GetOpenDocumentTexts()
 		{
-			Dictionary<String, String> texts = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, String> texts = new(StringComparer.OrdinalIgnoreCase);
 			foreach (DocumentViewModel document in this.Documents)
 			{
 				if (document.FilePath is not null)

@@ -35,6 +35,10 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		[ObservableProperty]
 		public partial Boolean CanRenameNode { get; set; }
 
+		/// <summary>Gets or sets whether the dialogue preview can be opened from the node.</summary>
+		[ObservableProperty]
+		public partial Boolean CanPreviewNode { get; set; }
+
 		/// <summary>Gets or sets whether the hide command can run.</summary>
 		[ObservableProperty]
 		public partial Boolean CanHideSelection { get; set; }
@@ -50,6 +54,10 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		/// <summary>Gets or sets the text of the edit command.</summary>
 		[ObservableProperty]
 		public partial String EditNodeHeader { get; set; } = Loc.Get("Str.Flowchart.Menu.Node.Edit");
+
+		/// <summary>Gets or sets the text of the preview command.</summary>
+		[ObservableProperty]
+		public partial String PreviewNodeHeader { get; set; } = Loc.Get("Str.Flowchart.Menu.Node.Preview");
 
 		/// <summary>Gets or sets the text of the rename command.</summary>
 		[ObservableProperty]
@@ -72,6 +80,8 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 
 			this.CanEditNode = node is not null;
 			this.EditNodeHeader = node is null ? Loc.Get("Str.Flowchart.Menu.Node.Edit") : Loc.Format("Str.Flowchart.Menu.Node.EditNamed", node.Name);
+			this.CanPreviewNode = node is not null;
+			this.PreviewNodeHeader = node is null ? Loc.Get("Str.Flowchart.Menu.Node.Preview") : Loc.Format("Str.Flowchart.Menu.Node.PreviewNamed", node.Name);
 			this.CanRenameNode = node is not null && !IsTalkProcedure(node.Name) && !this._nodeEditors.IsEditing(script, node.Name);
 			this.RenameNodeHeader = node is null ? Loc.Get("Str.Flowchart.Menu.Node.Rename") : Loc.Format("Str.Flowchart.Menu.Node.RenameNamed", node.Name);
 
@@ -100,6 +110,18 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			if (node is not null && this._script is not null)
 			{
 				this._nodeEditors.Open(this._script, node.Name, true);
+			}
+		}
+
+		/// <summary>Opens the dialogue preview at the node under the pointer (or the selected node); a preview window that is already open moves to it.</summary>
+		/// <returns>A task that completes when the preview is shown.</returns>
+		[RelayCommand]
+		public async Task PreviewNodeAsync()
+		{
+			DiagramNode? node = this.ContextNode ?? this._canvas?.SelectedItem as DiagramNode;
+			if (node is not null && this._script is not null)
+			{
+				await this._workspace.PreviewDialogueFromNodeAsync(this._script, node.Name);
 			}
 		}
 
@@ -174,9 +196,9 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				return;
 			}
 
-			List<String> procedures = new List<String>();
+			List<String> procedures = [];
 			Boolean refusedStart = false;
-			List<String> refusedEdited = new List<String>();
+			List<String> refusedEdited = [];
 			foreach (DiagramItem item in selection)
 			{
 				if (item is DiagramNode node)

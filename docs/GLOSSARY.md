@@ -1,7 +1,7 @@
 # Glossary of the user interface texts
 
 The application is translated into 11 languages. The same domain term must be translated **the same way in every window** of a language: this document lists the
-canonical translation of the 59 terms that matter. **Every new or changed string must use these terms** (see [CONVENTIONS.md](CONVENTIONS.md) and the guide
+canonical translation of the 60 terms that matter. **Every new or changed string must use these terms** (see [CONVENTIONS.md](CONVENTIONS.md) and the guide
 "A localized string" in [HOW_TO.md](HOW_TO.md)).
 
 This file is **generated** from [`FalloutScriptStudio/Localization/Glossary.json`](../FalloutScriptStudio/Localization/Glossary.json) by `GlossaryTests`; do not edit it by hand.
@@ -52,6 +52,7 @@ the other cases and the plural are accepted by the test and must be used with th
 | **Register** | registrovat | registrieren | registrar | inscrire | registrare | zarejestrować | registrar | зарегистрировать | registrera | 注册 |
 | **Template** | šablona | Vorlage | plantilla | modèle | modello | szablon | modelo | шаблон | mall | 模板 |
 | **Archive** | archiv | Archiv | archivo | archive | archivio | archiwum | arquivo | архив | arkiv | 档案 |
+| **Snippet** | úryvek kódu | Codeschnipsel | fragmento de código | extrait de code | frammento di codice | fragment kodu | trecho de código | фрагмент кода | kodsnutt | 代码片段 |
 
 Usage notes:
 
@@ -73,6 +74,7 @@ Usage notes:
 * **Register**: Adding a script to scripts.lst (register). Not the Windows registry and not "save". English wordings that trigger the check: `register`, `registered`, `registering`.
 * **Template**: A script template (.ssl) or a node code template. English wordings that trigger the check: `template`, `templates`.
 * **Archive**: The Fallout game archive (master.dat / critter.dat). es/pt use the same word as for "file" (archivo/arquivo); zh: 档案, never 存档 (that means a saved game). English wordings that trigger the check: `archive`, `archives`. Do not use: zh `存档`.
+* **Snippet**: A piece of code the editor inserts from a trigger word or a list (Insert Snippet, Surround With), with tab stops. Not the same as a template (a whole script or a node). English wordings that trigger the check: `snippet`, `snippets`.
 
 ### Tools
 

@@ -6,20 +6,20 @@ namespace FalloutScriptStudio.Workspace
 	using System.Linq;
 	using System.Text;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Indexing;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.Refactoring;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Text;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ScriptTools;
-	using FalloutScriptStudio.Services.ScriptTools.Procedures;
-	using FalloutScriptStudio.Services.ToolWindows;
+	using Core.Analysis;
+	using Core.Configuration;
+	using Core.Indexing;
+	using Core.Parsing;
+	using Core.Refactoring;
+	using Core.TextTools;
+	using Documents;
+	using Editor.Text;
+	using Localization;
+	using Problems;
+	using Services;
+	using Services.ScriptTools;
+	using Services.ScriptTools.Procedures;
+	using Services.ToolWindows;
 
 	/// <summary>
 	/// The operations that use the whole project: going to the definition of a symbol that is defined in another script or header,
@@ -42,6 +42,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly ParseCoordinator _parser;
 		private readonly IProblemService _problems;
 		private readonly IOutputSink _output;
+		private readonly LiveDiagnosticsService? _diagnostics;
 
 		/// <summary>Initializes the operations.</summary>
 		public CodeIntelligenceOperations(
@@ -52,7 +53,8 @@ namespace FalloutScriptStudio.Workspace
 			ISettingsService settings,
 			ParseCoordinator parser,
 			IProblemService problems,
-			IOutputSink output)
+			IOutputSink output,
+			LiveDiagnosticsService? diagnostics = null)
 		{
 			ArgumentNullException.ThrowIfNull(symbols);
 			ArgumentNullException.ThrowIfNull(toolWindows);
@@ -70,6 +72,7 @@ namespace FalloutScriptStudio.Workspace
 			this._parser = parser;
 			this._problems = problems;
 			this._output = output;
+			this._diagnostics = diagnostics;
 		}
 
 		/// <summary>Shows the "Go to symbol" list and opens the symbol the user chooses.</summary>
@@ -89,6 +92,15 @@ namespace FalloutScriptStudio.Workspace
 			{
 				await this.OpenSymbolAsync(workspace, chosen, chosen.Line);
 			}
+		}
+
+		/// <summary>Shows the list of snippets (Insert Snippet, Surround With) and waits for the choice.</summary>
+		/// <param name="request">The snippets to offer.</param>
+		/// <returns>The chosen snippet, or <see langword="null"/> when the list was cancelled.</returns>
+		public Task<FalloutScriptStudio.Core.Snippets.Snippet?> PickSnippetAsync(SnippetPickerRequest request)
+		{
+			ArgumentNullException.ThrowIfNull(request);
+			return this._toolWindows.PickSnippetAsync(request);
 		}
 
 		/// <summary>
@@ -268,7 +280,7 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			String text = document.TextDocument.Text;
-			TextLineMap map = new TextLineMap(text);
+			TextLineMap map = new(text);
 			if (line < 1 || line > map.LineCount)
 			{
 				return;
@@ -286,6 +298,62 @@ namespace FalloutScriptStudio.Workspace
 			document.TextDocument.ApplyEdits(new[] { edit });
 			this._problems.Remove(problem => problem.Origin == ProblemOrigins.UnusedVariables && ReferenceEquals(problem.Owner, document) && problem.Line == line);
 			await this._parser.ParseAsync(document, true);
+		}
+
+		/// <summary>Applies the quick fix of the finding at a place of a script (the fix of a problem): the script is opened when needed.</summary>
+		/// <param name="workspace">The workspace that opens the script.</param>
+		/// <param name="file">The script.</param>
+		/// <param name="line">The 1-based line of the finding.</param>
+		/// <param name="column">The 1-based column of the finding.</param>
+		/// <returns>A task that completes when the fix was applied.</returns>
+		public async Task ApplyQuickFixAsync(IWorkspaceManager workspace, String file, Int32 line, Int32 column)
+		{
+			ArgumentNullException.ThrowIfNull(workspace);
+			ArgumentException.ThrowIfNullOrEmpty(file);
+
+			DocumentViewModel? document = workspace.FindDocument(file) ?? await workspace.OpenAsync(file);
+			if (document is null)
+			{
+				return;
+			}
+
+			TextLineMap map = new(document.TextDocument.Text);
+			if (line < 1 || line > map.LineCount)
+			{
+				return;
+			}
+
+			await this.ApplyQuickFixAtAsync(workspace, document, map.GetLineStart(line) + Math.Max(column - 1, 0));
+		}
+
+		/// <summary>Applies the quick fix of the finding under an offset of a script: the script is analysed again, so the fix is made for the current text.</summary>
+		/// <param name="workspace">The workspace.</param>
+		/// <param name="document">The script.</param>
+		/// <param name="offset">The offset, usually of the caret.</param>
+		/// <returns><see langword="true"/> when a fix was applied.</returns>
+		public async Task<Boolean> ApplyQuickFixAtAsync(IWorkspace workspace, DocumentViewModel document, Int32 offset)
+		{
+			ArgumentNullException.ThrowIfNull(workspace);
+			ArgumentNullException.ThrowIfNull(document);
+
+			ScriptDiagnostic? diagnostic = null;
+			if (this._diagnostics is not null && document.Kind == DocumentKind.Script)
+			{
+				diagnostic = ScriptDiagnostics.FindAt(this._diagnostics.AnalyzeNow(document), offset, true);
+			}
+
+			IReadOnlyList<TextEdit> edits = diagnostic?.Fix is { } fix ? ScriptQuickFixes.CreateEdits(document.TextDocument.Text, fix) : Array.Empty<TextEdit>();
+			if (diagnostic is null || edits.Count == 0)
+			{
+				workspace.ReportStatus(Loc.Get("Str.Shell.Status.QuickFixNone"));
+				return false;
+			}
+
+			document.TextDocument.ApplyEdits(edits);
+			this._problems.Remove(problem => problem.Origin == ProblemOrigins.LiveDiagnostics && ReferenceEquals(problem.Owner, document) && problem.Line == diagnostic.Line);
+			workspace.ReportStatus(Loc.Format("Str.Shell.Status.QuickFixApplied", ScriptFixText.Describe(diagnostic.Fix!)));
+			await this._parser.ParseAsync(document, true);
+			return true;
 		}
 
 		/// <summary>Extracts the statements selected in a script into a new procedure placed in front of the current one.</summary>
@@ -423,7 +491,7 @@ namespace FalloutScriptStudio.Workspace
 		private async Task<IReadOnlyList<SourceReference>> FindUsesAsync(DocumentViewModel document, ProcedureRemovalPlan plan)
 		{
 			String? file = document.FilePath is null ? null : DocumentPaths.GetFullPath(document.FilePath);
-			List<SourceReference> uses = new List<SourceReference>();
+			List<SourceReference> uses = [];
 			IEnumerable<SymbolOccurrence> occurrences;
 			if (file is null)
 			{
@@ -457,8 +525,8 @@ namespace FalloutScriptStudio.Workspace
 		private async Task ShowReferencesCoreAsync(IWorkspace workspace, String name, IndexedSymbolKind kind, String? definingFile, Boolean allFiles, IReadOnlyList<SourceReference> known)
 		{
 			IReadOnlyList<SourceReference> found = await this._symbols.FindReferencesAsync(name, kind, definingFile, allFiles);
-			List<SourceReference> merged = new List<SourceReference>(known);
-			HashSet<(String File, Int32 Line)> seen = new HashSet<(String File, Int32 Line)>(known.Select(r => (Normalize(r.File), r.Line)));
+			List<SourceReference> merged = new(known);
+			HashSet<(String File, Int32 Line)> seen = new(known.Select(r => (Normalize(r.File), r.Line)));
 			foreach (SourceReference reference in found)
 			{
 				if (seen.Add((Normalize(reference.File), reference.Line)))

@@ -16,9 +16,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public Int32 OpenWindowCount => this.Opened.Count;
 
-		public List<String?> Opened { get; } = new List<String?>();
+		public List<String?> Opened { get; } = [];
 
-		public List<IMessageLineTarget?> Targets { get; } = new List<IMessageLineTarget?>();
+		public List<IMessageLineTarget?> Targets { get; } = [];
 
 		public Boolean Open(String? msgFilePath, IMessageLineTarget? target = null)
 		{
@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			return true;
 		}
 
-		public List<MessageEditorOpenOptions> Options { get; } = new List<MessageEditorOpenOptions>();
+		public List<MessageEditorOpenOptions> Options { get; } = [];
 
 		public Boolean Open(MessageEditorOpenOptions options)
 		{

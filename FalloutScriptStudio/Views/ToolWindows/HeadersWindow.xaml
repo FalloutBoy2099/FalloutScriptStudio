@@ -23,6 +23,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -100,4 +101,5 @@
                 IsDefault="True" />
         </DockPanel>
     </Grid>
+
 </ui:FluentWindow>

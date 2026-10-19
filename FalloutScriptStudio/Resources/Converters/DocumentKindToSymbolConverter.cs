@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Resources.Converters
 	using System;
 	using System.Globalization;
 	using System.Windows.Data;
-	using FalloutScriptStudio.Documents;
 	using Wpf.Ui.Controls;
+	using Documents;
 
 	/// <summary>Maps the kind of a document to the glyph shown on its tab and in the project explorer.</summary>
 	public sealed class DocumentKindToSymbolConverter : IValueConverter

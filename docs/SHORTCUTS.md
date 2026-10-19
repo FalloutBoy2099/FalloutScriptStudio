@@ -30,11 +30,14 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Ctrl+PageUp` | Previous document |
 | `Ctrl+S` | Save |
 | `Ctrl+Shift+F8` | Previous problem |
+| `Ctrl+Shift+H` | Replace in Files... |
+| `Ctrl+Shift+M` | Check Messages |
 | `Ctrl+Shift+S` | Save All |
 | `Ctrl+Shift+Tab` | Previous document |
 | `Ctrl+T` | Go to Symbol... |
 | `Ctrl+Tab` | Next document |
 | `Ctrl+W` | Close |
+| `F1` | Command Palette... |
 | `F3` | Find Next |
 | `F4` | Preprocess |
 | `F5` | Round Trip |
@@ -58,12 +61,16 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Alt+Space` | Show completion list |
 | `Alt+X` | Uncomment text |
 | `Ctrl+*` | Toggle block comment |
+| `Ctrl+.` | Quick Fix |
 | `Ctrl+/` | Toggle comment |
 | `Ctrl+B` | Go to matching bracket |
 | `Ctrl+F12` | Go to declaration |
+| `Ctrl+J` | Insert Snippet... |
 | `Ctrl+Shift+A` | Upper case |
 | `Ctrl+Shift+D` | Delete to end of line |
 | `Ctrl+Shift+E` | Extract Procedure... |
+| `Ctrl+Shift+J` | Surround With... |
+| `Ctrl+Shift+P` | Preview Dialogue From This Node |
 | `Ctrl+Shift+W` | Capitalize |
 | `Ctrl+Shift+Z` | Lower case |
 | `Ctrl+Space` | Show completion list |
@@ -136,6 +143,12 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | --- | --- |
 | `Enter` | Find Next |
 
+## Replace preview window
+
+| Shortcut | Action |
+| --- | --- |
+| `Ctrl+Enter` | Apply |
+
 ## Settings window
 
 | Shortcut | Action |
@@ -207,6 +220,47 @@ These keys are not bindings of a window: the controls themselves handle them. Th
 | Up, Down, Page Up, Page Down | Moves in the list while the filter box has the focus |
 | Enter | Opens the selected symbol in its file, at its line |
 | Esc | Closes the list |
+
+### Command palette (F1)
+
+F1 opens it (Ctrl+Shift+P is taken by Preview Dialogue From This Node in the editor, Ctrl+Shift+A by Upper case).
+
+| Key | Action |
+| --- | --- |
+| Type | Filters every command of the application: a name that starts with the text comes first, then a word that starts with it, then letters in order; the case and the accents are ignored and several words must all match (the menu path counts: `code format`); the commands used last come first |
+| Up, Down, Page Up, Page Down | Moves in the list while the filter box has the focus |
+| Enter | Runs the selected command after the palette closed; a dimmed command (it cannot run now) is not run |
+| Esc | Closes the palette |
+
+### Replace in Files (Ctrl+Shift+H) and its preview
+
+| Key | Action |
+| --- | --- |
+| Ctrl+Shift+H | Opens the search window ready to replace in the files of a folder |
+| Up, Down, Left, Right | Moves in the tree of the preview, expands and collapses a file |
+| Space | Ticks or unticks the selected file (all its replacements) or replacement |
+| Enter, Ctrl+Enter | Replace Selected: makes the ticked replacements only |
+| Esc | Closes the preview without replacing |
+
+### Snippets (editor) and their list
+
+| Key | Action |
+| --- | --- |
+| Tab after a trigger word | Expands the snippet (outside comments and strings; the words of the block completion such as `if` and `proc` keep their own Tab behaviour); the first tab stop is selected |
+| Tab, Shift+Tab | Next and previous tab stop while a snippet is being filled in; after the last stop the caret goes to the final position (`$0`) |
+| Typing in a stop | Updates the mirrors of the stop |
+| Esc | Leaves snippet mode (the text stays) |
+| Ctrl+J | Insert Snippet: opens the list of snippets |
+| Ctrl+Shift+J | Surround With: opens the list of the snippets that use the selected text |
+| Type, Up, Down, Page Up, Page Down, Enter, Esc | In the list: filters by trigger or description, moves while the filter box has the focus, inserts the selected snippet, closes |
+
+### Format Project (Code menu) and the snippet manager
+
+| Key | Action |
+| --- | --- |
+| Space | Ticks or unticks the selected file of the preview |
+| Esc | Closes the window (a running preview or formatting is cancelled first) |
+| Enter | In the snippet manager the default button saves the snippets; Esc asks before dropping the changes |
 
 ### Message grid
 

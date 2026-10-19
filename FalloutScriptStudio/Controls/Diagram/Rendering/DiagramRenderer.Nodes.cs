@@ -1,13 +1,10 @@
 namespace FalloutScriptStudio.Controls.Diagram.Rendering
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
-	using FalloutScriptStudio.Localization;
+	using Model;
+	using Localization;
 
 	/// <summary>Drawing of nodes (header, rows, links grips) and notes.</summary>
 	internal sealed partial class DiagramRenderer
@@ -30,7 +27,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 			Pen border = selected ? palette.AccentPen : (hovered && node.Kind == DiagramNodeKind.Default ? palette.NodeStrokeHover : palette.GetKindPen(node.Kind));
 			Double inset = border.Thickness / 2.0;
-			Rect body = new Rect(inset, inset, Math.Max(0.0, w - (2.0 * inset)), Math.Max(0.0, h - (2.0 * inset)));
+			Rect body = new(inset, inset, Math.Max(0.0, w - (2.0 * inset)), Math.Max(0.0, h - (2.0 * inset)));
 			dc.DrawRoundedRectangle(palette.NodeFill, null, body, r, r);
 
 			dc.PushClip(FrozenRoundedRect(new Rect(0, 0, w, h), r));
@@ -49,7 +46,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			{
 				if (!this._contentCache.TryGetValue(node, out Drawing? content))
 				{
-					DrawingGroup group = new DrawingGroup();
+					DrawingGroup group = new();
 					using (DrawingContext contentContext = group.Open())
 					{
 						this.DrawNodeContent(contentContext, node, layout, DiagramHitTestResult.Nothing, false);
@@ -239,7 +236,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 			Pen border = selected ? palette.AccentPen : palette.NoteStroke;
 			Double inset = border.Thickness / 2.0;
-			Rect body = new Rect(inset, inset, Math.Max(0.0, w - (2.0 * inset)), Math.Max(0.0, h - (2.0 * inset)));
+			Rect body = new(inset, inset, Math.Max(0.0, w - (2.0 * inset)), Math.Max(0.0, h - (2.0 * inset)));
 			dc.DrawRoundedRectangle(palette.NoteFill, null, body, r, r);
 			if (selected)
 			{

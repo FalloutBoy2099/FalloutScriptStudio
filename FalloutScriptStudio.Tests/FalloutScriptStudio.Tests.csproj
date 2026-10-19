@@ -10,14 +10,17 @@
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
 		<NoWarn>$(NoWarn);WPF0001</NoWarn>
-		<AssemblyVersion>2026.10.12.3</AssemblyVersion>
-		<FileVersion>2026.10.12.3</FileVersion>
+		<AssemblyVersion>2026.10.19.7</AssemblyVersion>
+		<FileVersion>2026.10.19.7</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
 		<PackageReference Include="xunit" />
-		<PackageReference Include="xunit.runner.visualstudio" />
+		<PackageReference Include="xunit.runner.visualstudio">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -30,4 +33,3 @@
 	</ItemGroup>
 
 </Project>
-

@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Views.Shell
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.Main;
+	using ViewModels.Main;
 
 	/// <summary>The quick find / replace bar.</summary>
 	public partial class SearchBarView : UserControl

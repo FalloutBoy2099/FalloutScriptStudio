@@ -8,10 +8,10 @@ namespace FalloutScriptStudio.Core.Compilation
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Decompilation;
-	using FalloutScriptStudio.Core.IO;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Decompilation;
+	using IO;
 
 	/// <summary>
 	/// <see cref="IScriptCompiler"/> implementation that drives <c>compile.exe</c> (sslc), the external preprocessors,
@@ -79,7 +79,7 @@ namespace FalloutScriptStudio.Core.Compilation
 			String sourceFile = Path.GetFullPath(request.ScriptPath);
 			String sourceDirectory = Path.GetDirectoryName(sourceFile) ?? String.Empty;
 			StringBuilder output = new StringBuilder();
-			List<ToolFailure> toolFailures = new List<ToolFailure>();
+			List<ToolFailure> toolFailures = [];
 
 			if (!request.Batch)
 			{

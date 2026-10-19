@@ -197,7 +197,7 @@ namespace FalloutScriptStudio.Core.Tests.Analysis
 		public void Find_WordsOfTheIncludedMacrosCountAsUses()
 		{
 			String text = Ssl.Crlf("procedure start begin", "\tvariable counter, other;", "\tHEADER_MACRO;", "end");
-			HashSet<String> words = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { "COUNTER" };
+			HashSet<String> words = new(StringComparer.OrdinalIgnoreCase) { "COUNTER" };
 
 			UnusedVariable variable = Assert.Single(Find(text, new UnusedVariableOptions { IsMacroWord = words.Contains }));
 

@@ -49,6 +49,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				Key.OemPlus or Key.Add => "+",
 				Key.OemMinus or Key.Subtract => "-",
 				Key.OemQuestion or Key.Divide => "/",
+				Key.OemPeriod => ".",
 				Key.Multiply => "*",
 				Key.Cancel => "Break",
 				>= Key.D0 and <= Key.D9 => ((Int32)(key - Key.D0)).ToString(System.Globalization.CultureInfo.InvariantCulture),
@@ -58,7 +59,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 		private static String Normalize(ModifierKeys modifiers, Key key)
 		{
-			List<String> parts = new List<String>();
+			List<String> parts = [];
 			if (modifiers.HasFlag(ModifierKeys.Control))
 			{
 				parts.Add("Ctrl");
@@ -110,7 +111,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		{
 			return UiThread.Run(() =>
 			{
-				HashSet<String> gestures = new HashSet<String>(StringComparer.Ordinal);
+				HashSet<String> gestures = new(StringComparer.Ordinal);
 				IEnumerable<System.Windows.Input.RoutedUICommand> commands = EditorCommands.All.Select(pair => pair.Value)
 					.Concat(new[] { EditorCommands.NavigateBack, EditorCommands.NavigateForward });
 				foreach (System.Windows.Input.RoutedUICommand command in commands)
@@ -132,7 +133,7 @@ namespace FalloutScriptStudio.Tests.Shell
 			HashSet<String> bound = CollectBoundGestures(window);
 			bound.UnionWith(CollectEditorGestures());
 
-			List<String> unbound = new List<String>();
+			List<String> unbound = [];
 			foreach (XElement item in window.Descendants(_presentation + "MenuItem"))
 			{
 				String? shown = (String?)item.Attribute("InputGestureText");

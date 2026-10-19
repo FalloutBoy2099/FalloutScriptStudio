@@ -6,8 +6,8 @@ namespace FalloutScriptStudio.Views.Shell
 	using System.Windows.Controls;
 	using System.Windows.Data;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.Main;
 	using Wpf.Ui.Controls;
+	using ViewModels.Main;
 
 	/// <summary>The output panel with the Parser, Build and Errors tabs.</summary>
 	public partial class OutputPanelView : UserControl

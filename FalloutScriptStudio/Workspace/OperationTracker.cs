@@ -25,7 +25,7 @@ namespace FalloutScriptStudio.Workspace
 				return null;
 			}
 
-			Operation operation = new Operation(this, new OperationInfo(kind, subject ?? String.Empty, 0, Math.Max(0, total), false));
+			Operation operation = new(this, new OperationInfo(kind, subject ?? String.Empty, 0, Math.Max(0, total), false));
 			this._current = operation;
 			this.Changed?.Invoke(this, EventArgs.Empty);
 			return operation;
@@ -57,7 +57,7 @@ namespace FalloutScriptStudio.Workspace
 		private sealed class Operation : IOperation
 		{
 			private readonly OperationTracker _owner;
-			private readonly CancellationTokenSource _source = new CancellationTokenSource();
+			private readonly CancellationTokenSource _source = new();
 			private Boolean _disposed;
 
 			public Operation(OperationTracker owner, OperationInfo info)
@@ -70,14 +70,14 @@ namespace FalloutScriptStudio.Workspace
 
 			public CancellationToken Token => this._source.Token;
 
-			public void Report(String subject, Int32 index = 0, Int32 total = 0)
+			public void Report(String subject, Int32 index = 0, Int32 total = 0, Int32 upToDate = 0)
 			{
 				if (this._disposed)
 				{
 					return;
 				}
 
-				this.Info = this.Info with { Subject = subject ?? String.Empty, Index = index, Total = total > 0 ? total : this.Info.Total };
+				this.Info = this.Info with { Subject = subject ?? String.Empty, Index = index, Total = total > 0 ? total : this.Info.Total, UpToDate = Math.Max(0, upToDate) };
 				this._owner.Update(this);
 			}
 

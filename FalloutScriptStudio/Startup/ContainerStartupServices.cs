@@ -2,12 +2,12 @@ namespace FalloutScriptStudio.Startup
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Core.Functions;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Workspace;
 	using Microsoft.Extensions.DependencyInjection;
+	using Core.Configuration;
+	using Core.Dialogue;
+	using Core.Functions;
+	using Services;
+	using Workspace;
 
 	/// <summary>The start-up services taken from the container of the application; disposing it disposes the container and with it the singletons.</summary>
 	public sealed class ContainerStartupServices : IStartupServices

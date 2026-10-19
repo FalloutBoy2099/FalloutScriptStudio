@@ -21,7 +21,7 @@ namespace FalloutScriptStudio.Views.ToolWindows
 
 		private static ComboBoxItem CreateItem(String resourceKey)
 		{
-			ComboBoxItem item = new ComboBoxItem();
+			ComboBoxItem item = new();
 			item.SetResourceReference(ContentControl.ContentProperty, resourceKey);
 			return item;
 		}

@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// Locates <c>scripts.lst</c>, <c>scrname.msg</c> and <c>scripts.h</c> from the configured folders.
@@ -26,7 +26,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 		/// <returns>The paths (when the list exists) and the problems.</returns>
 		public static ScriptRegistryPathResult Resolve(String? outputDirectory, String? scriptsHeaderFile, String language, String? scriptsListFile = null)
 		{
-			List<ScriptRegistryProblem> problems = new List<ScriptRegistryProblem>();
+			List<ScriptRegistryProblem> problems = [];
 			String? scriptsDirectory = String.IsNullOrWhiteSpace(scriptsListFile) ? outputDirectory : Path.GetDirectoryName(scriptsListFile);
 			if (String.IsNullOrEmpty(scriptsDirectory))
 			{

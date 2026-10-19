@@ -1,11 +1,12 @@
 namespace FalloutScriptStudio.Services.ScriptTools
 {
 	using System;
-	using FalloutScriptStudio.Services.ScriptTools.Registration;
-	using FalloutScriptStudio.Services.ScriptTools.Search;
-	using FalloutScriptStudio.ViewModels.ScriptTools;
-	using FalloutScriptStudio.Views.ScriptTools;
 	using Microsoft.Extensions.DependencyInjection;
+	using Registration;
+	using Replace;
+	using Search;
+	using ViewModels.ScriptTools;
+	using Views.ScriptTools;
 
 	/// <summary>
 	/// Registers the script tool windows.
@@ -27,6 +28,10 @@ namespace FalloutScriptStudio.Services.ScriptTools
 			services.AddSingleton<IScriptToolService, ScriptToolService>();
 			services.AddSingleton<ScriptRegistryStore>();
 			services.AddSingleton<ScriptSearcher>();
+			services.AddSingleton<ReplaceInFilesPlanner>();
+			services.AddSingleton<ReplaceInFilesApplier>();
+			services.AddSingleton<IReplacePreviewPresenter, ReplacePreviewPresenter>();
+			services.AddSingleton<IReplaceInFilesService, ReplaceInFilesService>();
 
 			services.AddTransient<ProcedureNameViewModel>();
 			services.AddTransient<ProcedureNameWindow>();
@@ -34,6 +39,8 @@ namespace FalloutScriptStudio.Services.ScriptTools
 			services.AddTransient<RegisterScriptWindow>();
 			services.AddTransient<AdvancedSearchViewModel>();
 			services.AddTransient<AdvancedSearchWindow>();
+			services.AddTransient<ReplacePreviewViewModel>();
+			services.AddTransient<ReplacePreviewWindow>();
 			return services;
 		}
 	}

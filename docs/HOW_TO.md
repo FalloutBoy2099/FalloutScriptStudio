@@ -14,6 +14,7 @@ repository root) and the tests to update or add. The rules in [CONVENTIONS.md](C
 * [7. A test file under `_test_files`](#7-a-test-file-under-_test_files)
 * [8. A parser or compiler option](#8-a-parser-or-compiler-option)
 * [9. Publishing](#9-publishing)
+* [10. A rule of the semantic diagnostics](#10-a-rule-of-the-semantic-diagnostics)
 
 The guides refer to each other by these numbers.
 
@@ -76,10 +77,11 @@ guide 6 and come back for the menu item. This guide is the shell command.
 
    Write the modifiers in the order Ctrl, Alt, Shift in both places, and several gestures of one item as `"Ctrl+Space / Alt+Space"`
    (`MainWindowGestureTests` compares the normalized text). Special keys are compared as: `OemPlus`/`Add` = `+`, `OemMinus`/`Subtract` = `-`,
-   `OemQuestion`/`Divide` = `/`, `Multiply` = `*`, `Cancel` = `Break`, `D0`..`D9` = the digit. Check by hand that the gesture is not
+   `OemQuestion`/`Divide` = `/`, `OemPeriod` = `.`, `Multiply` = `*`, `Cancel` = `Break`, `D0`..`D9` = the digit. Check by hand that the gesture is not
    already used by an editor command (`FalloutScriptStudio\Editor\EditorCommands.cs`) or by AvalonEdit: no test compares the two.
 4. **Localization.** Add `Str.Shell.Menu.Foo` (and `Str.Shell.Tip.Foo`) to `Shell.en.xaml` and the ten other `Shell.<lang>.xaml`
    files (guide 4).
+4b. **Command palette.** Add the menu item to `CommandCatalog.BuildDefinitions` (`FalloutScriptStudio\Commands\CommandCatalog.cs`): the menu it is in (`MenuFile`...), the key of its header, the command property (`"FooCommand"`, or `Command(...)` / `Edit(...)` / `Toggle(...)` for a command, an editor command, a check item) and when it is enabled (`CommandRequirement`: the same as its style or `IsEnabled`). A command that has a key binding but no menu item goes to `BuildExtraDefinitions`. `CommandCatalogTests` fail when the table and `MainWindow.xaml` differ, and tell which menu item is missing.
 5. **Shortcuts help.** There is no shortcuts window or help page to update. The shortcuts are listed in the menu (`InputGestureText`)
    and, for the problem and cancel keys, in `docs\ARCHITECTURE.md` (`ProblemShortcutTests.The_shortcuts_are_documented` requires
    `Ctrl+F8`, `Ctrl+Shift+F8` and `Ctrl+Break` to stay there). Add a line to `README.md` or `docs\ARCHITECTURE.md` only for a shortcut
@@ -415,6 +417,10 @@ The chain for an option, traced on `ShortCircuit` (grep it to see every hop):
       project settings by itself (`SettingsViewModel.ProjectOverrides.cs`). An option without a global control only needs the first part.
    6. `ProjectSettingsFile` (read / write, unknown properties kept) needs no change; the file is watched and reloaded by itself
       (`ProjectFileWatcher`), a new property needs nothing for that.
+   7. An option that is also part of a compile profile (optimization, short-circuit, backward compatibility, debug information, the
+      definition): add it to `CompileProfile` (`ApplyTo`, `Normalize` when it needs repair), to `CompileProfileItem` and
+      `CompileProfilesEditor.xaml`, and, if it changes what the compiler produces, to `BuildFingerprint.Create` (otherwise the scripts built
+      with another value stay "up to date"; `StalenessMatrixTests.Option_changes_make_the_script_stale` lists the options that count).
 7. **Interfaces.** A new member of `ISettingsService` also goes to `SettingsService` and the three test fakes (guide 2).
 
 Tests:
@@ -483,3 +489,62 @@ To change what is shipped:
 
 Verify a publish: run `.\Publish.ps1`, check the three `.exe` files and the two folders in `publish\`, then start each editor
 executable and open a script (the parser status in the status bar says "Built-in parser" only if `resources\parser.dll` was removed).
+
+## 10. A rule of the semantic diagnostics
+
+`ScriptDiagnostics` (`FalloutScriptStudio.Core\Analysis`) finds the mistakes that `sslc` only reports at compile time (see
+[ARCHITECTURE.md](ARCHITECTURE.md), "Semantic diagnostics"). A new rule must be right about the real compiler: it reports a script
+**exactly when `compile.exe` rejects it for that reason**, and nothing it reports as an error may compile.
+
+1. **Find out what the compiler does.** Compile small scripts with `_test_files\tools\compile.exe` (`compile.exe -q -l -O1 -p t.ssl -o t.int`) and note
+   which are accepted and which rejected, and the message. Do not trust the documentation or the grammar you remember: the scope of a
+   local is the procedure (not the block), a `procedure x;` of a standard handler fails even when unused...
+2. **Code.** Add the rule to `ScriptDiagnosticCodes` (`SSL1xxx` for what sslc enforces, `SSL2xxx` for a comparison with `opcodes.txt` /
+   `functions.ini`, which is never more than a warning) and to its `All` list; report it from the pass that has the facts
+   (`ScriptAnalyzer.Outline.cs` for declarations and structure, `.Bodies.cs` / `.Names.cs` for names and calls, `.Finish.cs` for what needs the
+   whole outline). Whatever the analysis cannot be sure of must make it quiet, not wrong: use `IsUnreliable` (headers not read, macros that
+   declare), `_structuralMacroUsed`, the condition frames (declarations in different branches of an `#if` are not duplicates) and
+   `softenInConditional`. An optional `ScriptQuickFix` carries the id, the argument and the place; the edits are built from the **current** text
+   in `ScriptQuickFixes.CreateEdits` (add the id there and a label in `ScriptFixText.Describe`).
+3. **Texts.** `Str.Editor.Diag.<Name>` (the message, arguments are the strings the analysis passes) and `Str.Editor.Diag.<Name>Hint`, in the
+   11 `Editor.<lang>.xaml` files (guide 4); the glossary applies. `ScriptDiagnosticProblemTests` checks the keys of every rule in every language.
+4. **Tests.** Add cases to `FalloutScriptStudio.Core.Tests\Support\ScriptDiagnosticCases.cs`: one script the compiler rejects (`Rejected("SSLxxxx", ...)`)
+   and, for each way the rule could be wrong, one it accepts (`Accepted(...)`). `ScriptDiagnosticTableTests` checks the analysis with CRLF and
+   LF without the compiler, `RealScriptDiagnosticsTests*` compile every case with the real `compile.exe` and compare the verdict with the table
+   (skipped when the tool is absent). Rules of the engine functions are checked against the compiler by `RealFunctionCatalogTests`. Run the
+   analysis over the sample scripts (`RealFunctionCatalogTests.No_script_of_the_FO2tweaksMk2_sample...`) and the generated 20 000 line
+   script (`DiagnosticsPerformanceTests`): neither may get an error.
+
+## 11. A formatting option
+
+The formatter (`FalloutScriptStudio.Core\Formatting`, see [ARCHITECTURE.md](ARCHITECTURE.md), "Code formatting") must keep three promises: the **default options give the
+text the original formatter gave**, **only white space changes**, and **formatting twice is formatting once**.
+
+1. **Model.** Add the property to `FormatOptions` (with its default = what the original formatter did, its range in `Normalize()` and, if it needs the structure
+   of the script, in `IsStructural`), to `FormatSettings` (property, `CopyFrom`, `Normalize`, `ToOptions`) and to the copy in `SettingsOptionMutator`
+   (`FalloutScriptStudio.Tests\ToolWindows`) so that the "every option is copied" tests see it. The project file needs nothing else: `ProjectSettings.Formatting`
+   is the whole style.
+2. **Pass.** Put the rule in the pass that owns it (`SpacingPass`, `PlacementPass`, `IndentPass`, `WrapPass`, `BlankLinePass`...) or add a pass to `FormatPipeline` in
+   the position that keeps the result stable. Work on the tokens of `FormatLexer`/`FormatLine` so that strings, comments and the preprocessor lines that must stay
+   verbatim are never touched; keep the line breaks of the text.
+3. **Tests** (`FalloutScriptStudio.Core.Tests\Formatting`): a before / after case in `FormatOptionTests` for every value of the option, an option set in
+   `FormatSamples.Sets` (the stability tests, the generated scripts of `FormatPerformanceTests` and the compiler tests `FormatCompilerTests` run on every set: the
+   compiled sample must not change). Run them all; fix the pass, never the test oracle.
+4. **Settings window.** A row in `FormattingOptionsEditor.xaml` (a `SettingCard` with a toggle, a combo of `Choice<T>` or a number box), the property on
+   `FormattingEditorViewModel` (it writes the style and refreshes the preview), the texts `Str.ToolWindows.Fmt.<Name>.Title` / `.Desc` (and `Str.ToolWindows.Fmt.Choice.*`
+   for the values) in the 11 files of `ToolWindows` (guide 4, glossary applies), then XamlStyler (guide 0). The project settings window shows the same user
+   control, so it needs nothing more.
+
+## 12. A built-in snippet, a snippet variable or a part of the snippet UI
+
+* **A built-in snippet.** Add it to `BuiltInSnippets` (trigger, a key for the description, the body) and the description `Str.Editor.Snippet.<Key>` to the 11 `Editor`
+  string files. The trigger must not be a word of the block completion (`SnippetValidator.IsReserved`; a test checks all of them). Check the body with
+  `SnippetTemplate.Parse(body).Problems` (a test does it for every built-in snippet).
+* **A variable.** Add the name to `SnippetVariables.All`, its value to `SnippetContext` (a property the editor fills in `SnippetController.CreateContext`) and its
+  expansion to `SnippetExpander`; test it in `SnippetExpanderTests` (a body with the variable and without a value, with CRLF and LF) and document it in the help text
+  `Str.ToolWindows.Snippets.SyntaxHelp` of every language. A variable name the parser does not know is reported by the manager as a mistake of the body.
+* **Editor behaviour.** Test it with the invisible harness (`EditorSnippetTests`: `EditorTestEnvironment`, `HiddenEditorPopups`; the user's snippets are written with
+  `env.Services.Snippets.TrySave`, the project's by opening a project folder of `_test_files\work`; the answer of the Insert Snippet list is
+  `env.Recorder.SnippetAnswer`). Keys are sent as routed events (`HwndSource` without a window) or with `MoveToNextStop`; never open a real popup.
+* **The manager and the list.** View-model tests use `FakeSnippetService` (in memory) and `FakeDialogService`; a window is only built by the accessibility tests
+  (`RuntimeAccessibilityTests`) and never shown.

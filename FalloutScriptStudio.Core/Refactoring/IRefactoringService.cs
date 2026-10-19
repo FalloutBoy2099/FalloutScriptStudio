@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Renames procedures, variables and macros (legacy <c>Refactor</c>). The service never touches a document or a file and

@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		public const Int32 MinRememberedLine = 10;
 
 		/// <summary>Gets the stored lines by script file name (compared ignoring case).</summary>
-		public Dictionary<String, Int32> Lines { get; } = new Dictionary<String, Int32>(StringComparer.OrdinalIgnoreCase);
+		public Dictionary<String, Int32> Lines { get; } = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// Remembers the caret line of a script. Lines near the top of the file are ignored.

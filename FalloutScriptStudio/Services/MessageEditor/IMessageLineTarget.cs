@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Services.MessageEditor
 {
 	using System;
-	using FalloutScriptStudio.Core.Messages;
+	using Core.Messages;
 
 	/// <summary>
 	/// What the Message Editor needs from the part of the application that opened it, usually the script editor tab

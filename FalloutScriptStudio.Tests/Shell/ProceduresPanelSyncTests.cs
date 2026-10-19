@@ -59,7 +59,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				ProcedureNodeViewModel start = Node(harness, "start");
 				ProcedureNodeViewModel helper = Node(harness, "helper");
 				Int32 line = helper.Procedure.StartLine;
-				List<String> changes = new List<String>();
+				List<String> changes = [];
 				helper.PropertyChanged += (_, e) => changes.Add(e.PropertyName ?? String.Empty);
 
 				document.TextDocument.Insert(0, "// a\r\n// b\r\n");
@@ -191,7 +191,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				(ShellHarness harness, DocumentViewModel document) = await CreateAsync();
 				using ShellHarness _h = harness;
 				TreeGroupNodeViewModel local = Local(harness);
-				List<String> changes = new List<String>();
+				List<String> changes = [];
 				local.PropertyChanged += (_, e) => changes.Add(e.PropertyName ?? String.Empty);
 
 				document.TextDocument.Text = "// nothing\r\n";

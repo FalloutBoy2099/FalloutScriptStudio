@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.Tests.Diagram
 	{
 		private static List<DiagramNode> CreateNodes()
 		{
-			List<DiagramNode> nodes = new List<DiagramNode>();
+			List<DiagramNode> nodes = [];
 			for (Int32 i = 0; i < 12; i++)
 			{
 				DiagramNode node = new DiagramNode("node" + i.ToString("D3", System.Globalization.CultureInfo.InvariantCulture)) { X = 30 + ((i % 4) * 330), Y = 30 + ((i / 4) * 250) };

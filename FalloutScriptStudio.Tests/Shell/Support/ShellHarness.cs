@@ -58,7 +58,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Catalog = new FunctionCatalogService(
 				new FunctionCatalogPaths(Path.Combine(this.Paths.DescriptionsDirectory, "functions.ini"), Path.Combine(this.Paths.DescriptionsDirectory, "userfunctions.ini")));
 			this.Catalog.LoadAsync().GetAwaiter().GetResult();
-			this.Workspace = WorkspaceServiceFactory.Create(this.Settings, this.Coordinator, this.Compiler, new FakeArchiveExtractor(), this.Dialogs, this.Output, this.MessageEditor, this.ScriptTools, this.DialogueDialogs, this.Problems, this.Operations);
+			this.MessageConsistency = new MessageConsistencyService(this.Settings, new MessageFileService(NullLogger<MessageFileService>.Instance), new FixedDialogueRules(), this.Problems, TimeSpan.FromMilliseconds(40));
+			this.Workspace = WorkspaceServiceFactory.Create(this.Settings, this.Coordinator, this.Compiler, new FakeArchiveExtractor(), this.Dialogs, this.Output, this.MessageEditor, this.ScriptTools, this.DialogueDialogs, this.Problems, this.Operations, null, null, this.MessageConsistency);
 			this.Build = new BuildCoordinator(this.Settings, this.Compiler, new FakeBatchCompileService(), this.Workspace, this.Coordinator, this.Dialogs, this.Output, this.Notifications, this.Sounds, this.ToolWindows, this.Operations, this.Problems);
 			this.Tracker = new ActiveEditorTracker(this.Workspace);
 			this.Search = new SearchBarViewModel(this.Workspace, this.Settings, this.Sounds, new TextSearcher());
@@ -137,6 +138,8 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public WorkspaceService Workspace { get; }
 
+		public MessageConsistencyService MessageConsistency { get; }
+
 		public BuildCoordinator Build { get; }
 
 		public ActiveEditorTracker Tracker { get; }
@@ -174,6 +177,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public void Dispose()
 		{
+			this.MessageConsistency.Dispose();
 			this.Projects.Dispose();
 			this.Tracker.Dispose();
 			this.Folder.Dispose();

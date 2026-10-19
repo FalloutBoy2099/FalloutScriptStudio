@@ -10,7 +10,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	/// <summary>Tracks the "open" node editors without any window.</summary>
 	internal sealed class FakeNodeCodeEditorService : INodeCodeEditorService
 	{
-		private readonly List<String> _open = new List<String>();
+		private readonly List<String> _open = [];
 
 		public event EventHandler<NodeEditorEventArgs>? EditorsChanged;
 
@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 
 		public Int32 CloseAllCount { get; private set; }
 
-		public List<(String Node, Boolean FromFlowchart)> Opened { get; } = new List<(String Node, Boolean FromFlowchart)>();
+		public List<(String Node, Boolean FromFlowchart)> Opened { get; } = [];
 
 		public Boolean IsEditing(DocumentViewModel script, String nodeName)
 		{

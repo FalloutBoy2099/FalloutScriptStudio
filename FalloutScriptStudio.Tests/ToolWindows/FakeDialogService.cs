@@ -11,11 +11,16 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public Queue<String?> FileAnswers { get; } = new Queue<String?>();
 
-		public List<String> Errors { get; } = new List<String>();
+		public Queue<String?> SaveAnswers { get; } = new Queue<String?>();
 
-		public List<String> Infos { get; } = new List<String>();
+		public List<String> Errors { get; } = [];
+
+		public List<String> Infos { get; } = [];
 
 		public Boolean ConfirmAnswer { get; set; } = true;
+
+		/// <summary>Gets how many times a confirmation was asked.</summary>
+		public Int32 ConfirmCount { get; private set; }
 
 		public String? LastFolderInitialDirectory { get; private set; }
 
@@ -38,6 +43,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public Task<Boolean> ConfirmAsync(String title, String message, String yesText = "Yes", String noText = "No")
 		{
+			this.ConfirmCount++;
 			return Task.FromResult(this.ConfirmAnswer);
 		}
 
@@ -63,7 +69,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public String? PickSaveFile(String title, String filter, String? initialDirectory = null, String? fileName = null)
 		{
-			return null;
+			return this.SaveAnswers.Count > 0 ? this.SaveAnswers.Dequeue() : null;
 		}
 
 		public String? PickFolder(String title, String? initialDirectory = null)

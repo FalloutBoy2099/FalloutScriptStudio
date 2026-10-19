@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.TextTools
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Comment / uncomment lines and toggle block comments (legacy <c>Utilities.CommentText</c>, <c>UnCommentText</c> and the

@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Core.Parsing
 	/// </summary>
 	public sealed class InMemoryCollapsedProcedureStore : ICollapsedProcedureStore
 	{
-		private readonly Dictionary<String, HashSet<String>> _scripts = new Dictionary<String, HashSet<String>>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<String, HashSet<String>> _scripts = new(StringComparer.OrdinalIgnoreCase);
 		private readonly Object _gate = new Object();
 
 		/// <inheritdoc />
@@ -30,7 +30,7 @@ namespace FalloutScriptStudio.Core.Parsing
 				{
 					if (!this._scripts.TryGetValue(scriptName, out HashSet<String>? procedures))
 					{
-						procedures = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+						procedures = new(StringComparer.OrdinalIgnoreCase);
 						this._scripts.Add(scriptName, procedures);
 					}
 

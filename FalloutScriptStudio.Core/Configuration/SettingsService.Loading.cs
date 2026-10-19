@@ -105,8 +105,8 @@ namespace FalloutScriptStudio.Core.Configuration
 				return legacy;
 			}
 
-			HashSet<String> unreadable = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
-			HashSet<String> loadedFromFile = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> unreadable = new(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> loadedFromFile = new(StringComparer.OrdinalIgnoreCase);
 
 			T ResolveFile<T>(FileRead read, String path, Func<T?> fromLegacy)
 				where T : class, new()
@@ -130,20 +130,20 @@ namespace FalloutScriptStudio.Core.Configuration
 			settings.Normalize();
 
 			RecentFiles recent = ResolveFile(raw.Recent, this.Paths.RecentFilesFile, () => GetLegacy()?.Recent);
-			recent.Scripts ??= new List<String>();
-			recent.Messages ??= new List<String>();
-			recent.Projects ??= new List<String>();
-			recent.ProjectSessions ??= new List<ProjectSession>();
+			recent.Scripts ??= [];
+			recent.Messages ??= [];
+			recent.Projects ??= [];
+			recent.ProjectSessions ??= [];
 
 			ScriptPositions positions = ResolveFile(raw.Positions, this.Paths.ScriptPositionsFile, () => GetLegacy()?.Positions);
 			FoldedProcedures folding = ResolveFile(raw.Folding, this.Paths.FoldingFile, () => GetLegacy()?.Folding);
 
 			SearchHistory history = ResolveFile(raw.SearchHistory, this.Paths.SearchHistoryFile, () => GetLegacy()?.SearchHistory);
-			history.Queries ??= new List<String>();
-			history.Directories ??= new List<String>();
+			history.Queries ??= [];
+			history.Directories ??= [];
 
 			PreprocessorDefines defines = ResolveFile(raw.Defines, this.Paths.PreprocessorDefinesFile, () => GetLegacy()?.Defines);
-			defines.Items ??= new List<String>();
+			defines.Items ??= [];
 			defines.Sanitize();
 
 			this.Settings = settings;

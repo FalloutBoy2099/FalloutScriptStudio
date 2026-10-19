@@ -52,7 +52,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		public Boolean IsFlowchart => !this.IsDirectory && String.Equals(Path.GetExtension(this.FullPath), ".fcd", StringComparison.OrdinalIgnoreCase);
 
 		/// <summary>Gets the child nodes of a folder.</summary>
-		public ObservableCollection<ProjectNodeViewModel> Children { get; } = new ObservableCollection<ProjectNodeViewModel>();
+		public ObservableCollection<ProjectNodeViewModel> Children { get; } = [];
 
 		/// <summary>True when the folder is expanded.</summary>
 		[ObservableProperty]

@@ -69,12 +69,17 @@ namespace FalloutScriptStudio.ViewModels.Main
 			return info.Kind switch
 			{
 				OperationKind.Compile => Loc.Format("Str.Shell.Operation.Compile", info.Subject),
-				OperationKind.CompileAll => Loc.Format("Str.Shell.Operation.CompileCounted", info.Subject.Length > 0 ? info.Subject : "...", info.Index, info.Total),
+				OperationKind.CompileAll => info.UpToDate > 0
+					? Loc.Format("Str.Shell.Operation.CompileCountedUpToDate", info.Subject.Length > 0 ? info.Subject : "...", info.Index, info.Total, info.UpToDate)
+					: Loc.Format("Str.Shell.Operation.CompileCounted", info.Subject.Length > 0 ? info.Subject : "...", info.Index, info.Total),
 				OperationKind.Preprocess => Loc.Format("Str.Shell.Operation.Preprocess", info.Subject),
 				OperationKind.RoundTrip => Loc.Format("Str.Shell.Operation.RoundTrip", info.Subject),
 				OperationKind.MassCompile => counted
-					? Loc.Format("Str.Shell.Operation.MassCompileCounted", info.Subject, info.Index, info.Total)
+					? Loc.Format(info.UpToDate > 0 ? "Str.Shell.Operation.MassCompileCountedUpToDate" : "Str.Shell.Operation.MassCompileCounted", info.Subject, info.Index, info.Total, info.UpToDate)
 					: Loc.Get("Str.Shell.Operation.MassCompile"),
+				OperationKind.FormatProject => counted
+					? Loc.Format("Str.Shell.Operation.FormatCounted", info.Subject, info.Index, info.Total)
+					: Loc.Get("Str.Shell.Operation.Format"),
 				_ => Loc.Format("Str.Shell.Operation.Decompile", info.Subject),
 			};
 		}
@@ -114,6 +119,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.CompileCommand.NotifyCanExecuteChanged();
 			this.CompileAllOpenCommand.NotifyCanExecuteChanged();
 			this.MassCompileCommand.NotifyCanExecuteChanged();
+			this.BuildChangedCommand.NotifyCanExecuteChanged();
+			this.RebuildAllCommand.NotifyCanExecuteChanged();
 			this.PreprocessCommand.NotifyCanExecuteChanged();
 			this.RoundTripCommand.NotifyCanExecuteChanged();
 			this.CancelOperationCommand.NotifyCanExecuteChanged();

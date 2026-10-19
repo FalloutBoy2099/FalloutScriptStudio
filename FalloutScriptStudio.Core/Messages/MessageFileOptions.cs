@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Core.Messages
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// Immutable options that control where message files are looked for and how they are encoded.

@@ -4,12 +4,11 @@ namespace FalloutScriptStudio.Workspace
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
+	using Core.Compilation;
+	using Core.Parsing;
+	using Documents;
+	using Localization;
+	using Problems;
 
 	/// <summary>Going to positions, opening includes and showing references and search results.</summary>
 	public sealed partial class WorkspaceService

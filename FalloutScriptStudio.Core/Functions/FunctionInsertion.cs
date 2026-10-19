@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Functions
 {
 	using System;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>
 	/// The text inserted into the editor when a function of the tree is clicked (legacy <c>FunctionsTree_NodeMouseClick</c>).

@@ -16,5 +16,8 @@ namespace FalloutScriptStudio.Core.Parsing
 
 		/// <summary>A <c>#define</c> macro.</summary>
 		Macro,
+
+		/// <summary>A snippet: the entry is its trigger and the description is what it inserts.</summary>
+		Snippet,
 	}
 }

@@ -8,6 +8,7 @@
     x:Name="Root"
     Focusable="False"
     FontSize="12">
+
     <UserControl.Resources>
         <Style x:Key="TabItemStyle" TargetType="{x:Type ListBoxItem}">
             <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" />
@@ -174,4 +175,5 @@
             ToolTip="{DynamicResource Str.Shell.Tab.AllDocuments}"
             Visibility="{Binding HasDocument, Converter={StaticResource BoolToVisibility}}" />
     </Grid>
+
 </UserControl>

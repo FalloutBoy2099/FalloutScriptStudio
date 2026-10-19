@@ -33,7 +33,7 @@ namespace FalloutScriptStudio.TestSupport
 		private static readonly Regex _procedureHeader = new Regex(@"^procedure\s+(\w+)\s*(\([^)]*\))?\s*begin\s*$", RegexOptions.CultureInvariant);
 
 		private readonly TestFolder _folder = new TestFolder("perf-inputs");
-		private readonly Dictionary<String, String> _files = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<String, String> _files = new(StringComparer.OrdinalIgnoreCase);
 		private List<SampleProcedure>? _pool;
 
 		/// <summary>Gets the folder that holds every generated file.</summary>
@@ -329,7 +329,7 @@ namespace FalloutScriptStudio.TestSupport
 		private static List<SampleProcedure> LoadPool()
 		{
 			String source = Path.Combine(TestFiles.Samples, "FO2tweaksMk2", "source");
-			List<SampleProcedure> pool = new List<SampleProcedure>();
+			List<SampleProcedure> pool = [];
 			foreach (String file in Directory.GetFiles(source, "*.ssl"))
 			{
 				String[] lines = File.ReadAllLines(file);
@@ -341,7 +341,7 @@ namespace FalloutScriptStudio.TestSupport
 						continue;
 					}
 
-					List<String> body = new List<String>();
+					List<String> body = [];
 					Int32 j = i + 1;
 					while (j < lines.Length && !String.Equals(lines[j], "end", StringComparison.Ordinal))
 					{

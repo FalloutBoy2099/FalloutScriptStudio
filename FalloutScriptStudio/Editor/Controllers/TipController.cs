@@ -31,7 +31,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private readonly EditorContext _context;
 		private readonly DiagnosticsController _diagnostics;
-		private readonly DispatcherTimer _codeTipTimer = new DispatcherTimer();
+		private readonly DispatcherTimer _codeTipTimer = new();
 		private ToolTip? _hoverTip;
 		private Popup? _codeTip;
 		private Boolean _codeTipShown;
@@ -119,7 +119,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		/// <returns>The tips; empty when there is nothing to show.</returns>
 		public IReadOnlyList<TipInfo> BuildTips(Int32 offset)
 		{
-			List<TipInfo> tips = new List<TipInfo>();
+			List<TipInfo> tips = [];
 			IReadOnlyList<DiagnosticMarker> markers = this._diagnostics.GetMarkersAt(offset);
 			foreach (IGrouping<MarkerSeverity, DiagnosticMarker> group in markers.GroupBy(m => m.Severity))
 			{
@@ -377,11 +377,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 			view.EnsureVisualLines();
 			this.HideCodeTip();
 
-			TextViewPosition location = new TextViewPosition(this._context.Document.GetLocation(textOffset));
+			TextViewPosition location = new(this._context.Document.GetLocation(textOffset));
 			Point bottom = view.GetVisualPosition(location, VisualYPosition.LineBottom) - view.ScrollOffset;
 
 			EditorTipViewModel model = EditorTipViewModel.Create(new[] { tip }, this._context.Palette, this._context.FontFamily, this._context.FontSize);
-			Border chrome = new Border
+			Border chrome = new()
 			{
 				Margin = new Thickness(CodeTipShadowMargin),
 				Padding = new Thickness(10, 6, 10, 6),

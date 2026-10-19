@@ -5,9 +5,10 @@ namespace FalloutScriptStudio.Documents
 	using System.IO;
 	using System.Text;
 	using CommunityToolkit.Mvvm.ComponentModel;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Parsing;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.Analysis;
+	using Core.Compilation;
+	using Core.Parsing;
 
 	/// <summary>
 	/// State of one open editor tab (legacy <c>TabInfo</c>). The AvalonEdit <see cref="TextDocument"/> is the single
@@ -74,6 +75,16 @@ namespace FalloutScriptStudio.Documents
 		/// <summary>Errors / warnings found by the parser (shown in the Errors tab and underlined in the editor).</summary>
 		[ObservableProperty]
 		public partial IReadOnlyList<BuildError> ParserErrors { get; set; } = Array.Empty<BuildError>();
+
+		/// <summary>
+		/// Findings of the semantic analysis of the script (a wrong number of arguments, an unknown name...), refreshed in the background after
+		/// each parse by <c>LiveDiagnosticsService</c>; underlined in the editor. Empty when the analysis is off or has not run yet.
+		/// </summary>
+		[ObservableProperty]
+		public partial IReadOnlyList<ScriptDiagnostic> LiveDiagnostics { get; set; } = Array.Empty<ScriptDiagnostic>();
+
+		/// <summary>Gets or sets the version of the text that <see cref="LiveDiagnostics"/> were made for; the places of the findings are only valid for that text.</summary>
+		public ITextSourceVersion? LiveDiagnosticsVersion { get; set; }
 
 		/// <summary>Full output of the last build of this document.</summary>
 		[ObservableProperty]

@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Redigera nod: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Byt namn på nod</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Byt namn på nod: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Förhandsgranska dialogen från den här noden</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Förhandsgranska dialogen från noden: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Hoppa från: --- till</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Hoppa från: {0} till</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Dölj nod</sys:String>

@@ -21,10 +21,10 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		private EventHandler<DocumentViewModel>? _parsed;
 
 		/// <summary>Gets the recorded calls.</summary>
-		public List<String> Calls { get; } = new List<String>();
+		public List<String> Calls { get; } = [];
 
 		/// <summary>Gets the recorded navigation targets as file and line.</summary>
-		public List<(String? File, Int32 Line)> Navigations { get; } = new List<(String?, Int32)>();
+		public List<(String? File, Int32 Line)> Navigations { get; } = [];
 
 		/// <summary>Gets the number of parses requested.</summary>
 		public Int32 ParseCount { get; private set; }
@@ -35,7 +35,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		/// <summary>Gets or sets the new name the rename gives, or <see langword="null"/> when the user cancels.</summary>
 		public String? RenameTo { get; set; }
 
-		public ObservableCollection<DocumentViewModel> Documents { get; } = new ObservableCollection<DocumentViewModel>();
+		public ObservableCollection<DocumentViewModel> Documents { get; } = [];
 
 		public static (IWorkspace Workspace, TestWorkspace Recorder) Create()
 		{
@@ -124,7 +124,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 
 			String text = document.TextDocument.Text;
 			String pattern = @"\b" + Regex.Escape(symbol.Name) + @"\b";
-			List<TextEdit> edits = new List<TextEdit>();
+			List<TextEdit> edits = [];
 			foreach (Match match in Regex.Matches(text, pattern))
 			{
 				edits.Add(new TextEdit(match.Index, match.Length, this.RenameTo));

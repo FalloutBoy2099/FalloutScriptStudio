@@ -67,7 +67,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		public event EventHandler? FocusRequested;
 
 		/// <summary>Gets the previous search texts, newest first.</summary>
-		public ObservableCollection<String> History { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> History { get; } = [];
 
 		/// <summary>True when the bar is shown.</summary>
 		[ObservableProperty]
@@ -97,7 +97,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		[ObservableProperty]
 		public partial String StatusText { get; set; } = String.Empty;
 
-		private SearchQuery Query => new SearchQuery(this.SearchText)
+		private SearchQuery Query => new(this.SearchText)
 		{
 			MatchCase = this.MatchCase,
 			WholeWord = this.WholeWord,

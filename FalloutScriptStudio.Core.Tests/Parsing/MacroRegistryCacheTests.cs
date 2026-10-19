@@ -126,7 +126,7 @@ namespace FalloutScriptStudio.Core.Tests.Parsing
 			WriteOld(first, "a.h", "#define FIRST 1");
 			WriteOld(second, "a.h", "#define SECOND 1");
 			MacroRegistry registry = new MacroRegistry();
-			ParseDiagnostics diagnostics = new ParseDiagnostics();
+			ParseDiagnostics diagnostics = [];
 
 			registry.LoadFromDirectory(first.Path, diagnostics, true);
 			registry.LoadFromDirectory(second.Path, diagnostics, true);

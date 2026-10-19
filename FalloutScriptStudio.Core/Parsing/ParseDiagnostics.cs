@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Core.Parsing
 	/// <remarks>Instances are not thread-safe; create one per parse operation.</remarks>
 	public sealed class ParseDiagnostics : IReadOnlyList<ParseDiagnostic>
 	{
-		private readonly List<ParseDiagnostic> _items = new List<ParseDiagnostic>();
+		private readonly List<ParseDiagnostic> _items = [];
 
 		/// <inheritdoc />
 		public Int32 Count => this._items.Count;

@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Messages
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// The result of a message file structure check.

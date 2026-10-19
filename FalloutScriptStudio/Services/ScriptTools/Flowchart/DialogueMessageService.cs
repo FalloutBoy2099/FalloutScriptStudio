@@ -4,10 +4,10 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Documents;
+	using Core.Configuration;
+	using Core.Dialogue;
+	using Core.Messages;
+	using Documents;
 
 	/// <inheritdoc />
 	public sealed class DialogueMessageService : IDialogueMessageService

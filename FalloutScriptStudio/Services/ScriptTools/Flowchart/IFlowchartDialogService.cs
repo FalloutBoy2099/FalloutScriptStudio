@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>
 	/// The small modal dialogs of the dialogue flowchart.

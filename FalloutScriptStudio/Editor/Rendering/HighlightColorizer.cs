@@ -2,9 +2,9 @@ namespace FalloutScriptStudio.Editor.Rendering
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.TextTools;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Core.TextTools;
 
 	/// <summary>
 	/// Colors the occurrences of the highlighted word (legacy "Highlight" on middle click) and the search matches by
@@ -19,9 +19,9 @@ namespace FalloutScriptStudio.Editor.Rendering
 
 		public HighlightColorizer(TextDocument document, EditorPalette palette)
 		{
-			this._occurrences = new TextSegmentCollection<TextSegment>(document);
-			this._matches = new TextSegmentCollection<TextSegment>(document);
-			this._flash = new TextSegmentCollection<TextSegment>(document);
+			this._occurrences = new(document);
+			this._matches = new(document);
+			this._flash = new(document);
 			this._palette = palette;
 		}
 

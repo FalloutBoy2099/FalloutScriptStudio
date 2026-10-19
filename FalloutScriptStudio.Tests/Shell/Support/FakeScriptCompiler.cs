@@ -12,14 +12,17 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 	{
 		public Boolean CompileSucceeds { get; set; } = true;
 
+		/// <summary>Gets or sets a value indicating whether a successful compilation writes the compiled file (the incremental build looks for it).</summary>
+		public Boolean WritesOutput { get; set; }
+
 		public String? DecompiledText { get; set; }
 
-		public List<String> Compiled { get; } = new List<String>();
+		public List<String> Compiled { get; } = [];
 
 		/// <summary>Gets the request of the last compilation.</summary>
 		public CompilationRequest? LastRequest { get; private set; }
 
-		public List<String> Preprocessed { get; } = new List<String>();
+		public List<String> Preprocessed { get; } = [];
 
 		public String? PreprocessedFile { get; set; }
 
@@ -45,6 +48,11 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			this.Compiled.Add(request.ScriptPath);
 			this.LastRequest = request;
 			await this.MaybeHangAsync(this.Compiled.Count, cancellationToken);
+			if (this.WritesOutput && this.CompileSucceeds)
+			{
+				File.WriteAllText(Path.ChangeExtension(request.ScriptPath, ".int"), "int " + Guid.NewGuid().ToString("N"));
+			}
+
 			return new CompilationResult
 			{
 				Success = this.CompileSucceeds,

@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
+	using Core.Parsing;
+	using Documents;
 
 	/// <summary>Navigation across the files of the project, the "Go to symbol" list and the refactorings that use the project index.</summary>
 	public sealed partial class WorkspaceService
@@ -41,6 +41,21 @@ namespace FalloutScriptStudio.Workspace
 		public Task RemoveUnusedVariableAsync(String file, Int32 line, Int32 column)
 		{
 			return this._intelligence is null ? Task.CompletedTask : this._intelligence.RemoveUnusedVariableAsync(this, file, line, column);
+		}
+
+		public Task ApplyQuickFixAsync(String file, Int32 line, Int32 column)
+		{
+			return this._intelligence is null ? Task.CompletedTask : this._intelligence.ApplyQuickFixAsync(this, file, line, column);
+		}
+
+		public Task<Boolean> ApplyQuickFixAtAsync(DocumentViewModel document, Int32 offset)
+		{
+			return this._intelligence is null ? Task.FromResult(false) : this._intelligence.ApplyQuickFixAtAsync(this, document, offset);
+		}
+
+		public Task<FalloutScriptStudio.Core.Snippets.Snippet?> PickSnippetAsync(FalloutScriptStudio.Services.ToolWindows.SnippetPickerRequest request)
+		{
+			return this._intelligence is null ? Task.FromResult<FalloutScriptStudio.Core.Snippets.Snippet?>(null) : this._intelligence.PickSnippetAsync(request);
 		}
 
 		public Task ExtractProcedureAsync(DocumentViewModel document)

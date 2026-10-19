@@ -79,6 +79,13 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// </summary>
 		public Boolean ShowUnusedVariables { get; set; }
 
+		/// <summary>
+		/// Gets or sets how much of the semantic analysis of a script is shown while it is typed: the findings that sslc would only report
+		/// when the script is compiled (a wrong number of arguments, an unknown name, a procedure used before its definition...). The
+		/// analysis runs in the background after each parse, underlines the places in the editor and lists them in the problems.
+		/// </summary>
+		public LiveDiagnosticsLevel LiveDiagnostics { get; set; } = LiveDiagnosticsLevel.ErrorsAndWarnings;
+
 		/// <summary>Gets or sets a value indicating whether scripts are saved as UTF-8.</summary>
 		public Boolean SaveScriptsAsUtf8 { get; set; }
 
@@ -101,6 +108,12 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// (inserting the missing spaces around operators); the "Auto Formatting Code" option of the legacy editor.
 		/// </summary>
 		public Boolean FormatCodeOnOpen { get; set; }
+
+		/// <summary>
+		/// Gets or sets the style of the code formatter (Format Document, Format Selection, Format Project, format on open and on save). A
+		/// project may replace it (<see cref="ProjectSettings.Formatting"/>); read the style in effect from <see cref="EffectiveSettings.Formatting"/>.
+		/// </summary>
+		public FormatSettings Formatting { get; set; } = new FormatSettings();
 
 		/// <summary>Gets or sets a value indicating whether searches ignore the letter case.</summary>
 		public Boolean SearchIgnoreCase { get; set; }

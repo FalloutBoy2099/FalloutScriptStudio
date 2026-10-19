@@ -4,11 +4,11 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Text;
+	using Core.Dialogue;
+	using Core.Parsing;
+	using Core.TextTools;
+	using Documents;
+	using Editor.Text;
 
 	/// <summary>
 	/// Changes the dialogue nodes (procedures) of a script document: replaces the code of a node, creates, renames and deletes
@@ -150,7 +150,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 				return new NodeRenameResult(NodeRenameOutcome.NotFound, null);
 			}
 
-			HashSet<String> before = new HashSet<String>(script.ProgramInfo!.Procedures.Select(p => p.Name), StringComparer.Ordinal);
+			HashSet<String> before = new(script.ProgramInfo!.Procedures.Select(p => p.Name), StringComparer.Ordinal);
 			await this._workspace.RenameSymbolAsync(script, procedure);
 			await this._workspace.RequestParseAsync(script, true);
 

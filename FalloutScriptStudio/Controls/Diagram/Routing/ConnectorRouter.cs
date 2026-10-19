@@ -94,7 +94,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Routing
 		{
 			ConnectionSide side = ChooseTargetSide(start, target, targetAnchorOffset);
 			Point end = GetConnectionPoint(target, side, targetAnchorOffset);
-			List<RouteSegment> segments = new List<RouteSegment>(5);
+			List<RouteSegment> segments = new(5);
 
 			switch (side)
 			{

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Controls.Diagram
 {
 	using System;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Describes an item (and possibly a row of it) for hover, selection and double-click notifications.

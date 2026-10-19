@@ -95,7 +95,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 				settings.Compiler.Optimization = OptimizationLevel.Full;
 				settings.Compiler.ShortCircuit = true;
 				settings.Compiler.PreprocessorDefine = "GLOBAL";
-				settings.Paths.MessageSearchDirectories = new List<String> { @"C:\msg" };
+				settings.Paths.MessageSearchDirectories = [@"C:\msg"];
 			});
 
 			ProjectSettingsViewModel viewModel = this.Open();
@@ -392,7 +392,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		[Fact]
 		public void TheMessageFolders_InheritTheGlobalList_AndAreEditableOnlyWhileOverridden()
 		{
-			this._settings.Update(settings => settings.Paths.MessageSearchDirectories = new List<String> { @"C:\a", @"C:\b" });
+			this._settings.Update(settings => settings.Paths.MessageSearchDirectories = [@"C:\a", @"C:\b"]);
 			ProjectSettingsViewModel viewModel = this.Open();
 			viewModel.SelectedMessagePath = @"C:\b";
 			Assert.False(viewModel.MoveMessagePathUpCommand.CanExecute(null));
@@ -416,7 +416,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		[Fact]
 		public void GoingBackToInheritForTheMessageFolders_RestoresTheGlobalListAndDropsTheOverride()
 		{
-			this._settings.Update(settings => settings.Paths.MessageSearchDirectories = new List<String> { @"C:\a" });
+			this._settings.Update(settings => settings.Paths.MessageSearchDirectories = [@"C:\a"]);
 			ProjectSettingsViewModel viewModel = this.Open("{ \"messageSearchDirectories\": [ \"msg\" ] }");
 			Assert.Equal(new[] { Path.Combine(this._folder, "msg") }, viewModel.MessagePaths.ToArray());
 

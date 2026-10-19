@@ -225,7 +225,7 @@ namespace FalloutScriptStudio.Core.Tests.Indexing
 			String b = this.Write("b.ssl", "procedure two begin\r\nend\r\n");
 			this.Write("c.ssl", "procedure three begin\r\nend\r\n");
 			using ProjectSymbolIndex index = Create();
-			List<ProjectIndexProgress> progress = new List<ProjectIndexProgress>();
+			List<ProjectIndexProgress> progress = [];
 			index.ProgressChanged += (_, p) => progress.Add(p);
 			await index.UpdateAsync(Roots(this._folder.Path));
 			Assert.Equal(3, progress.Where(p => p.Phase == ProjectIndexPhase.Indexing).Max(p => p.Total));
@@ -361,7 +361,7 @@ namespace FalloutScriptStudio.Core.Tests.Indexing
 			}
 
 			using ProjectSymbolIndex index = Create();
-			List<ProjectIndexProgress> progress = new List<ProjectIndexProgress>();
+			List<ProjectIndexProgress> progress = [];
 			index.ProgressChanged += (_, p) =>
 			{
 				lock (progress)

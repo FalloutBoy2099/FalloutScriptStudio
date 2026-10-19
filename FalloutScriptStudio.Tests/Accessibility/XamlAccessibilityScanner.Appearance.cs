@@ -8,7 +8,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	/// <content>Rules: hard coded colors and small fonts.</content>
 	internal sealed partial class XamlAccessibilityScanner
 	{
-		private static readonly HashSet<String> _colorProperties = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _colorProperties = new(StringComparer.Ordinal)
 		{
 			"Foreground", "Background", "BorderBrush", "Fill", "Stroke", "Color", "CaretBrush", "SelectionBrush", "OpacityMask",
 		};
@@ -26,7 +26,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public IReadOnlyList<String> FindHardCodedColors(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement element in document.Descendants())
 			{
 				foreach (XAttribute attribute in element.Attributes())
@@ -62,7 +62,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public IReadOnlyList<String> FindSmallFonts(String file, XDocument document, Double minimum)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (XElement element in document.Descendants())
 			{
 				String? value = element.Name.LocalName == "Setter" && (String?)element.Attribute("Property") == "FontSize"

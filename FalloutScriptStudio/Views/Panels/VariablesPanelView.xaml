@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Panels">
+
     <UserControl.Resources>
         <HierarchicalDataTemplate DataType="{x:Type vm:TreeGroupNodeViewModel}" ItemsSource="{Binding Children}">
             <TextBlock
@@ -104,4 +105,5 @@
             TextWrapping="Wrap"
             Visibility="{Binding HasData, Converter={StaticResource InvertedBoolToVisibility}}" />
     </Grid>
+
 </UserControl>

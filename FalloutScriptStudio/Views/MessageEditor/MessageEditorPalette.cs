@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>
 	/// The background colors of comment lines and of the line number column for every highlight choice and theme.
@@ -58,7 +58,7 @@ namespace FalloutScriptStudio.Views.MessageEditor
 		/// <param name="color">The color of the brush.</param>
 		public static SolidColorBrush CreateBrush(Color color)
 		{
-			SolidColorBrush brush = new SolidColorBrush(color);
+			SolidColorBrush brush = new(color);
 			brush.Freeze();
 			return brush;
 		}

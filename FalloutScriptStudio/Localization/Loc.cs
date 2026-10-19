@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Localization
 			"Common", "Shell", "Panels", "ToolWindows", "MessageEditor", "Flowchart", "ScriptTools", "Editor",
 		};
 
-		private static readonly Object _gate = new Object();
+		private static readonly Object _gate = new();
 		private static ResourceDictionary? _english;
 		private static Dictionary<String, String>? _fallbackTexts;
 		private static ResourceDictionary? _translation;
@@ -154,10 +154,10 @@ namespace FalloutScriptStudio.Localization
 		/// <summary>Loads the dictionaries of every area for one language into a single dictionary.</summary>
 		private static ResourceDictionary Load(String language)
 		{
-			ResourceDictionary container = new ResourceDictionary();
+			ResourceDictionary container = [];
 			foreach (String area in Areas)
 			{
-				Uri source = new Uri($"pack://application:,,,/FalloutScriptStudio;component/Localization/Strings/{area}.{language}.xaml", UriKind.Absolute);
+				Uri source = new($"pack://application:,,,/FalloutScriptStudio;component/Localization/Strings/{area}.{language}.xaml", UriKind.Absolute);
 				try
 				{
 					container.MergedDictionaries.Add(new ResourceDictionary { Source = source });
@@ -181,7 +181,7 @@ namespace FalloutScriptStudio.Localization
 				}
 
 				_english = Load(DefaultLanguage);
-				Dictionary<String, String> texts = new Dictionary<String, String>(StringComparer.Ordinal);
+				Dictionary<String, String> texts = new(StringComparer.Ordinal);
 				foreach (ResourceDictionary area in _english.MergedDictionaries)
 				{
 					foreach (System.Collections.DictionaryEntry entry in area)

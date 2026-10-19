@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>The edits that extract a block into a new procedure.</summary>
 	/// <param name="Edits">The edits in the coordinates of the original text; they never overlap.</param>

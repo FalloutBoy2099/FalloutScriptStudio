@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.Services
 		/// <summary>The size over which the log file is rotated: 1 MB.</summary>
 		public const Int64 DefaultMaxFileBytes = 1024 * 1024;
 
-		private readonly Object _gate = new Object();
+		private readonly Object _gate = new();
 		private readonly String _path;
 		private readonly Int64 _maxFileBytes;
 
@@ -59,7 +59,7 @@ namespace FalloutScriptStudio.Services
 
 		private void RotateIfNeeded()
 		{
-			FileInfo file = new FileInfo(this._path);
+			FileInfo file = new(this._path);
 			if (file.Exists && file.Length > this._maxFileBytes)
 			{
 				File.Move(this._path, this.RotatedPath, true);

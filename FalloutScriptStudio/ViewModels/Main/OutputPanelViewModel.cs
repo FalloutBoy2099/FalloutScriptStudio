@@ -47,12 +47,12 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this._shell = shell;
 			this._problems = problems ?? new ProblemService();
 			this._toolWindows = toolWindows;
-			this.Tabs = new ObservableCollection<OutputTabViewModel>
-			{
+			this.Tabs =
+			[
 				new ParserLogTabViewModel(this),
 				new BuildLogTabViewModel(this),
 				new ErrorsTabViewModel(this),
-			};
+			];
 			_ = LanguageChangedSubscription.Subscribe(this, static panel => panel.RebuildErrors());
 			this._problems.Changed += (_, _) => this.RunOnUi(this.RebuildErrors);
 
@@ -98,7 +98,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		public ObservableCollection<OutputTabViewModel> Tabs { get; }
 
 		/// <summary>Gets the rows of the Errors tab.</summary>
-		public ObservableCollection<ErrorItemViewModel> Errors { get; } = new ObservableCollection<ErrorItemViewModel>();
+		public ObservableCollection<ErrorItemViewModel> Errors { get; } = [];
 
 		/// <summary>The text of the Parser tab.</summary>
 		[ObservableProperty]
@@ -343,6 +343,27 @@ namespace FalloutScriptStudio.ViewModels.Main
 					if (action.FilePath is not null && this._workspace is not null)
 					{
 						await this._workspace.RemoveUnusedVariableAsync(action.FilePath, action.Line, action.Column);
+					}
+
+					break;
+				case ProblemActionKind.ApplyQuickFix:
+					if (action.FilePath is not null && this._workspace is not null)
+					{
+						await this._workspace.ApplyQuickFixAsync(action.FilePath, action.Line, action.Column);
+					}
+
+					break;
+				case ProblemActionKind.CreateMessageFile:
+					if (action.FilePath is not null && this._workspace is not null)
+					{
+						await this._workspace.CreateMessageFileAsync(action.FilePath);
+					}
+
+					break;
+				case ProblemActionKind.AddMissingMessages:
+					if (action.FilePath is not null && this._workspace is not null)
+					{
+						await this._workspace.AddMissingMessagesAsync(action.FilePath, action.Numbers);
 					}
 
 					break;

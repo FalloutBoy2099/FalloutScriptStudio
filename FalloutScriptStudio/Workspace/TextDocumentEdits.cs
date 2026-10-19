@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Workspace
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.TextTools;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.TextTools;
 
 	/// <summary>Applies the text edits computed by the Core text tools to an AvalonEdit document.</summary>
 	public static class TextDocumentEdits

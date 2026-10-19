@@ -1,11 +1,11 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Dialogs
 {
 	using System;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.ViewModels.ScriptTools.Dialogs;
-	using FalloutScriptStudio.Views.ScriptTools.Dialogs;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.DependencyInjection.Extensions;
+	using Editor.Highlighting;
+	using ViewModels.ScriptTools.Dialogs;
+	using Views.ScriptTools.Dialogs;
 
 	/// <summary>
 	/// Registration of the dialogue dialogs in the service collection.

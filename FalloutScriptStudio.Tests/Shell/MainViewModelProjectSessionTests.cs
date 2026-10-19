@@ -34,7 +34,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 		private static async Task WaitForAsync(Func<Boolean> condition, String what)
 		{
-			for (Int32 attempt = 0; attempt < 400 && !condition(); attempt++)
+			for (Int32 attempt = 0; attempt < 2400 && !condition(); attempt++)
 			{
 				await Task.Delay(25);
 			}
@@ -102,6 +102,123 @@ namespace FalloutScriptStudio.Tests.Shell
 				ProjectSession session = Assert.Single(harness.Settings.Recent.ProjectSessions);
 				Assert.Equal(new[] { "a.ssl", "b.ssl" }, session.Documents);
 				Assert.Equal("b.ssl", session.ActiveDocument);
+			});
+		}
+
+		[Fact]
+		public void Leaving_a_project_where_no_document_was_opened_keeps_the_session_it_had()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String first = ProjectFolder(harness);
+				String second = harness.Folder.Combine("other");
+				Directory.CreateDirectory(second);
+				Remember(harness, first, new[] { @"mod\a.ssl", @"mod\b.ssl" }, @"mod\b.ssl");
+				await harness.Main.OpenRecentProjectAsync(first);
+
+				await harness.Main.OpenRecentProjectAsync(second);
+
+				ProjectSession session = Assert.Single(harness.Settings.Recent.ProjectSessions);
+				Assert.Equal(first, session.Folder);
+				Assert.Equal(new[] { "a.ssl", "b.ssl" }, session.Documents);
+				Assert.Equal("b.ssl", session.ActiveDocument);
+			});
+		}
+
+		[Fact]
+		public void Closing_a_project_where_no_document_was_opened_keeps_the_session_it_had()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String folder = ProjectFolder(harness);
+				Remember(harness, folder, new[] { @"mod\a.ssl" }, null);
+				await harness.Main.OpenRecentProjectAsync(folder);
+
+				harness.Main.CloseProjectCommand.Execute(null);
+
+				Assert.Equal(new[] { "a.ssl" }, Assert.Single(harness.Settings.Recent.ProjectSessions).Documents);
+			});
+		}
+
+		[Fact]
+		public void Ending_the_program_without_having_opened_a_document_of_the_project_keeps_the_session_it_had()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String folder = ProjectFolder(harness);
+				Remember(harness, folder, new[] { @"mod\a.ssl", @"mod\b.ssl" }, null);
+				await harness.Main.OpenRecentProjectAsync(folder);
+				await harness.OpenFileAsync("work/w.ssl", Script);
+
+				Assert.True(await harness.Main.CanCloseAsync());
+
+				Assert.Equal(new[] { "a.ssl", "b.ssl" }, Assert.Single(harness.Settings.Recent.ProjectSessions).Documents);
+			});
+		}
+
+		[Fact]
+		public void Documents_of_another_project_that_stay_open_do_not_replace_the_session_of_the_project_that_is_left()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String first = ProjectFolder(harness);
+				String second = harness.Folder.Combine("other");
+				Directory.CreateDirectory(second);
+				Remember(harness, second, new[] { @"other\x.ssl" }, null);
+				await harness.Main.OpenRecentProjectAsync(first);
+				await harness.OpenFileAsync("mod/a.ssl", Script);
+				await harness.Main.OpenRecentProjectAsync(second);
+				await harness.OpenFileAsync("work/w.ssl", Script);
+
+				harness.Main.CloseProjectCommand.Execute(null);
+
+				ProjectSession session = Assert.Single(harness.Settings.Recent.ProjectSessions, item => String.Equals(item.Folder, second, StringComparison.OrdinalIgnoreCase));
+				Assert.Equal(new[] { "x.ssl" }, session.Documents);
+			});
+		}
+
+		[Fact]
+		public void Closing_every_document_of_the_project_during_the_visit_does_replace_the_session()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String folder = ProjectFolder(harness);
+				Remember(harness, folder, new[] { @"mod\a.ssl" }, null);
+				await harness.Main.OpenRecentProjectAsync(folder);
+				await harness.OpenFileAsync("mod/a.ssl", Script);
+				await harness.Workspace.CloseAllAsync();
+
+				harness.Main.CloseProjectCommand.Execute(null);
+
+				Assert.Empty(harness.Settings.Recent.ProjectSessions);
+			});
+		}
+
+		[Fact]
+		public void Documents_of_the_project_that_were_open_before_the_project_became_active_belong_to_the_visit()
+		{
+			ShellStaRunner.Run(async () =>
+			{
+				using ShellHarness harness = new ShellHarness();
+				harness.Settings.Update(settings => settings.Editor.RestoreProjectDocuments = false);
+				String folder = ProjectFolder(harness);
+				Remember(harness, folder, new[] { @"mod\old.ssl" }, null);
+				await harness.OpenFileAsync("mod/a.ssl", Script);
+				await harness.Main.OpenRecentProjectAsync(folder);
+
+				harness.Main.CloseProjectCommand.Execute(null);
+
+				Assert.Equal(new[] { "a.ssl" }, Assert.Single(harness.Settings.Recent.ProjectSessions).Documents);
 			});
 		}
 

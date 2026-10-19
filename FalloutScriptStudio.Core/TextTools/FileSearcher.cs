@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.TextTools
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Text;
@@ -74,7 +75,7 @@ namespace FalloutScriptStudio.Core.TextTools
 		{
 			try
 			{
-				return await File.ReadAllTextAsync(file, encoding ?? Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+				return await SharedFile.ReadAllTextAsync(file, encoding ?? Encoding.UTF8, cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{

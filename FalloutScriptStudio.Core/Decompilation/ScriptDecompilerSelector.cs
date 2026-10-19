@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// <see cref="IScriptDecompiler"/> that hands each request to the decompiler its options choose

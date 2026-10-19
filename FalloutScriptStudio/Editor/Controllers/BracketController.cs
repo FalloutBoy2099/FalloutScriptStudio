@@ -1,9 +1,9 @@
 namespace FalloutScriptStudio.Editor.Controllers
 {
 	using System;
-	using FalloutScriptStudio.Editor.Rendering;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Editor.Rendering;
+	using Editor.Text;
 
 	/// <summary>Highlights the bracket next to the caret together with its partner.</summary>
 	public sealed class BracketController : IDisposable

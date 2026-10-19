@@ -20,6 +20,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterScreen">
+
     <ui:FluentWindow.Resources>
         <Style
             x:Key="ToolButton"
@@ -243,4 +244,5 @@
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
+
 </ui:FluentWindow>

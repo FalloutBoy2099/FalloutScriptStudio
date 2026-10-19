@@ -23,7 +23,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 		{
 			StubCompiler compiler = new StubCompiler(script => !script.EndsWith("b.ssl", StringComparison.Ordinal));
 			BatchCompileService service = new BatchCompileService(compiler);
-			List<BatchCompileProgress> progress = new List<BatchCompileProgress>();
+			List<BatchCompileProgress> progress = [];
 			String[] scripts = { "a.ssl", "b.ssl", "c.ssl", "d.ssl" };
 
 			BatchCompileResult result = await service.CompileAsync(
@@ -132,7 +132,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 		private sealed class StubCompiler : IScriptCompiler
 		{
 			private readonly Func<String, Boolean> _succeeds;
-			private readonly List<CompilationRequest> _requests = new List<CompilationRequest>();
+			private readonly List<CompilationRequest> _requests = [];
 			private Int32 _running;
 			private Int32 _maxConcurrency;
 

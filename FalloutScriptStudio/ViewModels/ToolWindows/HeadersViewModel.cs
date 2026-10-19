@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 	/// </summary>
 	public sealed partial class HeadersViewModel : ToolWindowViewModelBase
 	{
-		private List<HeaderFileItem> _allItems = new List<HeaderFileItem>();
+		private List<HeaderFileItem> _allItems = [];
 
 		[ObservableProperty]
 		private String _filter = String.Empty;
@@ -28,7 +28,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		private String _statusText = String.Empty;
 
 		/// <summary>Gets the header files that match the current filter.</summary>
-		public ObservableCollection<HeaderFileItem> Items { get; } = new ObservableCollection<HeaderFileItem>();
+		public ObservableCollection<HeaderFileItem> Items { get; } = [];
 
 		/// <summary>Gets the path of the header file the user chose, or <see langword="null"/> when the picker was cancelled.</summary>
 		public String? SelectedPath { get; private set; }
@@ -86,10 +86,10 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 			if (!Directory.Exists(headersDirectory))
 			{
-				return new List<HeaderFileItem>();
+				return [];
 			}
 
-			EnumerationOptions options = new EnumerationOptions
+			EnumerationOptions options = new()
 			{
 				RecurseSubdirectories = true,
 				IgnoreInaccessible = true,

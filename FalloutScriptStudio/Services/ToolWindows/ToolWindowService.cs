@@ -7,13 +7,13 @@ namespace FalloutScriptStudio.Services.ToolWindows
 	using System.Threading;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
-	using FalloutScriptStudio.Workspace;
-	using FalloutScriptStudio.Views.ToolWindows;
 	using Microsoft.Extensions.DependencyInjection;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Localization;
+	using ViewModels.ToolWindows;
+	using Workspace;
+	using Views.ToolWindows;
 
 	/// <inheritdoc />
 	public sealed class ToolWindowService : IToolWindowService
@@ -91,6 +91,36 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <inheritdoc />
+		public Task ShowFormatProjectAsync()
+		{
+			FormatProjectViewModel viewModel = this._services.GetRequiredService<FormatProjectViewModel>();
+			FormatProjectWindow window = ActivatorUtilities.CreateInstance<FormatProjectWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc />
+		public Task<FalloutScriptStudio.Core.Snippets.Snippet?> PickSnippetAsync(SnippetPickerRequest request)
+		{
+			ArgumentNullException.ThrowIfNull(request);
+
+			SnippetPickerViewModel viewModel = this._services.GetRequiredService<SnippetPickerViewModel>();
+			viewModel.Initialize(request);
+			SnippetPickerWindow window = ActivatorUtilities.CreateInstance<SnippetPickerWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.FromResult(viewModel.ChosenSnippet);
+		}
+
+		/// <inheritdoc />
+		public Task ShowSnippetManagerAsync()
+		{
+			SnippetManagerViewModel viewModel = this._services.GetRequiredService<SnippetManagerViewModel>();
+			SnippetManagerWindow window = ActivatorUtilities.CreateInstance<SnippetManagerWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.CompletedTask;
+		}
+
+		/// <inheritdoc />
 		public void ShowAbout()
 		{
 			AboutViewModel viewModel = this._services.GetRequiredService<AboutViewModel>();
@@ -115,11 +145,17 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <inheritdoc />
-		public async Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, CancellationToken cancellationToken)
+		public Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, CancellationToken cancellationToken)
+		{
+			return this.RunBatchCompileAsync(scriptPaths, progress, false, cancellationToken);
+		}
+
+		/// <inheritdoc />
+		public async Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, Boolean rebuildAll, CancellationToken cancellationToken)
 		{
 			ArgumentNullException.ThrowIfNull(scriptPaths);
 
-			BatchCompileResult nothingDone = new BatchCompileResult(0, 0, Array.Empty<BatchCompileFailure>(), false, 0);
+			BatchCompileResult nothingDone = new(0, 0, Array.Empty<BatchCompileFailure>(), false, 0);
 			if (scriptPaths.Count == 0)
 			{
 				await this._dialogService.ShowInfoAsync(Loc.Get("Str.ToolWindows.Batch.Title"), Loc.Get("Str.ToolWindows.Batch.NothingToCompile")).ConfigureAwait(true);
@@ -136,7 +172,11 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			}
 
 			CompilerOptions options = settings.ToCompilerOptions(this._settingsService.Paths) with { CompileToSourceDirectory = false };
-			BatchCompileOptions batchOptions = settings.ToBatchCompileOptions();
+			BatchCompileOptions batchOptions = this._settingsService.Effective.ToBatchCompileOptions(this._settingsService.Paths);
+			if (rebuildAll)
+			{
+				batchOptions = batchOptions with { OnlyChanged = false };
+			}
 
 			BatchCompileViewModel viewModel = this._services.GetRequiredService<BatchCompileViewModel>();
 			BatchCompileWindow window = ActivatorUtilities.CreateInstance<BatchCompileWindow>(this._services, viewModel);
@@ -183,6 +223,18 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			SymbolPickerWindow window = ActivatorUtilities.CreateInstance<SymbolPickerWindow>(this._services, viewModel);
 			ShowModal(window);
 			return Task.FromResult(viewModel.SelectedSymbol);
+		}
+
+		/// <inheritdoc />
+		public Task<FalloutScriptStudio.Commands.CommandEntry?> PickCommandAsync(CommandPaletteRequest request)
+		{
+			ArgumentNullException.ThrowIfNull(request);
+
+			CommandPaletteViewModel viewModel = this._services.GetRequiredService<CommandPaletteViewModel>();
+			viewModel.Initialize(request);
+			CommandPaletteWindow window = ActivatorUtilities.CreateInstance<CommandPaletteWindow>(this._services, viewModel);
+			ShowModal(window);
+			return Task.FromResult(viewModel.ChosenEntry);
 		}
 
 		private static Window? FindOwner()

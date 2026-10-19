@@ -16,5 +16,8 @@ namespace FalloutScriptStudio.Core.Configuration
 
 		/// <summary>The flowchart (dialog node diagram) window.</summary>
 		Flowchart,
+
+		/// <summary>The Search &amp; Replace window.</summary>
+		Search,
 	}
 }

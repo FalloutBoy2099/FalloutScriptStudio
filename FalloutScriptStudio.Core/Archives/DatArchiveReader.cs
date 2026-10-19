@@ -277,7 +277,7 @@ namespace FalloutScriptStudio.Core.Archives
 			// Only the directory is read, sequentially: a buffer keeps the many small reads cheap. It is not disposed on purpose,
 			// that would close the file stream the caller disposes.
 			BufferedStream buffered = new BufferedStream(stream, 64 * 1024);
-			List<String> directories = new List<String>(directoryCount);
+			List<String> directories = new(directoryCount);
 			for (Int32 index = 0; index < directoryCount; index++)
 			{
 				String name = ReadString(buffered).Trim('\\');

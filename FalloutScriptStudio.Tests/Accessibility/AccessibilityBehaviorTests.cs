@@ -25,10 +25,10 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		private const String Namespaces =
 			"xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:a11y=\"clr-namespace:FalloutScriptStudio.Views.Accessibility;assembly=FalloutScriptStudio\"";
 
-		private static void RaiseKey(Window window, Key key)
+		/// <summary>Raises a key down on a window with a keyboard device that has the chosen modifiers down: the keys the developer holds while the tests run do not count.</summary>
+		private static void RaiseKey(Window window, Key key, ModifierKeys modifiers = ModifierKeys.None)
 		{
-			KeyEventArgs args = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, key) { RoutedEvent = Keyboard.KeyDownEvent };
-			window.RaiseEvent(args);
+			window.RaiseEvent(new FakeKeyboardDevice(modifiers).CreateKeyDown(PresentationSource.FromVisual(window), key));
 		}
 
 		private static Window ShowOffScreen(Window window)
@@ -101,6 +101,23 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		}
 
 		[Fact]
+		public void CloseOnEscape_IgnoresEscapeWithAModifier()
+		{
+			WindowHost.RunOnOwnThread(() =>
+			{
+				Window window = ShowOffScreen((Window)XamlReader.Parse("<Window " + Namespaces + " a11y:WindowKeys.CloseOnEscape=\"True\" Width=\"200\" Height=\"100\" />"));
+				Boolean closed = false;
+				window.Closed += (_, _) => closed = true;
+
+				RaiseKey(window, Key.Escape, ModifierKeys.Control);
+				Assert.False(closed);
+
+				RaiseKey(window, Key.Escape);
+				Assert.True(closed);
+			});
+		}
+
+		[Fact]
 		public void CloseOnEscape_LeavesEscapeToTheControlThatHandledIt()
 		{
 			WindowHost.RunOnOwnThread(() =>
@@ -113,7 +130,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				Boolean closed = false;
 				window.Closed += (_, _) => closed = true;
 
-				box.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Escape) { RoutedEvent = Keyboard.KeyDownEvent });
+				box.RaiseEvent(new FakeKeyboardDevice().CreateKeyDown(PresentationSource.FromVisual(window), Key.Escape));
 
 				Assert.False(closed);
 				window.Close();

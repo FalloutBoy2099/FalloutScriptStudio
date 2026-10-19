@@ -6,20 +6,8 @@
     xmlns:vm="clr-namespace:FalloutScriptStudio.ViewModels.Main"
     x:Name="Root"
     PreviewKeyDown="OnPreviewKeyDown">
-    <UserControl.Resources>
-        <Style
-            x:Key="CompactColumnHeaderStyle"
-            BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
-            TargetType="{x:Type DataGridColumnHeader}">
-            <Setter Property="Height" Value="22" />
-            <Setter Property="MinHeight" Value="22" />
-            <Setter Property="Padding" Value="6,0" />
-            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="FontSize" Value="11" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
-        </Style>
 
+    <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:ParserLogTabViewModel}">
             <TextBox
                 AutomationProperties.Name="{DynamicResource Str.Shell.Output.TabParser}"
@@ -61,7 +49,7 @@
                     CanUserAddRows="False"
                     CanUserResizeRows="False"
                     ColumnHeaderHeight="22"
-                    ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
+                    ColumnHeaderStyle="{StaticResource ShellCompactColumnHeaderStyle}"
                     FontSize="12"
                     GridLinesVisibility="None"
                     HeadersVisibility="Column"
@@ -259,7 +247,7 @@
                 CanUserAddRows="False"
                 CanUserResizeRows="False"
                 ColumnHeaderHeight="22"
-                ColumnHeaderStyle="{StaticResource CompactColumnHeaderStyle}"
+                ColumnHeaderStyle="{StaticResource ShellCompactColumnHeaderStyle}"
                 FontSize="12"
                 GridLinesVisibility="None"
                 HeadersVisibility="Column"
@@ -564,4 +552,5 @@
             </StackPanel>
         </Grid>
     </Border>
+
 </UserControl>

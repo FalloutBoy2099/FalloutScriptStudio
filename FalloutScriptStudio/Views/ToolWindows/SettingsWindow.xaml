@@ -21,6 +21,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <local:OptionOverriddenConverter x:Key="OptionOverridden" />
@@ -265,6 +266,26 @@
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ShowUnusedVariables.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ShowUnusedVariables.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Editor.ShowUnusedVariables}" />
                         </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.LiveDiagnostics.Title}" Description="{DynamicResource Str.ToolWindows.Opt.LiveDiagnostics.Desc}">
+                            <ComboBox
+                                MinWidth="240"
+                                DisplayMemberPath="Text"
+                                ItemsSource="{Binding LiveDiagnosticsChoices}"
+                                SelectedValue="{Binding Draft.Editor.LiveDiagnostics, Mode=TwoWay}"
+                                SelectedValuePath="Value" />
+                        </local:SettingCard>
+
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Formatting}" />
+                        <local:SettingCard
+                            Title="{DynamicResource Str.ToolWindows.Fmt.Title}"
+                            Description="{DynamicResource Str.ToolWindows.Fmt.Desc}"
+                            OptionId="Formatting" />
+                        <local:FormattingOptionsEditor Margin="0,6,0,6" DataContext="{Binding FormattingEditor}" />
+
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Snippets}" />
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Snippets.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Snippets.Desc}">
+                            <ui:Button Command="{Binding ManageSnippetsCommand}" Content="{DynamicResource Str.ToolWindows.Btn.ManageSnippets}" />
+                        </local:SettingCard>
 
                         <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Files}" />
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.Encoding.Title}" Description="{DynamicResource Str.ToolWindows.Opt.Encoding.Desc}">
@@ -375,6 +396,9 @@
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.MultiThread.Title}" Description="{DynamicResource Str.ToolWindows.Opt.MultiThread.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.MultiThreadedBatch}" />
                         </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.ListUpToDate.Title}" Description="{DynamicResource Str.ToolWindows.Opt.ListUpToDate.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Compiler.ListUpToDateScripts}" />
+                        </local:SettingCard>
 
                         <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.PreprocessorDefines}" />
                         <Border
@@ -447,6 +471,23 @@
                                             Content="{DynamicResource Str.ToolWindows.Btn.DeleteDefine}" />
                                     </StackPanel>
                                 </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.CompileProfiles}" />
+                        <Border
+                            Padding="16,12"
+                            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Text="{DynamicResource Str.ToolWindows.Profiles.Help}"
+                                    TextWrapping="Wrap" />
+                                <local:CompileProfilesEditor Margin="0,10,0,0" DataContext="{Binding ProfileEditor}" />
                             </StackPanel>
                         </Border>
 
@@ -610,6 +651,9 @@
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.AssocById.Title}" Description="{DynamicResource Str.ToolWindows.Opt.AssocById.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Messages.AssociateByScriptId}" />
                         </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CheckMessagesOnSave.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CheckMessagesOnSave.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Messages.CheckMessagesOnSave}" />
+                        </local:SettingCard>
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding HighlightComments}" />
                         </local:SettingCard>
@@ -755,4 +799,5 @@
                 IsCancel="True" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

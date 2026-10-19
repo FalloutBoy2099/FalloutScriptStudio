@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Model;
+	using Rendering;
 
 	// In-place editing of note texts.
 	public sealed partial class DiagramCanvas
@@ -24,7 +24,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 			DiagramPalette palette = this._scene.Context.Palette;
 			this._editingNote = note;
 			note.SetEditing(true);
-			TextBox editor = new TextBox
+			TextBox editor = new()
 			{
 				Text = note.Text,
 				AcceptsReturn = true,

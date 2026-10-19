@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Views.Flowchart
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.ViewModels.Flowchart;
 	using Wpf.Ui.Controls;
+	using ViewModels.Flowchart;
 
 	/// <summary>
 	/// The dialog that edits the text of one message.

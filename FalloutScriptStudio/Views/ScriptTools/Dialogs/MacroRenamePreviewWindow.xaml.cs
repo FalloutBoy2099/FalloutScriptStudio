@@ -1,10 +1,9 @@
 namespace FalloutScriptStudio.Views.ScriptTools.Dialogs
 {
 	using System;
-	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.ScriptTools.Dialogs;
 	using Wpf.Ui.Controls;
+	using ViewModels.ScriptTools.Dialogs;
 
 	/// <summary>
 	/// The macro rename preview window.

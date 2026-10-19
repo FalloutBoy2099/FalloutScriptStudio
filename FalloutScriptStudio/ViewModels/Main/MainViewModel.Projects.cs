@@ -15,11 +15,11 @@ namespace FalloutScriptStudio.ViewModels.Main
 	/// <summary>Projects: open, recent, close, create the settings file, open the project settings, and the hint about the project of an opened script.</summary>
 	public sealed partial class MainViewModel
 	{
-		private readonly HashSet<String> _offeredProjects = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+		private readonly HashSet<String> _offeredProjects = new(StringComparer.OrdinalIgnoreCase);
 		private String? _sessionFolder;
 
 		/// <summary>Gets the recent projects, newest first.</summary>
-		public ObservableCollection<String> RecentProjects { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> RecentProjects { get; } = [];
 
 		/// <summary>Gets a value indicating whether a project is open.</summary>
 		public Boolean HasProject => this._projects.IsOpen;
@@ -211,6 +211,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 
 			this._sessionFolder = current;
+			this._sessions.BeginVisit();
 			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectFile);
 			_ = this.Output.Problems.ClearOrigin(ProblemOrigins.ProjectSession);
 			if (current is not null)

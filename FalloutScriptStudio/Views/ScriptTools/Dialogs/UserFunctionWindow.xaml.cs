@@ -4,10 +4,10 @@ namespace FalloutScriptStudio.Views.ScriptTools.Dialogs
 	using System.ComponentModel;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.ViewModels.ScriptTools.Dialogs;
 	using Wpf.Ui.Controls;
+	using FalloutScriptStudio.Editor.Highlighting;
+	using Services;
+	using ViewModels.ScriptTools.Dialogs;
 
 	/// <summary>
 	/// The add / edit user function dialog. The code box is an AvalonEdit editor with the SSL syntax highlighting.
@@ -125,7 +125,7 @@ namespace FalloutScriptStudio.Views.ScriptTools.Dialogs
 
 		private static SolidColorBrush CreateBrush(String color)
 		{
-			SolidColorBrush brush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+			SolidColorBrush brush = new((Color)ColorConverter.ConvertFromString(color));
 			brush.Freeze();
 			return brush;
 		}

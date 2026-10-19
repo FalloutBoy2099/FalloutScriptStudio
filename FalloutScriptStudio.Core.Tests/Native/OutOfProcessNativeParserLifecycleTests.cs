@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 {
 	using System;
 	using System.ComponentModel;
+	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Parsing.Interop;
@@ -172,6 +173,29 @@ namespace FalloutScriptStudio.Core.Tests.Native
 
 			Assert.Equal(NativeParseStatus.Failed, result.Status);
 			Assert.Contains("could not be sent", result.Message, StringComparison.Ordinal);
+		}
+
+		[Fact]
+		public async Task ParseAsync_RemovesTheWorkingFoldersOfHostsThatEndedLongAgo_AndKeepsTheRecentOnes()
+		{
+			String hostsFolder = Path.Combine(this._directory.Path, "FalloutScriptStudio");
+			String stale = Path.Combine(hostsFolder, "parser-host-" + Guid.NewGuid().ToString("N"));
+			String recent = Path.Combine(hostsFolder, "parser-host-" + Guid.NewGuid().ToString("N"));
+			String other = Path.Combine(hostsFolder, "something-else");
+			foreach (String directory in new[] { stale, recent, other })
+			{
+				Directory.CreateDirectory(directory);
+			}
+
+			Directory.SetLastWriteTimeUtc(stale, DateTime.UtcNow.AddHours(-3));
+			Directory.SetLastWriteTimeUtc(other, DateTime.UtcNow.AddHours(-3));
+			this.Create(Normal);
+
+			await this.ParseAsync();
+
+			Assert.False(Directory.Exists(stale), "the folder of a host that ended long ago must be removed");
+			Assert.True(Directory.Exists(recent), "the folder of a recent host may belong to a running instance");
+			Assert.True(Directory.Exists(other), "only the working folders of hosts are touched");
 		}
 
 		[Fact]

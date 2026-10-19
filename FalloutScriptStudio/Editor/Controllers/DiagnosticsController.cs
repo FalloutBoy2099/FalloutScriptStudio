@@ -3,20 +3,21 @@ namespace FalloutScriptStudio.Editor.Controllers
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Editor.Rendering;
-	using FalloutScriptStudio.Editor.Text;
-	using FalloutScriptStudio.Localization;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Core.Analysis;
+	using Core.Compilation;
+	using Documents;
+	using Editor.Rendering;
+	using Editor.Text;
+	using Localization;
 
 	/// <summary>Underlines the parser errors and warnings of the document (<c>DocumentViewModel.ParserErrors</c>).</summary>
 	public sealed class DiagnosticsController : IDisposable
 	{
 		private readonly EditorContext _context;
 		private readonly DiagnosticRenderer _renderer;
-		private readonly List<TextView> _views = new List<TextView>();
+		private readonly List<TextView> _views = [];
 
 		public DiagnosticsController(EditorContext context)
 		{
@@ -87,6 +88,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 				this.AddUnusedMarkers();
 			}
 
+			if (this._context.Options.HighlightParseErrors && this._context.Kind == DocumentKind.Script)
+			{
+				this.AddScriptMarkers();
+			}
+
 			this.InvalidateViews();
 		}
 
@@ -102,6 +108,36 @@ namespace FalloutScriptStudio.Editor.Controllers
 			}
 		}
 
+		/// <summary>Underlines the findings of the semantic analysis (<c>DocumentViewModel.LiveDiagnostics</c>), with their message and the quick fix as the tool tip.</summary>
+		private void AddScriptMarkers()
+		{
+			DocumentViewModel model = this._context.DocumentModel;
+			TextDocument document = this._context.Document;
+			ITextSourceVersion? version = model.LiveDiagnosticsVersion;
+			if (model.LiveDiagnostics.Count == 0 || version is null || !document.Version.BelongsToSameDocumentAs(version) || document.Version.CompareAge(version) != 0)
+			{
+				// The findings were made for another text (the analysis of the current one is on its way): their places would be wrong.
+				return;
+			}
+
+			foreach (ScriptDiagnostic diagnostic in model.LiveDiagnostics)
+			{
+				if (diagnostic.Offset > document.TextLength)
+				{
+					continue;
+				}
+
+				Int32 length = Math.Max(Math.Min(diagnostic.Length, document.TextLength - diagnostic.Offset), 0);
+				MarkerSeverity severity = diagnostic.Severity switch
+				{
+					ScriptDiagnosticSeverity.Error => MarkerSeverity.Error,
+					ScriptDiagnosticSeverity.Warning => MarkerSeverity.Warning,
+					_ => MarkerSeverity.Hint,
+				};
+				this._renderer.Add(new DiagnosticMarker(diagnostic.Offset, length, severity, ScriptFixText.DescribeDiagnostic(diagnostic)));
+			}
+		}
+
 		private void AddParseMarkers()
 		{
 			TextDocument document = this._context.Document;
@@ -109,7 +145,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			Boolean isMessage = this._context.IsMessage;
 
 			// The "error in an included header" notes come last: like in the legacy editor a line that has a mark already keeps it.
-			List<BuildError> includeNotes = new List<BuildError>();
+			List<BuildError> includeNotes = [];
 			foreach (BuildError error in this._context.DocumentModel.ParserErrors)
 			{
 				MarkerSeverity? severity = GetSeverity(error.Type, isMessage);

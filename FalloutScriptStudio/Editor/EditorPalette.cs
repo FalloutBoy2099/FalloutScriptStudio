@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Editor
 {
 	using System;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Editor.Highlighting;
+	using Highlighting;
 
 	/// <summary>
 	/// The frozen brushes and pens of one <see cref="SyntaxTheme"/> used by the editor control and its renderers.
@@ -133,7 +133,7 @@ namespace FalloutScriptStudio.Editor
 				parsed = Color.FromArgb(alpha, parsed.R, parsed.G, parsed.B);
 			}
 
-			SolidColorBrush brush = new SolidColorBrush(parsed);
+			SolidColorBrush brush = new(parsed);
 			brush.Freeze();
 			return brush;
 		}

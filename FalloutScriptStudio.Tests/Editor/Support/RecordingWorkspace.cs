@@ -14,13 +14,19 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 	public class RecordingWorkspace : DispatchProxy
 	{
 		/// <summary>Gets the recorded calls as <c>MethodName(argument, ...)</c> strings.</summary>
-		public List<String> Calls { get; } = new List<String>();
+		public List<String> Calls { get; } = [];
 
 		/// <summary>Gets the names that <see cref="IWorkspace.HasProjectSymbol"/> reports as known to the project index.</summary>
-		public HashSet<String> ProjectSymbols { get; } = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+		public HashSet<String> ProjectSymbols { get; } = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>Gets the texts returned by <see cref="IWorkspace.GetMessageText"/>.</summary>
-		public Dictionary<Int32, String> Messages { get; } = new Dictionary<Int32, String>();
+		public Dictionary<Int32, String> Messages { get; } = [];
+
+		/// <summary>Gets or sets the snippet that <see cref="IWorkspace.PickSnippetAsync"/> chooses; <see langword="null"/> cancels the list.</summary>
+		public FalloutScriptStudio.Core.Snippets.Snippet? SnippetAnswer { get; set; }
+
+		/// <summary>Gets the lists of snippets the editor asked to show.</summary>
+		public List<FalloutScriptStudio.Services.ToolWindows.SnippetPickerRequest> SnippetRequests { get; } = [];
 
 		/// <summary>Creates a workspace stand-in.</summary>
 		/// <returns>The workspace and its recorder.</returns>
@@ -45,6 +51,12 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			}
 
 			this.Calls.Add(name + "(" + String.Join(", ", args ?? Array.Empty<Object?>()) + ")");
+			if (name == nameof(IWorkspace.PickSnippetAsync) && args is [FalloutScriptStudio.Services.ToolWindows.SnippetPickerRequest request])
+			{
+				this.SnippetRequests.Add(request);
+				return Task.FromResult(this.SnippetAnswer);
+			}
+
 			if (name == nameof(IWorkspace.HasProjectSymbol) && args is [String symbol])
 			{
 				return this.ProjectSymbols.Contains(symbol);

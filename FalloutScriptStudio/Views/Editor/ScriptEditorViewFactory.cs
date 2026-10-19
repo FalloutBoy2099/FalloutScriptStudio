@@ -1,6 +1,6 @@
 namespace FalloutScriptStudio.Views.Editor
 {
-	using FalloutScriptStudio.Documents;
+	using Documents;
 	using FalloutScriptStudio.Editor;
 
 	/// <summary>

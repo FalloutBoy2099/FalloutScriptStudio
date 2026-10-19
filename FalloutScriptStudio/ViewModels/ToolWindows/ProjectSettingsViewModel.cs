@@ -24,7 +24,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		private readonly IProjectService _projects;
 		private readonly ISettingsService _settings;
 		private readonly IDialogService _dialogs;
-		private ProjectSettings _original = new ProjectSettings();
+		private ProjectSettings _original = new();
 
 		[ObservableProperty]
 		private String _projectName = String.Empty;
@@ -53,6 +53,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			this._settings = settings;
 			this._dialogs = dialogs;
 
+			this._profileEditor = this.CreateProfileEditor();
 			this.MessagePathsMode = new OverrideMode(false);
 			this.MessagePathsMode.PropertyChanged += this.OnMessagePathsModeChanged;
 			this.ProjectDefines.CollectionChanged += (_, _) => this.SynchronizeDefineChoices();
@@ -144,13 +145,13 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		public OverrideMode MessagePathsMode { get; }
 
 		/// <summary>Gets the folders searched for message files while the project overrides them; folders at the top have priority.</summary>
-		public ObservableCollection<String> MessagePaths { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> MessagePaths { get; } = [];
 
 		/// <summary>Gets the definitions of the project, offered in the toolbar in addition to the global ones.</summary>
-		public ObservableCollection<String> ProjectDefines { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> ProjectDefines { get; } = [];
 
 		/// <summary>Gets the definitions the selected definition can be chosen from (the empty one means none).</summary>
-		public ObservableCollection<PreprocessorDefineOption> DefineChoices { get; } = new ObservableCollection<PreprocessorDefineOption>();
+		public ObservableCollection<PreprocessorDefineOption> DefineChoices { get; } = [];
 
 		/// <summary>
 		/// Reads the settings of the project again (the window opens with them, and again after the settings file was created).
@@ -188,6 +189,8 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 				this.ProjectDefines.Add(define);
 			}
 
+			this.LoadProfiles(global, project);
+			this.LoadFormatting(global, project);
 			this.SynchronizeDefineChoices();
 			this.OnPropertyChanged(String.Empty);
 		}
@@ -216,6 +219,8 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			result.PreprocessorDefine = TextValue(this.SelectedDefine);
 			result.Defines = this.ProjectDefines.ToList();
 			result.MessageSearchDirectories = this.MessagePathsMode.IsOverridden ? this.MessagePaths.ToList() : null;
+			this.SaveProfiles(result);
+			result.Formatting = this.SaveFormatting();
 			return result;
 		}
 

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Dialogue
 {
 	using System;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>
 	/// Result of creating a dialogue node.

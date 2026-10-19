@@ -3,9 +3,9 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Analysis;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// Plans the removal of a procedure that nothing uses: the procedure with the comment block that documents it and its forward
@@ -114,7 +114,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 				removeEnd = map.Text.Length;
 			}
 
-			List<TextEdit> edits = new List<TextEdit> { new TextEdit(removeStart, removeEnd - removeStart, String.Empty) };
+			List<TextEdit> edits = [new TextEdit(removeStart, removeEnd - removeStart, String.Empty)];
 			String? declarationText = null;
 			if (procedure.HasForwardDeclaration && procedure.DeclaredLine >= 1 && procedure.DeclaredLine <= map.LineCount)
 			{

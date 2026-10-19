@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>How the project index reads files and how much it keeps.</summary>
 	public sealed record ProjectIndexOptions

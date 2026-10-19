@@ -1,11 +1,8 @@
 namespace FalloutScriptStudio.Controls.Diagram.Internal
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
+	using Model;
 
 	/// <summary>Hit testing, selection and hover.</summary>
 	internal sealed partial class DiagramScene

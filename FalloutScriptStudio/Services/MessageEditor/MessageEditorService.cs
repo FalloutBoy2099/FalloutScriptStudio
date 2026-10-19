@@ -5,12 +5,12 @@ namespace FalloutScriptStudio.Services.MessageEditor
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Views.MessageEditor;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
+	using Core.Configuration;
+	using Core.Messages;
+	using Localization;
+	using Views.MessageEditor;
 
 	/// <inheritdoc/>
 	public sealed class MessageEditorService : IMessageEditorService
@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Services.MessageEditor
 		private readonly ISettingsService _settings;
 		private readonly IDialogService _dialogs;
 		private readonly ILogger<MessageEditorService> _logger;
-		private readonly List<MessageEditorWindow> _windows = new List<MessageEditorWindow>();
+		private readonly List<MessageEditorWindow> _windows = [];
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MessageEditorService"/> class.

@@ -144,9 +144,9 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 	/// <summary>An in-memory message source that records which files were requested.</summary>
 	internal sealed class FakeMessageSource : IDialogueMessageSource
 	{
-		private readonly Dictionary<Int32, (MessageDocument Document, String Path)> _files = new Dictionary<Int32, (MessageDocument, String)>();
+		private readonly Dictionary<Int32, (MessageDocument Document, String Path)> _files = [];
 
-		public List<Int32> Requested { get; } = new List<Int32>();
+		public List<Int32> Requested { get; } = [];
 
 		public void SetFile(Int32 number, MessageDocument document, String path)
 		{

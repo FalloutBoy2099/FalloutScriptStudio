@@ -5,11 +5,12 @@ namespace FalloutScriptStudio.Workspace
 	using System.Text.Json;
 	using System.Text.Json.Serialization;
 	using FalloutScriptStudio.Core.Configuration;
+	using FalloutScriptStudio.Core.IO;
 
 	/// <summary>Loads and saves the <see cref="ShellLayout"/> next to the other settings (<c>settings\shell.json</c>).</summary>
 	public sealed class ShellLayoutStore
 	{
-		private static readonly JsonSerializerOptions _options = new JsonSerializerOptions
+		private static readonly JsonSerializerOptions _options = new()
 		{
 			WriteIndented = true,
 			Converters = { new JsonStringEnumConverter() },
@@ -52,7 +53,7 @@ namespace FalloutScriptStudio.Workspace
 			try
 			{
 				Directory.CreateDirectory(Path.GetDirectoryName(this._path)!);
-				File.WriteAllText(this._path, JsonSerializer.Serialize(layout, _options));
+				AtomicFile.WriteAllBytes(this._path, TextEncodings.Utf8.GetBytes(JsonSerializer.Serialize(layout, _options)));
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{

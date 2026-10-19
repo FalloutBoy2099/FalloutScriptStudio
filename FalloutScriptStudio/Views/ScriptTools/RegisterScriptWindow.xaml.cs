@@ -6,9 +6,9 @@ namespace FalloutScriptStudio.Views.ScriptTools
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.ScriptTools;
 	using Wpf.Ui.Controls;
+	using Localization;
+	using ViewModels.ScriptTools;
 
 	/// <summary>
 	/// The "Scripts List Editor" window.

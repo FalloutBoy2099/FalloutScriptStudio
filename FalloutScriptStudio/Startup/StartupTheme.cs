@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Startup
 {
 	using System;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Services;
+	using Core.Configuration;
+	using Services;
 
 	/// <summary>Chooses the color mode the application starts with.</summary>
 	public static class StartupTheme

@@ -9,8 +9,8 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 	/// <typeparam name="T">The state type.</typeparam>
 	internal sealed class UndoHistory<T>
 	{
-		private readonly LinkedList<T> _undo = new LinkedList<T>();
-		private readonly Stack<T> _redo = new Stack<T>();
+		private readonly LinkedList<T> _undo = new();
+		private readonly Stack<T> _redo = new();
 
 		public Boolean CanUndo => this._undo.Count > 0;
 

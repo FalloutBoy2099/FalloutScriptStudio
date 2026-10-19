@@ -6,8 +6,8 @@
 		<RootNamespace>FalloutScriptStudio.Core</RootNamespace>
 		<AssemblyName>FalloutScriptStudio.Core</AssemblyName>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AssemblyVersion>2026.10.12.1</AssemblyVersion>
-		<FileVersion>2026.10.12.1</FileVersion>
+		<AssemblyVersion>2026.10.19.5</AssemblyVersion>
+		<FileVersion>2026.10.19.5</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

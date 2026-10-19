@@ -9,7 +9,7 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	/// <summary>Answers the small dialogs of the flowchart with configured values.</summary>
 	internal sealed class FakeFlowchartDialogService : IFlowchartDialogService
 	{
-		public List<String> Captions { get; } = new List<String>();
+		public List<String> Captions { get; } = [];
 
 		public String? MessageAnswer { get; set; }
 

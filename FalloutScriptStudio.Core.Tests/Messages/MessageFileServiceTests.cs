@@ -96,7 +96,7 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 		public async Task UpdateMessageText_WithLoadedLinesKeepsThemInSync()
 		{
 			String path = this._workspace.CreateFile("lines.msg", "{100}{}{old}\r\n");
-			List<String> lines = new List<String>(await this._service.ReadLinesAsync(path, TextEncodings.Utf8));
+			List<String> lines = new(await this._service.ReadLinesAsync(path, TextEncodings.Utf8));
 
 			Boolean updated = await this._service.UpdateMessageTextAsync(path, lines, 100, "changed", TextEncodings.Utf8);
 
@@ -254,6 +254,44 @@ namespace FalloutScriptStudio.Core.Tests.Messages
 			await Assert.ThrowsAsync<InvalidOperationException>(() => this._service.CreateFileAsync(unknown));
 		}
 
+		[Fact]
+		public async Task AppendMessages_AddsPlaceholdersAfterTheLastNonBlankLineAndKeepsEveryOtherLine()
+		{
+			String path = Path.Combine(this._workspace.Root, "append.msg");
+			String original = "# Comment\r\n{100}{}{Hello,\r\nsecond line}  # note\r\n\t{101}{}{Bye.}\r\n\r\n\r\n";
+			await File.WriteAllTextAsync(path, original, TextEncodings.Utf8);
+
+			IReadOnlyList<Int32> added = await this._service.AppendMessagesAsync(path, new[] { 300, 102, 100, 102, 0, -5 }, TextEncodings.Utf8);
+
+			Assert.Equal(new[] { 102, 300 }, added);
+			Assert.Equal("# Comment\r\n{100}{}{Hello,\r\nsecond line}  # note\r\n\t{101}{}{Bye.}\r\n{102}{}{}\r\n{300}{}{}\r\n\r\n\r\n", await File.ReadAllTextAsync(path));
+			Assert.Empty(Directory.GetFiles(this._workspace.Root, "*.tmp"));
+		}
+
+		[Fact]
+		public async Task AppendMessages_DoesNotTouchTheFileWhenEveryNumberExists()
+		{
+			String path = Path.Combine(this._workspace.Root, "same.msg");
+			await File.WriteAllTextAsync(path, "{100}{}{Hello}\n", TextEncodings.Utf8);
+			DateTime stamp = File.GetLastWriteTimeUtc(path);
+
+			IReadOnlyList<Int32> added = await this._service.AppendMessagesAsync(path, new[] { 100 }, TextEncodings.Utf8);
+
+			Assert.Empty(added);
+			Assert.Equal("{100}{}{Hello}\n", await File.ReadAllTextAsync(path));
+			Assert.Equal(stamp, File.GetLastWriteTimeUtc(path));
+		}
+
+		[Fact]
+		public async Task AppendMessages_WorksOnAnEmptyFileAndKeepsTheEncoding()
+		{
+			String path = Path.Combine(this._workspace.Root, "empty.msg");
+			await File.WriteAllTextAsync(path, String.Empty);
+
+			await this._service.AppendMessagesAsync(path, new[] { 5 }, TextEncodings.Oem866);
+
+			Assert.Equal("{5}{}{}\r\n", await File.ReadAllTextAsync(path));
+		}
 		[Fact]
 		public void Options_DialogDirectoryFollowsTheLanguage()
 		{

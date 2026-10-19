@@ -35,7 +35,7 @@ namespace FalloutScriptStudio.Workspace
 			{
 				try
 				{
-					UTF8Encoding strict = new UTF8Encoding(false, true);
+					UTF8Encoding strict = new(false, true);
 					return new DecodedText(strict.GetString(bytes), new UTF8Encoding(false));
 				}
 				catch (DecoderFallbackException)
@@ -87,7 +87,7 @@ namespace FalloutScriptStudio.Workspace
 				return text;
 			}
 
-			StringBuilder result = new StringBuilder(text.Length + 16);
+			StringBuilder result = new(text.Length + 16);
 			for (Int32 i = 0; i < text.Length; i++)
 			{
 				Char c = text[i];
@@ -117,7 +117,7 @@ namespace FalloutScriptStudio.Workspace
 		{
 			ArgumentNullException.ThrowIfNull(text);
 
-			TextDocument copy = new TextDocument(text);
+			TextDocument copy = new(text);
 			copy.UndoStack.SizeLimit = 0;
 			return TrimTrailingWhitespace(copy) ? copy.Text : text;
 		}

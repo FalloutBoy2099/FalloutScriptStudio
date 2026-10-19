@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">编辑节点：{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">重命名节点</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">重命名节点：{0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">从此节点预览对话</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">从节点预览对话：{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">从：--- 跳转到</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">从：{0} 跳转到</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">隐藏节点</sys:String>

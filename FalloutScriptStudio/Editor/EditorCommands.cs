@@ -3,9 +3,9 @@ namespace FalloutScriptStudio.Editor
 	using System;
 	using System.Collections.Generic;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Views.Editor;
+	using Documents;
+	using Localization;
+	using Views.Editor;
 
 	/// <summary>
 	/// The routed commands of the script editor. Every <see cref="EditorCommand"/> has one; menus and toolbars can bind to
@@ -14,9 +14,9 @@ namespace FalloutScriptStudio.Editor
 	/// </summary>
 	public static class EditorCommands
 	{
-		private static readonly List<(RoutedUICommand Command, String Key)> _texts = new List<(RoutedUICommand Command, String Key)>();
+		private static readonly List<(RoutedUICommand Command, String Key)> _texts = [];
 
-		private static readonly Dictionary<EditorCommand, RoutedUICommand> _byCommand = new Dictionary<EditorCommand, RoutedUICommand>
+		private static readonly Dictionary<EditorCommand, RoutedUICommand> _byCommand = new()
 		{
 			[EditorCommand.CommentSelection] = Create("Str.Editor.Cmd.CommentSelection", nameof(EditorCommand.CommentSelection), new KeyGesture(Key.C, ModifierKeys.Alt)),
 			[EditorCommand.UncommentSelection] = Create("Str.Editor.Cmd.UncommentSelection", nameof(EditorCommand.UncommentSelection), new KeyGesture(Key.X, ModifierKeys.Alt)),
@@ -56,6 +56,10 @@ namespace FalloutScriptStudio.Editor
 			[EditorCommand.DeleteUnusedProcedure] = Create("Str.Editor.Cmd.DeleteUnusedProcedure", nameof(EditorCommand.DeleteUnusedProcedure)),
 			[EditorCommand.FindUnusedVariables] = Create("Str.Editor.Cmd.FindUnusedVariables", nameof(EditorCommand.FindUnusedVariables)),
 			[EditorCommand.RemoveUnusedVariable] = Create("Str.Editor.Cmd.RemoveUnusedVariable", nameof(EditorCommand.RemoveUnusedVariable)),
+			[EditorCommand.QuickFix] = Create("Str.Editor.Cmd.QuickFix", nameof(EditorCommand.QuickFix), new KeyGesture(Key.OemPeriod, ModifierKeys.Control)),
+			[EditorCommand.PreviewDialogueFromNode] = Create("Str.Editor.Cmd.PreviewDialogueFromNode", nameof(EditorCommand.PreviewDialogueFromNode), new KeyGesture(Key.P, ModifierKeys.Control | ModifierKeys.Shift)),
+			[EditorCommand.InsertSnippet] = Create("Str.Editor.Cmd.InsertSnippet", nameof(EditorCommand.InsertSnippet), new KeyGesture(Key.J, ModifierKeys.Control)),
+			[EditorCommand.SurroundWith] = Create("Str.Editor.Cmd.SurroundWith", nameof(EditorCommand.SurroundWith), new KeyGesture(Key.J, ModifierKeys.Control | ModifierKeys.Shift)),
 		};
 
 		static EditorCommands()
@@ -106,13 +110,9 @@ namespace FalloutScriptStudio.Editor
 
 		private static RoutedUICommand Create(String textKey, String name, params InputGesture[] gestures)
 		{
-			InputGestureCollection collection = new InputGestureCollection();
-			foreach (InputGesture gesture in gestures)
-			{
-				collection.Add(gesture);
-			}
+			InputGestureCollection collection = [.. gestures];
 
-			RoutedUICommand command = new RoutedUICommand(Loc.Get(textKey), name, typeof(ScriptEditorView), collection);
+			RoutedUICommand command = new(Loc.Get(textKey), name, typeof(ScriptEditorView), collection);
 			_texts.Add((command, textKey));
 			return command;
 		}

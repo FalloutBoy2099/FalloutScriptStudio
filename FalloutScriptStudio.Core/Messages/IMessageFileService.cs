@@ -88,5 +88,16 @@ namespace FalloutScriptStudio.Core.Messages
 		/// <param name="cancellationToken">Cancels the operation.</param>
 		/// <returns><see langword="false"/> if the message does not exist (nothing is written).</returns>
 		Task<Boolean> UpdateMessageTextAsync(String path, List<String> lines, Int32 messageId, String text, Encoding encoding, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Appends empty placeholder messages (<c>{n}{}{}</c>) for the numbers the file does not have yet, after its last non-blank line, and saves
+		/// the file atomically. Every existing line is kept as it is.
+		/// </summary>
+		/// <param name="path">The message file.</param>
+		/// <param name="numbers">The message numbers; numbers that are not positive or that the file has are skipped.</param>
+		/// <param name="encoding">The encoding of the file.</param>
+		/// <param name="cancellationToken">Cancels the operation.</param>
+		/// <returns>The numbers that were added, ascending; the file is not written when there are none.</returns>
+		Task<IReadOnlyList<Int32>> AppendMessagesAsync(String path, IEnumerable<Int32> numbers, Encoding encoding, CancellationToken cancellationToken = default);
 	}
 }

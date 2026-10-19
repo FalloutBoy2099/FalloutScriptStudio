@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Indexing;
+	using Core.Indexing;
 
 	/// <summary>What the symbol list has to show.</summary>
 	public sealed record SymbolPickerRequest

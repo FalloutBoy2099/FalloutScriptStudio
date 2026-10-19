@@ -1,12 +1,14 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
+	using Core.TextTools;
+	using Documents;
+	using Localization;
+	using Problems;
 
 	/// <summary>Saving, reloading and external change detection.</summary>
 	public sealed partial class WorkspaceService
@@ -137,8 +139,24 @@ namespace FalloutScriptStudio.Workspace
 			this._settings.ScriptPositions.Set(document.FileName, line);
 		}
 
+		/// <summary>
+		/// Formats a script or header just before it is written when the style in effect asks for it ("Format on save"). The document itself is
+		/// changed (as one undoable step), so what is saved is what the editor shows.
+		/// </summary>
+		private void FormatBeforeSave(DocumentViewModel document, String path)
+		{
+			if (!this._settings.Effective.Formatting.FormatOnSave || DocumentViewModel.KindFromPath(path) is not (DocumentKind.Script or DocumentKind.Header))
+			{
+				return;
+			}
+
+			IReadOnlyList<TextEdit> edits = new CodeFormatter().GetDocumentEdits(document.TextDocument.Text, this._settings.Effective.ToFormatOptions());
+			document.TextDocument.ApplyEdits(edits);
+		}
+
 		private async Task<Boolean> WriteAsync(DocumentViewModel document, String path)
 		{
+			this.FormatBeforeSave(document, path);
 			if (!await this._files.WriteAsync(document, path))
 			{
 				return false;
@@ -156,6 +174,7 @@ namespace FalloutScriptStudio.Workspace
 				_ = this._symbols.NotifySavedAsync(path, document.TextDocument.Text);
 			}
 
+			this.DocumentSaved?.Invoke(this, document);
 			return true;
 		}
 	}

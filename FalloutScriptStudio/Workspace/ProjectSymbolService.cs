@@ -6,14 +6,14 @@ namespace FalloutScriptStudio.Workspace
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Indexing;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Core.Analysis;
+	using Core.Configuration;
+	using Core.Indexing;
+	using Core.Parsing;
+	using Documents;
+	using Localization;
 
 	/// <summary>
 	/// Keeps the index of the symbols of the project up to date and answers the questions of the navigation and of the refactorings: the
@@ -39,7 +39,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly TimeSpan _debounce;
 		private readonly SynchronizationContext? _context = SynchronizationContext.Current;
 		private readonly Int32 _uiThreadId = Environment.CurrentManagedThreadId;
-		private readonly Object _gate = new Object();
+		private readonly Object _gate = new();
 		private IWorkspaceManager? _workspace;
 		private CancellationTokenSource? _pending;
 		private ProjectIndexRoots _lastRoots = ProjectIndexRoots.None;
@@ -79,19 +79,34 @@ namespace FalloutScriptStudio.Workspace
 		{
 			ArgumentNullException.ThrowIfNull(workspace);
 			this._workspace = workspace;
-			workspace.DocumentOpened += (_, _) => this.RequestRefresh(false);
-			workspace.DocumentClosed += (_, _) => this.RequestRefresh(false);
-			this._projects.ProjectChanged += (_, _) => this.RequestRefresh(true);
-			this._settings.SettingsChanged += (_, _) => this.RequestRefresh(false);
+			workspace.DocumentOpened += this.OnDocumentOpenedOrClosed;
+			workspace.DocumentClosed += this.OnDocumentOpenedOrClosed;
+			this._projects.ProjectChanged += this.OnProjectChanged;
+			this._settings.SettingsChanged += this.OnSettingsChanged;
 			this.RequestRefresh(true);
+		}
+
+		private void OnDocumentOpenedOrClosed(Object? sender, DocumentViewModel document)
+		{
+			this.RequestRefresh(false);
+		}
+
+		private void OnProjectChanged(Object? sender, EventArgs e)
+		{
+			this.RequestRefresh(true);
+		}
+
+		private void OnSettingsChanged(Object? sender, SettingsChangedEventArgs e)
+		{
+			this.RequestRefresh(false);
 		}
 
 		/// <summary>Determines what is indexed now: the project folder, or the folders of the open scripts, and the headers folder.</summary>
 		/// <returns>The roots.</returns>
 		public ProjectIndexRoots GetRoots()
 		{
-			List<ProjectIndexRoot> folders = new List<ProjectIndexRoot>();
-			List<String> files = new List<String>();
+			List<ProjectIndexRoot> folders = [];
+			List<String> files = [];
 			IEnumerable<DocumentViewModel> documents = this._workspace?.Documents.Where(d => d.IsParsable && d.FilePath is not null).ToList() ?? Enumerable.Empty<DocumentViewModel>();
 			foreach (DocumentViewModel document in documents)
 			{
@@ -181,7 +196,7 @@ namespace FalloutScriptStudio.Workspace
 				}
 			}
 
-			CancellationTokenSource source = new CancellationTokenSource();
+			CancellationTokenSource source = new();
 			CancellationTokenSource? previous;
 			lock (this._gate)
 			{
@@ -273,13 +288,13 @@ namespace FalloutScriptStudio.Workspace
 
 			IReadOnlyCollection<String>? files = null;
 			Dictionary<String, String> openTexts = this._workspace is null
-				? new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase)
+				? new(StringComparer.OrdinalIgnoreCase)
 				: new Dictionary<String, String>(this._workspace.GetOpenDocumentTexts(), StringComparer.OrdinalIgnoreCase);
 			if (definingFile is not null && !allFiles)
 			{
 				IncludeResolver resolver = this._settings.Effective.ToIncludeResolver(this._settings.Paths);
-				HashSet<String> scope = new HashSet<String>(this._index.GetFilesSeeing(DocumentPaths.GetFullPath(definingFile), resolver), StringComparer.OrdinalIgnoreCase);
-				HashSet<String> known = new HashSet<String>(this._index.Files, StringComparer.OrdinalIgnoreCase);
+				HashSet<String> scope = new(this._index.GetFilesSeeing(DocumentPaths.GetFullPath(definingFile), resolver), StringComparer.OrdinalIgnoreCase);
+				HashSet<String> known = new(this._index.Files, StringComparer.OrdinalIgnoreCase);
 				known.UnionWith(openTexts.Keys);
 				scope.IntersectWith(known);
 				files = scope;
@@ -295,6 +310,14 @@ namespace FalloutScriptStudio.Workspace
 		{
 			this._disposed = true;
 			this._index.ProgressChanged -= this.OnProgress;
+			this._projects.ProjectChanged -= this.OnProjectChanged;
+			this._settings.SettingsChanged -= this.OnSettingsChanged;
+			if (this._workspace is not null)
+			{
+				this._workspace.DocumentOpened -= this.OnDocumentOpenedOrClosed;
+				this._workspace.DocumentClosed -= this.OnDocumentOpenedOrClosed;
+			}
+
 			CancellationTokenSource? pending;
 			lock (this._gate)
 			{
@@ -327,8 +350,9 @@ namespace FalloutScriptStudio.Workspace
 			{
 				// Replaced by a newer request, or the application is closing.
 			}
-			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+			catch (Exception ex)
 			{
+				// Nobody awaits this run: whatever failed is logged here, never left as an unobserved task exception.
 				this._logger.IndexRunFailed(ex.Message);
 			}
 			finally

@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Editor.Text
 		/// <summary>The biggest window; it stays below the size from which .NET allocates strings on the large object heap.</summary>
 		private const Int32 LastWindow = 4096 * 8;
 
-		private static readonly LexicalMap _empty = new LexicalMap(Array.Empty<LexicalSpan>());
+		private static readonly LexicalMap _empty = new(Array.Empty<LexicalSpan>());
 
 		private readonly LexicalSpan[] _spans;
 
@@ -41,7 +41,7 @@ namespace FalloutScriptStudio.Editor.Text
 				return _empty;
 			}
 
-			List<LexicalSpan> spans = new List<LexicalSpan>();
+			List<LexicalSpan> spans = [];
 			Scan(text, 0, spans, null);
 			return new LexicalMap(spans.ToArray());
 		}
@@ -89,7 +89,7 @@ namespace FalloutScriptStudio.Editor.Text
 
 				String window = text.GetText(scanFrom, length);
 				Boolean toEnd = scanFrom + length >= newLength;
-				List<LexicalSpan> fresh = new List<LexicalSpan>();
+				List<LexicalSpan> fresh = [];
 
 				// Back in step: past the edit, and where the scanner of the old text was in plain code too, so that the old spans from there on stay valid.
 				Int32 stopped = Scan(window, scanFrom, fresh, position => position >= editEnd && !IsInsideSpan(spans, position - delta));

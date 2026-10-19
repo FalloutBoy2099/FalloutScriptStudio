@@ -6,9 +6,9 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Controls.Primitives;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
+	using Core.Configuration;
+	using Localization;
+	using ViewModels.MessageEditor;
 
 	/// <summary>
 	/// The context menus of the Message Editor: completes the menus declared in XAML with the items that are built in code
@@ -23,8 +23,8 @@ namespace FalloutScriptStudio.Views.MessageEditor
 		private readonly ButtonBase _recentButton;
 		private readonly ButtonBase _openWithButton;
 		private readonly ButtonBase _optionsButton;
-		private readonly List<(MenuItem Item, CommentHighlightColor Color)> _colorItems = new List<(MenuItem, CommentHighlightColor)>();
-		private readonly List<(MenuItem Item, Int32 Points)> _fontItems = new List<(MenuItem, Int32)>();
+		private readonly List<(MenuItem Item, CommentHighlightColor Color)> _colorItems = [];
+		private readonly List<(MenuItem Item, Int32 Points)> _fontItems = [];
 
 		/// <summary>Initializes the menus.</summary>
 		/// <param name="resources">The resources of the window that declare <c>RowMenu</c>, <c>OptionsMenu</c> and <c>OpenWithMenu</c>.</param>
@@ -123,7 +123,8 @@ namespace FalloutScriptStudio.Views.MessageEditor
 			MenuItem colors = options.Items.OfType<MenuItem>().First(item => Equals(item.Tag, "colors"));
 			foreach (CommentHighlightColor color in this._viewModel.CommentColors)
 			{
-				MenuItem item = new MenuItem { Tag = color };
+				MenuItem item = new()
+				{ Tag = color };
 				this._colorItems.Add((item, color));
 				item.Click += (_, _) => this._viewModel.SetCommentColorCommand.Execute(color);
 				colors.Items.Add(item);
@@ -141,7 +142,8 @@ namespace FalloutScriptStudio.Views.MessageEditor
 			for (Int32 index = 0; index < this._viewModel.FontSizes.Count; index++)
 			{
 				Int32 captured = index;
-				MenuItem item = new MenuItem { Tag = index };
+				MenuItem item = new()
+				{ Tag = index };
 				this._fontItems.Add((item, this._viewModel.FontSizes[index]));
 				item.Click += (_, _) => this._viewModel.SetFontSizeIndexCommand.Execute(captured);
 				fonts.Items.Add(item);
@@ -158,7 +160,7 @@ namespace FalloutScriptStudio.Views.MessageEditor
 
 		private void ShowRecent()
 		{
-			ContextMenu menu = new ContextMenu();
+			ContextMenu menu = new();
 			if (this._viewModel.RecentFiles.Count == 0)
 			{
 				menu.Items.Add(new MenuItem { Header = Loc.Get("Str.MessageEditor.Menu.NoRecent"), IsEnabled = false });
@@ -167,7 +169,8 @@ namespace FalloutScriptStudio.Views.MessageEditor
 			foreach (String path in this._viewModel.RecentFiles)
 			{
 				String captured = path;
-				MenuItem item = new MenuItem { Header = path.Replace("_", "__", StringComparison.Ordinal) };
+				MenuItem item = new()
+				{ Header = path.Replace("_", "__", StringComparison.Ordinal) };
 				item.Click += (_, _) => this._viewModel.OpenRecentCommand.Execute(captured);
 				menu.Items.Add(item);
 			}

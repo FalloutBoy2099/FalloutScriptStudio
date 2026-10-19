@@ -2,10 +2,10 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Views.Flowchart;
-	using FalloutScriptStudio.Views.ScriptTools;
 	using Microsoft.Extensions.DependencyInjection;
+	using Documents;
+	using Views.Flowchart;
+	using Views.ScriptTools;
 
 	/// <inheritdoc />
 	public sealed class FlowchartDialogService : IFlowchartDialogService

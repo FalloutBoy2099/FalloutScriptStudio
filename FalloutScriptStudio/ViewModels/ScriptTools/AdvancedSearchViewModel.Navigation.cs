@@ -5,12 +5,11 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 	using System.Linq;
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.Input;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services.ScriptTools.Search;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.Compilation;
+	using Documents;
+	using Localization;
+	using Services.ScriptTools.Search;
 
 	/// <summary>Find next and going to a result.</summary>
 	public sealed partial class AdvancedSearchViewModel

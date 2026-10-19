@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System.Collections.ObjectModel;
 	using System.Windows;
 	using System.Windows.Controls;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Internal;
+	using Model;
 
 	/// <summary>
 	/// A zoomable, scrollable canvas that displays a graph of <see cref="DiagramNode"/> boxes with orthogonal connector
@@ -32,7 +32,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 		private readonly ScrollViewer _scrollViewer;
 		private readonly Canvas _editorLayer;
 		private readonly DiagramInputHandler _input;
-		private readonly ObservableCollection<DiagramItem> _items = new ObservableCollection<DiagramItem>();
+		private readonly ObservableCollection<DiagramItem> _items = [];
 		private readonly ReadOnlyObservableCollection<DiagramItem> _readOnlyItems;
 		private Int32 _updateDepth;
 		private Boolean _selectionChangedPending;
@@ -51,7 +51,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 			this._scene = new DiagramScene(this.CreateContext());
 			this._surface = new DiagramSurface(this._scene);
 			this._editorLayer = new Canvas { IsHitTestVisible = true };
-			Grid host = new Grid();
+			Grid host = new();
 			host.Children.Add(this._surface);
 			host.Children.Add(this._editorLayer);
 			this._scrollViewer = new ScrollViewer

@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using Core.IO;
 
 	/// <summary>
 	/// Describes one search run.

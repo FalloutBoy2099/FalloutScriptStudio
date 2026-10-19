@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Core.Tests.Indexing
 			IndexedSymbol included = Symbol(@"C:\mod\headers\h.h");
 			IndexedSymbol sibling = Symbol(@"C:\mod\scripts\b.ssl");
 			IndexedSymbol far = Symbol(@"C:\other\z.h");
-			HashSet<String> includes = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { included.File };
+			HashSet<String> includes = new(StringComparer.OrdinalIgnoreCase) { included.File };
 
 			IReadOnlyList<IndexedSymbol> ordered = SymbolCloseness.Order(new[] { far, sibling, included, current }, @"C:\mod\scripts\a.ssl", includes);
 

@@ -19,6 +19,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets or sets a value indicating whether message files are associated through the script number in <c>scripts.lst</c>.</summary>
 		public Boolean AssociateByScriptId { get; set; }
 
+		/// <summary>Gets or sets a value indicating whether a script and its message file are compared when one of them is saved (the unknown, unused and duplicate messages are listed as problems).</summary>
+		public Boolean CheckMessagesOnSave { get; set; } = true;
+
 		/// <summary>Gets or sets a value indicating whether comment lines are highlighted in the Message Editor.</summary>
 		public Boolean HighlightComments { get; set; } = true;
 

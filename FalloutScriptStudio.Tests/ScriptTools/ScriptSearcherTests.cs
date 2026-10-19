@@ -193,7 +193,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 				temp.Write("f" + i + ".ssl", "foo\r\n");
 			}
 
-			List<SearchProgress> reports = new List<SearchProgress>();
+			List<SearchProgress> reports = [];
 			ImmediateProgress progress = new ImmediateProgress(reports);
 
 			this._searcher.Search(new SearchRequest { Matcher = Matcher("foo"), Folder = Folder(temp.Path) }, progress, CancellationToken.None);

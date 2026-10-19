@@ -52,6 +52,9 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			this.Reload();
 		}
 
+		/// <summary>Gets or sets what the context menu item "Format Project" does (the main window opens the window of Format Project).</summary>
+		public Func<Task>? FormatProjectHandler { get; set; }
+
 		/// <summary>Gets or sets how long typing must pause before the file names are filtered (the filter text is debounced).</summary>
 		public TimeSpan FilterDelay { get; set; } = _defaultFilterDelay;
 
@@ -62,7 +65,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		public Task FilterTask { get; private set; } = Task.CompletedTask;
 
 		/// <summary>Gets the top level nodes (the content of the project folder, or the search results).</summary>
-		public ObservableCollection<ProjectNodeViewModel> Nodes { get; } = new ObservableCollection<ProjectNodeViewModel>();
+		public ObservableCollection<ProjectNodeViewModel> Nodes { get; } = [];
 
 		/// <summary>Gets the project folder, or <see langword="null"/> when none is set.</summary>
 		public String? ProjectFolder => this._settings.Settings.Paths.SolutionFolder;
@@ -103,14 +106,14 @@ namespace FalloutScriptStudio.ViewModels.Panels
 				return;
 			}
 
-			ProjectFileFilter filter = new ProjectFileFilter(this.ShowCompiled);
+			ProjectFileFilter filter = new(this.ShowCompiled);
 			if (this.FilterText.Trim().Length > 0)
 			{
 				this.StartFilter(folder, this.FilterText.Trim(), TimeSpan.Zero);
 				return;
 			}
 
-			ProjectNodeViewModel root = new ProjectNodeViewModel(folder, true, filter);
+			ProjectNodeViewModel root = new(folder, true, filter);
 			root.EnsureLoaded();
 			root.IsExpanded = true;
 			this.Nodes.Add(root);
@@ -159,6 +162,17 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		}
 
 		/// <summary>Copies the full path of a node to the clipboard.</summary>
+		/// <summary>Opens "Format Project" from the context menu of the explorer.</summary>
+		/// <returns>A task that completes when the window is closed.</returns>
+		[RelayCommand]
+		public async Task FormatProjectAsync()
+		{
+			if (this.FormatProjectHandler is { } handler)
+			{
+				await handler();
+			}
+		}
+
 		[RelayCommand]
 		public void CopyPath(ProjectNodeViewModel? node)
 		{
@@ -203,7 +217,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		private void StartFilter(String folder, String text, TimeSpan delay)
 		{
 			this.CancelFilter();
-			CancellationTokenSource cancellation = new CancellationTokenSource();
+			CancellationTokenSource cancellation = new();
 			this._filterCancellation = cancellation;
 			this.FilterTask = this.RunFilterAsync(folder, text, this.ShowCompiled, delay, cancellation.Token);
 		}
@@ -219,7 +233,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 
 				// The folder is walked once (off the UI thread) and the names are filtered in memory until Reload() or a new folder.
 				IReadOnlyList<String>? index = this._fileIndex;
-				ProjectFileFilter filter = new ProjectFileFilter(showCompiled);
+				ProjectFileFilter filter = new(showCompiled);
 				if (index is null || this._indexCompiled != showCompiled || !String.Equals(this._indexFolder, folder, StringComparison.OrdinalIgnoreCase))
 				{
 					index = await Task.Run(() => filter.ListAll(folder, cancellationToken), cancellationToken);

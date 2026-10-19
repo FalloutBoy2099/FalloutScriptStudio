@@ -1,9 +1,9 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Services.MessageEditor;
+	using Core.Messages;
+	using Documents;
+	using Services.MessageEditor;
 
 	/// <summary>Lets the Message Editor send message numbers into the script tab that owns the message file.</summary>
 	public sealed class DocumentMessageTarget : IMessageLineTarget

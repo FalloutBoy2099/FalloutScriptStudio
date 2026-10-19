@@ -10,9 +10,9 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 	/// </summary>
 	internal sealed class FakePlatform : IMessageEditorPlatform
 	{
-		public List<MessageEditorBeep> Beeps { get; } = new List<MessageEditorBeep>();
+		public List<MessageEditorBeep> Beeps { get; } = [];
 
-		public List<(String Program, String File)> StartedEditors { get; } = new List<(String, String)>();
+		public List<(String Program, String File)> StartedEditors { get; } = [];
 
 		public FileStamp? GetFileStamp(String path)
 		{

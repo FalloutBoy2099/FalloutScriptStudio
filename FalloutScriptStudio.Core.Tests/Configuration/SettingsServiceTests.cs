@@ -61,10 +61,15 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.True(settings.Editor.StoreLastPosition);
 			Assert.True(settings.Editor.RestoreProjectDocuments);
 			Assert.False(settings.Editor.ShowUnusedVariables);
+			Assert.Equal(LiveDiagnosticsLevel.ErrorsAndWarnings, settings.Editor.LiveDiagnostics);
+			Assert.False(settings.Editor.Formatting.Reindent);
+			Assert.False(settings.Editor.Formatting.FormatOnSave);
+			Assert.Equal(FalloutScriptStudio.Core.Formatting.SpacingStyle.Add, settings.Editor.Formatting.OperatorSpacing);
 			Assert.Equal(1, settings.Editor.FontIndex);
 			Assert.Equal(0, settings.Editor.FontSizeAdjustment);
 			Assert.Equal("english", settings.Messages.Language);
 			Assert.True(settings.Messages.HighlightComments);
+			Assert.True(settings.Messages.CheckMessagesOnSave);
 			Assert.Equal(CommentHighlightColor.LightYellow, settings.Messages.CommentColor);
 			Assert.True(settings.Flowchart.AutoSaveChart);
 			Assert.True(settings.Flowchart.WithoutExitNode);
@@ -88,8 +93,10 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			first.Settings.Editor.FontSizeAdjustment = -2;
 			first.Settings.Editor.RestoreProjectDocuments = false;
 			first.Settings.Editor.ShowUnusedVariables = true;
+			first.Settings.Editor.LiveDiagnostics = LiveDiagnosticsLevel.ErrorsOnly;
 			first.Settings.Messages.CommentColor = CommentHighlightColor.Lavender;
 			first.Settings.Messages.Language = "french";
+			first.Settings.Messages.CheckMessagesOnSave = false;
 			first.Settings.Paths.OutputDirectory = @"C:\Fallout2\data\scripts";
 			first.Settings.Paths.MessageSearchDirectories.Add(@"D:\msg1");
 			first.Settings.Paths.MessageSearchDirectories.Add(@"D:\msg2");
@@ -117,8 +124,10 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.Equal(-2, second.Settings.Editor.FontSizeAdjustment);
 			Assert.False(second.Settings.Editor.RestoreProjectDocuments);
 			Assert.True(second.Settings.Editor.ShowUnusedVariables);
+			Assert.Equal(LiveDiagnosticsLevel.ErrorsOnly, second.Settings.Editor.LiveDiagnostics);
 			Assert.Equal(CommentHighlightColor.Lavender, second.Settings.Messages.CommentColor);
 			Assert.Equal("french", second.Settings.Messages.Language);
+			Assert.False(second.Settings.Messages.CheckMessagesOnSave);
 			Assert.Equal(@"C:\Fallout2\data\scripts", second.Settings.Paths.OutputDirectory);
 			Assert.Equal(new[] { @"D:\msg1", @"D:\msg2" }, second.Settings.Paths.MessageSearchDirectories);
 			Assert.True(second.Settings.IsFirstRunCompleted);
@@ -235,7 +244,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		public void Load_RaisesSettingsChanged_AndApplyReplacesTheSettings()
 		{
 			SettingsService service = this.CreateService();
-			List<AppSettings> seen = new List<AppSettings>();
+			List<AppSettings> seen = [];
 			service.SettingsChanged += (_, args) => seen.Add(args.Settings);
 
 			service.Load();

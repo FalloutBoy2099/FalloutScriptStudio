@@ -29,7 +29,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			IProblemService? problems = null,
 			IOperationTracker? operations = null,
 			ProjectSymbolService? symbols = null,
-			CodeIntelligenceOperations? intelligence = null)
+			CodeIntelligenceOperations? intelligence = null,
+			MessageConsistencyService? consistency = null,
+			LiveDiagnosticsService? diagnostics = null)
 		{
 			DocumentFileService files = new DocumentFileService(settings, dialogs, NullLogger<DocumentFileService>.Instance, null, problems);
 			return new WorkspaceService(
@@ -49,7 +51,9 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				null,
 				problems,
 				symbols,
-				intelligence);
+				intelligence,
+				consistency,
+				diagnostics);
 		}
 	}
 }

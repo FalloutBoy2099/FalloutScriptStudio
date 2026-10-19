@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 		}
 
 		/// <summary>Gets the entries in list order; the position is the script id.</summary>
-		public List<ScriptListEntry> Entries { get; } = new List<ScriptListEntry>();
+		public List<ScriptListEntry> Entries { get; } = [];
 
 		/// <summary>Gets the encoding <c>scripts.lst</c> is written back with.</summary>
 		public Encoding ListEncoding { get; }

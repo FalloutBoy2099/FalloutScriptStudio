@@ -5,13 +5,13 @@ namespace FalloutScriptStudio.Editor
 	using System.Linq;
 	using System.Threading.Tasks;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
 	using ICSharpCode.AvalonEdit.Editing;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Core.Parsing;
+	using Documents;
+	using Text;
 
 	/// <summary>
 	/// Everything the feature controllers of one editor view share: the AvalonEdit control, the document view model,
@@ -38,7 +38,7 @@ namespace FalloutScriptStudio.Editor
 		public TextEditor Editor { get; }
 
 		/// <summary>Gets the other editor controls that show the same document (the second pane of a split view).</summary>
-		public List<TextEditor> LinkedEditors { get; } = new List<TextEditor>();
+		public List<TextEditor> LinkedEditors { get; } = [];
 
 		/// <summary>Gets the editor and all linked editors.</summary>
 		public IEnumerable<TextEditor> AllEditors => new[] { this.Editor }.Concat(this.LinkedEditors);

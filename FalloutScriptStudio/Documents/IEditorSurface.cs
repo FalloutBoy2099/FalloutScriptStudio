@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Documents
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Core.Parsing;
+	using Core.TextTools;
 
 	/// <summary>
 	/// What the rest of the application (view models, panels, tool windows) may ask of the text editor control of

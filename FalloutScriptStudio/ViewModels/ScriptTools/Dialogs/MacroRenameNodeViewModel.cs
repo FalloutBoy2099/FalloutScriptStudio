@@ -14,7 +14,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 	/// </summary>
 	public sealed partial class MacroRenameNodeViewModel : ObservableObject
 	{
-		private readonly List<MacroRenameNodeViewModel> _children = new List<MacroRenameNodeViewModel>();
+		private readonly List<MacroRenameNodeViewModel> _children = [];
 		private Boolean _updating;
 
 		private MacroRenameNodeViewModel(MacroRenameNodeKind kind, String header, String detail, MacroRenameNodeViewModel? parent)
@@ -94,7 +94,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 
 			String name = Path.GetFileName(filePath);
 			String folder = Path.GetDirectoryName(filePath) ?? String.Empty;
-			MacroRenameNodeViewModel file = new MacroRenameNodeViewModel(MacroRenameNodeKind.File, name.Length > 0 ? name : filePath, folder, section) { FilePath = filePath };
+			MacroRenameNodeViewModel file = new(MacroRenameNodeKind.File, name.Length > 0 ? name : filePath, folder, section) { FilePath = filePath };
 			section._children.Add(file);
 			return file;
 		}
@@ -110,7 +110,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 			ArgumentNullException.ThrowIfNull(match);
 
 			Int32 length = Math.Clamp(match.Span.Length, 0, match.PreviewText.Length);
-			MacroRenameNodeViewModel node = new MacroRenameNodeViewModel(
+			MacroRenameNodeViewModel node = new(
 				MacroRenameNodeKind.Match,
 				Loc.Format("Str.ScriptTools.MacroLine", match.Line),
 				String.Empty,

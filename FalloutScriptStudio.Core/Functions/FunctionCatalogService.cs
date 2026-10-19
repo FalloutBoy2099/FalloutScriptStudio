@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Core.Functions
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Configuration;
 
 	/// <summary>
 	/// <see cref="IFunctionCatalogService"/> working on the two ini files.

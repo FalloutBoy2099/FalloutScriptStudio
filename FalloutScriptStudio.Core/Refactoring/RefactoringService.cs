@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text.RegularExpressions;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// Default <see cref="IRefactoringService"/>.

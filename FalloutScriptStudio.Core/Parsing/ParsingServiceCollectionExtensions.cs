@@ -1,11 +1,11 @@
 namespace FalloutScriptStudio.Core.Parsing
 {
 	using System;
-	using FalloutScriptStudio.Core.Parsing.Interop;
-	using FalloutScriptStudio.Core.Parsing.Interop.Host;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.DependencyInjection.Extensions;
 	using Microsoft.Extensions.Logging;
+	using Parsing.Interop;
+	using Parsing.Interop.Host;
 
 	/// <summary>
 	/// Dependency injection registration of the parsing services.

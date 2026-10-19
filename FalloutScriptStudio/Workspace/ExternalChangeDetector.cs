@@ -5,9 +5,9 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
+	using Documents;
+	using Localization;
+	using Services;
 
 	/// <summary>Detects documents whose file was changed by another program and offers to reload them.</summary>
 	public sealed class ExternalChangeDetector

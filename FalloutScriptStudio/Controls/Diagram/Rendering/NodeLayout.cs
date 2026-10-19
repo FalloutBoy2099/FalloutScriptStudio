@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Computed geometry and text of a <see cref="DiagramNode"/> at a given width. All rectangles are relative to the node's

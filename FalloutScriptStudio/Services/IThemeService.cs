@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Services
 {
 	using System;
-	using FalloutScriptStudio.Editor.Highlighting;
+	using Editor.Highlighting;
 
 	/// <summary>The application color mode.</summary>
 	public enum AppTheme

@@ -11,8 +11,16 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the file encodings to choose from.</summary>
 		public IReadOnlyList<Choice<TextEncodingKind>> EncodingChoices { get; } = new List<Choice<TextEncodingKind>>
 		{
-			new Choice<TextEncodingKind>(TextEncodingKind.Ansi, Loc.Get("Str.ToolWindows.Choice.Encoding.Ansi")),
-			new Choice<TextEncodingKind>(TextEncodingKind.Oem866, Loc.Get("Str.ToolWindows.Choice.Encoding.Oem866")),
+			new(TextEncodingKind.Ansi, Loc.Get("Str.ToolWindows.Choice.Encoding.Ansi")),
+			new(TextEncodingKind.Oem866, Loc.Get("Str.ToolWindows.Choice.Encoding.Oem866")),
+		};
+
+		/// <summary>Gets the levels of the semantic analysis of the scripts to choose from.</summary>
+		public IReadOnlyList<Choice<LiveDiagnosticsLevel>> LiveDiagnosticsChoices { get; } = new List<Choice<LiveDiagnosticsLevel>>
+		{
+			new(LiveDiagnosticsLevel.Off, Loc.Get("Str.ToolWindows.Choice.Diagnostics.Off")),
+			new(LiveDiagnosticsLevel.ErrorsOnly, Loc.Get("Str.ToolWindows.Choice.Diagnostics.ErrorsOnly")),
+			new(LiveDiagnosticsLevel.ErrorsAndWarnings, Loc.Get("Str.ToolWindows.Choice.Diagnostics.ErrorsAndWarnings")),
 		};
 
 		/// <summary>Gets the smallest tab size.</summary>

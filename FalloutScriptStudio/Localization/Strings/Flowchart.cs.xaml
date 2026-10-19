@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Upravit uzel: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Přejmenovat uzel</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Přejmenovat uzel: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Náhled dialogu od tohoto uzlu</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Náhled dialogu od uzlu: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Skok z: --- na</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Skok z: {0} na</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Skrýt uzel</sys:String>

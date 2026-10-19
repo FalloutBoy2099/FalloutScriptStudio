@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 
 		public DiagnosticRenderer(TextDocument document, EditorPalette palette)
 		{
-			this._markers = new TextSegmentCollection<DiagnosticMarker>(document);
+			this._markers = new(document);
 			this._palette = palette;
 		}
 
@@ -95,7 +95,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 					MarkerSeverity.Unused => this._palette.UnusedUnderline,
 					_ => this._palette.MessageUnderline,
 				};
-				Pen pen = new Pen(brush, 1);
+				Pen pen = new(brush, 1);
 				if (marker.Severity == MarkerSeverity.Unused)
 				{
 					pen.DashStyle = new DashStyle(new Double[] { 1, 2 }, 0);
@@ -124,11 +124,11 @@ namespace FalloutScriptStudio.Editor.Rendering
 			Point end = rect.BottomRight;
 			Int32 count = Math.Max((Int32)((end.X - start.X) / Step) + 1, 4);
 
-			StreamGeometry geometry = new StreamGeometry();
+			StreamGeometry geometry = new();
 			using (StreamGeometryContext context = geometry.Open())
 			{
 				context.BeginFigure(new Point(start.X, start.Y - 1), false, false);
-				List<Point> points = new List<Point>(count);
+				List<Point> points = new(count);
 				for (Int32 i = 0; i < count; i++)
 				{
 					points.Add(new Point(start.X + (i * Step), start.Y - 1 - (((i + 1) % 2 == 0) ? Step : 0)));

@@ -53,7 +53,7 @@ namespace FalloutScriptStudio.Core.Tests.Native
 
 		private sealed class RecordingEngine : INativeParser
 		{
-			public List<(String Text, String File, ParserOptions Options)> Calls { get; } = new List<(String, String, ParserOptions)>();
+			public List<(String Text, String File, ParserOptions Options)> Calls { get; } = [];
 
 			public Func<NativeParseResult> Result { get; set; } = () => new NativeParseResult(NativeParseStatus.Completed) { ExitCode = 0, Log = "ok" };
 

@@ -4,7 +4,7 @@ namespace FalloutScriptStudio.Core.TextTools
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>Building and inserting a procedure with its forward declaration.</summary>
 	public sealed partial class ProcedureTextService

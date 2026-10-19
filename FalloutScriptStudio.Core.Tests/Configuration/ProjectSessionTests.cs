@@ -44,6 +44,17 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		}
 
 		[Fact]
+		public void IsInsideProject_TellsTheFilesOfTheFolderAndItsSubFoldersFromTheOthers()
+		{
+			Assert.True(ProjectSession.IsInsideProject(this.Project, this.InProject("a.ssl")));
+			Assert.True(ProjectSession.IsInsideProject(this.Project, this.InProject("scripts", "deep", "a.ssl")));
+			Assert.True(ProjectSession.IsInsideProject(this.Project.ToUpperInvariant(), this.InProject("a.ssl")));
+			Assert.False(ProjectSession.IsInsideProject(this.Project, this._root.Combine("other", "a.ssl")));
+			Assert.False(ProjectSession.IsInsideProject(this.Project, this._root.Combine("mod2", "a.ssl")));
+			Assert.False(ProjectSession.IsInsideProject(this.Project, "a.ssl"));
+		}
+
+		[Fact]
 		public void Create_IgnoresDocumentsOutsideTheProject_AndDuplicates()
 		{
 			String outside = this._root.Combine("other", "x.ssl");

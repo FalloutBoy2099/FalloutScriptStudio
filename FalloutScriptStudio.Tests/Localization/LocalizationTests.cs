@@ -90,7 +90,7 @@ namespace FalloutScriptStudio.Tests.Localization
 		[Fact]
 		public void EveryKeyUsedBySourcesExists()
 		{
-			HashSet<String> defined = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> defined = new(StringComparer.Ordinal);
 			foreach (String area in Loc.Areas)
 			{
 				String file = StringsFile(area, "en");
@@ -101,7 +101,7 @@ namespace FalloutScriptStudio.Tests.Localization
 			}
 
 			String root = Path.Combine(RepositoryRoot(), "FalloutScriptStudio");
-			List<String> missing = new List<String>();
+			List<String> missing = [];
 			foreach (String file in Directory.EnumerateFiles(root, "*.*", SearchOption.AllDirectories)
 				.Where(f => (f.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
 					&& !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
@@ -144,7 +144,7 @@ namespace FalloutScriptStudio.Tests.Localization
 
 		private static Dictionary<String, String> ReadTexts(String file)
 		{
-			Dictionary<String, String> texts = new Dictionary<String, String>(StringComparer.Ordinal);
+			Dictionary<String, String> texts = new(StringComparer.Ordinal);
 			foreach (XElement element in XDocument.Load(file).Root!.Elements())
 			{
 				String? key = (String?)element.Attribute(XamlNamespace + "Key");

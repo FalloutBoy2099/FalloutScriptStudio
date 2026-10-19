@@ -121,7 +121,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 		private List<ErrorItemViewModel> CollectRows()
 		{
-			List<ErrorItemViewModel> rows = new List<ErrorItemViewModel>();
+			List<ErrorItemViewModel> rows = [];
 			String parserGroup = GroupName(ProblemSource.Parse);
 			String buildGroup = GroupName(ProblemSource.Build);
 			if (this._aggregatedErrors is not null)

@@ -64,6 +64,20 @@
         <Setter Property="FontSize" Value="12" />
     </Style>
 
+    <!--  Thin column header (22 px, 11 px normal text) of the compact grids: the Errors tab and the results of the search window  -->
+    <Style
+        x:Key="ShellCompactColumnHeaderStyle"
+        BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"
+        TargetType="{x:Type DataGridColumnHeader}">
+        <Setter Property="Height" Value="22" />
+        <Setter Property="MinHeight" Value="22" />
+        <Setter Property="Padding" Value="6,0" />
+        <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+    </Style>
+
     <!--  Counter toggle (icon and count): flat, only a light background when it is on  -->
     <Style x:Key="ShellCounterToggleStyle" TargetType="{x:Type ToggleButton}">
         <Setter Property="Height" Value="22" />
@@ -177,4 +191,8 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Padding" Value="8,4" />
     </Style>
+    <!--  Title of a top-level menu: WPF-UI draws it larger than the drop-down items and ignores FontSize here, so the size is set on the text itself  -->
+    <DataTemplate x:Key="ShellMenuBarHeaderTemplate">
+        <AccessText FontSize="12" Text="{Binding}" />
+    </DataTemplate>
 </ResourceDictionary>

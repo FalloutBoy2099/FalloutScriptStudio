@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 {
 	using System;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	/// <summary>
 	/// Frozen vector glyphs (12 x 12 units) for <see cref="DiagramRowIcon"/>.

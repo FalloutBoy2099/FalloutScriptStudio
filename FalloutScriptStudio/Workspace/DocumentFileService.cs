@@ -5,14 +5,14 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Text;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.IO;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Core.Configuration;
+	using Core.IO;
+	using Documents;
+	using Localization;
+	using Problems;
+	using Services;
 
 	/// <summary>Reads and writes the text files of the documents: encoding detection, new line normalization, templates and saving.</summary>
 	public sealed class DocumentFileService
@@ -49,7 +49,7 @@ namespace FalloutScriptStudio.Workspace
 				DocumentKind.Message => 2,
 				_ => 3,
 			};
-			List<String> ordered = new List<String> { parts[first * 2], parts[(first * 2) + 1] };
+			List<String> ordered = [parts[first * 2], parts[(first * 2) + 1]];
 			for (Int32 i = 0; i < 4; i++)
 			{
 				if (i != first)
@@ -65,7 +65,7 @@ namespace FalloutScriptStudio.Workspace
 		/// <summary>Reads a file, detecting its encoding and (for scripts and headers) normalizing the new lines.</summary>
 		public async Task<DecodedText> ReadAsync(String path)
 		{
-			Byte[] bytes = await File.ReadAllBytesAsync(path);
+			Byte[] bytes = await SharedFile.ReadAllBytesAsync(path);
 			Encoding fallback = this._settings.Settings.Editor.FileEncoding.ToEncoding();
 			DecodedText decoded = DocumentTextCodec.Decode(bytes, fallback);
 			String extension = Path.GetExtension(path).ToLowerInvariant();
@@ -85,7 +85,7 @@ namespace FalloutScriptStudio.Workspace
 			{
 				try
 				{
-					return DocumentTextCodec.Decode(File.ReadAllBytes(file), this._settings.Settings.Editor.FileEncoding.ToEncoding()).Text;
+					return DocumentTextCodec.Decode(SharedFile.ReadAllBytes(file), this._settings.Settings.Editor.FileEncoding.ToEncoding()).Text;
 				}
 				catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 				{

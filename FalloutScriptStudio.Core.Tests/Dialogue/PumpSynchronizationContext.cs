@@ -8,7 +8,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 	/// <summary>A single-thread synchronization context like the UI thread: everything posted to it runs on its own thread.</summary>
 	internal sealed class PumpSynchronizationContext : SynchronizationContext, IDisposable
 	{
-		private readonly BlockingCollection<(SendOrPostCallback Callback, Object? State)> _queue = new BlockingCollection<(SendOrPostCallback, Object?)>();
+		private readonly BlockingCollection<(SendOrPostCallback Callback, Object? State)> _queue = [];
 		private readonly Thread _thread;
 
 		public PumpSynchronizationContext()

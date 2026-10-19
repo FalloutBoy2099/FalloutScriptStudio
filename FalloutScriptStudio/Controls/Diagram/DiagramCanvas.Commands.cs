@@ -2,10 +2,10 @@ namespace FalloutScriptStudio.Controls.Diagram
 {
 	using System;
 	using System.Linq;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Controls.Diagram.Layout;
+	using Model;
+	using Rendering;
+	using Internal;
+	using Layout;
 
 	// Bulk commands on all nodes: collapse, expand, widths and automatic arrangement.
 	public sealed partial class DiagramCanvas

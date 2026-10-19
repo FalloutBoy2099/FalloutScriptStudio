@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Core.Indexing
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
+	using Analysis;
+	using Parsing;
 
 	/// <summary>
 	/// Finds the symbols of one file: the procedures (with the text based procedure parser of the editor), the macros (with the macro

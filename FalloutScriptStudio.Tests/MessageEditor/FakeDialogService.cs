@@ -10,7 +10,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 	/// </summary>
 	internal sealed class FakeDialogService : IDialogService
 	{
-		public List<String> Messages { get; } = new List<String>();
+		public List<String> Messages { get; } = [];
 
 		public Boolean ConfirmAnswer { get; set; } = true;
 

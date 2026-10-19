@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 	using System;
 	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	// Zoom and scroll.
 	public sealed partial class DiagramCanvas

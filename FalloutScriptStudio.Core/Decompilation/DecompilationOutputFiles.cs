@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Decompilation
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// The file handling every decompiler shares: the work file <c>decomp.ssl</c> in the scratch folder is removed before a run and,

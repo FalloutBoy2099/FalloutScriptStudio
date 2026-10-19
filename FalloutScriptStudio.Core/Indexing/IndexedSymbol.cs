@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Core.Indexing
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>A procedure, macro or script level variable found in a file of the project.</summary>
 	public sealed class IndexedSymbol

@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System;
 	using System.Collections.Generic;
 	using System.Globalization;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>Parsing of each kind of dialogue statement: replies, messages, options, macros that jump to a node and <c>call</c>.</summary>
 	internal sealed partial class DialogueLineBuilder

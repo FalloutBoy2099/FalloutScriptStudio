@@ -37,8 +37,8 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private readonly IDialogService _dialogs;
 		private readonly IMessageEditorPlatform _platform;
 		private readonly ILogger<MessageEditorViewModel> _logger;
-		private readonly UndoHistory<EditorSnapshot> _history = new UndoHistory<EditorSnapshot>();
-		private readonly RangeObservableCollection<MessageRowViewModel> _rows = new RangeObservableCollection<MessageRowViewModel>();
+		private readonly UndoHistory<EditorSnapshot> _history = new();
+		private readonly RangeObservableCollection<MessageRowViewModel> _rows = [];
 
 		private IReadOnlyList<MessageRowViewModel> _selectedRows = Array.Empty<MessageRowViewModel>();
 		private Int32 _revision;
@@ -109,7 +109,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		public ICollectionView RowsView { get; }
 
 		/// <summary>Gets the recent message files, newest first.</summary>
-		public ObservableCollection<String> RecentFiles { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> RecentFiles { get; } = [];
 
 		/// <summary>Gets the step values that can be added after a comment when numbering a new message.</summary>
 		public IReadOnlyList<Int32> CommentSteps { get; } = new[] { 1, 5, 10, 20, 30, 40, 50 };
@@ -393,7 +393,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		/// </summary>
 		private MessageDocument BuildLiveDocument()
 		{
-			MessageDocument document = new MessageDocument();
+			MessageDocument document = new();
 			foreach (MessageRowViewModel row in this._rows)
 			{
 				document.Entries.Add(row.Entry);
@@ -408,7 +408,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		/// <returns>The document.</returns>
 		public MessageDocument BuildDocument()
 		{
-			MessageDocument document = new MessageDocument();
+			MessageDocument document = new();
 			foreach (MessageRowViewModel row in this._rows)
 			{
 				document.Entries.Add(MessageRowViewModel.CloneEntry(row.Entry));

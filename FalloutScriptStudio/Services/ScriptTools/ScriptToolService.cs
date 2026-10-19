@@ -5,30 +5,30 @@ namespace FalloutScriptStudio.Services.ScriptTools
 	using System.Runtime.InteropServices;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services.ScriptTools.Flowchart;
-	using FalloutScriptStudio.Services.ScriptTools.Procedures;
-	using FalloutScriptStudio.Services.ScriptTools.Registration;
-	using FalloutScriptStudio.Views.DialoguePreview;
-	using FalloutScriptStudio.Views.Flowchart;
-	using FalloutScriptStudio.Views.ScriptTools;
 	using Microsoft.Extensions.DependencyInjection;
+	using Documents;
+	using Localization;
+	using Flowchart;
+	using Procedures;
+	using Registration;
+	using Replace;
+	using Search;
+	using Views.DialoguePreview;
+	using Views.Flowchart;
+	using Views.ScriptTools;
 
 	/// <inheritdoc />
 	public sealed class ScriptToolService : IScriptToolService
 	{
-		private const Int32 MaxInitialSearchTextLength = 255;
-
 		private readonly IServiceProvider _services;
 		private readonly IDialogService _dialogs;
 
-		private readonly HashSet<DocumentViewModel> _previewsOpening = new HashSet<DocumentViewModel>();
+		private readonly HashSet<DocumentViewModel> _previewsOpening = [];
 		private RegisterScriptWindow? _registerWindow;
 		private Boolean _registerOpening;
 		private AdvancedSearchWindow? _searchWindow;
-		private readonly Dictionary<DocumentViewModel, FlowchartWindow> _flowcharts = new Dictionary<DocumentViewModel, FlowchartWindow>();
-		private readonly Dictionary<DocumentViewModel, DialoguePreviewWindow> _previews = new Dictionary<DocumentViewModel, DialoguePreviewWindow>();
+		private readonly Dictionary<DocumentViewModel, FlowchartWindow> _flowcharts = [];
+		private readonly Dictionary<DocumentViewModel, DialoguePreviewWindow> _previews = [];
 		private String _lastSearchText = String.Empty;
 
 		/// <summary>
@@ -162,6 +162,49 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		}
 
 		/// <inheritdoc />
+		public async Task ShowReplaceInFilesAsync(String? initialText)
+		{
+			await this.ShowAdvancedSearchAsync(initialText);
+			this._searchWindow?.ViewModel.PrepareReplaceInFiles();
+		}
+
+		/// <inheritdoc />
+		public Boolean CanUndoReplaceInFiles => this._services.GetService<IReplaceInFilesService>()?.CanUndo ?? false;
+
+		/// <inheritdoc />
+		public event EventHandler? UndoReplaceInFilesStateChanged
+		{
+			add
+			{
+				if (this._services.GetService<IReplaceInFilesService>() is { } service)
+				{
+					service.UndoStateChanged += value;
+				}
+			}
+
+			remove
+			{
+				if (this._services.GetService<IReplaceInFilesService>() is { } service)
+				{
+					service.UndoStateChanged -= value;
+				}
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task UndoReplaceInFilesAsync()
+		{
+			IReplaceInFilesService service = this._services.GetRequiredService<IReplaceInFilesService>();
+			if (!service.CanUndo)
+			{
+				await this._dialogs.ShowInfoAsync(Loc.Get("Str.ScriptTools.ReplUndoTitle"), Loc.Get("Str.ScriptTools.ReplNothingToUndo"));
+				return;
+			}
+
+			await service.UndoLastAsync(System.Threading.CancellationToken.None);
+		}
+
+		/// <inheritdoc />
 		public async Task ShowFlowchartAsync(DocumentViewModel script)
 		{
 			ArgumentNullException.ThrowIfNull(script);
@@ -193,12 +236,24 @@ namespace FalloutScriptStudio.Services.ScriptTools
 		}
 
 		/// <inheritdoc />
-		public async Task ShowDialoguePreviewAsync(DocumentViewModel script)
+		public Task ShowDialoguePreviewAsync(DocumentViewModel script)
+		{
+			return this.ShowDialoguePreviewAsync(script, new DialoguePreviewOpenOptions());
+		}
+
+		/// <inheritdoc />
+		public async Task ShowDialoguePreviewAsync(DocumentViewModel script, DialoguePreviewOpenOptions options)
 		{
 			ArgumentNullException.ThrowIfNull(script);
+			ArgumentNullException.ThrowIfNull(options);
 
 			if (this._previews.TryGetValue(script, out DialoguePreviewWindow? existing))
 			{
+				if (options.StartAtNode is not null)
+				{
+					await existing.ViewModel.ShowNodeAsync(options.StartAtNode);
+				}
+
 				Activate(existing);
 				return;
 			}
@@ -215,7 +270,7 @@ namespace FalloutScriptStudio.Services.ScriptTools
 				IServiceScope windowScope = this._services.CreateScope();
 				pending = windowScope;
 				DialoguePreviewWindow window = windowScope.ServiceProvider.GetRequiredService<DialoguePreviewWindow>();
-				if (!await window.ViewModel.InitializeAsync(script))
+				if (!await window.ViewModel.InitializeAsync(script, options))
 				{
 					await this._dialogs.ShowInfoAsync(Loc.Get("Str.ScriptTools.ToolsPreviewTitle"), Loc.Get("Str.ScriptTools.ToolsPreviewNoDialogue"));
 					return;
@@ -278,21 +333,13 @@ namespace FalloutScriptStudio.Services.ScriptTools
 
 		/// <summary>
 		/// Decides what the search field contains when the window is opened: the text the caller gave, otherwise the selection of
-		/// the active editor, the text of an already open window, the text of the previous search, and finally the clipboard.
+		/// the active editor, the text of an already open window, the text of the previous search, and finally the clipboard. The field
+		/// is a single line: a multi-line text contributes its first line (see <see cref="SearchTextSuggestion"/>).
 		/// </summary>
 		private String ChooseSearchText(String? initialText, String? currentText)
 		{
 			String? selection = this._services.GetService<IWorkspace>()?.ActiveDocument?.Editor?.SelectedText;
-			foreach (String? candidate in new[] { initialText, selection, currentText, this._lastSearchText })
-			{
-				if (!String.IsNullOrWhiteSpace(candidate))
-				{
-					return candidate.Trim().Length <= MaxInitialSearchTextLength ? candidate.Trim() : String.Empty;
-				}
-			}
-
-			String clipboard = ReadClipboardText().Trim();
-			return clipboard.Length is > 0 and < MaxInitialSearchTextLength ? clipboard : String.Empty;
+			return SearchTextSuggestion.Choose(initialText, selection, currentText, this._lastSearchText, ReadClipboardText);
 		}
 
 		private static String ReadClipboardText()

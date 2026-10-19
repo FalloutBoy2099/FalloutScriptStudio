@@ -4,9 +4,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Layout;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Layout;
+	using Model;
+	using Rendering;
 
 	/// <summary>Positions the visible nodes of a scene in left-to-right layers following their links.</summary>
 	internal static class DiagramAutoArranger
@@ -18,8 +18,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 		{
 			scene.EnsureLayouts();
 			List<DiagramNode> nodes = scene.Items.OfType<DiagramNode>().Where(n => !n.IsHidden).ToList();
-			Dictionary<DiagramNode, Int32> index = new Dictionary<DiagramNode, Int32>();
-			List<Size> sizes = new List<Size>(nodes.Count);
+			Dictionary<DiagramNode, Int32> index = [];
+			List<Size> sizes = new(nodes.Count);
 			foreach (DiagramNode node in nodes)
 			{
 				index[node] = sizes.Count;
@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 				sizes.Add(new Size(layout.Width, layout.Height));
 			}
 
-			List<ArrangeEdge> edges = new List<ArrangeEdge>();
+			List<ArrangeEdge> edges = [];
 			foreach (DiagramLink link in scene.Links)
 			{
 				if (index.TryGetValue(link.Source, out Int32 from) && index.TryGetValue(link.Target, out Int32 to))

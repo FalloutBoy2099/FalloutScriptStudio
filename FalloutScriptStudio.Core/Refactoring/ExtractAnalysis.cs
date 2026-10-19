@@ -3,13 +3,13 @@ namespace FalloutScriptStudio.Core.Refactoring
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.Analysis;
+	using Analysis;
 
 	/// <summary>The outcome of examining a selection for "Extract Procedure": either why it cannot be extracted, or what the new procedure needs.</summary>
 	public sealed class ExtractAnalysis
 	{
-		private readonly List<String> _parameters = new List<String>();
-		private readonly List<String> _movedLocals = new List<String>();
+		private readonly List<String> _parameters = [];
+		private readonly List<String> _movedLocals = [];
 
 		internal ExtractAnalysis(ExtractFailure failure, String? detail)
 		{
@@ -49,7 +49,7 @@ namespace FalloutScriptStudio.Core.Refactoring
 
 		internal Int32 LastToken { get; set; }
 
-		internal List<VariableDeclaration> MovedDeclarations { get; } = new List<VariableDeclaration>();
+		internal List<VariableDeclaration> MovedDeclarations { get; } = [];
 
 		/// <summary>Determines whether a list of parameter names (typed by the user) is the list the new procedure needs, in any order.</summary>
 		/// <param name="names">The parameter names.</param>

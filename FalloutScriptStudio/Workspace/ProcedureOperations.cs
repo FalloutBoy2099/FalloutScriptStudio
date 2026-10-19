@@ -1,17 +1,16 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ScriptTools;
-	using FalloutScriptStudio.Services.ScriptTools.Procedures;
+	using Core.Configuration;
+	using Core.Parsing;
+	using Core.TextTools;
+	using Documents;
+	using Localization;
+	using Services;
+	using Services.ScriptTools;
+	using Services.ScriptTools.Procedures;
 
 	/// <summary>Creates, deletes and moves the procedures of a script (the text edits are computed by <see cref="IProcedureTextService"/>).</summary>
 	public sealed class ProcedureOperations
@@ -139,7 +138,7 @@ namespace FalloutScriptStudio.Workspace
 
 		private async Task InsertAsync(IWorkspace workspace, DocumentViewModel document, ProcedureNameResult answer, ScriptProcedure? current)
 		{
-			ProcedureInsertRequest request = new ProcedureInsertRequest(answer.Declaration)
+			ProcedureInsertRequest request = new(answer.Declaration)
 			{
 				Placement = answer.Placement switch
 				{
@@ -173,7 +172,7 @@ namespace FalloutScriptStudio.Workspace
 			{
 				InitialName = initialName,
 				Mode = mode,
-				ExistingNames = document.ProgramInfo?.Procedures.Select(p => p.Name).ToList() ?? new List<String>(),
+				ExistingNames = document.ProgramInfo?.Procedures.Select(p => p.Name).ToList() ?? [],
 				NameReadOnly = nameReadOnly,
 				CanChoosePlacement = true,
 				CanCopyBody = current is not null,

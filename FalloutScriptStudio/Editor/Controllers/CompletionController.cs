@@ -10,11 +10,13 @@ namespace FalloutScriptStudio.Editor.Controllers
 	using System.Windows.Media;
 	using System.Windows.Media.Effects;
 	using System.Windows.Threading;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Editor.Completion;
-	using FalloutScriptStudio.Editor.Text;
-	using FalloutScriptStudio.Views.Editor;
 	using ICSharpCode.AvalonEdit.CodeCompletion;
+	using Core.Parsing;
+	using Core.Snippets;
+	using Editor.Completion;
+	using Editor.Snippets;
+	using Editor.Text;
+	using Views.Editor;
 
 	/// <summary>
 	/// The auto-completion popup for opcodes, procedures, variables and macros: opens while typing an identifier and on
@@ -26,10 +28,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private const Int32 VisibleItems = 12;
 
 		private readonly EditorContext _context;
-		private readonly EditorPopupResources _resources = new EditorPopupResources();
+		private readonly EditorPopupResources _resources = [];
 		private CompletionWindow? _window;
 		private Window? _ownerWindow;
 		private Boolean _attached;
+		private IReadOnlyList<Snippet> _snippets = Array.Empty<Snippet>();
 
 		public CompletionController(EditorContext context)
 		{
@@ -38,6 +41,9 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		/// <summary>Gets a value indicating whether the completion list is open.</summary>
 		public Boolean IsOpen => this._window is not null;
+
+		/// <summary>Gets or sets the controller that expands the snippets chosen in the list.</summary>
+		public SnippetController? Snippets { get; set; }
 
 		/// <summary>Gets the open completion window (for tests), or <see langword="null"/>.</summary>
 		public CompletionWindow? Window => this._window;
@@ -95,11 +101,14 @@ namespace FalloutScriptStudio.Editor.Controllers
 			}
 
 			String prefix = CompletionSource.GetPrefix(this._context.Document, caret, out Int32 start);
+			this._snippets = this.Snippets is null ? Array.Empty<Snippet>() : this._context.Services.Snippets.GetSnippets();
 			IReadOnlyList<AutosuggestItem> items = CompletionSource.GetItems(
 				prefix,
 				this._context.ProgramInfo,
 				this._context.Services.GetOpcodeCatalog(),
-				explicitRequest ? 1 : CompletionSource.MinPrefixLength);
+				explicitRequest ? 1 : CompletionSource.MinPrefixLength,
+				this._snippets,
+				SnippetDescriptions.Describe);
 			if (items.Count == 0)
 			{
 				return false;
@@ -113,13 +122,13 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private void Open(IReadOnlyList<AutosuggestItem> items, String prefix, Int32 start)
 		{
 			EditorPalette palette = this._context.Palette;
-			CompletionAppearance appearance = new CompletionAppearance(
+			CompletionAppearance appearance = new(
 				palette,
 				this._context.Options.AutocompleteColor,
 				this._context.FontFamily,
 				this._context.FontSize);
 
-			CompletionWindow window = new CompletionWindow(this._context.TextArea)
+			CompletionWindow window = new(this._context.TextArea)
 			{
 				CloseAutomatically = true,
 				StartOffset = start,
@@ -132,7 +141,15 @@ namespace FalloutScriptStudio.Editor.Controllers
 			CompletionList list = window.CompletionList;
 			foreach (AutosuggestItem item in items)
 			{
-				list.CompletionData.Add(new ScriptCompletionData(item, appearance));
+				Snippet? snippet = item.Kind == AutosuggestKind.Snippet ? this._snippets.FirstOrDefault(s => String.Equals(s.Trigger, item.Name, StringComparison.Ordinal)) : null;
+				if (snippet is not null && this.Snippets is { } snippets)
+				{
+					list.CompletionData.Add(new ScriptCompletionData(item, appearance, snippet, (chosen, segment) => snippets.Insert(chosen, segment.Offset, segment.Length, null)));
+				}
+				else
+				{
+					list.CompletionData.Add(new ScriptCompletionData(item, appearance));
+				}
 			}
 
 			list.ApplyTemplate();
@@ -152,7 +169,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			list.SelectItem(prefix);
 
 			window.Content = null;
-			Border chrome = new Border
+			Border chrome = new()
 			{
 				Margin = new Thickness(0, 0, ShadowMargin, ShadowMargin),
 				CornerRadius = new CornerRadius(8),
@@ -175,8 +192,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private Double MeasureWidth(IReadOnlyList<AutosuggestItem> items)
 		{
 			String longest = items.Max(i => i.Name.Length) is Int32 length ? items.First(i => i.Name.Length == length).Name : String.Empty;
-			Typeface typeface = new Typeface(this._context.FontFamily, FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal);
-			FormattedText text = new FormattedText(
+			Typeface typeface = new(this._context.FontFamily, FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal);
+			FormattedText text = new(
 				longest,
 				CultureInfo.CurrentUICulture,
 				FlowDirection.LeftToRight,

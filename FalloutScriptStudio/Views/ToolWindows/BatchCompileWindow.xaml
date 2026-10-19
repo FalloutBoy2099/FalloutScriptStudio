@@ -21,9 +21,11 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -76,6 +78,10 @@
                 <TextBlock Text="{Binding ProgressText}" />
                 <TextBlock Margin="24,0,0,0" Text="{Binding CompiledText}" />
                 <TextBlock Margin="24,0,0,0" Text="{Binding FailedText}" />
+                <TextBlock
+                    Margin="24,0,0,0"
+                    Text="{Binding UpToDateText}"
+                    Visibility="{Binding HasUpToDate, Converter={StaticResource BoolToVisibility}}" />
             </StackPanel>
 
             <Grid Grid.Row="3">
@@ -171,4 +177,5 @@
                 Visibility="{Binding IsFinished, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
     </Grid>
+
 </ui:FluentWindow>

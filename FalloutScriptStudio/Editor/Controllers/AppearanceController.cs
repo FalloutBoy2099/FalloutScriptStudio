@@ -3,10 +3,10 @@ namespace FalloutScriptStudio.Editor.Controllers
 	using System;
 	using System.Collections.Generic;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Editor.Rendering;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Folding;
 	using ICSharpCode.AvalonEdit.Rendering;
+	using Editor.Rendering;
 
 	/// <summary>
 	/// Applies the editor options, the color theme, the font and the zoom to the AvalonEdit control and keeps them
@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private const Double PointsToPixels = 96.0 / 72.0;
 
 		private readonly EditorContext _context;
-		private readonly Dictionary<TextView, TabMarkerRenderer> _tabMarkers = new Dictionary<TextView, TabMarkerRenderer>();
+		private readonly Dictionary<TextView, TabMarkerRenderer> _tabMarkers = [];
 		private Boolean _attached;
 		private Boolean _applyPending;
 

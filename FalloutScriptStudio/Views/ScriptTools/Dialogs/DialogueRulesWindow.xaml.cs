@@ -5,8 +5,8 @@ namespace FalloutScriptStudio.Views.ScriptTools.Dialogs
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Windows.Threading;
-	using FalloutScriptStudio.ViewModels.ScriptTools.Dialogs;
 	using Wpf.Ui.Controls;
+	using ViewModels.ScriptTools.Dialogs;
 
 	/// <summary>
 	/// The dialogue function rules window.

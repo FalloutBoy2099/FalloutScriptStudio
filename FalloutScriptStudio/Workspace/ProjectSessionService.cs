@@ -5,23 +5,24 @@ namespace FalloutScriptStudio.Workspace
 	using System.IO;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Problems;
 	using Microsoft.Extensions.Logging;
+	using Core.Configuration;
+	using Documents;
+	using Problems;
 
 	/// <summary>
 	/// Remembers, per project, which documents were open (and which one was active) and opens them again later. The list is kept in the
 	/// persisted <see cref="RecentFiles"/> (paths relative to the project folder); the caret line and the folded procedures of each document
 	/// are already remembered per script and come back by themselves when the document is opened.
 	/// </summary>
-	public sealed class ProjectSessionService
+	public sealed class ProjectSessionService : IDisposable
 	{
 		private readonly IWorkspaceManager _workspace;
 		private readonly ISettingsService _settings;
 		private readonly IProjectService _projects;
 		private readonly IProblemService _problems;
 		private readonly ILogger? _logger;
+		private readonly HashSet<String> _touched = new(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>Initializes a new instance of the <see cref="ProjectSessionService"/> class.</summary>
 		/// <param name="workspace">The open documents.</param>
@@ -40,19 +41,63 @@ namespace FalloutScriptStudio.Workspace
 			this._projects = projects;
 			this._problems = problems;
 			this._logger = logger;
+			this._workspace.DocumentOpened += this.OnDocumentOpenedOrClosed;
+			this._workspace.DocumentClosed += this.OnDocumentOpenedOrClosed;
+		}
+
+		/// <inheritdoc />
+		public void Dispose()
+		{
+			this._workspace.DocumentOpened -= this.OnDocumentOpenedOrClosed;
+			this._workspace.DocumentClosed -= this.OnDocumentOpenedOrClosed;
+		}
+
+		/// <summary>
+		/// A project was entered (or the program started with one): the documents that are open now count as opened during this visit, and
+		/// whatever is opened or closed from now on is noted too. <see cref="Capture"/> then knows whether the visit changed anything.
+		/// </summary>
+		public void BeginVisit()
+		{
+			this._touched.Clear();
+			foreach (DocumentViewModel document in this._workspace.Documents)
+			{
+				this.Touch(document);
+			}
 		}
 
 		/// <summary>
 		/// Remembers the documents that are open now as the session of a project (call it when the project is left or the program ends).
-		/// Documents outside the project folder and documents without a file are not remembered.
+		/// Documents outside the project folder and documents without a file are not remembered. What was remembered is only replaced when a
+		/// document of the project was opened or closed during this visit (see <see cref="BeginVisit"/>): leaving a project without having
+		/// touched its documents keeps the session it had, instead of erasing it with an empty list.
 		/// </summary>
 		/// <param name="projectFolder">The project folder.</param>
-		public void Capture(String projectFolder)
+		/// <returns><see langword="true"/> when the session was replaced; <see langword="false"/> when the visit changed nothing.</returns>
+		public Boolean Capture(String projectFolder)
 		{
 			ArgumentException.ThrowIfNullOrEmpty(projectFolder);
 
+			if (!this._touched.Any(path => ProjectSession.IsInsideProject(projectFolder, path)))
+			{
+				return false;
+			}
+
 			IEnumerable<String> paths = this._workspace.Documents.Select(document => document.FilePath).OfType<String>();
 			this._settings.Recent.SetProjectSession(ProjectSession.Create(projectFolder, paths, this._workspace.ActiveDocument?.FilePath));
+			return true;
+		}
+
+		private void OnDocumentOpenedOrClosed(Object? sender, DocumentViewModel document)
+		{
+			this.Touch(document);
+		}
+
+		private void Touch(DocumentViewModel document)
+		{
+			if (document.FilePath is { } path)
+			{
+				_ = this._touched.Add(path);
+			}
 		}
 
 		/// <summary>Gets how many remembered documents of a project still exist.</summary>

@@ -6,15 +6,15 @@ namespace FalloutScriptStudio.Workspace
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Problems;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.MessageEditor;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Core.Configuration;
+	using Core.Messages;
+	using Documents;
+	using Localization;
+	using Problems;
+	using Services;
+	using Services.MessageEditor;
 
 	/// <summary>Associates scripts with their message files and keeps the message texts of every script for the hover and the diagnostics.</summary>
 	public sealed class MessageAssociationService
@@ -25,8 +25,8 @@ namespace FalloutScriptStudio.Workspace
 		private readonly IMessageEditorService _messageEditor;
 		private readonly ILogger _logger;
 		private readonly IProblemService _problems;
-		private readonly Dictionary<DocumentViewModel, Dictionary<Int32, String>> _messageTexts = new Dictionary<DocumentViewModel, Dictionary<Int32, String>>();
-		private readonly ConditionalWeakTable<DocumentViewModel, Object> _forgotten = new ConditionalWeakTable<DocumentViewModel, Object>();
+		private readonly Dictionary<DocumentViewModel, Dictionary<Int32, String>> _messageTexts = [];
+		private readonly ConditionalWeakTable<DocumentViewModel, Object> _forgotten = [];
 
 		/// <summary>Initializes the service.</summary>
 		public MessageAssociationService(
@@ -93,7 +93,7 @@ namespace FalloutScriptStudio.Workspace
 					? MessageDocument.Parse(text.Split('\n').Select(line => line.TrimEnd('\r')).ToList())
 					: await this._messageFiles.ReadAsync(path, this._settings.Effective.ToMessageFileOptions().Encoding);
 				this.Store(document, messages);
-				this._problems.ClearOwner(document, ProblemSource.Message);
+				this.ClearLookupProblems(document);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
@@ -198,7 +198,7 @@ namespace FalloutScriptStudio.Workspace
 				return null;
 			}
 
-			this._problems.ClearOwner(document, ProblemSource.Message);
+			this.ClearLookupProblems(document);
 			document.MessageFilePath = path;
 			try
 			{
@@ -212,6 +212,12 @@ namespace FalloutScriptStudio.Workspace
 			}
 
 			return path;
+		}
+
+		/// <summary>Removes the message file problems of a script that a lookup made obsolete; the findings of the consistency check stay until the next check.</summary>
+		private void ClearLookupProblems(DocumentViewModel document)
+		{
+			_ = this._problems.Remove(problem => ReferenceEquals(problem.Owner, document) && problem.Source == ProblemSource.Message && problem.Origin != ProblemOrigins.MessageConsistency);
 		}
 
 		private async Task ReportLookupIssuesAsync(MessageLookupIssues issues)

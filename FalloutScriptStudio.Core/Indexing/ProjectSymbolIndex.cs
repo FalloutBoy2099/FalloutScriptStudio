@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.Indexing
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
@@ -8,10 +9,10 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Analysis;
-	using FalloutScriptStudio.Core.Parsing;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Analysis;
+	using Parsing;
 
 	/// <summary>
 	/// Default <see cref="IProjectSymbolIndex"/>. The work runs on thread pool threads, a run does not start before the previous one ended,
@@ -117,7 +118,7 @@ namespace FalloutScriptStudio.Core.Indexing
 				return Array.Empty<IndexedSymbol>();
 			}
 
-			List<IndexedSymbol> result = new List<IndexedSymbol>(symbols.Length);
+			List<IndexedSymbol> result = new(symbols.Length);
 			foreach (IndexedSymbol symbol in symbols)
 			{
 				if ((symbol.Kind & kinds) != 0 && (symbol.Kind != IndexedSymbolKind.Macro || String.Equals(symbol.Name, name, StringComparison.Ordinal)))
@@ -141,7 +142,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			IReadOnlyList<String> terms = SymbolMatcher.SplitTerms(filter);
 			if (terms.Count == 0)
 			{
-				List<IndexedSymbol> first = new List<IndexedSymbol>(Math.Min(maxResults, snapshot.Symbols.Length));
+				List<IndexedSymbol> first = new(Math.Min(maxResults, snapshot.Symbols.Length));
 				foreach (IndexedSymbol symbol in snapshot.Sorted)
 				{
 					if ((symbol.Kind & kinds) != 0)
@@ -210,8 +211,8 @@ namespace FalloutScriptStudio.Core.Indexing
 			ArgumentNullException.ThrowIfNull(resolver);
 
 			IndexSnapshot snapshot = Volatile.Read(ref this._snapshot);
-			Dictionary<String, List<String>> includedBy = new Dictionary<String, List<String>>(StringComparer.OrdinalIgnoreCase);
-			Dictionary<String, String> resolved = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, List<String>> includedBy = new(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, String> resolved = new(StringComparer.OrdinalIgnoreCase);
 			foreach (IndexedFile indexed in snapshot.Files.Values)
 			{
 				String? directory = Path.GetDirectoryName(indexed.Path);
@@ -220,7 +221,7 @@ namespace FalloutScriptStudio.Core.Indexing
 					String target = Resolve(resolver, resolved, raw, directory);
 					if (!includedBy.TryGetValue(target, out List<String>? list))
 					{
-						list = new List<String>(1);
+						list = new(1);
 						includedBy.Add(target, list);
 					}
 
@@ -228,7 +229,7 @@ namespace FalloutScriptStudio.Core.Indexing
 				}
 			}
 
-			HashSet<String> result = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { file };
+			HashSet<String> result = new(StringComparer.OrdinalIgnoreCase) { file };
 			Queue<String> pending = new Queue<String>();
 			pending.Enqueue(file);
 			while (pending.Count > 0)
@@ -256,8 +257,8 @@ namespace FalloutScriptStudio.Core.Indexing
 			ArgumentNullException.ThrowIfNull(resolver);
 
 			IndexSnapshot snapshot = Volatile.Read(ref this._snapshot);
-			Dictionary<String, String> resolved = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
-			HashSet<String> result = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, String> resolved = new(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> result = new(StringComparer.OrdinalIgnoreCase);
 			Queue<String> pending = new Queue<String>();
 			foreach (String seed in seeds)
 			{
@@ -323,7 +324,7 @@ namespace FalloutScriptStudio.Core.Indexing
 
 		private static List<FileStamp> Enumerate(ProjectIndexRoots roots, ProjectIndexOptions options, CancellationToken cancellationToken)
 		{
-			Dictionary<String, FileStamp> found = new Dictionary<String, FileStamp>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, FileStamp> found = new(StringComparer.OrdinalIgnoreCase);
 			String[] extensions = options.Extensions.ToArray();
 			foreach (ProjectIndexRoot root in roots.Folders)
 			{
@@ -397,7 +398,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			return false;
 		}
 
-		private static IReadOnlyList<SymbolOccurrence> ScanOccurrences(SymbolOccurrenceRequest request, ProjectIndexOptions options, String[] paths, CancellationToken cancellationToken)
+		private static List<SymbolOccurrence> ScanOccurrences(SymbolOccurrenceRequest request, ProjectIndexOptions options, String[] paths, CancellationToken cancellationToken)
 		{
 			IReadOnlyList<SymbolOccurrence>[] results = new IReadOnlyList<SymbolOccurrence>[paths.Length];
 			ParallelOptions parallel = new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = options.MaxDegreeOfParallelism };
@@ -416,7 +417,7 @@ namespace FalloutScriptStudio.Core.Indexing
 						FileInfo info = new FileInfo(path);
 						if (info.Exists && info.Length <= options.MaxFileBytes)
 						{
-							Byte[] bytes = File.ReadAllBytes(path);
+							Byte[] bytes = SharedFile.ReadAllBytes(path);
 							text = IndexTextDecoder.LooksBinary(bytes) ? null : IndexTextDecoder.Decode(bytes, options.Encoding);
 						}
 					}
@@ -443,7 +444,7 @@ namespace FalloutScriptStudio.Core.Indexing
 
 			List<FileStamp> found = Enumerate(roots, options, cancellationToken);
 			Dictionary<String, IndexedFile> files = new Dictionary<String, IndexedFile>(found.Count, StringComparer.OrdinalIgnoreCase);
-			List<FileStamp> toRead = new List<FileStamp>();
+			List<FileStamp> toRead = [];
 			Int32 keptSymbols = 0;
 			foreach (FileStamp stamp in found)
 			{
@@ -538,7 +539,7 @@ namespace FalloutScriptStudio.Core.Indexing
 						return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, startedAt, Array.Empty<IndexedSymbol>(), Array.Empty<String>());
 					}
 
-					Byte[] bytes = File.ReadAllBytes(stamp.Path);
+					Byte[] bytes = SharedFile.ReadAllBytes(stamp.Path);
 					if (bytes.Length > options.MaxFileBytes || IndexTextDecoder.LooksBinary(bytes))
 					{
 						return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, startedAt, Array.Empty<IndexedSymbol>(), Array.Empty<String>());
@@ -559,8 +560,8 @@ namespace FalloutScriptStudio.Core.Indexing
 				return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, stamp.LastWriteTicks, Array.Empty<IndexedSymbol>(), Array.Empty<String>());
 			}
 
-			List<IndexedSymbol> symbols = new List<IndexedSymbol>();
-			List<String> includes = new List<String>();
+			List<IndexedSymbol> symbols = [];
+			List<String> includes = [];
 			SymbolFileScanner.Scan(stamp.Path, text, symbols, includes);
 
 			Int32 left = Interlocked.Add(ref state.Remaining, -symbols.Count);

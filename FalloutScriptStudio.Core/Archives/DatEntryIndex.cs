@@ -8,9 +8,9 @@ namespace FalloutScriptStudio.Core.Archives
 	/// </summary>
 	internal sealed class DatEntryIndex
 	{
-		private readonly List<DatEntry> _entries = new List<DatEntry>();
-		private readonly Dictionary<String, DatEntry> _byPath = new Dictionary<String, DatEntry>(StringComparer.OrdinalIgnoreCase);
-		private readonly Dictionary<String, List<DatEntry>> _byDirectory = new Dictionary<String, List<DatEntry>>(StringComparer.OrdinalIgnoreCase);
+		private readonly List<DatEntry> _entries = [];
+		private readonly Dictionary<String, DatEntry> _byPath = new(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<String, List<DatEntry>> _byDirectory = new(StringComparer.OrdinalIgnoreCase);
 
 		public IReadOnlyList<DatEntry> Entries => this._entries;
 
@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Core.Archives
 
 			if (!this._byDirectory.TryGetValue(entry.Directory, out List<DatEntry>? list))
 			{
-				list = new List<DatEntry>();
+				list = [];
 				this._byDirectory.Add(entry.Directory, list);
 			}
 

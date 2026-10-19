@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System;
 	using System.Linq;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>Restores and stores the position and size of a Message Editor window in the user settings.</summary>
 	internal static class MessageEditorPlacement

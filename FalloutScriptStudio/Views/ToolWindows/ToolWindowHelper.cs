@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Views.ToolWindows
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
+	using Core.Configuration;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// Plumbing shared by the code-behind of the tool windows: it connects a window to its view model

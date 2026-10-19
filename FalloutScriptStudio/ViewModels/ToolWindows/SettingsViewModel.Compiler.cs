@@ -13,25 +13,25 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the optimization levels to choose from.</summary>
 		public IReadOnlyList<Choice<OptimizationLevel>> OptimizationChoices { get; } = new List<Choice<OptimizationLevel>>
 		{
-			new Choice<OptimizationLevel>(OptimizationLevel.None, Loc.Get("Str.ToolWindows.Choice.Optimization.None")),
-			new Choice<OptimizationLevel>(OptimizationLevel.Basic, Loc.Get("Str.ToolWindows.Choice.Optimization.Basic")),
-			new Choice<OptimizationLevel>(OptimizationLevel.Full, Loc.Get("Str.ToolWindows.Choice.Optimization.Full")),
-			new Choice<OptimizationLevel>(OptimizationLevel.Experimental, Loc.Get("Str.ToolWindows.Choice.Optimization.Experimental")),
+			new(OptimizationLevel.None, Loc.Get("Str.ToolWindows.Choice.Optimization.None")),
+			new(OptimizationLevel.Basic, Loc.Get("Str.ToolWindows.Choice.Optimization.Basic")),
+			new(OptimizationLevel.Full, Loc.Get("Str.ToolWindows.Choice.Optimization.Full")),
+			new(OptimizationLevel.Experimental, Loc.Get("Str.ToolWindows.Choice.Optimization.Experimental")),
 		};
 
 		/// <summary>Gets the preprocessors to choose from.</summary>
 		public IReadOnlyList<Choice<PreprocessorKind>> PreprocessorChoices { get; } = new List<Choice<PreprocessorKind>>
 		{
-			new Choice<PreprocessorKind>(PreprocessorKind.Builtin, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Builtin")),
-			new Choice<PreprocessorKind>(PreprocessorKind.Mcpp, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Mcpp")),
-			new Choice<PreprocessorKind>(PreprocessorKind.Watcom, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Watcom")),
+			new(PreprocessorKind.Builtin, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Builtin")),
+			new(PreprocessorKind.Mcpp, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Mcpp")),
+			new(PreprocessorKind.Watcom, Loc.Get("Str.ToolWindows.Choice.Preprocessor.Watcom")),
 		};
 
 		/// <summary>Gets the decompilers to choose from.</summary>
 		public IReadOnlyList<Choice<DecompilerKind>> DecompilerChoices { get; } = new List<Choice<DecompilerKind>>
 		{
-			new Choice<DecompilerKind>(DecompilerKind.BuiltIn, Loc.Get("Str.ToolWindows.Choice.Decompiler.BuiltIn")),
-			new Choice<DecompilerKind>(DecompilerKind.ExternalInt2Ssl, Loc.Get("Str.ToolWindows.Choice.Decompiler.External")),
+			new(DecompilerKind.BuiltIn, Loc.Get("Str.ToolWindows.Choice.Decompiler.BuiltIn")),
+			new(DecompilerKind.ExternalInt2Ssl, Loc.Get("Str.ToolWindows.Choice.Decompiler.External")),
 		};
 
 		/// <summary>Gets or sets a value indicating whether the user batch file compiles the scripts.</summary>

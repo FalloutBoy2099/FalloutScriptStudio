@@ -5,6 +5,7 @@
     xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
     Focusable="False">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition x:Name="PrimaryRow" Height="*" />
@@ -41,4 +42,5 @@
             Visibility="Collapsed"
             WordWrap="False" />
     </Grid>
+
 </UserControl>

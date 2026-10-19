@@ -8,13 +8,13 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	/// <summary>A dialog service that records the messages and answers with configured values.</summary>
 	internal sealed class FakeDialogs : IDialogService
 	{
-		public List<String> Infos { get; } = new List<String>();
+		public List<String> Infos { get; } = [];
 
-		public List<String> Warnings { get; } = new List<String>();
+		public List<String> Warnings { get; } = [];
 
-		public List<String> Errors { get; } = new List<String>();
+		public List<String> Errors { get; } = [];
 
-		public List<String> Questions { get; } = new List<String>();
+		public List<String> Questions { get; } = [];
 
 		public Boolean ConfirmAnswer { get; set; } = true;
 

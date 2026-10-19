@@ -12,10 +12,10 @@ namespace FalloutScriptStudio.Core.Configuration
 		public const Int32 MaxQueries = 150;
 
 		/// <summary>Gets or sets the search texts, most recent first.</summary>
-		public List<String> Queries { get; set; } = new List<String>();
+		public List<String> Queries { get; set; } = [];
 
 		/// <summary>Gets or sets the folders used for searches in files.</summary>
-		public List<String> Directories { get; set; } = new List<String>();
+		public List<String> Directories { get; set; } = [];
 
 		/// <summary>
 		/// Moves a search text to the top of the history.

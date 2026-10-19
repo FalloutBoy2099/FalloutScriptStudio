@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Core.Analysis
 			}
 
 			SslTokenStream tokens = SslTokenizer.Tokenize(text);
-			List<SymbolOccurrence> result = new List<SymbolOccurrence>();
+			List<SymbolOccurrence> result = [];
 			for (Int32 i = 0; i < tokens.Count; i++)
 			{
 				SslToken token = tokens[i];

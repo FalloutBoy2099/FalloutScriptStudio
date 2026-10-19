@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Views.Accessibility
 	using System;
 	using System.Windows;
 	using System.Windows.Input;
-	using FalloutScriptStudio.Views.ToolWindows;
+	using ToolWindows;
 
 	/// <summary>
 	/// Keyboard conventions shared by the windows. <see cref="CloseOnEscapeProperty"/> gives the windows that have no cancel button
@@ -53,7 +53,7 @@ namespace FalloutScriptStudio.Views.Accessibility
 		private static void OnWindowKeyDown(Object sender, KeyEventArgs e)
 		{
 			// KeyDown is the bubbling event: a drop-down, a cell editor or a completion list that used Escape has already handled it.
-			if (e.Key == Key.Escape && !e.Handled && Keyboard.Modifiers == ModifierKeys.None && sender is Window window)
+			if (e.Key == Key.Escape && !e.Handled && e.KeyboardDevice.Modifiers == ModifierKeys.None && sender is Window window)
 			{
 				e.Handled = true;
 				ToolWindowHelper.Close(window, false);

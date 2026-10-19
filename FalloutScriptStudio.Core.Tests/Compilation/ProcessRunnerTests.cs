@@ -51,7 +51,7 @@ namespace FalloutScriptStudio.Core.Tests.Compilation
 		[Fact]
 		public async Task Run_ReportsEveryOutputLineToTheProgressReceiver()
 		{
-			List<String> lines = new List<String>();
+			List<String> lines = [];
 
 			ProcessRunResult result = await this._runner.RunAsync(
 				new ProcessRunRequest { FileName = "cmd.exe", Arguments = "/c echo one&echo two", OutputLineProgress = new LineCollector(lines) });

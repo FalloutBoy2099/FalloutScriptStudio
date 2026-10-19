@@ -20,5 +20,8 @@ namespace FalloutScriptStudio.Workspace
 
 		/// <summary>Decompiling a compiled script.</summary>
 		Decompile = 5,
+
+		/// <summary>Looking at or formatting the files of a project ("Format Project").</summary>
+		FormatProject = 20,
 	}
 }

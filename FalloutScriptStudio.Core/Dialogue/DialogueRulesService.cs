@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Configuration;
+	using Configuration;
 
 	/// <summary>
 	/// <see cref="IDialogueRulesService"/> that stores the user's rules in a text file.

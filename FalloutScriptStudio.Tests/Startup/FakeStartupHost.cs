@@ -16,11 +16,11 @@ namespace FalloutScriptStudio.Tests.Startup
 			this._events = events;
 		}
 
-		public List<String> Information { get; } = new List<String>();
+		public List<String> Information { get; } = [];
 
-		public List<String> Errors { get; } = new List<String>();
+		public List<String> Errors { get; } = [];
 
-		public List<Int32> ShutdownCodes { get; } = new List<Int32>();
+		public List<Int32> ShutdownCodes { get; } = [];
 
 		public String? Language { get; private set; }
 

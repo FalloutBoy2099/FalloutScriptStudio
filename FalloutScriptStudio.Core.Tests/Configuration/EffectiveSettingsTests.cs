@@ -19,7 +19,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			global.Paths.HeadersDirectory = @"C:\global\headers";
 			global.Paths.ScriptsHeaderFile = @"C:\global\headers\SCRIPTS.H";
 			global.Paths.OutputDirectory = @"C:\global\game\scripts";
-			global.Paths.MessageSearchDirectories = new List<String> { @"C:\global\msg" };
+			global.Paths.MessageSearchDirectories = [@"C:\global\msg"];
 			global.Compiler.CompileToSourceDirectory = true;
 			global.Compiler.SearchIncludePath = true;
 			global.Compiler.Preprocessor = PreprocessorKind.Mcpp;
@@ -80,7 +80,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 				HeadersDirectory = @"D:\mod\headers",
 				ScriptsHeaderFile = @"D:\mod\headers\scripts.h",
 				OutputDirectory = @"D:\mod\out",
-				MessageSearchDirectories = new List<String> { @"D:\mod\msg", @"D:\mod\msg2" },
+				MessageSearchDirectories = [@"D:\mod\msg", @"D:\mod\msg2"],
 				CompileToSourceDirectory = false,
 				SearchIncludePath = false,
 				Preprocessor = PreprocessorKind.Watcom,
@@ -113,7 +113,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		public void AnOverrideNeverChangesTheGlobalSettings()
 		{
 			AppSettings global = CreateGlobal();
-			ProjectSettings project = new ProjectSettings { HeadersDirectory = "x", ShortCircuit = true, MessageSearchDirectories = new List<String>() };
+			ProjectSettings project = new ProjectSettings { HeadersDirectory = "x", ShortCircuit = true, MessageSearchDirectories = [] };
 
 			_ = Create(global, project).Settings;
 
@@ -138,7 +138,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void AnEmptyMessageFolderListOverrideReplacesTheGlobalFolders()
 		{
-			ProjectSettings project = new ProjectSettings { MessageSearchDirectories = new List<String>() };
+			ProjectSettings project = new ProjectSettings { MessageSearchDirectories = [] };
 
 			Assert.Empty(Create(CreateGlobal(), project).Settings.Paths.MessageSearchDirectories);
 		}
@@ -165,8 +165,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		[Fact]
 		public void TheDefineChoices_AddTheProjectDefinesToTheGlobalOnes_WithoutDuplicates()
 		{
-			PreprocessorDefines defines = new PreprocessorDefines { Items = new List<String> { "G1", "SHARED" } };
-			ProjectSettings project = new ProjectSettings { Defines = new List<String> { "P1", "SHARED", "DEBUG" } };
+			PreprocessorDefines defines = new PreprocessorDefines { Items = ["G1", "SHARED"] };
+			ProjectSettings project = new ProjectSettings { Defines = ["P1", "SHARED", "DEBUG"] };
 
 			Assert.Equal(new[] { "DEBUG", "RELEASE", "G1", "SHARED", "P1" }, Create(CreateGlobal(), project, defines).DefineChoices.ToArray());
 			Assert.Equal(new[] { "DEBUG", "RELEASE", "G1", "SHARED" }, Create(CreateGlobal(), null, defines).DefineChoices.ToArray());
@@ -253,7 +253,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		public void TheMessageFileOptions_FollowTheProject()
 		{
 			AppSettings global = CreateGlobal();
-			ProjectSettings project = new ProjectSettings { OutputDirectory = @"D:\mod\out", MessageSearchDirectories = new List<String> { @"D:\mod\msg" } };
+			ProjectSettings project = new ProjectSettings { OutputDirectory = @"D:\mod\out", MessageSearchDirectories = [@"D:\mod\msg"] };
 
 			MessageFileOptions overridden = Create(global, project).ToMessageFileOptions();
 			MessageFileOptions inherited = Create(global, new ProjectSettings()).ToMessageFileOptions();
@@ -303,13 +303,13 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 				SearchIncludePath = false,
 				Preprocessor = PreprocessorKind.Watcom,
 				PreprocessorDefine = String.Empty,
-				Defines = new List<String> { "MODDEF" },
+				Defines = ["MODDEF"],
 				Optimization = OptimizationLevel.Full,
 				ShortCircuit = true,
 				BackwardCompatibility = true,
 				ShowWarnings = false,
 				DebugInfo = false,
-				MessageSearchDirectories = new List<String>(),
+				MessageSearchDirectories = [],
 				ScriptsListFile = @"C:\project\scripts.lst",
 			};
 

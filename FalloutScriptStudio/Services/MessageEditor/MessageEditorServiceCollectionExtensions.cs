@@ -1,12 +1,11 @@
 namespace FalloutScriptStudio.Services.MessageEditor
 {
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
-	using FalloutScriptStudio.Views.MessageEditor;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.DependencyInjection.Extensions;
-	using Microsoft.Extensions.Logging;
+	using Core.Messages;
+	using Editor.Highlighting;
+	using ViewModels.MessageEditor;
+	using Views.MessageEditor;
 
 	/// <summary>
 	/// Registers the Message Editor.

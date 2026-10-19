@@ -1,9 +1,8 @@
 namespace FalloutScriptStudio.Core.Analysis
 {
 	using System;
-	using System.Collections.Generic;
 	using System.Linq;
-	using FalloutScriptStudio.Core.TextTools;
+	using TextTools;
 
 	/// <summary>Computes the text edits that remove the declaration of a variable.</summary>
 	public static class VariableDeclarationEditor

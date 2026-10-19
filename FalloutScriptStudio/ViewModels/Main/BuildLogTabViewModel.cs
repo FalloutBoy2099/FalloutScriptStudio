@@ -1,6 +1,6 @@
 namespace FalloutScriptStudio.ViewModels.Main
 {
-	using FalloutScriptStudio.Workspace;
+	using Workspace;
 
 	/// <summary>The "Build" tab: the raw compiler log (<see cref="OutputPanelViewModel.BuildText"/>).</summary>
 	public sealed class BuildLogTabViewModel : OutputTabViewModel

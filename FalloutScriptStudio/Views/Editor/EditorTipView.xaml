@@ -4,9 +4,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Focusable="False"
     IsTabStop="False">
+
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     </UserControl.Resources>
+
     <ItemsControl
         MaxWidth="640"
         Focusable="False"
@@ -33,4 +35,5 @@
             </DataTemplate>
         </ItemsControl.ItemTemplate>
     </ItemsControl>
+
 </UserControl>

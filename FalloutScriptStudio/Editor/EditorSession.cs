@@ -4,11 +4,11 @@ namespace FalloutScriptStudio.Editor
 	using System.ComponentModel;
 	using System.Windows.Input;
 	using System.Windows.Threading;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Editor.Controllers;
-	using FalloutScriptStudio.Editor.Text;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
+	using Controllers;
+	using Documents;
+	using Text;
 
 	/// <summary>
 	/// Everything that makes one <see cref="TextEditor"/> a script editor: the feature controllers, the wiring to the
@@ -166,14 +166,14 @@ namespace FalloutScriptStudio.Editor
 			this.Diagnostics.AddView(context.TextView);
 			this.Occurrences.AddView(context.TextView);
 
-			FoldingController folding = new FoldingController(context);
-			NavigationController navigation = new NavigationController(context, folding);
-			BracketController brackets = new BracketController(context);
-			TipController tips = new TipController(context, this.Diagnostics);
-			CompletionController completion = new CompletionController(context);
-			InputController input = new InputController(context, completion, tips, this.Indentation);
-			EditorCommandHandler commands = new EditorCommandHandler(context, folding, navigation, this.Occurrences, completion, this._toggleSplit, brackets);
-			EditorPane pane = new EditorPane(context, folding, navigation, brackets, tips, completion, input, commands, false);
+			FoldingController folding = new(context);
+			NavigationController navigation = new(context, folding);
+			BracketController brackets = new(context);
+			TipController tips = new(context, this.Diagnostics);
+			CompletionController completion = new(context);
+			InputController input = new(context, completion, tips, this.Indentation);
+			EditorCommandHandler commands = new(context, folding, navigation, this.Occurrences, completion, this._toggleSplit, brackets);
+			EditorPane pane = new(context, folding, navigation, brackets, tips, completion, input, commands, false);
 
 			folding.Attach(this.Folding);
 			brackets.Attach();
@@ -395,6 +395,7 @@ namespace FalloutScriptStudio.Editor
 					this.Secondary?.Navigation.UpdateCurrentProcedure();
 					break;
 				case nameof(DocumentViewModel.ParserErrors):
+				case nameof(DocumentViewModel.LiveDiagnostics):
 					this.Diagnostics.Update();
 					this.Tips.HideHoverTip();
 					this.Secondary?.Tips.HideHoverTip();

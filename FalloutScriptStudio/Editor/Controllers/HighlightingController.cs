@@ -14,8 +14,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 	public sealed class HighlightingController : IDisposable
 	{
 		private readonly EditorContext _context;
-		private HashSet<String> _macros = new HashSet<String>(StringComparer.Ordinal);
-		private HashSet<String> _procedures = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+		private HashSet<String> _macros = new(StringComparer.Ordinal);
+		private HashSet<String> _procedures = new(StringComparer.OrdinalIgnoreCase);
 		private SyntaxTheme? _theme;
 		private HighlightingKind? _kind;
 		private Boolean _attached;
@@ -77,7 +77,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private HashSet<String> CollectMacros()
 		{
-			HashSet<String> words = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> words = new(StringComparer.Ordinal);
 			if (this._context.IsMessage)
 			{
 				return words;
@@ -112,7 +112,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private HashSet<String> CollectProcedures()
 		{
-			HashSet<String> names = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
+			HashSet<String> names = new(StringComparer.OrdinalIgnoreCase);
 			ProgramInfo? info = this._context.ProgramInfo;
 			if (info is not null && !this._context.IsMessage)
 			{

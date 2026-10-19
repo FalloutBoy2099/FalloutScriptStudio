@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Views.ToolWindows
 	using System;
 	using System.ComponentModel;
 	using System.Windows.Controls;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The batch compiler window: progress, failed scripts and their output.

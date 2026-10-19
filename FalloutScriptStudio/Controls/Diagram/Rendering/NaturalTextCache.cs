@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	internal sealed class NaturalTextCache
 	{
 		private readonly DiagramTextStyles _styles;
-		private readonly Dictionary<(String Text, Typeface Face, Double Size, Brush Brush), FormattedText> _items = new Dictionary<(String, Typeface, Double, Brush), FormattedText>();
+		private readonly Dictionary<(String Text, Typeface Face, Double Size, Brush Brush), FormattedText> _items = [];
 		private NaturalTextCache? _previous;
 
 		/// <summary>Initializes a cache.</summary>

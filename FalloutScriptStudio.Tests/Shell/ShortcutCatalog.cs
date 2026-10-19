@@ -26,7 +26,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		/// <summary>Gets the shortcuts: scope, normalized gesture and what they do.</summary>
 		public static IReadOnlyList<(String Scope, String Gesture, String Description)> Read()
 		{
-			List<(String Scope, String Gesture, String Description)> entries = new List<(String, String, String)>();
+			List<(String Scope, String Gesture, String Description)> entries = [];
 			Dictionary<String, String> english = SourceTree.LoadStrings("en");
 
 			// The code editor: the gestures of the commands of the editor, whatever the window.
@@ -96,13 +96,13 @@ namespace FalloutScriptStudio.Tests.Shell
 			}
 
 			text.Append(manualPart);
-			return text.ToString().Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal);
+			return text.ToString().Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\n", "\r\n", StringComparison.Ordinal).TrimEnd('\r', '\n');
 		}
 
 		/// <summary>Gets the pairs scope and gesture of the generated tables of a document.</summary>
 		public static HashSet<String> Documented(String document)
 		{
-			HashSet<String> pairs = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> pairs = new(StringComparer.Ordinal);
 			String? scope = null;
 			foreach (String line in document.Split('\n').Select(l => l.TrimEnd('\r')))
 			{
@@ -143,10 +143,10 @@ namespace FalloutScriptStudio.Tests.Shell
 
 		private static Dictionary<String, String> MenuTexts(XDocument window, Dictionary<String, String> english)
 		{
-			Dictionary<String, String> texts = new Dictionary<String, String>(StringComparer.Ordinal);
+			Dictionary<String, String> texts = new(StringComparer.Ordinal);
 			foreach (XElement item in window.Descendants(_presentation + "MenuItem"))
 			{
-				Match command = Regex.Match((String?)item.Attribute("Command") ?? String.Empty, @"Binding\s+([A-Za-z0-9_.]+?)Command");
+				Match command = Regex.Match((String?)item.Attribute("Command") ?? String.Empty, @"Binding\s+([A-Za-z0-9_.]+?)Command\b");
 				Match header = Regex.Match((String?)item.Attribute("Header") ?? String.Empty, @"DynamicResource\s+(Str\.[A-Za-z0-9_.]+)");
 				if (command.Success && header.Success && english.TryGetValue(header.Groups[1].Value, out String? text) && !texts.ContainsKey(command.Groups[1].Value))
 				{
@@ -198,6 +198,7 @@ namespace FalloutScriptStudio.Tests.Shell
 				Key.OemPlus or Key.Add => "+",
 				Key.OemMinus or Key.Subtract => "-",
 				Key.OemQuestion or Key.Divide => "/",
+				Key.OemPeriod => ".",
 				Key.Multiply => "*",
 				Key.Cancel => "Break",
 				Key.Return => "Enter",
@@ -211,7 +212,7 @@ namespace FalloutScriptStudio.Tests.Shell
 
 		private static String Normalize(ModifierKeys modifiers, Key key)
 		{
-			List<String> parts = new List<String>();
+			List<String> parts = [];
 			if (modifiers.HasFlag(ModifierKeys.Control))
 			{
 				parts.Add("Ctrl");

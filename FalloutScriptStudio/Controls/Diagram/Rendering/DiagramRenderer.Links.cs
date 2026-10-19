@@ -4,10 +4,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	using System.Collections.Generic;
 	using System.Windows;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Controls.Diagram.Internal;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Routing;
-	using FalloutScriptStudio.Localization;
+	using Internal;
+	using Model;
+	using Routing;
 
 	/// <summary>Drawing of the connector lines: routed polylines with rounded corners and the markers at the ends.</summary>
 	internal sealed partial class DiagramRenderer
@@ -33,9 +32,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 				}
 			}
 
-			List<RoutedLink> normal = new List<RoutedLink>();
-			List<RoutedLink> incoming = new List<RoutedLink>();
-			List<RoutedLink> outgoing = new List<RoutedLink>();
+			List<RoutedLink> normal = [];
+			List<RoutedLink> incoming = [];
+			List<RoutedLink> outgoing = [];
 			foreach (RoutedLink routed in this._scene.Routes)
 			{
 				if (interactive && routed.Link.Source.IsSelected)
@@ -61,7 +60,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		private static StreamGeometry BuildRoundedPolylines(IEnumerable<RoutedLink> links)
 		{
-			StreamGeometry geometry = new StreamGeometry();
+			StreamGeometry geometry = new();
 			using (StreamGeometryContext ctx = geometry.Open())
 			{
 				foreach (RoutedLink routed in links)
@@ -112,7 +111,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			Pen pen = DiagramPalette.MakeLinkPen(brush, thickness);
 			dc.DrawGeometry(null, pen, BuildRoundedPolylines(links));
 
-			StreamGeometry arrows = new StreamGeometry();
+			StreamGeometry arrows = new();
 			Double length = 9.0 * scale;
 			Double half = 4.5 * scale;
 			using (StreamGeometryContext ctx = arrows.Open())
@@ -121,7 +120,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 				{
 					Point tip = routed.Route.End;
 					Vector dir = DirectionVector(routed.Route.EndDirection);
-					Vector perp = new Vector(-dir.Y, dir.X);
+					Vector perp = new(-dir.Y, dir.X);
 					Point back = tip - (dir * length);
 					ctx.BeginFigure(tip, true, true);
 					ctx.LineTo(back + (perp * half), true, false);

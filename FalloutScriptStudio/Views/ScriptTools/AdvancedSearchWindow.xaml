@@ -5,10 +5,10 @@
     xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="{DynamicResource Str.ScriptTools.SearchTitle}"
-    Width="720"
-    Height="760"
+    Width="760"
+    Height="640"
     MinWidth="560"
-    MinHeight="560"
+    MinHeight="480"
     a11y:WindowFit.FitToWorkArea="True"
     Background="{DynamicResource ApplicationBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
@@ -20,11 +20,53 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
+        <!--  WPF-UI draws a text with an access key larger than the plain text (14 instead of 12), so every such text is shown by an explicit AccessText  -->
+        <DataTemplate x:Key="AccessTextContentTemplate">
+            <AccessText FontSize="12" Text="{Binding}" />
+        </DataTemplate>
         <Style x:Key="FieldCaption" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+
+        <!--  A text button grows with its text (never a fixed width), so the longest translation is not clipped  -->
+        <Style
+            x:Key="SearchActionButtonStyle"
+            BasedOn="{StaticResource {x:Type ui:Button}}"
+            TargetType="{x:Type ui:Button}">
+            <Setter Property="MinWidth" Value="88" />
+            <Setter Property="MinHeight" Value="28" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Margin" Value="0,2,6,2" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="ContentTemplate" Value="{StaticResource AccessTextContentTemplate}" />
+        </Style>
+
+        <Style BasedOn="{StaticResource {x:Type CheckBox}}" TargetType="{x:Type CheckBox}">
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="ContentTemplate" Value="{StaticResource AccessTextContentTemplate}" />
+            <Setter Property="Margin" Value="0,0,16,0" />
+        </Style>
+        <Style BasedOn="{StaticResource {x:Type RadioButton}}" TargetType="{x:Type RadioButton}">
+            <Setter Property="MinHeight" Value="24" />
+            <Setter Property="ContentTemplate" Value="{StaticResource AccessTextContentTemplate}" />
+            <Setter Property="Margin" Value="0,0,16,0" />
+        </Style>
+        <Style BasedOn="{StaticResource {x:Type ui:ToggleSwitch}}" TargetType="{x:Type ui:ToggleSwitch}">
+            <Setter Property="ContentTemplate" Value="{StaticResource AccessTextContentTemplate}" />
+        </Style>
+        <Style BasedOn="{StaticResource {x:Type ComboBox}}" TargetType="{x:Type ComboBox}">
+            <Setter Property="MinHeight" Value="28" />
+            <Setter Property="Padding" Value="8,2" />
+        </Style>
+        <Style BasedOn="{StaticResource {x:Type ui:TextBox}}" TargetType="{x:Type ui:TextBox}">
+            <Setter Property="MinHeight" Value="28" />
+            <Setter Property="Padding" Value="8,2" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -39,9 +81,8 @@
             ShowMaximize="False"
             ShowMinimize="False" />
 
-        <Grid Grid.Row="1" Margin="16,4,16,16">
+        <Grid Grid.Row="1" Margin="12,2,12,12">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -51,28 +92,44 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0">
-                <TextBlock Style="{StaticResource FieldCaption}" Text="{DynamicResource Str.ScriptTools.SearchFindText}" />
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldCaption}"
+                    Text="{DynamicResource Str.ScriptTools.SearchFindText}" />
                 <ComboBox
                     x:Name="SearchBox"
+                    Grid.Row="0"
+                    Grid.Column="1"
                     AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchFindText}"
                     IsEditable="True"
                     ItemsSource="{Binding QueryHistory}"
                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Style="{StaticResource FieldCaption}"
+                    Text="{DynamicResource Str.ScriptTools.SearchReplaceText}" />
+                <ui:TextBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,6,0,0"
+                    AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchReplaceText}"
+                    Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
 
-            <StackPanel Grid.Row="1" Margin="0,10,0,0">
-                <TextBlock Style="{StaticResource FieldCaption}" Text="{DynamicResource Str.ScriptTools.SearchReplaceText}" />
-                <ui:TextBox AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchReplaceText}" Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
-
-            <WrapPanel Grid.Row="2" Margin="0,12,0,0">
+            <WrapPanel Grid.Row="1" Margin="0,8,0,0">
+                <CheckBox Content="{DynamicResource Str.ScriptTools.SearchMatchCase}" IsChecked="{Binding MatchCase}" />
                 <CheckBox
-                    Margin="0,0,20,0"
-                    Content="{DynamicResource Str.ScriptTools.SearchMatchCase}"
-                    IsChecked="{Binding MatchCase}" />
-                <CheckBox
-                    Margin="0,0,20,0"
                     Content="{DynamicResource Str.ScriptTools.SearchWholeWord}"
                     IsChecked="{Binding WholeWord}"
                     IsEnabled="{Binding CanChangeWholeWord}" />
@@ -80,27 +137,26 @@
             </WrapPanel>
 
             <Border
-                Grid.Row="3"
-                Margin="0,12,0,0"
-                Padding="12,10,12,12"
+                Grid.Row="2"
+                Margin="0,8,0,0"
+                Padding="10,6,10,8"
                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                 BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="6">
                 <StackPanel>
-                    <TextBlock
-                        Margin="0,0,0,8"
-                        FontWeight="SemiBold"
-                        Text="{DynamicResource Str.ScriptTools.SearchIn}" />
                     <WrapPanel>
+                        <TextBlock
+                            Margin="0,0,16,0"
+                            VerticalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="{DynamicResource Str.ScriptTools.SearchIn}" />
                         <RadioButton
-                            Margin="0,0,20,0"
                             Content="{DynamicResource Str.ScriptTools.SearchScopeCurrent}"
                             GroupName="Scope"
                             IsChecked="{Binding IsCurrentScope}"
                             ToolTip="{DynamicResource Str.ScriptTools.SearchScopeCurrentTip}" />
                         <RadioButton
-                            Margin="0,0,20,0"
                             Content="{DynamicResource Str.ScriptTools.SearchScopeOpen}"
                             GroupName="Scope"
                             IsChecked="{Binding IsOpenScope}"
@@ -111,7 +167,7 @@
                             IsChecked="{Binding IsFolderScope}"
                             ToolTip="{DynamicResource Str.ScriptTools.SearchScopeFolderTip}" />
                     </WrapPanel>
-                    <Grid Margin="0,10,0,0" IsEnabled="{Binding IsFolderScope}">
+                    <Grid Margin="0,6,0,0" IsEnabled="{Binding IsFolderScope}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -136,25 +192,29 @@
                             Command="{Binding BrowseFolderCommand}"
                             Content="{DynamicResource Str.ScriptTools.SearchBtnBrowse}"
                             Icon="{ui:SymbolIcon FolderOpen24}"
+                            Style="{StaticResource SearchActionButtonStyle}"
                             ToolTip="{DynamicResource Str.ScriptTools.SearchBrowseTip}" />
                         <ui:Button
                             Grid.Row="0"
                             Grid.Column="2"
-                            Margin="6,0,0,0"
+                            MinWidth="28"
+                            Margin="0,0,0,0"
+                            Padding="6,0"
                             AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchRemoveFolderName}"
                             Command="{Binding RemoveSavedFolderCommand}"
                             Icon="{ui:SymbolIcon Delete24}"
+                            Style="{StaticResource SearchActionButtonStyle}"
                             ToolTip="{DynamicResource Str.ScriptTools.SearchRemoveFolderTip}" />
                         <WrapPanel
                             Grid.Row="1"
                             Grid.ColumnSpan="3"
-                            Margin="0,10,0,0">
+                            Margin="0,6,0,0">
                             <TextBlock
                                 Margin="0,0,10,0"
                                 VerticalAlignment="Center"
                                 Text="{DynamicResource Str.ScriptTools.SearchFileTypes}" />
                             <ComboBox
-                                Width="200"
+                                MinWidth="200"
                                 AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchFileTypes}"
                                 IsEditable="True"
                                 ItemsSource="{Binding MaskPresets}"
@@ -169,47 +229,64 @@
                 </StackPanel>
             </Border>
 
-            <WrapPanel Grid.Row="4" Margin="0,12,0,0">
-                <ui:Button
-                    Appearance="Primary"
-                    Command="{Binding SearchCommand}"
-                    Content="{DynamicResource Str.ScriptTools.SearchFindNext}"
-                    Icon="{ui:SymbolIcon Search24}"
-                    IsDefault="True"
-                    ToolTip="{DynamicResource Str.ScriptTools.SearchFindNextTip}" />
-                <ui:Button
-                    Margin="8,0,0,0"
-                    Command="{Binding FindAllCommand}"
-                    Content="{DynamicResource Str.ScriptTools.SearchFindAll}"
-                    ToolTip="{DynamicResource Str.ScriptTools.SearchFindAllTip}" />
-                <ui:Button
-                    Margin="8,0,0,0"
-                    Command="{Binding ReplaceCommand}"
-                    Content="{DynamicResource Str.ScriptTools.SearchBtnReplace}"
-                    ToolTip="{DynamicResource Str.ScriptTools.SearchReplaceTip}" />
-                <ui:Button
-                    Margin="8,0,0,0"
-                    Command="{Binding ReplaceAllCommand}"
-                    Content="{DynamicResource Str.ScriptTools.SearchBtnReplaceAll}"
-                    ToolTip="{DynamicResource Str.ScriptTools.SearchReplaceAllTip}" />
-                <ui:Button
-                    Margin="8,0,0,0"
-                    Command="{Binding FindAllCancelCommand}"
-                    Content="{DynamicResource Str.Common.Cancel}"
-                    Icon="{ui:SymbolIcon Dismiss24}"
-                    Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibility}}" />
+            <WrapPanel Grid.Row="3" Margin="0,8,0,0">
+                <WrapPanel Margin="0,0,12,0">
+                    <ui:Button
+                        Appearance="Primary"
+                        Command="{Binding SearchCommand}"
+                        Content="{DynamicResource Str.ScriptTools.SearchFindNext}"
+                        Icon="{ui:SymbolIcon Search24}"
+                        IsDefault="True"
+                        Style="{StaticResource SearchActionButtonStyle}"
+                        ToolTip="{DynamicResource Str.ScriptTools.SearchFindNextTip}" />
+                    <ui:Button
+                        Command="{Binding FindAllCommand}"
+                        Content="{DynamicResource Str.ScriptTools.SearchFindAll}"
+                        Style="{StaticResource SearchActionButtonStyle}"
+                        ToolTip="{DynamicResource Str.ScriptTools.SearchFindAllTip}" />
+                    <ui:Button
+                        Command="{Binding CancelRunningCommand}"
+                        Content="{DynamicResource Str.Common.Cancel}"
+                        Icon="{ui:SymbolIcon Dismiss24}"
+                        Style="{StaticResource SearchActionButtonStyle}"
+                        Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibility}}" />
+                </WrapPanel>
+                <Border
+                    Padding="6,2,0,2"
+                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                    <WrapPanel>
+                        <ui:Button
+                            Command="{Binding ReplaceCommand}"
+                            Content="{DynamicResource Str.ScriptTools.SearchBtnReplace}"
+                            Style="{StaticResource SearchActionButtonStyle}"
+                            ToolTip="{DynamicResource Str.ScriptTools.SearchReplaceTip}" />
+                        <ui:Button
+                            Command="{Binding ReplaceAllCommand}"
+                            Content="{DynamicResource Str.ScriptTools.SearchBtnReplaceAll}"
+                            Style="{StaticResource SearchActionButtonStyle}"
+                            ToolTip="{DynamicResource Str.ScriptTools.SearchReplaceAllTip}" />
+                        <ui:Button
+                            Command="{Binding ReplaceInFilesCommand}"
+                            Content="{DynamicResource Str.ScriptTools.ReplBtnReplaceInFiles}"
+                            Style="{StaticResource SearchActionButtonStyle}"
+                            ToolTip="{DynamicResource Str.ScriptTools.ReplBtnReplaceInFilesTip}" />
+                    </WrapPanel>
+                </Border>
             </WrapPanel>
 
             <ui:InfoBar
                 Title=""
-                Grid.Row="5"
-                Margin="0,12,0,0"
+                Grid.Row="4"
+                Margin="0,8,0,0"
                 IsClosable="False"
                 IsOpen="{Binding HasError, Mode=OneWay}"
                 Message="{Binding ErrorMessage}"
                 Severity="Error" />
 
-            <StackPanel Grid.Row="6" Margin="0,12,0,6">
+            <StackPanel Grid.Row="5" Margin="0,8,0,6">
                 <ProgressBar
                     Height="4"
                     Margin="0,0,0,6"
@@ -218,49 +295,97 @@
                     Visibility="{Binding IsSearching, Converter={StaticResource BooleanToVisibility}}"
                     Value="{Binding ProgressValue, Mode=OneWay}" />
                 <TextBlock
+                    MinHeight="16"
+                    a11y:LiveRegion.Text="{Binding StatusText}"
+                    FontSize="12"
                     Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                     Text="{Binding StatusText}"
                     TextTrimming="CharacterEllipsis" />
             </StackPanel>
 
-            <DataGrid
-                x:Name="ResultsGrid"
-                Grid.Row="7"
-                AutoGenerateColumns="False"
-                AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchResultsName}"
-                CanUserAddRows="False"
-                CanUserDeleteRows="False"
-                GridLinesVisibility="Horizontal"
-                HeadersVisibility="Column"
-                HorizontalScrollBarVisibility="Disabled"
-                IsReadOnly="True"
-                ItemsSource="{Binding Results}"
-                KeyDown="OnResultKeyDown"
-                MouseDoubleClick="OnResultDoubleClick"
-                RowHeaderWidth="0"
-                SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
-                SelectionMode="Single"
-                SelectionUnit="FullRow">
-                <DataGrid.RowStyle>
-                    <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
-                        <Setter Property="ToolTip" Value="{Binding FullPath}" />
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="150"
-                        Binding="{Binding FileName}"
-                        Header="{DynamicResource Str.Common.File}" />
-                    <DataGridTextColumn
-                        Width="60"
-                        Binding="{Binding Line}"
-                        Header="{DynamicResource Str.Common.Line}" />
-                    <DataGridTextColumn
-                        Width="*"
-                        Binding="{Binding Text}"
-                        Header="{DynamicResource Str.ScriptTools.SearchColText}" />
-                </DataGrid.Columns>
-            </DataGrid>
+            <Border
+                Grid.Row="6"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <Grid>
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Vertical"
+                        Visibility="{Binding HasNoResults, Converter={StaticResource BooleanToVisibility}}">
+                        <ui:SymbolIcon
+                            HorizontalAlignment="Center"
+                            FontSize="28"
+                            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                            Symbol="Search24" />
+                        <TextBlock
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{DynamicResource Str.ScriptTools.SearchResultsEmpty}" />
+                    </StackPanel>
+                    <DataGrid
+                        x:Name="ResultsGrid"
+                        AutoGenerateColumns="False"
+                        AutomationProperties.Name="{DynamicResource Str.ScriptTools.SearchResultsName}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        CanUserResizeRows="False"
+                        ColumnHeaderHeight="22"
+                        ColumnHeaderStyle="{StaticResource ShellCompactColumnHeaderStyle}"
+                        FontSize="12"
+                        GridLinesVisibility="None"
+                        HeadersVisibility="Column"
+                        HorizontalScrollBarVisibility="Disabled"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding Results}"
+                        KeyDown="OnResultKeyDown"
+                        MinRowHeight="22"
+                        MouseDoubleClick="OnResultDoubleClick"
+                        RowHeaderWidth="0"
+                        RowHeight="22"
+                        SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+                        SelectionMode="Single"
+                        SelectionUnit="FullRow">
+                        <DataGrid.Style>
+                            <Style BasedOn="{StaticResource {x:Type DataGrid}}" TargetType="{x:Type DataGrid}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasNoResults}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Style>
+                        <DataGrid.RowStyle>
+                            <Style BasedOn="{StaticResource DefaultDataGridRowStyle}" TargetType="DataGridRow">
+                                <Setter Property="Height" Value="22" />
+                                <Setter Property="MinHeight" Value="22" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="ToolTip" Value="{Binding FullPath}" />
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="160"
+                                Binding="{Binding FileName}"
+                                Header="{DynamicResource Str.Common.File}" />
+                            <DataGridTextColumn
+                                Width="56"
+                                Binding="{Binding Line}"
+                                Header="{DynamicResource Str.Common.Line}" />
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Text}"
+                                Header="{DynamicResource Str.ScriptTools.SearchColText}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
+
 </ui:FluentWindow>

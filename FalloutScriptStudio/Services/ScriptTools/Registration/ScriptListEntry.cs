@@ -47,7 +47,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Registration
 		{
 			ArgumentNullException.ThrowIfNull(line);
 
-			ScriptListEntry entry = new ScriptListEntry();
+			ScriptListEntry entry = new();
 			Int32 varPos = line.LastIndexOf(LocalVarsMarker, StringComparison.Ordinal);
 			Int32 descPos = line.IndexOf(';');
 			if (varPos >= 0 && descPos > varPos)

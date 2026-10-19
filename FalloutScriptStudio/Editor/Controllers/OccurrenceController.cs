@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 	{
 		private readonly EditorContext _context;
 		private readonly HighlightColorizer _colorizer;
-		private readonly List<TextView> _views = new List<TextView>();
+		private readonly List<TextView> _views = [];
 		private String? _highlighted;
 
 		public OccurrenceController(EditorContext context)

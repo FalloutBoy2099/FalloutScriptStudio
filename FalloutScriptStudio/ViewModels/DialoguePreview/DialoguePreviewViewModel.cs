@@ -13,6 +13,7 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services.MessageEditor;
+	using FalloutScriptStudio.Services.ScriptTools;
 	using FalloutScriptStudio.Services.ScriptTools.Flowchart;
 
 	/// <summary>
@@ -66,10 +67,10 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 		public Boolean NeedUpdate { get; private set; }
 
 		/// <summary>Gets the names of the dialogue nodes of the script.</summary>
-		public ObservableCollection<String> NodeNames { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> NodeNames { get; } = [];
 
 		/// <summary>Gets the rows of the node being shown.</summary>
-		public ObservableCollection<DialoguePreviewRowViewModel> Rows { get; } = new ObservableCollection<DialoguePreviewRowViewModel>();
+		public ObservableCollection<DialoguePreviewRowViewModel> Rows { get; } = [];
 
 		/// <summary>Gets or sets the title of the window.</summary>
 		[ObservableProperty]
@@ -106,12 +107,13 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 		public Boolean CanGoForward => this._preview.CanGoForward;
 
 		/// <summary>
-		/// Starts the preview of a script. The node that contains the caret of the editor is shown first, otherwise
-		/// <c>talk_p_proc</c>.
+		/// Starts the preview of a script. The node of <see cref="DialoguePreviewOpenOptions.StartAtNode"/> is shown first; without one, the node that
+		/// contains the caret of the editor, otherwise <c>talk_p_proc</c>.
 		/// </summary>
 		/// <param name="script">The script.</param>
+		/// <param name="options">How the window is opened; the node at the caret or <c>talk_p_proc</c> when <see langword="null"/>.</param>
 		/// <returns><see langword="false"/> when the script has no dialogue to show.</returns>
-		public async Task<Boolean> InitializeAsync(DocumentViewModel script)
+		public async Task<Boolean> InitializeAsync(DocumentViewModel script, DialoguePreviewOpenOptions? options = null)
 		{
 			ArgumentNullException.ThrowIfNull(script);
 
@@ -130,7 +132,7 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 
 			this._source = new ReloadableMessageSource(await this._messages.CreateSourceAsync(script));
 			Int32 caretLine = script.Editor?.CaretLine ?? 1;
-			this._started = await this._preview.StartAsync(script.TextDocument.Text, info, this._source, caretLine);
+			this._started = await this._preview.StartAsync(script.TextDocument.Text, info, this._source, caretLine, default, options?.StartAtNode);
 			this.NeedUpdate = false;
 			this.SyncFromPreview();
 			return this._started;
@@ -173,6 +175,28 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 			this._source.Replace(await this._messages.CreateSourceAsync(script));
 			this.NeedUpdate = false;
 			await this._preview.UpdateScriptAsync(script.TextDocument.Text, script.ProgramInfo);
+		}
+
+		/// <summary>
+		/// Moves the window to a node ("Preview Dialogue From This Node" while the window is open): the changes made to the script are read first, the
+		/// node is added to the history, so Back returns to where the preview was.
+		/// </summary>
+		/// <param name="nodeName">The node.</param>
+		/// <returns>A task that completes when the node is shown.</returns>
+		public async Task ShowNodeAsync(String nodeName)
+		{
+			ArgumentNullException.ThrowIfNull(nodeName);
+			if (!this._started)
+			{
+				return;
+			}
+
+			if (this.NeedUpdate)
+			{
+				await this.UpdateScriptAsync();
+			}
+
+			await this._preview.GoToNodeAsync(nodeName);
 		}
 
 		/// <summary>Shows the previous node of the history.</summary>

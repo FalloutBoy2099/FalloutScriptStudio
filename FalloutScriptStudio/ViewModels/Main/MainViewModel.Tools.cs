@@ -255,6 +255,33 @@ namespace FalloutScriptStudio.ViewModels.Main
 			}
 		}
 
+		/// <summary>
+		/// Compares the active script with its message file and lists the differences in the Errors tab: the message numbers the script uses
+		/// and the file lacks, the unused, duplicate and empty messages. A script and a message file without differences give a short note.
+		/// </summary>
+		[RelayCommand]
+		public async Task CheckMessagesAsync()
+		{
+			if (this._workspace.ActiveDocument is not { Kind: DocumentKind.Script } document)
+			{
+				return;
+			}
+
+			if (document.FilePath is null)
+			{
+				await this._dialogs.ShowInfoAsync(Loc.Get("Str.Shell.Dlg.MessageFileTitle"), Loc.Get("Str.Shell.Dlg.SaveScriptFirst"));
+				return;
+			}
+
+			if (await this._workspace.CheckMessagesAsync(document) == 0)
+			{
+				await this._dialogs.ShowInfoAsync(Loc.Get("Str.Shell.Dlg.CheckTitle"), Loc.Get("Str.Shell.Dlg.NoErrorsFound"));
+				return;
+			}
+
+			this.Output.ShowTab(OutputTab.Errors);
+		}
+
 		/// <summary>Opens the dialogue function rules configuration.</summary>
 		[RelayCommand]
 		public async Task ShowFunctionRulesAsync()
@@ -459,6 +486,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		private async Task AfterSettingsChangedAsync()
 		{
 			this.LoadPreprocessorDefines();
+			this.LoadCompileProfiles();
 			this.LoadTemplates();
 			this.RefreshSettingsProperties();
 			await this._workspace.ReloadGlobalMacrosAsync();

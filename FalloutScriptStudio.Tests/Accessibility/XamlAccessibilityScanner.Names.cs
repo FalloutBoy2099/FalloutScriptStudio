@@ -10,20 +10,20 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	internal sealed partial class XamlAccessibilityScanner
 	{
 		/// <summary>Controls that show their own content as the accessible name, so an icon only content is not enough.</summary>
-		private static readonly HashSet<String> _buttonLike = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _buttonLike = new(StringComparer.Ordinal)
 		{
 			"Button", "ToggleButton", "CheckBox", "RadioButton", "HyperlinkButton", "RepeatButton", "ToggleSwitch",
 		};
 
 		/// <summary>Controls that have no text of their own and need a name or a label.</summary>
-		private static readonly HashSet<String> _inputLike = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _inputLike = new(StringComparer.Ordinal)
 		{
 			"TextBox", "PasswordBox", "NumberBox", "ComboBox", "OverrideModeBox", "ListBox", "ListView", "TreeView", "DataGrid", "Slider",
 			"AutoSuggestBox", "TextEditor", "ProgressBar", "DiagramCanvas",
 		};
 
 		/// <summary>Controls that can be labelled by the title of a settings card.</summary>
-		private static readonly HashSet<String> _cardLabelled = new HashSet<String>(StringComparer.Ordinal)
+		private static readonly HashSet<String> _cardLabelled = new(StringComparer.Ordinal)
 		{
 			"TextBox", "PasswordBox", "NumberBox", "ComboBox", "OverrideModeBox", "ListBox", "Slider", "ToggleSwitch", "CheckBox",
 		};
@@ -37,7 +37,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Same rule on markup that is already loaded.</summary>
 		public IReadOnlyList<String> FindMissingNames(String file, XDocument document)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			HashSet<String> labelTargets = LabelTargets(document);
 			Dictionary<String, XElement> keyed = KeyedStyles(document);
 			Dictionary<String, XElement> implicitStyles = ImplicitStyles(document);
@@ -166,7 +166,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 			}
 
 			XElement? style = this.ResolveStyle(element, keyed, implicitStyles);
-			return style is not null && this.StyleProvidesName(style, keyed, new HashSet<XElement>());
+			return style is not null && this.StyleProvidesName(style, keyed, []);
 		}
 
 		private XElement? ResolveStyle(XElement element, Dictionary<String, XElement> keyed, Dictionary<String, XElement> implicitStyles)

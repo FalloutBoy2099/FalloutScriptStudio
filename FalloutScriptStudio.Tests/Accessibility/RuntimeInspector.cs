@@ -33,7 +33,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Finds interactive controls for which a screen reader would announce no name.</summary>
 		public static IReadOnlyList<String> FindMissingNames(Window window)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 
 			// A screen reader walks the tree and so creates the peers of the labels before it asks for the name of a labelled control.
 			foreach (UIElement element in Descendants(window).OfType<UIElement>())
@@ -63,7 +63,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <summary>Finds interactive controls that the Tab key cannot reach.</summary>
 		public static IReadOnlyList<String> FindUnreachable(Window window)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			foreach (Control element in Descendants(window).OfType<Control>().Where(IsChecked).Where(control => control is not ProgressBar))
 			{
 				// The items of a list or of a tree take the Tab stop of their control, so the control itself only has to take the focus.
@@ -82,14 +82,14 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		/// <param name="escapeInCode">Whether the code of the window handles Escape itself.</param>
 		public static IReadOnlyList<String> FindDialogProblems(Window window, Boolean escapeInCode)
 		{
-			List<String> findings = new List<String>();
+			List<String> findings = [];
 			Boolean hasCancel = Descendants(window).OfType<Button>().Any(button => button.IsCancel);
 			if (!hasCancel && !escapeInCode && !Views.Accessibility.WindowKeys.GetCloseOnEscape(window))
 			{
 				findings.Add($"{window.GetType().Name}: Escape does not close the window");
 			}
 
-			if (FocusManager.GetFocusedElement(window) is null && Keyboard.FocusedElement is not DependencyObject)
+			if (FocusManager.GetFocusedElement(window) is null)
 			{
 				findings.Add($"{window.GetType().Name}: nothing has the initial focus");
 			}

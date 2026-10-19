@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Startup
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>The folders of an installation, as <see cref="AppPaths"/> manages them.</summary>
 	public sealed class AppPathsFolders : IStartupFolders

@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 			ArgumentNullException.ThrowIfNull(parsedLines);
 			this.Nodes = nodes;
 			this.ParsedLines = parsedLines;
-			this._byName = new Dictionary<String, FlowchartNodeData>(StringComparer.OrdinalIgnoreCase);
+			this._byName = new(StringComparer.OrdinalIgnoreCase);
 			foreach (FlowchartNodeData node in nodes)
 			{
 				this._byName.TryAdd(node.Name, node);

@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Controls.Diagram
 {
 	using System;
 	using System.Linq;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	// Selecting items.
 	public sealed partial class DiagramCanvas

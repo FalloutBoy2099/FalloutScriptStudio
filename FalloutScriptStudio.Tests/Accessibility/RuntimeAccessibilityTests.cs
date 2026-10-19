@@ -5,6 +5,8 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	using System.Linq;
 	using System.Runtime.CompilerServices;
 	using System.Windows;
+	using FalloutScriptStudio.Services.ScriptTools.Replace;
+	using FalloutScriptStudio.Services.ScriptTools.Search;
 	using FalloutScriptStudio.Tests.ToolWindows;
 	using FalloutScriptStudio.ViewModels.Flowchart;
 	using FalloutScriptStudio.ViewModels.ScriptTools;
@@ -25,7 +27,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	{
 		public static IEnumerable<Object[]> Windows()
 		{
-			return new[] { "Settings", "About", "GoToLine", "BatchCompile", "MacroRenamePreview", "NewNode", "Headers", "RegisterScript", "SymbolPicker", "SymbolChoice" }.Select(name => new Object[] { name });
+			return new[] { "Settings", "About", "GoToLine", "BatchCompile", "MacroRenamePreview", "NewNode", "Headers", "RegisterScript", "SymbolPicker", "SymbolChoice", "CommandPalette", "ReplacePreview", "FormatProject", "SnippetPicker", "SnippetManager" }.Select(name => new Object[] { name });
 		}
 
 		private static Window Create(String name)
@@ -42,6 +44,11 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				"RegisterScript" => new RegisterScriptWindow(Uninitialized<RegisterScriptViewModel>()),
 				"SymbolPicker" => new SymbolPickerWindow(CreateSymbolPicker(FalloutScriptStudio.Services.ToolWindows.SymbolPickerMode.Search)),
 				"SymbolChoice" => new SymbolPickerWindow(CreateSymbolPicker(FalloutScriptStudio.Services.ToolWindows.SymbolPickerMode.Choose)),
+				"CommandPalette" => new CommandPaletteWindow(CreateCommandPalette()),
+				"ReplacePreview" => new ReplacePreviewWindow(CreateReplacePreview()),
+				"FormatProject" => new FormatProjectWindow(CreateFormatProject()),
+				"SnippetPicker" => new SnippetPickerWindow(CreateSnippetPicker()),
+				"SnippetManager" => new SnippetManagerWindow(CreateSnippetManager()),
 				_ => throw new ArgumentOutOfRangeException(nameof(name)),
 			};
 		}
@@ -57,6 +64,71 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				Candidates = new[] { new FalloutScriptStudio.Core.Indexing.IndexedSymbol("name", FalloutScriptStudio.Core.Indexing.IndexedSymbolKind.Procedure, @"C:\a.ssl", 1) },
 			});
 			return viewModel;
+		}
+
+		private static FormatProjectViewModel CreateFormatProject()
+		{
+			return new FormatProjectViewModel(
+				System.Reflection.DispatchProxy.Create<FalloutScriptStudio.Workspace.Formatting.IProjectFormatService, NullProxy>(),
+				System.Reflection.DispatchProxy.Create<FalloutScriptStudio.Workspace.IOperationTracker, NullProxy>(),
+				new FakeSettingsService(@"C:ss"),
+				System.Reflection.DispatchProxy.Create<FalloutScriptStudio.Documents.IWorkspace, NullProxy>());
+		}
+
+		private static SnippetPickerViewModel CreateSnippetPicker()
+		{
+			SnippetPickerViewModel viewModel = new SnippetPickerViewModel();
+			viewModel.Initialize(new FalloutScriptStudio.Services.ToolWindows.SnippetPickerRequest(FalloutScriptStudio.Core.Snippets.BuiltInSnippets.All, false));
+			return viewModel;
+		}
+
+		private static SnippetManagerViewModel CreateSnippetManager()
+		{
+			return new SnippetManagerViewModel(new FalloutScriptStudio.Tests.ToolWindows.FakeSnippetService(), new FakeDialogService());
+		}
+
+		private static CommandPaletteViewModel CreateCommandPalette()
+		{
+			CommandPaletteViewModel viewModel = new CommandPaletteViewModel();
+			viewModel.Initialize(new FalloutScriptStudio.Services.ToolWindows.CommandPaletteRequest
+			{
+				Entries = new[]
+				{
+					new FalloutScriptStudio.Commands.CommandEntry(
+						"SaveCommand",
+						new[] { FalloutScriptStudio.Commands.CommandText.FromKey("Str.Shell.MenuBar.File") },
+						FalloutScriptStudio.Commands.CommandText.FromKey("Str.Common.Save"),
+						new CommunityToolkit.Mvvm.Input.RelayCommand(() => { }),
+						null,
+						() => FalloutScriptStudio.Commands.CommandAvailability.NeedsDocument),
+				},
+				RecentIds = new[] { "SaveCommand" },
+			});
+			return viewModel;
+		}
+
+		private static ReplacePreviewViewModel CreateReplacePreview()
+		{
+			ReplacePreviewViewModel viewModel = new ReplacePreviewViewModel();
+			ReplaceMatch match = new ReplaceMatch(0, 3, 5, 40, 3, "old", "new", "x = ", ";");
+			ReplacePlan plan = new ReplacePlan(
+				new[] { new ReplaceFilePlan(@"C:\mods\a.ssl", new Byte[32], new[] { match }, null) },
+				new[] { new ReplaceSkip(@"C:\mods\ro.ssl", ReplaceSkipReason.ReadOnly, 2) },
+				2,
+				true,
+				System.Text.Encoding.UTF8);
+			SearchMatcher.TryCreate(new SearchOptions("old", true, false, false), out SearchMatcher? matcher, out _);
+			viewModel.Initialize(plan, new ReplaceInFilesRequest { Matcher = matcher!, Replacement = "new" });
+			return viewModel;
+		}
+
+		/// <summary>A stand-in for an interface whose members are never called by the window.</summary>
+		private class NullProxy : System.Reflection.DispatchProxy
+		{
+			protected override Object? Invoke(System.Reflection.MethodInfo? targetMethod, Object?[]? args)
+			{
+				return null;
+			}
 		}
 
 		private static T Uninitialized<T>()

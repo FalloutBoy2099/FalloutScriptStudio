@@ -31,16 +31,16 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		{
 			ArgumentNullException.ThrowIfNull(info);
 
-			TreeGroupNodeViewModel global = new TreeGroupNodeViewModel(Loc.Get("Str.Panels.GroupGlobalProcedures"), GlobalProceduresKey, false)
+			TreeGroupNodeViewModel global = new(Loc.Get("Str.Panels.GroupGlobalProcedures"), GlobalProceduresKey, false)
 			{
 				ToolTip = WithHint("Str.Panels.TipGlobalProcedures", "Str.Panels.HintProcedure"),
 			};
-			TreeGroupNodeViewModel local = new TreeGroupNodeViewModel(Loc.Get("Str.Panels.GroupLocalProcedures"), LocalProceduresKey, true)
+			TreeGroupNodeViewModel local = new(Loc.Get("Str.Panels.GroupLocalProcedures"), LocalProceduresKey, true)
 			{
 				ToolTip = WithHint("Str.Panels.TipLocalProcedures", "Str.Panels.HintProcedure"),
 			};
 
-			List<ProcedureNodeViewModel> locals = new List<ProcedureNodeViewModel>();
+			List<ProcedureNodeViewModel> locals = [];
 			foreach (ScriptProcedure procedure in info.Procedures)
 			{
 				if (!info.HasNativeData && procedure.EndLine == -1)
@@ -49,7 +49,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 				}
 
 				Boolean isLocal = IsLocal(procedure, documentFileName);
-				ProcedureNodeViewModel node = new ProcedureNodeViewModel(
+				ProcedureNodeViewModel node = new(
 					procedure,
 					showArguments ? procedure.ShortDescription : procedure.Name,
 					"proc:" + procedure.NormalizedName,
@@ -95,11 +95,11 @@ namespace FalloutScriptStudio.ViewModels.Panels
 				return Array.Empty<TreeGroupNodeViewModel>();
 			}
 
-			TreeGroupNodeViewModel global = new TreeGroupNodeViewModel(Loc.Get("Str.Panels.GroupGlobalVariables"), GlobalVariablesKey, false)
+			TreeGroupNodeViewModel global = new(Loc.Get("Str.Panels.GroupGlobalVariables"), GlobalVariablesKey, false)
 			{
 				ToolTip = WithHint("Str.Panels.TipGlobalVariables", "Str.Panels.HintVariable"),
 			};
-			TreeGroupNodeViewModel local = new TreeGroupNodeViewModel(Loc.Get("Str.Panels.GroupScriptVariables"), LocalVariablesKey, true)
+			TreeGroupNodeViewModel local = new(Loc.Get("Str.Panels.GroupScriptVariables"), LocalVariablesKey, true)
 			{
 				ToolTip = WithHint("Str.Panels.TipScriptVariables", "Str.Panels.HintVariable"),
 			};
@@ -108,7 +108,7 @@ namespace FalloutScriptStudio.ViewModels.Panels
 			{
 				Boolean isLocal = String.IsNullOrEmpty(variable.FileName)
 					|| String.Equals(variable.FileName, documentFileName, StringComparison.OrdinalIgnoreCase);
-				VariableNodeViewModel node = new VariableNodeViewModel(variable, "var:" + variable.Name.ToLowerInvariant())
+				VariableNodeViewModel node = new(variable, "var:" + variable.Name.ToLowerInvariant())
 				{
 					ToolTip = isLocal ? variable.FullDescription : variable.FullDescription + "\n" + Loc.Format("Str.Panels.DeclaredIn", variable.FileName),
 				};

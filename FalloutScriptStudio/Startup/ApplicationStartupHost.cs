@@ -4,14 +4,14 @@ namespace FalloutScriptStudio.Startup
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Editor;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services.MessageEditor;
-	using FalloutScriptStudio.ViewModels.Main;
-	using FalloutScriptStudio.Views.Editor;
-	using FalloutScriptStudio.Views.Shell;
-	using FalloutScriptStudio.Workspace;
 	using Microsoft.Extensions.DependencyInjection;
+	using Editor;
+	using Localization;
+	using Services.MessageEditor;
+	using ViewModels.Main;
+	using Views.Editor;
+	using Views.Shell;
+	using Workspace;
 
 	/// <summary>The WPF side of the start-up: message boxes, the main window, the message editor and the end of the application.</summary>
 	public sealed class ApplicationStartupHost : IStartupHost

@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Views.ToolWindows
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The "Go to line" prompt.

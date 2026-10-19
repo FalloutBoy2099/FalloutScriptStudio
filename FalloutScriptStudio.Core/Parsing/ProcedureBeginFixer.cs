@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Core.Parsing
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// Joins a lone <c>begin</c> line to the <c>procedure</c> line above it

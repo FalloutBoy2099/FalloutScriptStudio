@@ -7,7 +7,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Messages;
+	using Messages;
 
 	/// <summary>
 	/// <see cref="IDialogueMessageSource"/> backed by <see cref="IMessageFileService"/>: the message file of the script is loaded when
@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Core.Dialogue
 		private readonly IMessageFileService? _service;
 		private readonly String _scriptPath;
 		private readonly MessageFileOptions? _options;
-		private readonly Dictionary<Int32, LoadedFile> _files = new Dictionary<Int32, LoadedFile>();
+		private readonly Dictionary<Int32, LoadedFile> _files = [];
 		private readonly Object _sync = new Object();
 		private LoadedFile _own;
 

@@ -134,7 +134,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		{
 			HeadersViewModel viewModel = new HeadersViewModel();
 			await viewModel.LoadAsync(this._directory);
-			List<String> chosen = new List<String>();
+			List<String> chosen = [];
 			viewModel.KeepOpenHandler = path =>
 			{
 				chosen.Add(path);

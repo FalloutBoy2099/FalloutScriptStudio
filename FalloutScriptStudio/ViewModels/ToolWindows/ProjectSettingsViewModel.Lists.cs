@@ -215,9 +215,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Keeps the list the selected definition is chosen from in step with the global definitions and those of the project, without disturbing the selection.</summary>
 		private void SynchronizeDefineChoices()
 		{
-			List<String> wanted = new List<String> { String.Empty };
-			wanted.AddRange(this._settings.PreprocessorDefines.GetChoices());
-			wanted.AddRange(this.ProjectDefines);
+			List<String> wanted = [String.Empty, .. this._settings.PreprocessorDefines.GetChoices(), .. this.ProjectDefines];
 			String selected = this.SelectedDefine.Value;
 			if (!String.IsNullOrEmpty(selected) && !wanted.Contains(selected, StringComparer.Ordinal))
 			{

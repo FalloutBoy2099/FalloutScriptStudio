@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Controls.Diagram
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Model;
+	using Rendering;
 
 	// Hit testing, item bounds and conversions between viewport and world coordinates.
 	public sealed partial class DiagramCanvas

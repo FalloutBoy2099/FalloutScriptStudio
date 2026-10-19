@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Documents
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// The status of the parser of one document: a kind and the arguments of its message. The text is only computed when it is
@@ -13,7 +13,7 @@ namespace FalloutScriptStudio.Documents
 	public sealed record ParserStatus(ParserStatusKind Kind, IReadOnlyList<Object?> Arguments)
 	{
 		/// <summary>Gets the status of a document the parser has not been asked about.</summary>
-		public static readonly ParserStatus None = new ParserStatus(ParserStatusKind.None);
+		public static readonly ParserStatus None = new(ParserStatusKind.None);
 
 		/// <summary>Initializes a new instance of the <see cref="ParserStatus"/> record for a state whose message has no placeholder.</summary>
 		/// <param name="kind">The state of the parser.</param>

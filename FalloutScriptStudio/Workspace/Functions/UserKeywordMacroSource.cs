@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Workspace.Functions
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Functions;
-	using FalloutScriptStudio.Editor;
+	using Core.Functions;
+	using Editor;
 
 	/// <summary>
 	/// Tells the editor which user keywords (the functions the user chose to highlight, for example <c>DEBUGMSG</c>)

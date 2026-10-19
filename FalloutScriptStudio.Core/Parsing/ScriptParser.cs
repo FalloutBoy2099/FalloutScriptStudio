@@ -1,14 +1,13 @@
 namespace FalloutScriptStudio.Core.Parsing
 {
 	using System;
-	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing.Interop;
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
+	using Parsing.Interop;
 
 	/// <summary>
 	/// Default <see cref="IScriptParser"/>: reproduces the logic of the legacy <c>ParserExternal.Parse</c> and of the

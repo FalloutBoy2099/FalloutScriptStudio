@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Compilation
 {
 	using System;
-	using FalloutScriptStudio.Core.Parsing;
+	using Parsing;
 
 	/// <summary>
 	/// Immutable snapshot of everything the compiler services need to know about the environment and the user settings.

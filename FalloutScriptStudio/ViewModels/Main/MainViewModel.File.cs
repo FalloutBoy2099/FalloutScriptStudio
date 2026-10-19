@@ -4,6 +4,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Linq;
+	using System.Threading;
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.Input;
 	using FalloutScriptStudio.Core.Configuration;
@@ -145,7 +146,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 
 			try
 			{
-				await File.WriteAllTextAsync(Path.Combine(directory, Path.GetFileName(path)), document.TextDocument.Text, TextEncodings.Ansi);
+				await AtomicFile.WriteAllBytesAsync(Path.Combine(directory, Path.GetFileName(path)), TextEncodings.Ansi.GetBytes(document.TextDocument.Text), CancellationToken.None);
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{

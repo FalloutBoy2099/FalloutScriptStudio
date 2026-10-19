@@ -21,9 +21,11 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterOwner">
+
     <Window.InputBindings>
         <KeyBinding Command="{Binding AcceptCommand}" Gesture="Ctrl+Return" />
     </Window.InputBindings>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -153,4 +155,5 @@
             </StackPanel>
         </Grid>
     </Grid>
+
 </ui:FluentWindow>

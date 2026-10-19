@@ -20,6 +20,7 @@
     UseLayoutRounding="True"
     WindowBackdropType="Mica"
     WindowStartupLocation="CenterScreen">
+
     <ui:FluentWindow.InputBindings>
         <KeyBinding Command="{Binding EditNodeCommand}" Gesture="Alt+E" />
         <KeyBinding Command="{Binding HideSelectionCommand}" Gesture="Alt+H" />
@@ -150,6 +151,14 @@
                 IsEnabled="{Binding CanEditNode}">
                 <MenuItem.Icon>
                     <ui:SymbolIcon Symbol="Edit24" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Command="{Binding PreviewNodeCommand}"
+                Header="{Binding PreviewNodeHeader}"
+                IsEnabled="{Binding CanPreviewNode}">
+                <MenuItem.Icon>
+                    <ui:SymbolIcon Symbol="Play24" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -449,4 +458,5 @@
             </Popup>
         </Grid>
     </Grid>
+
 </ui:FluentWindow>

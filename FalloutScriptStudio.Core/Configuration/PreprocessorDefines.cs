@@ -18,7 +18,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		public static readonly IReadOnlyList<String> BuiltIn = new[] { "DEBUG", "RELEASE" };
 
 		/// <summary>Gets or sets the definitions added by the user.</summary>
-		public List<String> Items { get; set; } = new List<String>();
+		public List<String> Items { get; set; } = [];
 
 		/// <summary>
 		/// Tells whether a text can be a definition: it is not empty, has no white space and is not a placeholder such as
@@ -64,7 +64,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// </summary>
 		public void Sanitize()
 		{
-			this.Items = (this.Items ?? new List<String>())
+			this.Items = (this.Items ?? [])
 				.Where(IsValidDefinition)
 				.Select(item => item.Trim())
 				.Where(item => !BuiltIn.Contains(item, StringComparer.Ordinal))

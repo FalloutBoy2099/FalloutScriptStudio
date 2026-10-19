@@ -54,7 +54,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 		/// <param name="alignment">Horizontal alignment inside <paramref name="maxWidth"/>.</param>
 		public FormattedText Create(String text, Typeface face, Double size, Brush brush, Double maxWidth = 0.0, Int32 maxLines = 1, TextAlignment alignment = TextAlignment.Left)
 		{
-			FormattedText formatted = new FormattedText(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, face, size, brush, this._pixelsPerDip)
+			FormattedText formatted = new(text, CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, face, size, brush, this._pixelsPerDip)
 			{
 				Trimming = TextTrimming.CharacterEllipsis,
 				MaxLineCount = Math.Max(1, maxLines),

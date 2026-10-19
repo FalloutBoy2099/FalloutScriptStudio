@@ -51,8 +51,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		private void LoadPreprocessorDefines()
 		{
 			EffectiveSettings effective = this._settings.Effective;
-			List<String> values = new List<String> { this._noPreprocessorDefine };
-			values.AddRange(effective.DefineChoices);
+			List<String> values = [this._noPreprocessorDefine, .. effective.DefineChoices];
 			String? current = effective.Settings.Compiler.PreprocessorDefine;
 			if (!String.IsNullOrEmpty(current) && !values.Contains(current))
 			{

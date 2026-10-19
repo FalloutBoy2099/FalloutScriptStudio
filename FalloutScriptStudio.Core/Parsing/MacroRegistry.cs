@@ -108,7 +108,7 @@ namespace FalloutScriptStudio.Core.Parsing
 
 				var collector = new MacroCollector(new IncludeResolver(null, null));
 				var collected = new SortedDictionary<String, ScriptMacro>(StringComparer.Ordinal);
-				ParseDiagnostics own = new ParseDiagnostics();
+				ParseDiagnostics own = [];
 				foreach (String file in files)
 				{
 					collector.CollectFromFile(file, collected, false, own);

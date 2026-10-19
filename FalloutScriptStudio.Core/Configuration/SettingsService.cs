@@ -29,9 +29,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		private readonly SemaphoreSlim _gate = new SemaphoreSlim(1, 1);
 
 		/// <summary>The content of every file as it was when this instance loaded or last wrote it (the base of the merge).</summary>
-		private readonly Dictionary<String, JsonNode> _baselines = new Dictionary<String, JsonNode>(StringComparer.OrdinalIgnoreCase);
+		private readonly Dictionary<String, JsonNode> _baselines = new(StringComparer.OrdinalIgnoreCase);
 
-		private readonly List<SettingsProblem> _problems = new List<SettingsProblem>();
+		private readonly List<SettingsProblem> _problems = [];
 		private Dictionary<String, Byte[]>? _pristine;
 		private Boolean _loaded;
 		private volatile ActiveProjectState _project = new ActiveProjectState(null, null);

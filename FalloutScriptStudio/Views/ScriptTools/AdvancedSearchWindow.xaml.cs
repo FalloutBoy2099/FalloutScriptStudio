@@ -1,37 +1,48 @@
 namespace FalloutScriptStudio.Views.ScriptTools
 {
 	using System;
-	using System.Windows;
-	using System.Windows.Controls;
 	using System.Windows.Input;
-	using FalloutScriptStudio.ViewModels.ScriptTools;
 	using Wpf.Ui.Controls;
+	using Core.Configuration;
+	using ViewModels.ScriptTools;
+	using Views.ToolWindows;
 
 	/// <summary>
-	/// The advanced "Search &amp; Replace" window.
+	/// The advanced "Search &amp; Replace" window. It remembers its size.
 	/// </summary>
 	public partial class AdvancedSearchWindow : FluentWindow
 	{
+		private readonly ISettingsService _settingsService;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AdvancedSearchWindow"/> class.
 		/// </summary>
 		/// <param name="viewModel">The view model.</param>
-		public AdvancedSearchWindow(AdvancedSearchViewModel viewModel)
+		/// <param name="settingsService">Stores the window size.</param>
+		public AdvancedSearchWindow(AdvancedSearchViewModel viewModel, ISettingsService settingsService)
 		{
 			ArgumentNullException.ThrowIfNull(viewModel);
+			ArgumentNullException.ThrowIfNull(settingsService);
 
 			this.ViewModel = viewModel;
+			this._settingsService = settingsService;
 			this.DataContext = viewModel;
 			this.InitializeComponent();
+			ToolWindowHelper.ApplySize(this, settingsService.Settings.Window.GetPlacement(WindowKind.Search));
+			this.Closing += (_, _) =>
+			{
+				WindowPlacement placement = ToolWindowHelper.Capture(this);
+				this._settingsService.Update(settings => settings.Window.SetPlacement(WindowKind.Search, placement));
+			};
 			ScriptToolWindowHelper.CloseWhenRequested(this, viewModel);
 			this.Activated += (_, _) => this.ViewModel.RefreshHistory();
 
 			// Closing the window (Esc closes it) stops a search that is still running instead of letting it finish unseen.
 			this.Closed += (_, _) =>
 			{
-				if (this.ViewModel.FindAllCancelCommand.CanExecute(null))
+				if (this.ViewModel.CancelRunningCommand.CanExecute(null))
 				{
-					this.ViewModel.FindAllCancelCommand.Execute(null);
+					this.ViewModel.CancelRunningCommand.Execute(null);
 				}
 			};
 		}

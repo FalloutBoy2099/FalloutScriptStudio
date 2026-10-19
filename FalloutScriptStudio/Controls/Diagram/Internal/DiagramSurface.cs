@@ -4,8 +4,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Windows.Threading;
-	using FalloutScriptStudio.Controls.Diagram.Model;
-	using FalloutScriptStudio.Controls.Diagram.Rendering;
+	using Model;
+	using Rendering;
 
 	/// <summary>
 	/// The element that is scrolled inside the canvas. It paints the background grid itself and hosts four retained
@@ -20,10 +20,10 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 		private readonly DiagramScene _scene;
 		private readonly DiagramRenderer _renderer;
 		private readonly VisualCollection _visuals;
-		private readonly DrawingVisual _lowerLayer = new DrawingVisual();
-		private readonly DrawingVisual _linkLayer = new DrawingVisual();
-		private readonly DrawingVisual _upperLayer = new DrawingVisual();
-		private readonly DrawingVisual _overlayLayer = new DrawingVisual();
+		private readonly DrawingVisual _lowerLayer = new();
+		private readonly DrawingVisual _linkLayer = new();
+		private readonly DrawingVisual _upperLayer = new();
+		private readonly DrawingVisual _overlayLayer = new();
 		private SurfaceLayers _dirty = SurfaceLayers.All;
 		private Boolean _renderQueued;
 		private Double _zoom = 1.0;
@@ -185,7 +185,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 			Point origin = this.Origin;
 			if (origin != this._appliedOrigin || Double.IsNaN(this._appliedZoom) || Math.Abs(this._appliedZoom - this._zoom) > 1e-12)
 			{
-				MatrixTransform transform = new MatrixTransform(this._zoom, 0, 0, this._zoom, -origin.X * this._zoom, -origin.Y * this._zoom);
+				MatrixTransform transform = new(this._zoom, 0, 0, this._zoom, -origin.X * this._zoom, -origin.Y * this._zoom);
 				transform.Freeze();
 				this._lowerLayer.Transform = transform;
 				this._linkLayer.Transform = transform;
@@ -271,7 +271,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			DiagramPalette palette = this._scene.Context.Palette;
-			Rect area = new Rect(this.RenderSize);
+			Rect area = new(this.RenderSize);
 			drawingContext.DrawRectangle(palette.Background, null, area);
 			if (!this._showGrid)
 			{
@@ -291,8 +291,8 @@ namespace FalloutScriptStudio.Controls.Diagram.Internal
 			Double offsetX = (firstX - origin.X) * this._zoom;
 			Double offsetY = (firstY - origin.Y) * this._zoom;
 
-			GeometryDrawing dot = new GeometryDrawing(palette.GridDot, null, new EllipseGeometry(new Point(spacing / 2.0, spacing / 2.0), 1.0, 1.0));
-			DrawingBrush brush = new DrawingBrush(dot)
+			GeometryDrawing dot = new(palette.GridDot, null, new EllipseGeometry(new Point(spacing / 2.0, spacing / 2.0), 1.0, 1.0));
+			DrawingBrush brush = new(dot)
 			{
 				Viewbox = new Rect(0, 0, spacing, spacing),
 				ViewboxUnits = BrushMappingMode.Absolute,

@@ -11,14 +11,14 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 	using System.Threading.Tasks;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using CommunityToolkit.Mvvm.Input;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Core.TextTools;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.ScriptTools.Search;
 	using ICSharpCode.AvalonEdit.Document;
+	using Core.Compilation;
+	using Core.Configuration;
+	using Documents;
+	using Localization;
+	using Services;
+	using Services.ScriptTools.Replace;
+	using Services.ScriptTools.Search;
 
 	/// <summary>
 	/// View model of the advanced "Search &amp; Replace" window (legacy <c>SearchForm</c>): searches the active script, all open scripts
@@ -30,6 +30,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		private readonly ISettingsService _settings;
 		private readonly IDialogService _dialogs;
 		private readonly ScriptSearcher _searcher;
+		private readonly IReplaceInFilesService? _replaceInFiles;
 		private Boolean _loading = true;
 
 		/// <summary>
@@ -39,7 +40,8 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		/// <param name="settings">The settings and the search history.</param>
 		/// <param name="dialogs">Shows messages and the folder picker.</param>
 		/// <param name="searcher">Runs the searches.</param>
-		public AdvancedSearchViewModel(IWorkspace workspace, ISettingsService settings, IDialogService dialogs, ScriptSearcher searcher)
+		/// <param name="replaceInFiles">Runs "Replace in Files"; the command is unavailable without it.</param>
+		public AdvancedSearchViewModel(IWorkspace workspace, ISettingsService settings, IDialogService dialogs, ScriptSearcher searcher, IReplaceInFilesService? replaceInFiles = null)
 		{
 			ArgumentNullException.ThrowIfNull(workspace);
 			ArgumentNullException.ThrowIfNull(settings);
@@ -50,6 +52,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			this._settings = settings;
 			this._dialogs = dialogs;
 			this._searcher = searcher;
+			this._replaceInFiles = replaceInFiles;
 
 			EditorSettings editor = settings.Settings.Editor;
 			this.MatchCase = !editor.SearchIgnoreCase;
@@ -69,10 +72,10 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		}
 
 		/// <summary>Gets the previously used search texts, most recent first.</summary>
-		public ObservableCollection<String> QueryHistory { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> QueryHistory { get; } = [];
 
 		/// <summary>Gets the saved search folders.</summary>
-		public ObservableCollection<String> Folders { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> Folders { get; } = [];
 
 		/// <summary>Gets the file masks offered for a folder search.</summary>
 		public IReadOnlyList<String> MaskPresets { get; } = new[] { SearchFileMasks.AllScriptFiles, "*.ssl", "*.h", "*.msg", "*.*" };
@@ -118,6 +121,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 
 		/// <summary>Gets the matching lines of the last search.</summary>
 		[ObservableProperty]
+		[NotifyPropertyChangedFor(nameof(HasNoResults))]
 		public partial IReadOnlyList<SearchResultItem> Results { get; private set; } = Array.Empty<SearchResultItem>();
 
 		/// <summary>Gets or sets the selected result.</summary>
@@ -190,6 +194,9 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		/// <summary>Gets a value indicating whether the whole word option applies (it does not to regular expressions).</summary>
 		public Boolean CanChangeWholeWord => !this.UseRegex;
 
+		/// <summary>Gets a value indicating whether the list of matching lines is empty (the window then shows a hint instead of an empty grid).</summary>
+		public Boolean HasNoResults => this.Results.Count == 0;
+
 		/// <summary>Gets a value indicating whether <see cref="ErrorMessage"/> is shown.</summary>
 		public Boolean HasError => this.ErrorMessage.Length > 0;
 
@@ -199,7 +206,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		/// <param name="text">The text.</param>
 		public void SetSearchText(String text)
 		{
-			this.SearchText = text;
+			this.SearchText = SearchTextSuggestion.FirstLine(text, Int32.MaxValue);
 			this.ErrorMessage = String.Empty;
 		}
 
@@ -222,6 +229,16 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			}
 
 			this.SearchText = text;
+		}
+
+		partial void OnSearchTextChanged(String value)
+		{
+			// The field is a single line and a match never spans a line break: a pasted multi-line text keeps its first line, so the field
+			// cannot grow to several lines and push the layout.
+			if (value.AsSpan().IndexOfAny('\r', '\n') >= 0)
+			{
+				this.SearchText = SearchTextSuggestion.FirstLine(value, Int32.MaxValue);
+			}
 		}
 
 		partial void OnMatchCaseChanged(Boolean value)
@@ -307,7 +324,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			this.ProgressValue = 0;
 			this.ProgressMaximum = 1;
 			this.StatusText = Loc.Get("Str.ScriptTools.SearchSearching");
-			Progress<SearchProgress> progress = new Progress<SearchProgress>(this.OnProgress);
+			Progress<SearchProgress> progress = new(this.OnProgress);
 			SearchResult result;
 			try
 			{
@@ -406,7 +423,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 
 					String fullPath = Path.GetFullPath(path);
 					this.RememberFolder(fullPath);
-					Dictionary<String, String> openTexts = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase);
+					Dictionary<String, String> openTexts = new(StringComparer.OrdinalIgnoreCase);
 					foreach (KeyValuePair<String, String> pair in this._workspace.GetOpenDocumentTexts())
 					{
 						openTexts[pair.Key] = pair.Value;

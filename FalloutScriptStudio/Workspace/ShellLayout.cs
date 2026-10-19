@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Workspace
 {
 	using System;
-	using FalloutScriptStudio.Services;
+	using Services;
 
 	/// <summary>View state of the main window that is not part of the core settings model.</summary>
 	public sealed class ShellLayout

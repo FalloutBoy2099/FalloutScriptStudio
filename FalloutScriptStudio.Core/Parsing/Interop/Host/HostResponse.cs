@@ -19,8 +19,8 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 		public String Log { get; set; } = String.Empty;
 
-		public List<HostProcedureDto> Procedures { get; set; } = new List<HostProcedureDto>();
+		public List<HostProcedureDto> Procedures { get; set; } = [];
 
-		public List<HostVariableDto> Variables { get; set; } = new List<HostVariableDto>();
+		public List<HostVariableDto> Variables { get; set; } = [];
 	}
 }

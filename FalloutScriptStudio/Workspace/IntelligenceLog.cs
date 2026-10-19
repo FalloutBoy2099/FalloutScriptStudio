@@ -11,5 +11,8 @@ namespace FalloutScriptStudio.Workspace
 
 		[LoggerMessage(EventId = 2151, Level = LogLevel.Warning, Message = "The project index run failed: {Reason}")]
 		public static partial void IndexRunFailed(this ILogger logger, String reason);
+
+		[LoggerMessage(EventId = 2152, Level = LogLevel.Debug, Message = "The semantic analysis of {File} failed")]
+		public static partial void DiagnosticsFailed(this ILogger logger, Exception exception, String file);
 	}
 }

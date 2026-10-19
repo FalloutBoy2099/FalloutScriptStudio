@@ -15,13 +15,13 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 
 		public Boolean SettingsAnswer { get; set; } = true;
 
-		public List<String> Calls { get; } = new List<String>();
+		public List<String> Calls { get; } = [];
 
 		/// <summary>Gets or sets what the symbol list answers; it chooses nothing when it is <see langword="null"/>.</summary>
 		public Func<SymbolPickerRequest, FalloutScriptStudio.Core.Indexing.IndexedSymbol?>? SymbolAnswer { get; set; }
 
 		/// <summary>Gets the requests of the symbol list that were shown.</summary>
-		public List<SymbolPickerRequest> SymbolRequests { get; } = new List<SymbolPickerRequest>();
+		public List<SymbolPickerRequest> SymbolRequests { get; } = [];
 
 		public Task<FalloutScriptStudio.Core.Indexing.IndexedSymbol?> PickSymbolAsync(SymbolPickerRequest request)
 		{
@@ -29,22 +29,34 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			return Task.FromResult(this.SymbolAnswer?.Invoke(request));
 		}
 
+		/// <summary>Gets or sets what the command palette answers; it chooses nothing when it is <see langword="null"/>.</summary>
+		public Func<CommandPaletteRequest, FalloutScriptStudio.Commands.CommandEntry?>? CommandAnswer { get; set; }
+
+		/// <summary>Gets the requests of the command palette that were shown.</summary>
+		public List<CommandPaletteRequest> CommandRequests { get; } = [];
+
+		public Task<FalloutScriptStudio.Commands.CommandEntry?> PickCommandAsync(CommandPaletteRequest request)
+		{
+			this.CommandRequests.Add(request);
+			return Task.FromResult(this.CommandAnswer?.Invoke(request));
+		}
+
 		/// <summary>Gets or sets a value indicating whether a mass compilation waits until its token is cancelled (like a batch window of hanging tools).</summary>
 		public Boolean BatchHangs { get; set; }
 
 		/// <summary>Gets the scripts the fake batch run reports as failed.</summary>
-		public List<BatchCompileFailure> BatchFailures { get; } = new List<BatchCompileFailure>();
+		public List<BatchCompileFailure> BatchFailures { get; } = [];
 
 		/// <summary>Gets the progress notifications the fake batch run reports before it finishes or hangs.</summary>
-		public List<BatchCompileProgress> BatchProgress { get; } = new List<BatchCompileProgress>();
+		public List<BatchCompileProgress> BatchProgress { get; } = [];
 
 		/// <summary>Gets the token of the last mass compilation.</summary>
 		public System.Threading.CancellationToken BatchToken { get; private set; }
 
 		/// <summary>Gets the settings pages that were opened.</summary>
-		public List<FalloutScriptStudio.ViewModels.ToolWindows.SettingsPage> SettingsPages { get; } = new List<FalloutScriptStudio.ViewModels.ToolWindows.SettingsPage>();
+		public List<FalloutScriptStudio.ViewModels.ToolWindows.SettingsPage> SettingsPages { get; } = [];
 
-		public List<IReadOnlyList<String>> BatchRuns { get; } = new List<IReadOnlyList<String>>();
+		public List<IReadOnlyList<String>> BatchRuns { get; } = [];
 
 		public Task<Boolean> ShowSettingsAsync()
 		{
@@ -62,6 +74,18 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		{
 			this.SettingsPages.Add(page);
 			return this.ShowSettingsAsync();
+		}
+
+		/// <summary>Gets, for every mass compilation, whether it was asked to compile everything (Rebuild All).</summary>
+		public List<Boolean> RebuildAllRequests { get; } = [];
+
+		/// <summary>Gets the scripts the fake batch run reports as skipped because they are up to date.</summary>
+		public List<String> BatchUpToDate { get; } = [];
+
+		public Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, Boolean rebuildAll, System.Threading.CancellationToken cancellationToken)
+		{
+			this.RebuildAllRequests.Add(rebuildAll);
+			return this.RunBatchCompileAsync(scriptPaths, progress, cancellationToken);
 		}
 
 		public async Task<BatchCompileResult> RunBatchCompileAsync(IReadOnlyList<String> scriptPaths, IProgress<BatchCompileProgress>? progress, System.Threading.CancellationToken cancellationToken)
@@ -87,7 +111,19 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 				}
 			}
 
-			return new BatchCompileResult(scriptPaths.Count, scriptPaths.Count - this.BatchFailures.Count, this.BatchFailures.ToArray(), false, 1);
+			return new BatchCompileResult(scriptPaths.Count, scriptPaths.Count - this.BatchFailures.Count - this.BatchUpToDate.Count, this.BatchFailures.ToArray(), false, 1) { UpToDateScripts = this.BatchUpToDate.ToArray() };
+		}
+
+		public Task ShowFormatProjectAsync()
+		{
+			this.Calls.Add("FormatProject");
+			return Task.CompletedTask;
+		}
+
+		public Task ShowSnippetManagerAsync()
+		{
+			this.Calls.Add("SnippetManager");
+			return Task.CompletedTask;
 		}
 
 		public void ShowAbout()
@@ -108,7 +144,7 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 		}
 
 		/// <summary>Gets the headers the fake "chooses with Ctrl" (handed to the keep-open callback) before it answers.</summary>
-		public List<String> KeepOpenHeaders { get; } = new List<String>();
+		public List<String> KeepOpenHeaders { get; } = [];
 
 		public async Task<String?> PickHeaderAsync(Func<String, Task>? chooseAndKeepOpen = null)
 		{

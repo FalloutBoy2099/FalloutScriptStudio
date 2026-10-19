@@ -307,7 +307,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			return true;
 		}
 
-		/// <summary>Navigates to the symbol or include under a position (Ctrl+click).</summary>
+		/// <summary>Navigates to the symbol or include under a position (Ctrl+click): a symbol of the document, or one that only the project index knows.</summary>
 		/// <param name="offset">The offset of the clicked character.</param>
 		/// <returns><see langword="true"/> when something was navigated to.</returns>
 		public Boolean TryNavigateAt(Int32 offset)
@@ -324,8 +324,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 				return true;
 			}
 
-			IScriptSymbol? symbol = this.FindSymbol(offset, out _);
-			if (symbol is null)
+			if (!this.IsCodeSymbolAt(offset))
 			{
 				return false;
 			}
@@ -506,7 +505,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 
 		private void OnPreviewMouseLeftButtonDown(Object sender, MouseButtonEventArgs e)
 		{
-			if (Keyboard.Modifiers != ModifierKeys.Control || e.ClickCount != 1 || !this._context.IsScript)
+			if (this._context.Services.Input.Modifiers != ModifierKeys.Control || e.ClickCount != 1 || !this._context.IsScript)
 			{
 				return;
 			}
@@ -534,7 +533,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private void UpdateCursor(MouseEventArgs e)
 		{
 			ICSharpCode.AvalonEdit.Rendering.TextView view = this._context.TextView;
-			if (Keyboard.Modifiers == ModifierKeys.Control && this._context.IsScript && this.GetOffsetUnderMouse(e) is Int32 offset && this.IsNavigable(offset))
+			if (this._context.Services.Input.Modifiers == ModifierKeys.Control && this._context.IsScript && this.GetOffsetUnderMouse(e) is Int32 offset && this.IsNavigable(offset))
 			{
 				view.Cursor = Cursors.Hand;
 			}
@@ -551,7 +550,14 @@ namespace FalloutScriptStudio.Editor.Controllers
 				return this.GetIncludePath(this._context.Document.GetLineByOffset(offset).LineNumber) is not null;
 			}
 
-			return this.FindSymbol(offset, out _) is not null;
+			return this.IsCodeSymbolAt(offset);
+		}
+
+		/// <summary>The word at an offset is a symbol of the document, or a symbol that only the project index knows (another file of the project).</summary>
+		private Boolean IsCodeSymbolAt(Int32 offset)
+		{
+			IScriptSymbol? symbol = this.FindSymbol(offset, out String word);
+			return symbol is not null || (word.Length > 0 && this._context.Services.Workspace.HasProjectSymbol(word));
 		}
 
 		private Int32? GetOffsetUnderMouse(MouseEventArgs e)

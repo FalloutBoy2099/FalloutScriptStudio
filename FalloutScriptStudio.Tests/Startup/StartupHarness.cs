@@ -46,7 +46,7 @@ namespace FalloutScriptStudio.Tests.Startup
 
 		public ShutdownCoordinator Shutdown { get; }
 
-		public List<String> Log { get; } = new List<String>();
+		public List<String> Log { get; } = [];
 
 		public Task RunAsync(params String[] arguments)
 		{

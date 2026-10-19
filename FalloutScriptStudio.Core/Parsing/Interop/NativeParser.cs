@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Core.Parsing.Interop
 	using System.IO;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// The native parser: calls the 32-bit <c>parser.dll</c> (the SSLC front end) to obtain procedures, variables and references

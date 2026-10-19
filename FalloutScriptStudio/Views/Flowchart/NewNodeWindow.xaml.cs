@@ -2,9 +2,9 @@ namespace FalloutScriptStudio.Views.Flowchart
 {
 	using System;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.ViewModels.Flowchart;
 	using Wpf.Ui.Controls;
+	using Core.Dialogue;
+	using ViewModels.Flowchart;
 
 	/// <summary>
 	/// The dialog that asks for the name and the starting code of a new dialogue node.

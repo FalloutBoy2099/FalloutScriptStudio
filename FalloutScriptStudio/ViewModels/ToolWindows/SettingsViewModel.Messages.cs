@@ -21,9 +21,9 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the comment highlight colors to choose from.</summary>
 		public IReadOnlyList<Choice<CommentHighlightColor>> CommentColorChoices { get; } = new List<Choice<CommentHighlightColor>>
 		{
-			new Choice<CommentHighlightColor>(CommentHighlightColor.LightYellow, Loc.Get("Str.ToolWindows.Choice.Color.LightYellow")),
-			new Choice<CommentHighlightColor>(CommentHighlightColor.PaleGreen, Loc.Get("Str.ToolWindows.Choice.Color.PaleGreen")),
-			new Choice<CommentHighlightColor>(CommentHighlightColor.Lavender, Loc.Get("Str.ToolWindows.Choice.Color.Lavender")),
+			new(CommentHighlightColor.LightYellow, Loc.Get("Str.ToolWindows.Choice.Color.LightYellow")),
+			new(CommentHighlightColor.PaleGreen, Loc.Get("Str.ToolWindows.Choice.Color.PaleGreen")),
+			new(CommentHighlightColor.Lavender, Loc.Get("Str.ToolWindows.Choice.Color.Lavender")),
 		};
 
 		/// <summary>Gets the additional folders searched for message files; folders at the top have priority.</summary>

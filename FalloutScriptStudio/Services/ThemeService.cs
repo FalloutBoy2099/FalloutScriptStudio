@@ -1,8 +1,8 @@
 namespace FalloutScriptStudio.Services
 {
 	using System;
-	using FalloutScriptStudio.Editor.Highlighting;
 	using Wpf.Ui.Appearance;
+	using Editor.Highlighting;
 
 	/// <inheritdoc />
 	public sealed class ThemeService : IThemeService

@@ -34,7 +34,7 @@ namespace FalloutScriptStudio.Core.Tests.Decompilation
 		{
 			// Whichever way the analysis of a damaged script fails (a missing node, a bad number, an index out of range...), the caller
 			// gets a ScriptFormatException, never an exception that would crash the UI.
-			List<String> unexpected = new List<String>();
+			List<String> unexpected = [];
 			for (Int32 seed = 1; seed <= 25; seed++)
 			{
 				Random random = new Random(seed);

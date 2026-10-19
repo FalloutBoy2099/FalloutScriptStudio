@@ -50,7 +50,7 @@ namespace FalloutScriptStudio.Tests.Shell
 		public void Reporting_updates_the_subject_and_the_progress_and_raises_the_event()
 		{
 			OperationTracker tracker = new OperationTracker();
-			List<OperationInfo?> seen = new List<OperationInfo?>();
+			List<OperationInfo?> seen = [];
 			tracker.Changed += (_, _) => seen.Add(tracker.Current);
 			using IOperation operation = tracker.TryBegin(OperationKind.CompileAll, String.Empty, 4)!;
 

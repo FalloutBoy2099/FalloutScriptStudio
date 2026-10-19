@@ -123,7 +123,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 				OutputDirectory = Path.Combine(this.Project, "out", "scripts"),
 				ScriptsHeaderFile = Path.Combine(this.Project, "headers", "SCRIPTS.H"),
 				ScriptsListFile = Path.Combine(this.Project, "data", "scripts.lst"),
-				MessageSearchDirectories = new List<String> { Path.Combine(this.Project, "text", "english") },
+				MessageSearchDirectories = [Path.Combine(this.Project, "text", "english")],
 			};
 
 			ProjectSettingsFile.Write(this.Project, settings);
@@ -288,8 +288,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			{
 				Name = "  ",
 				PreprocessorDefine = "<Not Preset>",
-				Defines = new List<String> { "A", " A ", "has space", String.Empty, "<none>", "B" },
-				MessageSearchDirectories = new List<String> { " C:\\a ", "c:\\A", String.Empty },
+				Defines = ["A", " A ", "has space", String.Empty, "<none>", "B"],
+				MessageSearchDirectories = [" C:\\a ", "c:\\A", String.Empty],
 			};
 
 			settings.Normalize();
@@ -305,8 +305,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 		{
 			ProjectSettings settings = new ProjectSettings
 			{
-				Defines = new List<String> { "A" },
-				MessageSearchDirectories = new List<String> { "x" },
+				Defines = ["A"],
+				MessageSearchDirectories = ["x"],
 				Optimization = OptimizationLevel.Full,
 			};
 

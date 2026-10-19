@@ -15,8 +15,8 @@
 		<AssemblyName>FalloutScriptStudio.ParserHost</AssemblyName>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<InvariantGlobalization>false</InvariantGlobalization>
-		<AssemblyVersion>2026.10.12.3</AssemblyVersion>
-		<FileVersion>2026.10.12.3</FileVersion>
+		<AssemblyVersion>2026.10.19.7</AssemblyVersion>
+		<FileVersion>2026.10.19.7</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

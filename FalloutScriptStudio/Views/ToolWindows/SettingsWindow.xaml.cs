@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Views.ToolWindows
 {
-	using FalloutScriptStudio.ViewModels.ToolWindows;
 	using Wpf.Ui.Controls;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// The settings window: a list of pages on the left and the options of the selected page on the right.

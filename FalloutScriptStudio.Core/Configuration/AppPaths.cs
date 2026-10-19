@@ -37,6 +37,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets the file with the last caret line of every script.</summary>
 		public String ScriptPositionsFile => Path.Combine(this.SettingsDirectory, "positions.json");
 
+		/// <summary>Gets the build cache used when no project is open (with a project the cache is <c>fss-build.json</c> in the project folder).</summary>
+		public String BuildCacheFile => Path.Combine(this.SettingsDirectory, "fss-build.json");
+
 		/// <summary>Gets the file with the folded procedures of every script.</summary>
 		public String FoldingFile => Path.Combine(this.SettingsDirectory, "folding.json");
 
@@ -147,7 +150,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The problems that were met (empty when everything worked).</returns>
 		public IReadOnlyList<String> EnsureCreated()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			foreach (String directory in new[] { this.SettingsDirectory, this.TemplatesDirectory, this.ScratchDirectory })
 			{
 				try
@@ -206,7 +209,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The leftovers that could not be deleted (empty when everything worked).</returns>
 		public IReadOnlyList<String> PrepareScratchDirectory()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			try
 			{
 				if (!Directory.Exists(this.ScratchDirectory))
@@ -235,7 +238,7 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <returns>The files and folders that could not be deleted (empty when everything worked).</returns>
 		public IReadOnlyList<String> DeleteScratchDirectory()
 		{
-			List<String> problems = new List<String>();
+			List<String> problems = [];
 			if (!Directory.Exists(this.ScratchDirectory))
 			{
 				return problems;

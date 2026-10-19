@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Collections.Generic;
-	using FalloutScriptStudio.Core.Compilation;
+	using Core.Compilation;
 
 	/// <summary>What the workspace and the build services need from the output panel at the bottom of the main window.</summary>
 	public interface IOutputSink

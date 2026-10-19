@@ -5,8 +5,8 @@ namespace FalloutScriptStudio.Core.Dialogue
 	using System.Linq;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Core.TextTools;
+	using Parsing;
+	using TextTools;
 
 	/// <summary>
 	/// Default <see cref="IFlowchartBuilder"/>.

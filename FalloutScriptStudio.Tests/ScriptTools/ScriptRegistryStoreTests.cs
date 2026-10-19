@@ -154,7 +154,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void InsertDefine_GoesBeforeTheLastDirectiveLine()
 		{
-			List<String> lines = new List<String> { "#ifndef SCRIPTS_H", "#define SCRIPTS_H", "", "#define SCRIPT_OLD (1)", "", "#endif" };
+			List<String> lines = ["#ifndef SCRIPTS_H", "#define SCRIPTS_H", "", "#define SCRIPT_OLD (1)", "", "#endif"];
 			ScriptListEntry entry = new ScriptListEntry { Script = "new.int", Description = "New" };
 
 			DefineInsertResult result = ScriptRegistryStore.InsertDefine(lines, "SCRIPT_NEW", 2, entry);
@@ -168,7 +168,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void InsertDefine_ExistingDefinition_IsNotDuplicated()
 		{
-			List<String> lines = new List<String> { "#define SCRIPT_NEW (2)", "#endif" };
+			List<String> lines = ["#define SCRIPT_NEW (2)", "#endif"];
 
 			DefineInsertResult result = ScriptRegistryStore.InsertDefine(lines, "script_new", 2, new ScriptListEntry { Script = "new.int" });
 
@@ -179,7 +179,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void InsertDefine_FileWithoutDirectives_InsertsBeforeTheFirstLine()
 		{
-			List<String> lines = new List<String> { "// nothing here", "" };
+			List<String> lines = ["// nothing here", ""];
 
 			DefineInsertResult result = ScriptRegistryStore.InsertDefine(lines, "SCRIPT_A", 1, new ScriptListEntry { Script = "a.int" });
 
@@ -190,7 +190,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void InsertDefine_EmptyFile_AppendsTheLine()
 		{
-			List<String> lines = new List<String>();
+			List<String> lines = [];
 
 			DefineInsertResult result = ScriptRegistryStore.InsertDefine(lines, "SCRIPT_A", 1, new ScriptListEntry { Script = "a.int" });
 
@@ -230,7 +230,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void ApplyGameNames_IgnoresLinesWithBraceInTheText()
 		{
-			List<ScriptListEntry> entries = new List<ScriptListEntry> { new ScriptListEntry { Script = "a.int" } };
+			List<ScriptListEntry> entries = [new ScriptListEntry { Script = "a.int" }];
 
 			ScriptRegistryStore.ApplyGameNames(entries, new[] { "{101}{}{Na}me}  # a.int ; x" });
 

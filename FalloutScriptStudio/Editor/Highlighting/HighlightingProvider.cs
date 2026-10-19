@@ -7,9 +7,9 @@ namespace FalloutScriptStudio.Editor.Highlighting
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Xml;
+	using Microsoft.Extensions.Logging;
 	using ICSharpCode.AvalonEdit.Highlighting;
 	using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-	using Microsoft.Extensions.Logging;
 
 	/// <summary>
 	/// Builds AvalonEdit highlighting definitions from the embedded <c>.xshd</c> files, applying a
@@ -136,7 +136,7 @@ namespace FalloutScriptStudio.Editor.Highlighting
 
 		private static void AddKeywords(XshdRuleSet ruleSet, String colorName, IEnumerable<String> words)
 		{
-			XshdKeywords keywords = new XshdKeywords
+			XshdKeywords keywords = new()
 			{
 				ColorReference = new XshdReference<XshdColor>(null, colorName),
 			};
@@ -186,7 +186,7 @@ namespace FalloutScriptStudio.Editor.Highlighting
 			}
 
 			String assembly = typeof(HighlightingProvider).Assembly.GetName().Name ?? String.Empty;
-			Uri uri = new Uri($"pack://application:,,,/{assembly};component/Assets/Syntax/{resource}", UriKind.Absolute);
+			Uri uri = new($"pack://application:,,,/{assembly};component/Assets/Syntax/{resource}", UriKind.Absolute);
 
 			using Stream stream = Application.GetResourceStream(uri).Stream;
 			using XmlReader reader = XmlReader.Create(stream);

@@ -106,6 +106,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this._projects = projects;
 			this._sessions = sessions ?? new ProjectSessionService(workspace, settings, projects, output.Problems);
 			this._sessionFolder = projects.Folder;
+			this._sessions.BeginVisit();
 
 			this._layout = layoutStore.Load();
 			this._loadingLayout = true;
@@ -122,6 +123,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this._workspace.DocumentOpened += (_, _) => this.RefreshRecentFiles();
 			this._workspace.DocumentClosed += (_, _) => this.RefreshRecentFiles();
 			this._settings.SettingsChanged += (_, _) => this.RefreshSettingsProperties();
+			this._scriptTools.UndoReplaceInFilesStateChanged += (_, _) => this.OnUndoReplaceInFilesStateChanged();
 			this._projects.ProjectChanged += (_, _) => this.OnProjectChanged();
 			this._projects.FileChangedOnDisk += (_, e) => this.OnProjectFileChangedOnDisk(e);
 			this._projects.ProblemRaised += (_, problem) => this.Output.Problems.Report(ProblemFactory.FromSettings(problem));
@@ -140,8 +142,10 @@ namespace FalloutScriptStudio.ViewModels.Main
 			};
 
 			this.InitializeProblems();
+			this.InitializeFormatting();
 			this.LoadTemplates();
 			this.LoadPreprocessorDefines();
+			this.LoadCompileProfiles();
 			this.RefreshRecentFiles();
 			this.RefreshRecentProjects();
 			this.OnActiveDocumentChanged();
@@ -172,13 +176,13 @@ namespace FalloutScriptStudio.ViewModels.Main
 		public ObservableCollection<DocumentViewModel> Documents => this._workspace.Documents;
 
 		/// <summary>Gets the recent files, newest first.</summary>
-		public ObservableCollection<String> RecentFiles { get; } = new ObservableCollection<String>();
+		public ObservableCollection<String> RecentFiles { get; } = [];
 
 		/// <summary>Gets the script templates of the New menu.</summary>
-		public ObservableCollection<TemplateItem> Templates { get; } = new ObservableCollection<TemplateItem>();
+		public ObservableCollection<TemplateItem> Templates { get; } = [];
 
 		/// <summary>Gets the preprocessor definitions offered in the toolbar (the first entry means "none").</summary>
-		public ObservableCollection<PreprocessorDefineOption> PreprocessorDefineOptions { get; } = new ObservableCollection<PreprocessorDefineOption>();
+		public ObservableCollection<PreprocessorDefineOption> PreprocessorDefineOptions { get; } = [];
 
 		/// <summary>Gets the definitions of the toolbar list (the empty string stands for "none").</summary>
 		public IEnumerable<String> PreprocessorDefineItems => this.PreprocessorDefineOptions.Select(option => option.Value);
@@ -415,6 +419,9 @@ namespace FalloutScriptStudio.ViewModels.Main
 				nameof(this.ProjectText),
 				nameof(this.ProjectTip),
 				nameof(this.SelectedPreprocessorDefine),
+				nameof(this.SelectedCompileProfile),
+				nameof(this.CanChooseDefine),
+				nameof(this.MassCompileOnlyChanged),
 				nameof(this.Title),
 				nameof(this.ParserStatusText),
 			})

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System.Text;
-	using FalloutScriptStudio.Core.IO;
+	using IO;
 
 	/// <summary>
 	/// Conversions of <see cref="TextEncodingKind"/>.

@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Core.Messages
 {
 	using System;
-	using FalloutScriptStudio.Core.Compilation;
+	using Compilation;
 
 	/// <summary>
 	/// A problem found by the message file structure check.

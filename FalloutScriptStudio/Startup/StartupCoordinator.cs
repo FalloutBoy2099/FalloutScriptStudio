@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Startup
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Localization;
+	using Localization;
 
 	/// <summary>
 	/// The start-up sequence: single-instance handling, folder preparation, loading of the settings and the stores, theme and language, then

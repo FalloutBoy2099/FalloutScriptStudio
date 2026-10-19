@@ -1,10 +1,10 @@
 namespace FalloutScriptStudio.Services.ToolWindows
 {
 	using System;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
-	using FalloutScriptStudio.Views.ToolWindows;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.DependencyInjection.Extensions;
+	using ViewModels.ToolWindows;
+	using Views.ToolWindows;
 
 	/// <summary>
 	/// Registration of the tool windows in the service collection.
@@ -33,6 +33,10 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<BatchCompileViewModel>();
 			services.AddTransient<HeadersViewModel>();
 			services.AddTransient<SymbolPickerViewModel>();
+			services.AddTransient<CommandPaletteViewModel>();
+			services.AddTransient<FormatProjectViewModel>();
+			services.AddTransient<SnippetPickerViewModel>();
+			services.AddTransient<SnippetManagerViewModel>();
 
 			services.AddTransient<SettingsWindow>();
 			services.AddTransient<ProjectSettingsWindow>();
@@ -41,6 +45,10 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<BatchCompileWindow>();
 			services.AddTransient<HeadersWindow>();
 			services.AddTransient<SymbolPickerWindow>();
+			services.AddTransient<CommandPaletteWindow>();
+			services.AddTransient<FormatProjectWindow>();
+			services.AddTransient<SnippetPickerWindow>();
+			services.AddTransient<SnippetManagerWindow>();
 
 			return services;
 		}

@@ -1,13 +1,14 @@
 namespace FalloutScriptStudio.Services.ScriptTools.Search
 {
 	using System;
+	using FalloutScriptStudio.Core.IO;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.IO;
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.TextTools;
+	using Core.TextTools;
 
 	/// <summary>
 	/// Searches open documents and the files of a folder (the "search in files" of the legacy editor), cancellable and with progress.
@@ -46,7 +47,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		{
 			ArgumentNullException.ThrowIfNull(request);
 
-			List<SearchHit> hits = new List<SearchHit>();
+			List<SearchHit> hits = [];
 			Int32 searched = 0;
 			Int32 withMatches = 0;
 			Int32 skipped = 0;
@@ -128,7 +129,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 				return true;
 			}
 
-			TextLineMap map = new TextLineMap(text);
+			TextLineMap map = new(text);
 			Int32 added = 0;
 			for (Int32 line = 1; line <= map.LineCount; line++)
 			{
@@ -171,7 +172,7 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		{
 			ArgumentNullException.ThrowIfNull(folder);
 
-			EnumerationOptions options = new EnumerationOptions
+			EnumerationOptions options = new()
 			{
 				RecurseSubdirectories = folder.IncludeSubfolders,
 				IgnoreInaccessible = true,
@@ -179,8 +180,8 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 				MatchCasing = MatchCasing.CaseInsensitive,
 			};
 
-			HashSet<String> seen = new HashSet<String>(StringComparer.OrdinalIgnoreCase);
-			List<String> files = new List<String>();
+			HashSet<String> seen = new(StringComparer.OrdinalIgnoreCase);
+			List<String> files = [];
 			if (!Directory.Exists(folder.Directory))
 			{
 				return files;
@@ -206,13 +207,13 @@ namespace FalloutScriptStudio.Services.ScriptTools.Search
 		{
 			try
 			{
-				FileInfo info = new FileInfo(path);
+				FileInfo info = new(path);
 				if (info.Length > MaxFileBytes)
 				{
 					return null;
 				}
 
-				Byte[] bytes = File.ReadAllBytes(path);
+				Byte[] bytes = SharedFile.ReadAllBytes(path);
 				return LooksBinary(bytes) ? null : ScriptTextFile.Decode(bytes, fallback).Text;
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)

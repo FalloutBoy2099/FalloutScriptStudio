@@ -3,7 +3,7 @@ namespace FalloutScriptStudio.Views.ScriptTools
 	using System;
 	using System.Linq;
 	using System.Windows;
-	using FalloutScriptStudio.ViewModels.ScriptTools;
+	using ViewModels.ScriptTools;
 
 	/// <summary>
 	/// Plumbing shared by the code-behind of the script tool windows.

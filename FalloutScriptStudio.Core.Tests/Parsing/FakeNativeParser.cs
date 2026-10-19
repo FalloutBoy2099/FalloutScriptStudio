@@ -12,7 +12,7 @@ namespace FalloutScriptStudio.Core.Tests.Parsing
 	{
 		public NativeParseResult Result { get; set; } = new NativeParseResult(NativeParseStatus.Unavailable) { Message = "fake" };
 
-		public List<String> ParsedTexts { get; } = new List<String>();
+		public List<String> ParsedTexts { get; } = [];
 
 		public Task<NativeParseResult> ParseAsync(String scriptText, String filePath, ParserOptions options, CancellationToken cancellationToken)
 		{

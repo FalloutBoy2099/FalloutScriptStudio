@@ -41,7 +41,7 @@ namespace FalloutScriptStudio.ViewModels.Main
 		public String Title => this._titleArgument is null ? Loc.Get(this._titleKey) : Loc.Format(this._titleKey, this._titleArgument);
 
 		/// <summary>Gets the results.</summary>
-		public ObservableCollection<ErrorItemViewModel> Results { get; } = new ObservableCollection<ErrorItemViewModel>();
+		public ObservableCollection<ErrorItemViewModel> Results { get; } = [];
 
 		/// <summary>The selected result.</summary>
 		[ObservableProperty]

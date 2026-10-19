@@ -5,7 +5,7 @@ namespace FalloutScriptStudio.Editor
 	using System.IO;
 	using System.Linq;
 	using System.Windows.Media;
-	using FalloutScriptStudio.Core.Configuration;
+	using Core.Configuration;
 
 	/// <summary>
 	/// Finds the editor font: the fonts bundled in the fonts folder (selected by the 1-based index of the settings)

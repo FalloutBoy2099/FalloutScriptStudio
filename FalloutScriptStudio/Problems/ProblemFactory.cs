@@ -2,15 +2,15 @@ namespace FalloutScriptStudio.Problems
 {
 	using System;
 	using System.IO;
-	using FalloutScriptStudio.Core.Compilation;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.ViewModels.ToolWindows;
+	using Core.Compilation;
+	using Core.Configuration;
+	using ViewModels.ToolWindows;
 
 	/// <summary>
 	/// Creates the <see cref="Problem"/> of every known failure, with its message, its fix hint and (when there is an obvious one) its
 	/// action. The texts are in <c>Str.Shell.Problem.*</c>.
 	/// </summary>
-	public static class ProblemFactory
+	public static partial class ProblemFactory
 	{
 		private const String KeyPrefix = "Str.Shell.Problem.";
 

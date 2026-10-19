@@ -22,7 +22,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		{
 			ReportingService service = new ReportingService();
 			BatchCompileViewModel viewModel = new BatchCompileViewModel(service);
-			List<BatchCompileProgress> seen = new List<BatchCompileProgress>();
+			List<BatchCompileProgress> seen = [];
 
 			BatchCompileResult result = await viewModel.RunAsync(new[] { @"C:\s\a.ssl", @"C:\s\b.ssl" }, CreateOptions(), new BatchCompileOptions { MultiThreaded = false }, new ListProgress(seen));
 			Assert.True(await Task.Run(() => SpinWait.SpinUntil(() => { lock (seen) { return seen.Count == 2; } }, TimeSpan.FromSeconds(10))));

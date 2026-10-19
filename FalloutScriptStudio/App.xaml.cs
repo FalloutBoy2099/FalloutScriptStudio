@@ -4,18 +4,18 @@ namespace FalloutScriptStudio
 	using System.IO;
 	using System.Threading.Tasks;
 	using System.Windows;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Startup;
 	using Microsoft.Extensions.DependencyInjection;
+	using Core.Configuration;
+	using Localization;
+	using Services;
+	using Startup;
 
 	/// <summary>The application: a thin WPF shell around the start-up and exit logic of <c>FalloutScriptStudio.Startup</c>.</summary>
 	public partial class App : Application, IDisposable
 	{
 		private const String ApplicationName = "Fallout Script Studio";
 
-		private readonly StartupSession _session = new StartupSession();
+		private readonly StartupSession _session = new();
 		private ShutdownCoordinator? _shutdown;
 		private FileLoggerProvider? _log;
 
@@ -23,25 +23,25 @@ namespace FalloutScriptStudio
 		{
 			base.OnStartup(e);
 			this.ShutdownMode = ShutdownMode.OnExplicitShutdown;
-			ApplicationStartupHost host = new ApplicationStartupHost(this, ApplicationName);
+			ApplicationStartupHost host = new(this, ApplicationName);
 			host.InitializeLanguage(null);
 
 			String baseDirectory = AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 			Directory.SetCurrentDirectory(baseDirectory);
 			AppPaths paths = AppPaths.ForInstallation(baseDirectory);
-			FileLoggerProvider log = new FileLoggerProvider(paths.LogFile);
+			FileLoggerProvider log = new(paths.LogFile);
 			this._log = log;
 			this.HookUnhandledExceptions();
 
-			AppPathsFolders folders = new AppPathsFolders(paths);
+			AppPathsFolders folders = new(paths);
 			this._shutdown = new ShutdownCoordinator(this._session, folders, log.Write);
-			StartupCoordinator coordinator = new StartupCoordinator(
+			StartupCoordinator coordinator = new(
 				host,
 				folders,
 				() => new SingleInstanceService(baseDirectory, diagnostics: log.Write),
 				singleInstance =>
 				{
-					ServiceCollection collection = new ServiceCollection();
+					ServiceCollection collection = new();
 					AppServices.ConfigureServices(collection, paths, log, singleInstance);
 					return new ContainerStartupServices(collection.BuildServiceProvider());
 				},

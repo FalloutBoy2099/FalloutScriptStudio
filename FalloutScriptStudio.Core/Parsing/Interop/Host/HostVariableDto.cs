@@ -24,6 +24,6 @@ namespace FalloutScriptStudio.Core.Parsing.Interop.Host
 
 		public Int32 ArrayLength { get; set; }
 
-		public List<HostReferenceDto> References { get; set; } = new List<HostReferenceDto>();
+		public List<HostReferenceDto> References { get; set; } = [];
 	}
 }

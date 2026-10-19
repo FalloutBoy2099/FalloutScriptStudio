@@ -24,17 +24,17 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 
 		public IWorkspace Interface { get; }
 
-		public ObservableCollection<DocumentViewModel> Documents { get; } = new ObservableCollection<DocumentViewModel>();
+		public ObservableCollection<DocumentViewModel> Documents { get; } = [];
 
 		public DocumentViewModel? ActiveDocument { get; set; }
 
-		public List<String> Opened { get; } = new List<String>();
+		public List<String> Opened { get; } = [];
 
-		public List<(String? File, Int32 Line, Int32 Column, Int32 Length)> Navigations { get; } = new List<(String?, Int32, Int32, Int32)>();
+		public List<(String? File, Int32 Line, Int32 Column, Int32 Length)> Navigations { get; } = [];
 
-		public List<IReadOnlyList<BuildError>> SearchResults { get; } = new List<IReadOnlyList<BuildError>>();
+		public List<IReadOnlyList<BuildError>> SearchResults { get; } = [];
 
-		public List<String> Statuses { get; } = new List<String>();
+		public List<String> Statuses { get; } = [];
 
 		public DocumentViewModel AddDocument(String? path, String text)
 		{

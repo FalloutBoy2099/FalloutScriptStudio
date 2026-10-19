@@ -1,7 +1,7 @@
 namespace FalloutScriptStudio.Controls.Diagram
 {
 	using System;
-	using FalloutScriptStudio.Controls.Diagram.Model;
+	using Model;
 
 	// Adding, removing and ordering items.
 	public sealed partial class DiagramCanvas

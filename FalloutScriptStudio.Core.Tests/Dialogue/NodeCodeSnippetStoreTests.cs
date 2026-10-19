@@ -25,7 +25,7 @@ namespace FalloutScriptStudio.Core.Tests.Dialogue
 		{
 			using PumpSynchronizationContext pump = new PumpSynchronizationContext();
 			using NodeCodeSnippetStore store = new NodeCodeSnippetStore(this._folder.Combine("CustomCode.ini"));
-			List<SynchronizationContext?> seen = new List<SynchronizationContext?>();
+			List<SynchronizationContext?> seen = [];
 			store.Changed += (_, _) => seen.Add(SynchronizationContext.Current);
 
 			Boolean added = await pump.RunAsync(() => store.AddAsync("greeting", "Reply(100);"));

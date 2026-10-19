@@ -2,7 +2,7 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.ComponentModel;
-	using FalloutScriptStudio.Documents;
+	using Documents;
 
 	/// <summary>
 	/// Follows the active document and the editor surface attached to it, and re-raises the events of the editor

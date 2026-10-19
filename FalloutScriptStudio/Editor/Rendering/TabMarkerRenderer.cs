@@ -40,7 +40,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 		/// <returns>The document offsets of the tabs.</returns>
 		public static IReadOnlyList<Int32> FindTabs(String text, Int32 offset)
 		{
-			List<Int32> tabs = new List<Int32>();
+			List<Int32> tabs = [];
 			for (Int32 i = text.IndexOf('\t', StringComparison.Ordinal); i >= 0; i = text.IndexOf('\t', i + 1))
 			{
 				tabs.Add(offset + i);
@@ -81,7 +81,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 
 		private static Pen CreatePen(Brush brush)
 		{
-			Pen pen = new Pen(brush, 1);
+			Pen pen = new(brush, 1);
 			pen.Freeze();
 			return pen;
 		}
@@ -96,7 +96,7 @@ namespace FalloutScriptStudio.Editor.Rendering
 			Double y = Math.Round(rect.Top + (rect.Height / 2)) + 0.5;
 			Double left = rect.Left + 2;
 			Double right = rect.Right - 2;
-			StreamGeometry geometry = new StreamGeometry();
+			StreamGeometry geometry = new();
 			using (StreamGeometryContext context = geometry.Open())
 			{
 				context.BeginFigure(new Point(left, y), false, false);

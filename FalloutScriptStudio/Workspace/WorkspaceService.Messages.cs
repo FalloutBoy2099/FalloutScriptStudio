@@ -3,9 +3,9 @@ namespace FalloutScriptStudio.Workspace
 	using System;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Messages;
-	using FalloutScriptStudio.Documents;
-	using FalloutScriptStudio.Services.MessageEditor;
+	using Core.Messages;
+	using Documents;
+	using Services.MessageEditor;
 
 	/// <summary>Message file association, delegated to <see cref="MessageAssociationService"/>.</summary>
 	public sealed partial class WorkspaceService
@@ -18,6 +18,9 @@ namespace FalloutScriptStudio.Workspace
 		public void UpdateMessageTexts(DocumentViewModel document, MessageDocument messages)
 		{
 			this._messages.UpdateMessageTexts(document, messages);
+
+			// The Message Editor saved the message file of this script.
+			this.DocumentSaved?.Invoke(this, document);
 		}
 
 		public Task OpenMessageEditorAsync(DocumentViewModel document)

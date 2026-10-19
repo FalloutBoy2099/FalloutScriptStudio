@@ -58,7 +58,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 		}
 
 		/// <summary>Gets the rows of the list; the position is the script id.</summary>
-		public ObservableCollection<ScriptEntryViewModel> Entries { get; } = new ObservableCollection<ScriptEntryViewModel>();
+		public ObservableCollection<ScriptEntryViewModel> Entries { get; } = [];
 
 		/// <summary>Gets or sets the selected row.</summary>
 		[ObservableProperty]
@@ -330,7 +330,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 				return false;
 			}
 
-			ScriptRegistry registry = new ScriptRegistry(this._registry.ListEncoding);
+			ScriptRegistry registry = new(this._registry.ListEncoding);
 			registry.Entries.AddRange(this.Entries.Select(entry => entry.Model));
 			ScriptRegistryPaths paths = this._paths;
 			Encoding messageEncoding = this._settings.Settings.Editor.FileEncoding.ToEncoding();

@@ -3,8 +3,8 @@ namespace FalloutScriptStudio.Services.ScriptTools.Flowchart
 	using System;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Dialogue;
-	using FalloutScriptStudio.Documents;
+	using Core.Dialogue;
+	using Documents;
 
 	/// <summary>
 	/// Gives the dialogue tools (flowchart, node code editor, dialogue preview) access to the message files of a script and

@@ -2,8 +2,8 @@ namespace FalloutScriptStudio.Workspace
 {
 	using System;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Parsing;
-	using FalloutScriptStudio.Documents;
+	using Core.Parsing;
+	using Documents;
 
 	/// <summary>Renames a symbol (procedure, variable or macro) in the places where it is used.</summary>
 	/// <remarks>The default implementation edits the open documents directly; a preview based implementation can replace it.</remarks>

@@ -15,7 +15,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 	public sealed class FoldingController : IDisposable
 	{
 		private readonly EditorContext _context;
-		private readonly FoldingGenerator _generator = new FoldingGenerator();
+		private readonly FoldingGenerator _generator = new();
 		private FoldingManager? _manager;
 		private FoldingRedrawGate? _redrawGate;
 		private Boolean _stateRestored;
@@ -61,7 +61,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			this.Update();
 			if (mirror?._manager is FoldingManager source)
 			{
-				HashSet<String> folded = new HashSet<String>(source.AllFoldings.Where(s => s.IsFolded).Select(s => s.Tag as String).OfType<String>(), StringComparer.Ordinal);
+				HashSet<String> folded = new(source.AllFoldings.Where(s => s.IsFolded).Select(s => s.Tag as String).OfType<String>(), StringComparer.Ordinal);
 				foreach (FoldingSection section in this._manager.AllFoldings)
 				{
 					section.IsFolded = section.Tag is String key && folded.Contains(key);
@@ -97,8 +97,8 @@ namespace FalloutScriptStudio.Editor.Controllers
 				this._context.DocumentModel.FileName,
 				info?.Procedures ?? Array.Empty<ScriptProcedure>());
 
-			List<(NewFolding Folding, String Key)> foldings = new List<(NewFolding, String)>();
-			Dictionary<String, Int32> occurrences = new Dictionary<String, Int32>(StringComparer.Ordinal);
+			List<(NewFolding Folding, String Key)> foldings = [];
+			Dictionary<String, Int32> occurrences = new(StringComparer.Ordinal);
 			foreach (FoldingRegion region in regions)
 			{
 				Int32 startLine = Math.Clamp(region.StartLine, 1, document.LineCount);
@@ -119,7 +119,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 			foldings.Sort((a, b) => a.Folding.StartOffset.CompareTo(b.Folding.StartOffset));
 			manager.UpdateFoldings(foldings.Select(f => f.Folding), -1);
 
-			Dictionary<Int32, String> keys = new Dictionary<Int32, String>();
+			Dictionary<Int32, String> keys = [];
 			foreach ((NewFolding folding, String key) in foldings)
 			{
 				keys[folding.StartOffset] = key;
@@ -146,7 +146,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 				return;
 			}
 
-			HashSet<String> folded = new HashSet<String>(StringComparer.Ordinal);
+			HashSet<String> folded = new(StringComparer.Ordinal);
 			foreach (FoldingSection section in manager.AllFoldings)
 			{
 				if (section.IsFolded && section.Tag is String key)

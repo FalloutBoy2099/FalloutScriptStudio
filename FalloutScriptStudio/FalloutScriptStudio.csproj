@@ -13,8 +13,8 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 		<NoWarn>$(NoWarn);WPF0001</NoWarn>
-		<AssemblyVersion>2026.10.12.1</AssemblyVersion>
-		<FileVersion>2026.10.12.1</FileVersion>
+		<AssemblyVersion>2026.10.19.6</AssemblyVersion>
+		<FileVersion>2026.10.19.6</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

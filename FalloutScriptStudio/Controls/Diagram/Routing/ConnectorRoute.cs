@@ -21,7 +21,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Routing
 		public ConnectorRoute(Point start, IEnumerable<RouteSegment> segments, ConnectionSide targetSide)
 		{
 			ArgumentNullException.ThrowIfNull(segments);
-			this._segments = new List<RouteSegment>(segments);
+			this._segments = new(segments);
 			if (this._segments.Count == 0)
 			{
 				throw new ArgumentException("A route needs at least one segment.", nameof(segments));
@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Routing
 
 			this.Start = start;
 			this.TargetSide = targetSide;
-			this._points = new List<Point>(this._segments.Count + 1) { start };
+			this._points = new(this._segments.Count + 1) { start };
 			Point current = start;
 			foreach (RouteSegment segment in this._segments)
 			{
@@ -65,7 +65,7 @@ namespace FalloutScriptStudio.Controls.Diagram.Routing
 		/// <returns>The bounding box.</returns>
 		public Rect GetBounds()
 		{
-			Rect bounds = new Rect(this._points[0], this._points[0]);
+			Rect bounds = new(this._points[0], this._points[0]);
 			for (Int32 i = 1; i < this._points.Count; i++)
 			{
 				bounds.Union(this._points[i]);

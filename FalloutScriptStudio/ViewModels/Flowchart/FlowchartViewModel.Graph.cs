@@ -162,7 +162,8 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		{
 			DiagramCanvas canvas = this.RequireCanvas();
 			Point position = canvas.ViewportToWorld(new Point(40, 40));
-			DiagramNote note = new DiagramNote { X = position.X, Y = position.Y };
+			DiagramNote note = new()
+			{ X = position.X, Y = position.Y };
 			canvas.AddItem(note);
 			canvas.ClearSelection();
 			canvas.Select(note);
@@ -208,7 +209,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			}
 
 			IDialogueMessageSource source = await this._messages.CreateSourceAsync(script);
-			FlowchartBuildOptions options = new FlowchartBuildOptions
+			FlowchartBuildOptions options = new()
 			{
 				ExcludeExitNode = this.WithoutExitNode,
 				ShowCommentedCode = this.ShowCommentCode,
@@ -327,13 +328,13 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		private void ReplaceNodes(String? newNodeName)
 		{
 			DiagramCanvas canvas = this.RequireCanvas();
-			Dictionary<String, DiagramNode> existing = new Dictionary<String, DiagramNode>(StringComparer.OrdinalIgnoreCase);
+			Dictionary<String, DiagramNode> existing = new(StringComparer.OrdinalIgnoreCase);
 			foreach (DiagramNode node in canvas.Nodes)
 			{
 				existing.TryAdd(node.Name, node);
 			}
 
-			HashSet<DiagramNode> replaced = new HashSet<DiagramNode>();
+			HashSet<DiagramNode> replaced = [];
 			Int32 shift = 0;
 			foreach (FlowchartNodeData data in this._model.Nodes)
 			{

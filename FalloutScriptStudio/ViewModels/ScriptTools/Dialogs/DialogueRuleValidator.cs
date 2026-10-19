@@ -108,7 +108,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools.Dialogs
 				return Loc.Get("Str.ScriptTools.RulesErrNodeRequired");
 			}
 
-			HashSet<Int32> used = new HashSet<Int32>();
+			HashSet<Int32> used = [];
 			foreach ((String column, Int32 value) in positions)
 			{
 				if (value != 0 && !used.Add(value))

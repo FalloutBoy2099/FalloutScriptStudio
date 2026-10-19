@@ -132,11 +132,11 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void Find_ForwardWrapsAndStartsAfterTheCurrentCell()
 		{
-			List<ScriptListEntry> entries = new List<ScriptListEntry>
-			{
+			List<ScriptListEntry> entries =
+			[
 				new ScriptListEntry { Script = "alpha.int", Description = "boss" },
 				new ScriptListEntry { Script = "beta.int", Description = "Boss fight", GameName = "The BOSS" },
-			};
+			];
 
 			(Int32 Row, Int32 Column)? first = ScriptListFinder.Find(entries, " boss ", -1, 0, true);
 			(Int32 Row, Int32 Column)? second = ScriptListFinder.Find(entries, "boss", first!.Value.Row, first.Value.Column, true);
@@ -152,11 +152,11 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[Fact]
 		public void Find_BackwardGoesToThePreviousMatch()
 		{
-			List<ScriptListEntry> entries = new List<ScriptListEntry>
-			{
+			List<ScriptListEntry> entries =
+			[
 				new ScriptListEntry { Script = "alpha.int" },
 				new ScriptListEntry { Script = "alpha2.int" },
-			};
+			];
 
 			(Int32 Row, Int32 Column)? previous = ScriptListFinder.Find(entries, "alpha", 1, 1, false);
 			(Int32 Row, Int32 Column)? fromStart = ScriptListFinder.Find(entries, "alpha", -1, 0, false);
@@ -183,7 +183,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 		[InlineData("zzz")]
 		public void Find_NothingToFind_ReturnsNull(String text)
 		{
-			List<ScriptListEntry> entries = new List<ScriptListEntry> { new ScriptListEntry { Script = "a.int" } };
+			List<ScriptListEntry> entries = [new ScriptListEntry { Script = "a.int" }];
 
 			Assert.Null(ScriptListFinder.Find(entries, text, -1, 0, true));
 		}

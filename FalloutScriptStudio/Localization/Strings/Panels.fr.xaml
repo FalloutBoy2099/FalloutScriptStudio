@@ -72,6 +72,7 @@
     <sys:String x:Key="Str.Panels.MsgSelectProjectFolder">Sélectionnez le dossier du projet</sys:String>
     <sys:String x:Key="Str.Panels.TreeFilterPlaceholder">Filtrer...</sys:String>
     <sys:String x:Key="Str.Panels.MenuEditNodeCode">Modifier le code du nœud</sys:String>
+    <sys:String x:Key="Str.Panels.MenuPreviewDialogue">Aperçu du dialogue depuis ce nœud</sys:String>
     <sys:String x:Key="Str.Panels.TipOnlyProcedure">Afficher seulement la procédure visée : les autres procédures sont réduites quand on sélectionne une procédure</sys:String>
     <sys:String x:Key="Str.Panels.MenuDeleteUnusedProcedure">Supprimer une procédure inutilisée...</sys:String>
     <sys:String x:Key="Str.Panels.MenuFindUnusedVariables">Rechercher les variables inutilisées</sys:String>

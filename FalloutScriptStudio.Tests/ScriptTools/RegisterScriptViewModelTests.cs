@@ -450,7 +450,7 @@ namespace FalloutScriptStudio.Tests.ScriptTools
 
 		private sealed class FakeDatExtractor : IDatArchiveExtractor
 		{
-			public System.Collections.Generic.List<DatExtractionRequest> Requests { get; } = new System.Collections.Generic.List<DatExtractionRequest>();
+			public System.Collections.Generic.List<DatExtractionRequest> Requests { get; } = [];
 
 			public Boolean Fail { get; set; }
 

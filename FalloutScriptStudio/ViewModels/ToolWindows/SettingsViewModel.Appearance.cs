@@ -17,9 +17,9 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the color modes to choose from.</summary>
 		public IReadOnlyList<Choice<AppTheme>> ThemeChoices { get; } = new List<Choice<AppTheme>>
 		{
-			new Choice<AppTheme>(AppTheme.System, Loc.Get("Str.Common.ThemeSystem")),
-			new Choice<AppTheme>(AppTheme.Light, Loc.Get("Str.Common.ThemeLight")),
-			new Choice<AppTheme>(AppTheme.Dark, Loc.Get("Str.Common.ThemeDark")),
+			new(AppTheme.System, Loc.Get("Str.Common.ThemeSystem")),
+			new(AppTheme.Light, Loc.Get("Str.Common.ThemeLight")),
+			new(AppTheme.Dark, Loc.Get("Str.Common.ThemeDark")),
 		};
 
 		/// <summary>Gets the editor fonts to choose from; the value is the font index stored in the settings (0 is the default font).</summary>
@@ -27,7 +27,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		private static List<Choice<Int32>> BuildFontChoices(IEditorFontCatalog fontCatalog, String fontsDirectory)
 		{
-			List<Choice<Int32>> fonts = new List<Choice<Int32>> { new Choice<Int32>(0, KnownFonts.DefaultFamily) };
+			List<Choice<Int32>> fonts = [new Choice<Int32>(0, KnownFonts.DefaultFamily)];
 			IReadOnlyList<String> bundled = fontCatalog.GetFamilyNames(fontsDirectory);
 			for (Int32 i = 0; i < bundled.Count; i++)
 			{

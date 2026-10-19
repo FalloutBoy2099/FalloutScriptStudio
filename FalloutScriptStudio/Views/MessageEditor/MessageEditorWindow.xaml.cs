@@ -6,14 +6,14 @@ namespace FalloutScriptStudio.Views.MessageEditor
 	using System.Windows.Controls;
 	using System.Windows.Input;
 	using System.Windows.Threading;
-	using FalloutScriptStudio.Core.Configuration;
-	using FalloutScriptStudio.Editor.Highlighting;
-	using FalloutScriptStudio.Localization;
-	using FalloutScriptStudio.Services;
-	using FalloutScriptStudio.Services.MessageEditor;
-	using FalloutScriptStudio.ViewModels.MessageEditor;
 	using Wpf.Ui.Controls;
 	using TextBox = System.Windows.Controls.TextBox;
+	using Core.Configuration;
+	using FalloutScriptStudio.Editor.Highlighting;
+	using Localization;
+	using Services;
+	using Services.MessageEditor;
+	using ViewModels.MessageEditor;
 
 	/// <summary>
 	/// The Message Editor window: a grid of the messages of a <c>.msg</c> file with inline editing.
@@ -30,7 +30,7 @@ namespace FalloutScriptStudio.Views.MessageEditor
 		private readonly MessageEditorMenus _menus;
 		private readonly MessageDetailsPane _details;
 
-		private MessageEditorOpenOptions _options = new MessageEditorOpenOptions();
+		private MessageEditorOpenOptions _options = new();
 		private Boolean _closeApproved;
 		private Boolean _closing;
 

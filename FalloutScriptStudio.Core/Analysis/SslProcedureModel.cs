@@ -6,7 +6,7 @@ namespace FalloutScriptStudio.Core.Analysis
 	/// <summary>A procedure with a body, located in the tokens of a script.</summary>
 	public sealed class SslProcedureModel
 	{
-		private readonly List<VariableDeclaration> _declarations = new List<VariableDeclaration>();
+		private readonly List<VariableDeclaration> _declarations = [];
 
 		/// <summary>Initializes a new instance of the <see cref="SslProcedureModel"/> class.</summary>
 		/// <param name="name">The name.</param>

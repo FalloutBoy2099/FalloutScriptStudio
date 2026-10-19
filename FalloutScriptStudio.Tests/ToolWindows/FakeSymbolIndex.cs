@@ -16,7 +16,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 
 		public event EventHandler? Updated;
 
-		public List<IndexedSymbol> Symbols { get; } = new List<IndexedSymbol>();
+		public List<IndexedSymbol> Symbols { get; } = [];
 
 		public ProjectIndexProgress Progress { get; private set; } = ProjectIndexProgress.Idle;
 
@@ -29,7 +29,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		public IReadOnlyCollection<String> Files => this.Symbols.Select(s => s.File).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
 		/// <summary>Gets the filters and limits of the searches.</summary>
-		public List<(String? Filter, Int32 Max)> Searches { get; } = new List<(String? Filter, Int32 Max)>();
+		public List<(String? Filter, Int32 Max)> Searches { get; } = [];
 
 		public void SetProgress(ProjectIndexProgress progress)
 		{

@@ -44,6 +44,8 @@
     <sys:String x:Key="Str.Flowchart.Menu.Node.EditNamed">Edytuj węzeł: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Rename">Zmień nazwę węzła</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.RenameNamed">Zmień nazwę węzła: {0}</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.Preview">Podgląd dialogu od tego węzła</sys:String>
+    <sys:String x:Key="Str.Flowchart.Menu.Node.PreviewNamed">Podgląd dialogu od węzła: {0}</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Jump">Skocz z: --- do</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.JumpNamed">Skocz z: {0} do</sys:String>
     <sys:String x:Key="Str.Flowchart.Menu.Node.Hide">Ukryj węzeł</sys:String>

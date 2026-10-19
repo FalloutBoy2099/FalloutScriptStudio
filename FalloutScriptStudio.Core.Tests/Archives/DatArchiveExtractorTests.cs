@@ -6,11 +6,11 @@ namespace FalloutScriptStudio.Core.Tests.Archives
 	using System.Text;
 	using System.Threading;
 	using System.Threading.Tasks;
-	using FalloutScriptStudio.Core.Archives;
-	using FalloutScriptStudio.Core.Tests.Compilation;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging.Abstractions;
 	using Xunit;
+	using FalloutScriptStudio.Core.Archives;
+	using FalloutScriptStudio.Core.Tests.Compilation;
 
 	public sealed class DatArchiveExtractorTests : IDisposable
 	{
