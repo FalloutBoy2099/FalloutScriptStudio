@@ -53,6 +53,13 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		/// <summary>Gets a value indicating whether the row can be edited in the line number column.</summary>
 		public Boolean CanEditLine => this.Entry.Kind != MessageLineKind.Comment;
 
+		/// <summary>Gets the text a screen reader announces for the row (the automation name of a list or grid item is the text of its object).</summary>
+		/// <returns>The text.</returns>
+		public override String ToString()
+		{
+			return this.IsMessage ? this.LineText + ": " + this.Text : this.IsComment ? this.Comment : String.Empty;
+		}
+
 		/// <summary>
 		/// Gets or sets the text of the line column: the message number, <c>-</c> for comments, <c>?</c> for unrecognized lines and nothing for empty lines.
 		/// Typing a number into an empty or unrecognized line turns it into a message.

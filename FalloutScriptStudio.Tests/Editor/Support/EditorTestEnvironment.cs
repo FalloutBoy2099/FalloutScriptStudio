@@ -6,8 +6,10 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 	using FalloutScriptStudio.Core.Parsing;
 	using FalloutScriptStudio.Documents;
 	using FalloutScriptStudio.Editor;
+	using FalloutScriptStudio.Tests.Shell.Support;
 	using FalloutScriptStudio.Tests.Support;
 	using FalloutScriptStudio.TestSupport;
+	using FalloutScriptStudio.Workspace.Help;
 	using ICSharpCode.AvalonEdit;
 	using ICSharpCode.AvalonEdit.Document;
 	using Microsoft.Extensions.Logging.Abstractions;
@@ -18,7 +20,7 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 		private readonly String _directory;
 		private readonly Boolean _ownsDirectory;
 
-		public EditorTestEnvironment(Boolean dark = false, String? baseDirectory = null, IUserMacroSource? userMacros = null)
+		public EditorTestEnvironment(Boolean dark = false, String? baseDirectory = null, IUserMacroSource? userMacros = null, Boolean withHelp = false)
 		{
 			this._ownsDirectory = baseDirectory is null;
 			this._directory = baseDirectory ?? TestFiles.CreateWorkFolder("editor");
@@ -38,10 +40,26 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			this.Recorder = recorder;
 			this.CollapsedStore = new InMemoryCollapsedProcedureStore();
 			this.Input = new FakeInputState();
-			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros, popups: this.Popups, input: this.Input);
+			if (withHelp)
+			{
+				Directory.CreateDirectory(this.SettingsService.Paths.DescriptionsDirectory);
+				File.WriteAllText(
+					Path.Combine(this.SettingsService.Paths.DescriptionsDirectory, "opcodes.txt"),
+					"int random (int min, int max) | - Returns a random number in the range (min...max) inclusive.\r\nvoid display_msg (string text) | - Displays a message.\r\n// SFALL OPCODES:\r\nvoid set_sfall_global (string/int varname, int/float value) | - Sets the value of an sfall global variable.\r\n");
+				this.HelpShell = new FakeShellService();
+				this.HelpService = new FunctionHelpService(this.SettingsService, null, this.HelpShell, this.Workspace);
+			}
+
+			this.Services = new ScriptEditorServices(this.SettingsService, this.Theme, this.Workspace, this.CollapsedStore, userMacros, popups: this.Popups, input: this.Input, help: this.HelpService);
 		}
 
 		public SettingsService SettingsService { get; }
+
+		/// <summary>Gets the documentation of the functions (only when the environment was created with help), or <see langword="null"/>.</summary>
+		public FunctionHelpService? HelpService { get; }
+
+		/// <summary>Gets the shell that records the addresses the help opened (only when the environment was created with help).</summary>
+		internal FakeShellService? HelpShell { get; }
 
 		/// <summary>Gets the presenter that records the popups of the editors instead of opening them.</summary>
 		public HiddenEditorPopups Popups { get; }

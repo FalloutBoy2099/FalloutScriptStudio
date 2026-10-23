@@ -46,6 +46,13 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 			? (this.File.Path == BuildError.NoFile ? Loc.Get("Str.ScriptTools.SearchUnsavedScript") : System.IO.Path.GetFileName(this.File.Path))
 			: Loc.Format("Str.ScriptTools.MacroLine", this.Match.Line);
 
+		/// <summary>Gets the text a screen reader announces for the node (the automation name of a tree item is the text of its object).</summary>
+		/// <returns>The file name, or the line of the replacement.</returns>
+		public override String ToString()
+		{
+			return this.Header;
+		}
+
 		/// <summary>Gets the folder of a file node, otherwise an empty text.</summary>
 		public String Detail => this.Match is null && this.File.Path != BuildError.NoFile ? System.IO.Path.GetDirectoryName(this.File.Path) ?? String.Empty : String.Empty;
 

@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 	using FalloutScriptStudio.Core.Configuration;
 	using FalloutScriptStudio.Localization;
 
@@ -22,6 +23,27 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 			new(LiveDiagnosticsLevel.ErrorsOnly, Loc.Get("Str.ToolWindows.Choice.Diagnostics.ErrorsOnly")),
 			new(LiveDiagnosticsLevel.ErrorsAndWarnings, Loc.Get("Str.ToolWindows.Choice.Diagnostics.ErrorsAndWarnings")),
 		};
+
+		/// <summary>
+		/// Gets or sets the ignore list of the findings about global variables as text, one entry per line (a name, a macro, a number, or a
+		/// prefix that ends with <c>*</c>).
+		/// </summary>
+		public String GlobalVariableIgnoreText
+		{
+			get => String.Join(Environment.NewLine, this.Draft.Editor.GlobalVariableIgnore);
+			set
+			{
+				List<String> entries = (value ?? String.Empty)
+					.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+					.Distinct(StringComparer.OrdinalIgnoreCase)
+					.ToList();
+				if (!entries.SequenceEqual(this.Draft.Editor.GlobalVariableIgnore, StringComparer.Ordinal))
+				{
+					this.Draft.Editor.GlobalVariableIgnore = entries;
+					this.OnPropertyChanged();
+				}
+			}
+		}
 
 		/// <summary>Gets the smallest tab size.</summary>
 		public Double MinTabSize => EditorSettings.MinTabSize;

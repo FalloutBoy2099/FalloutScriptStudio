@@ -47,6 +47,8 @@ Use Release for numbers you want to compare; Debug is several times slower (the 
 * `FalloutScriptStudio.Core.Tests\Performance\DiagnosticsPerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\DiagnosticsPerformanceTests.cs`: the semantic diagnostics (valid and damaged scripts of 5 000 and 20 000 lines made of copies of the real samples, the environment of a script, the underlines of 500 findings, the Quick Fix command).
 * `FalloutScriptStudio.Tests\Performance\ReplaceInFilesPerformanceTests.cs`: the preview over 5 000 files (four kinds of search), its memory, the cancellation, and the replacement and undo of 500 files (compared byte for byte with the originals).
 * `FalloutScriptStudio.Core.Tests\Performance\FormatPerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\FormatProjectPerformanceTests.cs`: the formatter on the generated scripts of 5 000 and 20 000 lines (stable, only white space changes, every option set), and Format Project over the 5 000 file project (preview, memory, cancellation, formatting of 500 files).
+* `FalloutScriptStudio.Core.Tests\Performance\DialogueQualityPerformanceTests.cs`: the dialogue quality check on the generated dialogues of 200 and 900 nodes (no finding on either), `...\MessageComparisonPerformanceTests.cs` and `FalloutScriptStudio.Tests\Performance\CompareMessagesPerformanceTests.cs`: the comparison of two message files of 30 000 lines, reading one, and the window (opening it, switching a filter, typing in the filter box, 16 000 rows).
+* `FalloutScriptStudio.Core.Tests\Performance\GlobalsPerformanceTests.cs`: the global variable tracker on a generated project of 5 000 scripts (70 000 uses of 7 000 variables, a header of 2 000 `GVAR_*` macros): the index run with and without the scan, the resolved index, the analysis, the CSV export, one saved script, the memory, the scanner on a 20 000 line script.
 * Equivalence tests for the optimised pieces (they compare with a full recomputation on random or large inputs):
   `LexicalMapIncrementalTests`, `BracketMatcherLargeTextTests`, `FoldingRedrawTests`, `DiagramCachedRenderingTests`, `MessageEditorLargeFileTests`,
   `FunctionsTreeFilterTests`, `ProceduresPanelSyncTests`, `MacroRegistryCacheTests`.
@@ -107,6 +109,11 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
 | Incremental build: stale check of 5 000 scripts that share 300 headers (up to 30 files each), warm cache and include graph | about 75 to 150 ms (budget 1 s) |
 | Open a 5 000 / 20 000 line script in the editor (read, session, layout) | 150 to 180 ms / 230 to 310 ms |
 | Project symbol index of 5 000 files (4 250 scripts and headers, 54 000 symbols), from scratch / nothing changed / one saved script | 260 ms (4 threads) / 17 ms / 22 ms |
+| Global variable scan: project index of the 5 000 scripts of the generated globals project (70 000 uses), with / without the scan (Release) | 350 ms / 245 ms |
+| Global variable scan on the symbol project above, which has no use of a global variable (best of 12; the macros that stand for a number are kept): with / without | 403 ms / 348 ms |
+| Global variables: resolved index of 70 000 uses (built on first request after each index update) plus the update of one saved script | 235 to 250 ms (budget 800 ms) |
+| Global variable analysis (all the rules, 7 000 variables, 2 000 macros) / CSV export of 70 000 uses / name lookup | 107 ms / 90 to 127 ms / under 0.1 ms |
+| `GlobalUseScanner` on a 20 000 line script / on 5 000 procedures with 10 000 uses | 30 ms / 8 ms |
 | Symbol search over 54 000 symbols (prefix, substring, letters in order, two words, no match) | 1.5 to 3.4 ms |
 | References of a name in 5 000 files / files that include a header | 170 ms / 8 ms |
 | Cancelling an index run | under 20 ms |
@@ -126,6 +133,9 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
 | Lines that change when a 20 000 line script is formatted in K&R style (`LineDiff`) | 2.4 ms |
 | Format Project, preview over 5 000 files (4 000 scripts and headers all changing, up to four threads): time / managed memory kept / cancellation | 1.1 s / 3 MB / stops 130 ms after the request (Release; Debug 2.4 s) |
 | Format Project, formatting 500 files (atomic writes) and a second preview that finds nothing | 1.6 s |
+| Dialogue quality check (`DialogueQualityChecker.Check`, tokens + node parser + graph + rules), generated dialogue of 200 / 900 nodes (Release) | 17 ms / 100 ms (budgets 150 ms / 1 s); it runs after a save on a pool thread |
+| Compare message files (`MessageFileComparer.Compare`), two files of 30 000 lines (Release) / reading and parsing one of them | 84 ms (budget 200 ms) / 49 ms |
+| Compare Message Files window, two files of 30 000 lines (Debug): open (read, parse, compare, 16 000 rows) / show 15 000 more rows and hide them / type in the filter box | 460 ms / 4 ms / 3 ms (the table is a virtualized `DataGrid` with rows of 22) |
 
 ### Memory
 
@@ -136,6 +146,7 @@ drawing of the nodes, so a selection change draws only the frame; `MacroRegistry
   process stays at about 74 MB (72 MB before). Cancellation stops the search about 1 to 13 ms after the request.
 * Replace in Files over 5 000 files with 4 000 replacements: the files are read one at a time and only the matches are kept (a few strings per replacement, at most 50 000 listed); managed memory does not grow, the peak working set of the test process stays at about 87 MB. The undo record holds the reverse edits and a hash per file, never a file content.
 * Project symbol index: 12 MB of managed memory for 54 000 symbols in 4 250 files (only names, kinds, files and lines are kept, never the text; the index stops at 300 000 symbols, about 36 MB, for the 2 to 4 GB of an x86 process).
+* Global variables: 17 MB of managed memory for 70 000 uses of 5 000 scripts (the compact scans kept by the index, strings shared through a pool, plus the resolved index of the last snapshot); the index keeps at most 200 000 uses (`ProjectIndexOptions.MaxGlobalUses`, about 50 MB) and says when it left files out.
 * `.msg` of 30 000 lines: 17 MB managed after loading, 22 MB after 30 edits (undo history 4 MB).
 
 ## Known remaining hotspots

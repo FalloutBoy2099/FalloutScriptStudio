@@ -3,6 +3,7 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System;
 	using System.Collections.Generic;
 	using Analysis;
+	using Globals;
 	using Parsing;
 
 	/// <summary>
@@ -19,8 +20,13 @@ namespace FalloutScriptStudio.Core.Indexing
 		/// <param name="text">The text.</param>
 		/// <param name="symbols">Receives the symbols, in file order within each kind.</param>
 		/// <param name="includes">Receives the paths of the <c>#include</c> directives as written.</param>
-		internal static void Scan(String path, String text, List<IndexedSymbol> symbols, List<String> includes)
+		/// <param name="globals">Receives the uses of global variables and the macros that stand for a number, or <see langword="null"/> when there are none.</param>
+		/// <param name="pool">Shares the texts of the global variable uses between the files; none when <see langword="null"/>.</param>
+		/// <param name="trackGlobals">Whether the uses of global variables and the macro constants are recorded.</param>
+		internal static void Scan(String path, String text, List<IndexedSymbol> symbols, List<String> includes, out FileGlobalScan? globals, GlobalStringPool? pool = null, Boolean trackGlobals = true)
 		{
+			globals = null;
+			MacroConstant[] constants = Array.Empty<MacroConstant>();
 			if (text.Contains("procedure", StringComparison.OrdinalIgnoreCase))
 			{
 				foreach (ScriptProcedure procedure in _procedureParser.ParseProcedures(text, path))
@@ -43,7 +49,13 @@ namespace FalloutScriptStudio.Core.Indexing
 
 			if (text.Contains("#define", StringComparison.Ordinal))
 			{
-				foreach (ScriptMacro macro in _macroCollector.CollectFromText(text, path, false).Values)
+				SortedDictionary<String, ScriptMacro> macros = _macroCollector.CollectFromText(text, path, false);
+				if (trackGlobals)
+				{
+					constants = GlobalUseScanner.CollectConstants(macros.Values, pool);
+				}
+
+				foreach (ScriptMacro macro in macros.Values)
 				{
 					symbols.Add(new IndexedSymbol(macro.Token, IndexedSymbolKind.Macro, path, macro.DeclaredLine)
 					{
@@ -53,13 +65,21 @@ namespace FalloutScriptStudio.Core.Indexing
 			}
 
 			Boolean hasVariables = text.Contains("variable", StringComparison.OrdinalIgnoreCase);
-			if (hasVariables || text.Contains("#include", StringComparison.Ordinal))
+			Boolean hasGlobals = trackGlobals && GlobalUseScanner.MayContainUses(text);
+			if (hasVariables || hasGlobals || text.Contains("#include", StringComparison.Ordinal))
 			{
 				SslTokenStream tokens = SslTokenizer.Tokenize(text);
 				ScanIncludes(tokens, includes);
-				if (hasVariables)
+				SslScriptModel? model = hasVariables || hasGlobals ? SslScriptModel.Analyze(tokens) : null;
+				if (hasGlobals && model is not null)
 				{
-					foreach (VariableDeclaration declaration in SslScriptModel.Analyze(tokens).Declarations)
+					FileGlobalScan scan = GlobalUseScanner.Scan(model, constants, pool);
+					globals = scan.IsEmpty ? null : scan;
+				}
+
+				if (hasVariables && model is not null)
+				{
+					foreach (VariableDeclaration declaration in model.Declarations)
 					{
 						if (declaration.Kind is VariableDeclarationKind.Parameter or VariableDeclarationKind.Local)
 						{
@@ -77,6 +97,11 @@ namespace FalloutScriptStudio.Core.Indexing
 						});
 					}
 				}
+			}
+
+			if (globals is null && constants.Length > 0)
+			{
+				globals = new FileGlobalScan(Array.Empty<RawGlobalUse>(), Array.Empty<String>(), constants);
 			}
 		}
 

@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">Minimera</sys:String>
     <sys:String x:Key="Str.Common.Maximize">Maximera</sys:String>
     <sys:String x:Key="Str.Common.Restore">Återställ</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">Rulla uppåt</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">Rulla nedåt</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">Rulla åt vänster</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">Rulla åt höger</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">Sida upp</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">Sida ned</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">Sida åt vänster</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">Sida åt höger</sys:String>
 </ResourceDictionary>

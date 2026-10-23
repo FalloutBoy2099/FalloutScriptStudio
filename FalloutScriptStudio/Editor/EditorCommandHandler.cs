@@ -27,6 +27,7 @@ namespace FalloutScriptStudio.Editor
 		private readonly CompletionController _completion;
 		private readonly Action _toggleSplit;
 		private readonly BracketController? _brackets;
+		private readonly TipController? _tips;
 		private readonly FalloutScriptStudio.Core.TextTools.CodeFormatter _formatter = new();
 		private ITextSourceVersion? _unusedVersion;
 		private IReadOnlyList<UnusedVariable> _unused = Array.Empty<UnusedVariable>();
@@ -38,9 +39,11 @@ namespace FalloutScriptStudio.Editor
 			OccurrenceController occurrences,
 			CompletionController completion,
 			Action toggleSplit,
-			BracketController? brackets = null)
+			BracketController? brackets = null,
+			TipController? tips = null)
 		{
 			this._brackets = brackets;
+			this._tips = tips;
 			this._context = context;
 			this._folding = folding;
 			this._navigation = navigation;
@@ -126,6 +129,8 @@ namespace FalloutScriptStudio.Editor
 					return script && this._completion.Snippets is not null;
 				case EditorCommand.SurroundWith:
 					return script && this._completion.Snippets is not null && !this._context.TextArea.Selection.IsEmpty;
+				case EditorCommand.ShowHelp:
+					return script && this._tips is not null && this._tips.CanShowHelp();
 				default:
 					return false;
 			}
@@ -276,6 +281,9 @@ namespace FalloutScriptStudio.Editor
 						this._context.RunInBackground(() => snippets.InsertChosenAsync(surround));
 					}
 
+					break;
+				case EditorCommand.ShowHelp:
+					this._tips?.ShowHelp();
 					break;
 				default:
 					break;

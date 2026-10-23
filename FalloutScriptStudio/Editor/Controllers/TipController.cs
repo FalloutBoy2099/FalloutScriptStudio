@@ -32,6 +32,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		private readonly EditorContext _context;
 		private readonly DiagnosticsController _diagnostics;
 		private readonly DispatcherTimer _codeTipTimer = new();
+		private readonly HelpPopupController _help;
 		private ToolTip? _hoverTip;
 		private Popup? _codeTip;
 		private Boolean _codeTipShown;
@@ -42,11 +43,15 @@ namespace FalloutScriptStudio.Editor.Controllers
 		{
 			this._context = context;
 			this._diagnostics = diagnostics;
+			this._help = new HelpPopupController(context);
 			this._codeTipTimer.Tick += (_, _) => this.HideCodeTip();
 		}
 
 		/// <summary>Gets the popup of the code tip (for tests), or <see langword="null"/>.</summary>
 		public Popup? CodeTipPopup => this._codeTip;
+
+		/// <summary>Gets the help popup of the editor (for tests).</summary>
+		public HelpPopupController Help => this._help;
 
 		/// <summary>Gets a value indicating whether a code tip is visible.</summary>
 		public Boolean IsCodeTipVisible => this._codeTip is not null && this._codeTipShown;
@@ -84,6 +89,22 @@ namespace FalloutScriptStudio.Editor.Controllers
 			}
 
 			this.HideAll();
+			this._help.Dispose();
+		}
+
+		/// <summary>Determines whether there is help for the word at the caret.</summary>
+		/// <returns><see langword="true"/> when <see cref="ShowHelp"/> shows something.</returns>
+		public Boolean CanShowHelp()
+		{
+			return this._help.CanShow();
+		}
+
+		/// <summary>Shows the documentation of the function, macro or procedure at the caret in a popup.</summary>
+		public void ShowHelp()
+		{
+			this.HideHoverTip();
+			this.HideCodeTip();
+			this._help.Show();
 		}
 
 		/// <summary>Closes the hover tip and the code tip.</summary>
@@ -91,6 +112,7 @@ namespace FalloutScriptStudio.Editor.Controllers
 		{
 			this.HideHoverTip();
 			this.HideCodeTip();
+			this._help.Hide();
 		}
 
 		/// <summary>Closes the hover tip.</summary>
@@ -201,6 +223,11 @@ namespace FalloutScriptStudio.Editor.Controllers
 				}
 			}
 
+			if (this._help.IsOpen)
+			{
+				this._help.Hide();
+			}
+
 			this.HideHoverTip();
 		}
 
@@ -226,13 +253,16 @@ namespace FalloutScriptStudio.Editor.Controllers
 			}
 
 			String word = document.GetText(start, length);
-			return TipResolver.ResolveWord(
+			TipInfo? tip = TipResolver.ResolveWord(
 				word,
 				line.LineNumber,
 				this._context.DocumentModel.FilePath,
 				this._context.ProgramInfo,
 				this._context.Services.GetOpcodeCatalog(),
 				id => this._context.Services.Workspace.GetMessageText(this._context.DocumentModel, id));
+			return tip is not null && tip.Kind != TipKind.Message && this._help.Resolve(start) is { } topic && (topic.IsDocumented || topic.HasDocumentation)
+				? tip with { Hint = Loc.Format("Str.Editor.Tip.HelpHint", HelpPopupController.GestureText) }
+				: tip;
 		}
 
 		private static String? GetDirectory(String? filePath)

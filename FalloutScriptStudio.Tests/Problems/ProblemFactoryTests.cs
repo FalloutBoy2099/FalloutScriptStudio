@@ -67,6 +67,29 @@ namespace FalloutScriptStudio.Tests.Problems
 				yield return ProblemFactory.ReplaceFileSkipped(@"C:\mods\a\scripts\a.ssl", reason, 3, "access denied");
 			}
 
+			foreach (FalloutScriptStudio.Core.Globals.GlobalFindingKind kind in Enum.GetValues<FalloutScriptStudio.Core.Globals.GlobalFindingKind>())
+			{
+				yield return ProblemFactory.GlobalVariable(new FalloutScriptStudio.Core.Globals.GlobalFinding(kind, FalloutScriptStudio.Core.Globals.GlobalFindingSeverity.Warning, "GVAR_A", "GVAR_B", 3, @"C:\s\a.ssl", 5, "start"));
+			}
+
+			foreach (FalloutScriptStudio.Core.Dialogue.DialogueQualityCode code in Enum.GetValues<FalloutScriptStudio.Core.Dialogue.DialogueQualityCode>())
+			{
+				yield return ProblemFactory.DialogueQuality(
+					new FalloutScriptStudio.Core.Dialogue.DialogueQualityFinding(code, FalloutScriptStudio.Core.Dialogue.DialogueQualitySeverity.Warning, "Node001", 12, "Node002", 3, new[] { 101, 102 }, new[] { "Node001", "Node002" }),
+					@"C:\s\a.ssl",
+					owner);
+			}
+
+			foreach (FalloutScriptStudio.Core.Messages.MessageComparisonStatus status in Enum.GetValues<FalloutScriptStudio.Core.Messages.MessageComparisonStatus>())
+			{
+				FalloutScriptStudio.Core.Messages.MessageComparisonRow row = new(5, FalloutScriptStudio.Core.Messages.MessageEntry.CreateMessage(5, "Hello"), FalloutScriptStudio.Core.Messages.MessageEntry.CreateMessage(5, "Hello"), 3, 4, status, status == FalloutScriptStudio.Core.Messages.MessageComparisonStatus.Ok ? FalloutScriptStudio.Core.Messages.MessageComparisonIssues.TrailingSpaces : FalloutScriptStudio.Core.Messages.MessageComparisonIssues.None);
+				foreach (Problem problem in ProblemFactory.MessageComparison(row, @"C:\t\english\a.msg", @"C:\t\french\a.msg", FalloutScriptStudio.ViewModels.ToolWindows.ComparisonTexts.IssueNames))
+				{
+					yield return problem;
+				}
+			}
+
+
 			yield return ProblemFactory.ReplaceFileSkipped("<unsaved>", FalloutScriptStudio.Services.ScriptTools.Replace.ReplaceFailureReason.Closed, 2, String.Empty);
 		}
 

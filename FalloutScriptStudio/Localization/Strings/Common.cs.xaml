@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">Minimalizovat</sys:String>
     <sys:String x:Key="Str.Common.Maximize">Maximalizovat</sys:String>
     <sys:String x:Key="Str.Common.Restore">Obnovit</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">Posunout nahoru</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">Posunout dolů</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">Posunout doleva</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">Posunout doprava</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">Stránka nahoru</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">Stránka dolů</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">Stránka doleva</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">Stránka doprava</sys:String>
 </ResourceDictionary>

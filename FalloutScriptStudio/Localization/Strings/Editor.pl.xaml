@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">Węzeł dialogu, który tylko wyświetla komunikat.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Dwie zmienne z wartościami początkowymi.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">Definicja makra (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Pomoc dla funkcji</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0}: pomoc</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Numery wierszy</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Znaczniki zwijania kodu</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Separator</sys:String>
 </ResourceDictionary>

@@ -10,6 +10,7 @@ namespace FalloutScriptStudio.Editor
 	using Documents;
 	using Highlighting;
 	using Services;
+	using Workspace.Help;
 
 	/// <summary>
 	/// The application services every editor view needs, gathered in one object (settings, theme, workspace, folding
@@ -47,6 +48,7 @@ namespace FalloutScriptStudio.Editor
 		/// <param name="popups">Opens the completion list, the tooltips and the code tips; the real windows are used when none is given.</param>
 		/// <param name="snippets">The snippets of the editor; the ones of the settings folder and the project when none is given.</param>
 		/// <param name="input">The keyboard modifiers and mouse button state the handlers read; the real ones when none is given.</param>
+		/// <param name="help">The documentation of the functions, macros and procedures; the editor offers no help when none is given.</param>
 		public ScriptEditorServices(
 			ISettingsService settings,
 			IThemeService theme,
@@ -57,7 +59,8 @@ namespace FalloutScriptStudio.Editor
 			ILogger<HighlightingProvider>? logger = null,
 			IEditorPopupPresenter? popups = null,
 			ISnippetService? snippets = null,
-			IInputState? input = null)
+			IInputState? input = null,
+			IFunctionHelpService? help = null)
 		{
 			this.Settings = settings;
 			this.Snippets = snippets ?? new SnippetService(settings);
@@ -68,6 +71,7 @@ namespace FalloutScriptStudio.Editor
 			this.ViewOptions = viewOptions ?? new EditorViewOptions();
 			this.Popups = popups ?? new EditorPopupPresenter();
 			this.Input = input ?? new SystemInputState();
+			this.Help = help;
 			this.Highlighting = new HighlightingProvider(Path.Combine(settings.Paths.ResourcesDirectory, SyntaxDirectoryName), logger);
 			this.Options = this.CreateOptions();
 			this._zoomPercent = ReadZoom(settings);
@@ -106,6 +110,9 @@ namespace FalloutScriptStudio.Editor
 
 		/// <summary>Gets the presenter that opens the completion list, the tooltips and the code tips.</summary>
 		public IEditorPopupPresenter Popups { get; }
+
+		/// <summary>Gets the documentation of the functions, macros and procedures (Ctrl+F1, the hint of the tooltips), or <see langword="null"/> when the editor has none.</summary>
+		public IFunctionHelpService? Help { get; }
 
 		/// <summary>Gets the keyboard modifiers and the mouse button state the handlers of the editor read.</summary>
 		public IInputState Input { get; }

@@ -41,6 +41,14 @@ namespace FalloutScriptStudio.Core.IO
 		/// <summary>Gets UTF-8 without a byte order mark.</summary>
 		public static Encoding Utf8 { get; } = new UTF8Encoding(false);
 
+		/// <summary>Gets the encoding of a code page (the legacy code pages are registered first).</summary>
+		/// <param name="codePage">The code page number (1252, 1251, 866...).</param>
+		/// <returns>The encoding; Windows-1252 when the code page is not available on this system.</returns>
+		public static Encoding FromCodePage(Int32 codePage)
+		{
+			return GetEncoding(codePage);
+		}
+
 		/// <summary>
 		/// Gets the encoding of a system code page reported by <paramref name="getCodePage"/>. A Unicode code page (a system with the
 		/// UTF-8 option for legacy programs), an unknown or unsupported one, or a failing probe gives Windows-1252.

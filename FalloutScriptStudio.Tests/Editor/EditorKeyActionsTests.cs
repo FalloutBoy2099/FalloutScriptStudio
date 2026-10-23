@@ -180,6 +180,7 @@ namespace FalloutScriptStudio.Tests.Editor
 		[InlineData(EditorCommand.ShowCompletion, Key.Space, ModifierKeys.Control)]
 		[InlineData(EditorCommand.ShowCompletion, Key.Space, ModifierKeys.Alt)]
 		[InlineData(EditorCommand.SplitDocument, Key.S, ModifierKeys.Alt)]
+		[InlineData(EditorCommand.ShowHelp, Key.F1, ModifierKeys.Control)]
 		public void Commands_HaveTheLegacyGestures(EditorCommand command, Key key, ModifierKeys modifiers)
 		{
 			UiThread.Run(() =>

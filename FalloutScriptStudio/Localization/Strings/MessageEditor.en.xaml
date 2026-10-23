@@ -151,4 +151,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Invalid line number of the message.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Duplicate message line number: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.A11y.Grid">Messages</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Menu.CompareFilesTip">Compare this message file with the message files of the other languages.</sys:String>
 </ResourceDictionary>

@@ -151,4 +151,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Número de linha da mensagem inválido.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Número de linha de mensagem duplicado: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.A11y.Grid">Mensagens</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Menu.CompareFilesTip">Compara este arquivo de mensagens com os arquivos de mensagens dos outros idiomas.</sys:String>
 </ResourceDictionary>

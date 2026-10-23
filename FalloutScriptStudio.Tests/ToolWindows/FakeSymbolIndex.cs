@@ -6,6 +6,7 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 	using System.Threading;
 	using System.Threading.Tasks;
 	using FalloutScriptStudio.Core.Analysis;
+	using FalloutScriptStudio.Core.Globals;
 	using FalloutScriptStudio.Core.Indexing;
 	using FalloutScriptStudio.Core.Parsing;
 
@@ -25,6 +26,16 @@ namespace FalloutScriptStudio.Tests.ToolWindows
 		public Int32 SymbolCount => this.Symbols.Count;
 
 		public Boolean IsTruncated => false;
+
+		/// <summary>Gets or sets the global variables the index reports.</summary>
+		public GlobalVariableIndex GlobalVariables { get; set; } = GlobalVariableIndex.Empty;
+
+		public Boolean AreGlobalsTruncated => this.GlobalVariables.IsTruncated;
+
+		public GlobalVariableIndex GetGlobalVariables()
+		{
+			return this.GlobalVariables;
+		}
 
 		public IReadOnlyCollection<String> Files => this.Symbols.Select(s => s.File).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 

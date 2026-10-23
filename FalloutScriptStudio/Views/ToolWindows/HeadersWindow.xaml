@@ -67,8 +67,7 @@
                     <StackPanel Margin="4,3" ToolTip="{Binding FullPath}">
                         <TextBlock FontWeight="SemiBold" Text="{Binding DisplayName}" />
                         <TextBlock
-                            FontSize="11"
-                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Style="{DynamicResource ShellListSecondaryTextStyle}"
                             Text="{Binding RelativePath}"
                             TextTrimming="CharacterEllipsis" />
                     </StackPanel>

@@ -8,6 +8,9 @@ namespace FalloutScriptStudio.Editor.Tips
 	/// <param name="Kind">What the tooltip describes.</param>
 	public sealed record TipInfo(String Title, String Body, TipKind Kind)
 	{
+		/// <summary>Gets a small dimmed line under the description (for example that Ctrl+F1 shows the help); empty when there is none.</summary>
+		public String Hint { get; init; } = String.Empty;
+
 		/// <summary>Splits a description at its first line break.</summary>
 		/// <param name="description">The description text.</param>
 		/// <param name="kind">What the tooltip describes.</param>

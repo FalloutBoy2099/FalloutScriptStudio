@@ -1,0 +1,78 @@
+<UserControl
+    x:Class="FalloutScriptStudio.Views.Panels.HelpPanelView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:help="clr-namespace:FalloutScriptStudio.Views.Help"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TextBox
+            Grid.Row="0"
+            Margin="6,4"
+            AutomationProperties.Name="{DynamicResource Str.Panels.HelpFilterPlaceholder}"
+            ClearButtonEnabled="True"
+            PlaceholderText="{DynamicResource Str.Panels.HelpFilterPlaceholder}"
+            Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+
+        <ListBox
+            Grid.Row="1"
+            MaxHeight="170"
+            Margin="6,0,6,4"
+            AutomationProperties.Name="{DynamicResource Str.Panels.HelpResultsName}"
+            BorderThickness="0"
+            FontSize="12"
+            ItemsSource="{Binding Results}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            SelectedItem="{Binding SelectedResult, Mode=TwoWay}"
+            Visibility="{Binding ShowResults, Converter={StaticResource BoolToVisibility}}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock FontWeight="SemiBold" Text="{Binding Name}" />
+                        <TextBlock
+                            Style="{DynamicResource ShellListSecondaryTextStyle}"
+                            Text="{Binding Summary}"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ScrollViewer
+            Grid.Row="2"
+            Padding="10,4,10,10"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding HasCurrent, Converter={StaticResource BoolToVisibility}}">
+            <help:HelpTopicView DataContext="{Binding Current}" />
+        </ScrollViewer>
+
+        <TextBlock
+            Grid.Row="2"
+            Margin="16"
+            VerticalAlignment="Top"
+            IsHitTestVisible="False"
+            Style="{StaticResource ShellCaptionTextStyle}"
+            Text="{DynamicResource Str.Panels.EmptyHelp}"
+            TextAlignment="Center"
+            TextWrapping="Wrap"
+            Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}" />
+        <TextBlock
+            Grid.Row="2"
+            Margin="16"
+            VerticalAlignment="Top"
+            IsHitTestVisible="False"
+            Style="{StaticResource ShellCaptionTextStyle}"
+            Text="{DynamicResource Str.Panels.HelpNoResults}"
+            TextAlignment="Center"
+            TextWrapping="Wrap"
+            Visibility="{Binding HasNoResults, Converter={StaticResource BoolToVisibility}}" />
+    </Grid>
+
+</UserControl>

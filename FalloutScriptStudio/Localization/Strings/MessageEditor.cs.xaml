@@ -151,4 +151,5 @@
     <sys:String x:Key="Str.MessageEditor.Issue.InvalidNumber">Neplatné číslo řádku zprávy.</sys:String>
     <sys:String x:Key="Str.MessageEditor.Issue.DuplicateNumber">Duplicitní číslo řádku zprávy: {0}</sys:String>
     <sys:String x:Key="Str.MessageEditor.A11y.Grid">Zprávy</sys:String>
+    <sys:String x:Key="Str.MessageEditor.Menu.CompareFilesTip">Porovná tento soubor zpráv se soubory zpráv v ostatních jazycích.</sys:String>
 </ResourceDictionary>

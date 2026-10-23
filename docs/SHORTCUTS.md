@@ -32,6 +32,7 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Ctrl+Shift+F8` | Previous problem |
 | `Ctrl+Shift+H` | Replace in Files... |
 | `Ctrl+Shift+M` | Check Messages |
+| `Ctrl+Shift+Q` | Check Dialogue |
 | `Ctrl+Shift+S` | Save All |
 | `Ctrl+Shift+Tab` | Previous document |
 | `Ctrl+T` | Go to Symbol... |
@@ -64,6 +65,7 @@ To regenerate the tables run the tests with the environment variable `FSS_WRITE_
 | `Ctrl+.` | Quick Fix |
 | `Ctrl+/` | Toggle comment |
 | `Ctrl+B` | Go to matching bracket |
+| `Ctrl+F1` | Function Help |
 | `Ctrl+F12` | Go to declaration |
 | `Ctrl+J` | Insert Snippet... |
 | `Ctrl+Shift+A` | Upper case |
@@ -195,6 +197,16 @@ These keys are not bindings of a window: the controls themselves handle them. Th
 | Alt+Up, Alt+Down | Procedures: moves the procedure up or down |
 | Ctrl+C | Solution: copies the full path of the file |
 
+### Globals and Help panels
+
+| Key | Action |
+| --- | --- |
+| Up, Down, Left, Right, Home, End | Globals: moves in the tree, expands and collapses |
+| Enter | Globals: goes to the use (a variable: to its first use); a group is expanded or collapsed |
+| Menu key, Shift+F10 | Globals: context menu (Go to, Find all uses, Copy name, Ignore findings for this variable, Check global variables, Export to CSV) |
+| Type, Up, Down | Help: typing in the filter box lists the functions; Down moves into the list, which shows the function that is selected |
+| Esc, any key | Function Help popup (Ctrl+F1): closes it; the popup also closes when you click outside it |
+
 ### Errors, Problems and search results (also Find in Files)
 
 | Key | Action |
@@ -281,6 +293,25 @@ F1 opens it (Ctrl+Shift+P is taken by Preview Dialogue From This Node in the edi
 | Enter | Follows the selected option |
 | Ctrl+Enter | Shows the code of the selected row in the editor |
 | F2 | Edits the message of the selected row |
+
+### Check Dialogue (Dialogue menu) and the issues of the flowchart
+
+| Key | Action |
+| --- | --- |
+| Ctrl+Shift+Q | Checks the dialogue of the active script and lists the weak points in the Errors tab (click, double click or Enter on a row goes to the line) |
+| Enter, double click | In the list of issues of the flowchart (button "Issues" of the toolbar): selects the node of the issue on the canvas |
+| Up, Down | In that list: moves to the previous or to the next issue |
+| Esc | In that list: closes it and gives the focus back to the button |
+
+### Compare Message Files (window)
+
+| Key | Action |
+| --- | --- |
+| Up, Down, Page Up, Page Down, Home, End | Moves in the table of lines (it is virtualized: 30 000 lines are fine) |
+| Enter, double click | Opens the selected line in the Message Editor, on its message (on the message of the original when the translation lacks it) |
+| Menu key, Shift+F10 | Context menu of the line: open in the Message Editor, open the original |
+| Tab, Shift+Tab | Moves between the original, the translations, the filters, the table and the buttons |
+| Esc | Closes the window |
 
 ### Flowchart canvas
 

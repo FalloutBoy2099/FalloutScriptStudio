@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Файл отсутствует</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Файл сообщений для диалога не найден.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Блок-схема диалога</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Замечания ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Выводит слабые места диалога, найденные проверкой диалога.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">В диалоге нет слабых мест.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">Слабых мест в диалоге: {0}.</sys:String>
 </ResourceDictionary>

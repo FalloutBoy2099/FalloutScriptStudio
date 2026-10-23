@@ -177,6 +177,10 @@
             Command="{Binding CheckMessagesCommand}"
             Modifiers="Ctrl+Shift" />
         <KeyBinding
+            Key="Q"
+            Command="{Binding CheckDialogueCommand}"
+            Modifiers="Ctrl+Shift" />
+        <KeyBinding
             Key="OemPlus"
             Command="{Binding ZoomInCommand}"
             Modifiers="Ctrl" />
@@ -693,6 +697,13 @@
                             CommandParameter="{x:Static docs:EditorCommand.RemoveUnusedVariable}"
                             Header="{DynamicResource Str.Shell.Menu.RemoveUnusedVariable}"
                             Style="{StaticResource ParsableMenuItemStyle}" />
+                        <MenuItem Command="{Binding CheckGlobalVariablesCommand}" Header="{DynamicResource Str.Shell.Menu.CheckGlobalVariables}" />
+                        <MenuItem
+                            Command="{Binding EditCommand}"
+                            CommandParameter="{x:Static docs:EditorCommand.ShowHelp}"
+                            Header="{DynamicResource Str.Shell.Menu.FunctionHelp}"
+                            InputGestureText="Ctrl+F1"
+                            Style="{StaticResource ParsableMenuItemStyle}" />
                         <Separator />
                         <MenuItem
                             Command="{Binding CheckMessageStructureCommand}"
@@ -760,6 +771,16 @@
                             InputGestureText="Ctrl+Shift+M"
                             Style="{StaticResource ScriptMenuItemStyle}"
                             ToolTip="{DynamicResource Str.Shell.Tip.CheckMessages}" />
+                        <MenuItem
+                            Command="{Binding CheckDialogueCommand}"
+                            Header="{DynamicResource Str.Shell.Menu.CheckDialogue}"
+                            InputGestureText="Ctrl+Shift+Q"
+                            Style="{StaticResource ScriptMenuItemStyle}"
+                            ToolTip="{DynamicResource Str.Shell.Tip.CheckDialogue}" />
+                        <MenuItem
+                            Command="{Binding CompareMessageFilesCommand}"
+                            Header="{DynamicResource Str.Shell.Menu.CompareMessageFiles}"
+                            ToolTip="{DynamicResource Str.Shell.Tip.CompareMessageFiles}" />
                         <MenuItem Command="{Binding ShowFunctionRulesCommand}" Header="{DynamicResource Str.Shell.Menu.FunctionsConfig}" />
                         <Separator />
                         <MenuItem
@@ -873,6 +894,8 @@
                             InputGestureText="Alt+L"
                             IsCheckable="True"
                             IsChecked="{Binding ShowLog, Mode=TwoWay}" />
+                        <MenuItem Command="{Binding ShowGlobalVariablesCommand}" Header="{DynamicResource Str.Shell.Menu.ShowGlobalVariables}" />
+                        <MenuItem Command="{Binding ShowHelpPanelCommand}" Header="{DynamicResource Str.Shell.Menu.ShowHelpPanel}" />
                         <Separator />
                         <MenuItem Header="{DynamicResource Str.Common.Theme}">
                             <MenuItem

@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">文件缺失</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">未找到该对话的消息文件。&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">对话流程图</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">疑点（{0}）</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">列出对话检查发现的对话薄弱之处。</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">对话中没有薄弱之处。</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">对话中有 {0} 处薄弱之处。</sys:String>
 </ResourceDictionary>

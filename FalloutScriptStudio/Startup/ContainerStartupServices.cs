@@ -7,19 +7,23 @@ namespace FalloutScriptStudio.Startup
 	using Core.Dialogue;
 	using Core.Functions;
 	using Services;
+	using UiTesting;
 	using Workspace;
 
 	/// <summary>The start-up services taken from the container of the application; disposing it disposes the container and with it the singletons.</summary>
 	public sealed class ContainerStartupServices : IStartupServices
 	{
 		private readonly ServiceProvider _provider;
+		private readonly UiTestMode _uiTest;
 
 		/// <summary>Initializes a new instance of the <see cref="ContainerStartupServices"/> class.</summary>
 		/// <param name="provider">The container, built from <see cref="AppServices.ConfigureServices"/>.</param>
-		public ContainerStartupServices(ServiceProvider provider)
+		/// <param name="uiTest">The UI test mode (first run skipped, language and color mode fixed); <see langword="null"/> for a normal run.</param>
+		public ContainerStartupServices(ServiceProvider provider, UiTestMode? uiTest = null)
 		{
 			ArgumentNullException.ThrowIfNull(provider);
 			this._provider = provider;
+			this._uiTest = uiTest ?? UiTestMode.Off;
 		}
 
 		/// <inheritdoc />
@@ -28,7 +32,13 @@ namespace FalloutScriptStudio.Startup
 		/// <inheritdoc />
 		public void LoadSettings()
 		{
-			this._provider.GetRequiredService<ISettingsService>().Load();
+			ISettingsService settings = this._provider.GetRequiredService<ISettingsService>();
+			settings.Load();
+			if (!this._uiTest.OpensFirstRunSettings && !settings.Settings.IsFirstRunCompleted)
+			{
+				// Under the UI tests the first-run Settings window never opens (it would block the start of the main window).
+				settings.Update(current => current.IsFirstRunCompleted = true);
+			}
 		}
 
 		/// <inheritdoc />
@@ -58,14 +68,16 @@ namespace FalloutScriptStudio.Startup
 			ISettingsService settings = this._provider.GetRequiredService<ISettingsService>();
 			ShellLayoutStore layoutStore = this._provider.GetRequiredService<ShellLayoutStore>();
 			Boolean exists = layoutStore.Exists;
-			AppTheme theme = StartupTheme.Resolve(exists, exists ? layoutStore.Load().Theme : AppTheme.System, settings.ImportedLegacyData, settings.Settings.Editor.Theme);
+			AppTheme theme = this._uiTest.OverridesLayout
+				? this._uiTest.Theme
+				: StartupTheme.Resolve(exists, exists ? layoutStore.Load().Theme : AppTheme.System, settings.ImportedLegacyData, settings.Settings.Editor.Theme);
 			this._provider.GetRequiredService<IThemeService>().Apply(theme);
 		}
 
 		/// <inheritdoc />
 		public String? GetStoredLanguage()
 		{
-			return this._provider.GetRequiredService<ShellLayoutStore>().Load().Language;
+			return this._uiTest.OverridesLayout ? this._uiTest.Language : this._provider.GetRequiredService<ShellLayoutStore>().Load().Language;
 		}
 
 		/// <inheritdoc />

@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">Узел диалога, который только показывает сообщение.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Две переменные с начальными значениями.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">Определение макроса (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Справка по функции</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0} — справка</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Номера строк</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Маркеры сворачивания кода</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Разделитель</sys:String>
 </ResourceDictionary>

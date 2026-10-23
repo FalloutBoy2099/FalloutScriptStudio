@@ -5,6 +5,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	using System.Windows;
 	using System.Windows.Automation;
 	using System.Windows.Controls;
+	using System.Windows.Controls.Primitives;
 	using System.Windows.Input;
 	using System.Windows.Markup;
 	using FalloutScriptStudio.Controls.Diagram;
@@ -188,6 +189,31 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		}
 
 		[Fact]
+		public void TheMarginsOfACodeEditor_HaveANameForAScreenReader()
+		{
+			WindowHost.RunOnOwnThread(() =>
+			{
+				TextEditor editor = new TextEditor { ShowLineNumbers = true };
+				Window window = new Window { Content = editor, Width = 300, Height = 200 };
+				window.Resources["Str.Test.Editor"] = "Script editor";
+				window.Resources["Str.Editor.A11y.LineNumbers"] = "Line numbers";
+				window.Resources["Str.Editor.A11y.FoldingMargin"] = "Code folding markers";
+				window.Resources["Str.Editor.A11y.MarginSeparator"] = "Separator";
+
+				EditorAutomation.SetNameResource(editor, "Str.Test.Editor");
+				ShowOffScreen(window);
+
+				// Without a name the items of the list of margins are announced with the name of their type (ICSharpCode.AvalonEdit.Editing.LineNumberMargin).
+				ItemsControl margins = RuntimeInspector.Descendants(editor.TextArea).OfType<ItemsControl>().First();
+				String[] names = editor.TextArea.LeftMargins.Select(margin => AutomationProperties.GetName(margins.ItemContainerGenerator.ContainerFromItem(margin))).ToArray();
+				Assert.Contains("Line numbers", names);
+				Assert.Contains("Separator", names);
+				Assert.DoesNotContain(names, name => name.Length == 0);
+				window.Close();
+			});
+		}
+
+		[Fact]
 		public void TheButtonsOfTheTitleBarAreNamedForAScreenReader()
 		{
 			String[] names = Array.Empty<String>();
@@ -202,6 +228,25 @@ namespace FalloutScriptStudio.Tests.Accessibility
 			Assert.Contains("PART_MinimizeButton=Minimize", names);
 			Assert.Contains("PART_MaximizeButton=Maximize", names);
 			Assert.Contains("PART_CloseButton=Close", names);
+		}
+
+		[Fact]
+		public void TheArrowsAndTheTrackOfAScrollBarAreNamedForAScreenReader()
+		{
+			String[] names = Array.Empty<String>();
+			WindowHost.Run(
+				() => (Window)XamlReader.Parse(
+					"<Window " + Namespaces + " Width=\"300\" Height=\"200\"><ScrollBar a11y:ScrollBarNames.Localize=\"True\" Orientation=\"Vertical\" Maximum=\"10\" ViewportSize=\"2\" /></Window>"),
+				window =>
+				{
+					names = RuntimeInspector.Descendants(window).OfType<System.Windows.Controls.Primitives.ButtonBase>().Select(button => (button.Command == ScrollBar.PageUpCommand ? "PageUp" : button.Command == ScrollBar.PageDownCommand ? "PageDown" : button.Name) + "=" + AutomationProperties.GetName(button)).ToArray();
+				});
+
+			// Without the names the arrows are announced with the name of their icon (CaretUp24) and the track buttons have none.
+			Assert.Contains("PART_ButtonScrollUp=Scroll up", names);
+			Assert.Contains("PART_ButtonScrollDown=Scroll down", names);
+			Assert.Contains("PageUp=Page up", names);
+			Assert.Contains("PageDown=Page down", names);
 		}
 
 		[Fact]

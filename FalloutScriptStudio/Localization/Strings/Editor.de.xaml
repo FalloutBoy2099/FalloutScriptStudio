@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">Ein Dialogknoten, der nur eine Nachricht zeigt.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Zwei Variablen mit Anfangswerten.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">Eine Makro-Definition (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Funktionshilfe</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0} für Hilfe</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Zeilennummern</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Markierungen zum Einklappen des Codes</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Trennlinie</sys:String>
 </ResourceDictionary>

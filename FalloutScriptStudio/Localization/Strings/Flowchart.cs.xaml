@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Soubor chybí</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Soubor zpráv pro dialog nebyl nalezen.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Vývojový diagram dialogu</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Potíže ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Vypíše slabá místa dialogu nalezená kontrolou dialogu.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">V dialogu není žádné slabé místo.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">Slabých míst v dialogu: {0}.</sys:String>
 </ResourceDictionary>

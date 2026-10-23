@@ -107,35 +107,10 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		[RelayCommand]
 		public void Insert(FunctionNodeViewModel? node)
 		{
-			IEditorSurface? editor = this._tracker.Editor;
-			DocumentViewModel? document = this._tracker.Document;
-			if (node is not { IsFunction: true } || editor is null || document is null)
+			if (node is { IsFunction: true })
 			{
-				return;
+				_ = FunctionInserter.Insert(this._tracker.Editor, this._tracker.Document, node.Node.Code);
 			}
-
-			TextDocument text = document.TextDocument;
-			Int32 offset = editor.CaretOffset;
-			Char before = offset > 0 && offset <= text.TextLength ? text.GetCharAt(offset - 1) : '\0';
-			Char after = offset < text.TextLength ? text.GetCharAt(offset) : '\0';
-			Boolean hasSelection = editor.SelectionLength > 0;
-			FunctionInsertion insertion = FunctionInsertion.Create(node.Node.Code, editor.CaretColumn - 1, hasSelection, before, after);
-			Int32 start = hasSelection ? editor.SelectionStart : offset;
-			if (hasSelection)
-			{
-				editor.ReplaceSelection(insertion.Text);
-			}
-			else
-			{
-				editor.InsertText(insertion.Text);
-			}
-
-			if (insertion.FirstPlaceholder is { } placeholder)
-			{
-				editor.Select(start + placeholder.Offset, placeholder.Length);
-			}
-
-			editor.FocusEditor();
 		}
 
 		/// <summary>Adds a user function after the selected function or as the first function of the selected category.</summary>

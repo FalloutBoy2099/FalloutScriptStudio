@@ -20,7 +20,7 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 		private readonly TestFolder _folder;
 		private readonly TestFolder _installation;
 
-		public MessageEditorHarness(Action<FakeSettingsService>? configure = null)
+		public MessageEditorHarness(Action<FakeSettingsService>? configure = null, FalloutScriptStudio.Services.ToolWindows.IToolWindowService? toolWindows = null)
 		{
 			this._folder = new TestFolder("msgeditor");
 			this._installation = new TestFolder("msgeditor-app");
@@ -34,7 +34,8 @@ namespace FalloutScriptStudio.Tests.MessageEditor
 				this.Settings,
 				this.Dialogs,
 				this.Platform,
-				NullLogger<MessageEditorViewModel>.Instance);
+				NullLogger<MessageEditorViewModel>.Instance,
+				toolWindows);
 			this.Editor.RowFocusRequested += (_, e) => this.FocusRequests.Add(e);
 		}
 

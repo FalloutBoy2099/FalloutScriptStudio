@@ -14,6 +14,9 @@ namespace FalloutScriptStudio.Core.Indexing
 		/// <summary>The default largest number of symbols the index keeps (about 120 bytes each).</summary>
 		public const Int32 DefaultMaxSymbols = 300_000;
 
+		/// <summary>The default largest number of uses of global variables the index keeps (about 40 bytes each).</summary>
+		public const Int32 DefaultMaxGlobalUses = 200_000;
+
 		/// <summary>Gets the code page used for files that are neither Unicode nor valid UTF-8.</summary>
 		public Encoding Encoding { get; init; } = TextEncodings.Ansi;
 
@@ -22,6 +25,12 @@ namespace FalloutScriptStudio.Core.Indexing
 
 		/// <summary>Gets the number of symbols above which the remaining files are not indexed (the memory bound).</summary>
 		public Int32 MaxSymbols { get; init; } = DefaultMaxSymbols;
+
+		/// <summary>Gets a value indicating whether the reads and writes of global variables are recorded (they cost one tokenizer pass over the files that mention them).</summary>
+		public Boolean TrackGlobalVariables { get; init; } = true;
+
+		/// <summary>Gets the number of uses of global variables above which the remaining files are not scanned for them (the memory bound).</summary>
+		public Int32 MaxGlobalUses { get; init; } = DefaultMaxGlobalUses;
 
 		/// <summary>Gets the number of files read and scanned at the same time.</summary>
 		public Int32 MaxDegreeOfParallelism { get; init; } = Math.Clamp(Environment.ProcessorCount / 2, 1, 4);

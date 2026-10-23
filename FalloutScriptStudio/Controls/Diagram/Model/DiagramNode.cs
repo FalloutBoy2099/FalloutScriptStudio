@@ -21,6 +21,9 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 		private Boolean _showCodeRows = true;
 		private Boolean _showCodeButton = true;
 		private Boolean _isEditing;
+		private DiagramIssueSeverity _issueSeverity;
+		private String _issueText = String.Empty;
+		private Boolean _isDimmed;
 
 		/// <summary>
 		/// Initializes a new node.
@@ -81,6 +84,27 @@ namespace FalloutScriptStudio.Controls.Diagram.Model
 		{
 			get => this._isEditing;
 			set => this.SetProperty(ref this._isEditing, value);
+		}
+
+		/// <summary>Gets or sets how serious the problem is that the node is marked with: a coloured ring around the node and a badge in its corner.</summary>
+		public DiagramIssueSeverity IssueSeverity
+		{
+			get => this._issueSeverity;
+			set => this.SetProperty(ref this._issueSeverity, value);
+		}
+
+		/// <summary>Gets or sets the description of the problems of the node (shown as a tool tip by the window); empty when there is none.</summary>
+		public String IssueText
+		{
+			get => this._issueText;
+			set => this.SetProperty(ref this._issueText, value ?? String.Empty);
+		}
+
+		/// <summary>Gets or sets a value indicating whether the node is drawn faded (a node that nothing leads to).</summary>
+		public Boolean IsDimmed
+		{
+			get => this._isDimmed;
+			set => this.SetProperty(ref this._isDimmed, value);
 		}
 
 		/// <summary>Gets the secondary lines drawn under the title (for example the names of the nodes that link here).</summary>

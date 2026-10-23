@@ -2,6 +2,7 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 {
 	using System;
 	using System.Buffers;
+	using System.Linq;
 	using CommunityToolkit.Mvvm.ComponentModel;
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services.ScriptTools.Registration;
@@ -38,6 +39,13 @@ namespace FalloutScriptStudio.ViewModels.ScriptTools
 
 		/// <summary>Gets the underlying entry.</summary>
 		public ScriptListEntry Model { get; }
+
+		/// <summary>Gets the text a screen reader announces for the entry (the automation name of a list or grid item is the text of its object).</summary>
+		/// <returns>The text.</returns>
+		public override String ToString()
+		{
+			return String.Join(" - ", new[] { this.Script, this.GameName }.Where(text => !String.IsNullOrEmpty(text)));
+		}
 
 		/// <summary>Gets or sets the script id (1-based); it is the position in the list.</summary>
 		public Int32 Number

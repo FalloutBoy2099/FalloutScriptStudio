@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Brak pliku</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Nie znaleziono pliku komunikatów dla dialogu.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Schemat blokowy dialogu</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Uwagi ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Wypisuje słabe punkty dialogu znalezione przez sprawdzanie dialogu.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">Brak słabych punktów w dialogu.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">Słabych punktów w dialogu: {0}.</sys:String>
 </ResourceDictionary>

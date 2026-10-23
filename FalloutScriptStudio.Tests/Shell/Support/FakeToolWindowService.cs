@@ -126,6 +126,16 @@ namespace FalloutScriptStudio.Tests.Shell.Support
 			return Task.CompletedTask;
 		}
 
+		/// <summary>Gets the requests of the window "Compare Message Files".</summary>
+		public List<FalloutScriptStudio.Services.ToolWindows.CompareMessagesRequest> CompareRequests { get; } = [];
+
+		public Task ShowCompareMessagesAsync(FalloutScriptStudio.Services.ToolWindows.CompareMessagesRequest request)
+		{
+			this.Calls.Add("CompareMessages");
+			this.CompareRequests.Add(request);
+			return Task.CompletedTask;
+		}
+
 		public void ShowAbout()
 		{
 			this.Calls.Add("about");

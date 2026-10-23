@@ -3,22 +3,29 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using Globals;
 
 	/// <summary>An immutable view of the index: the indexed files, all the symbols and the lookup by name.</summary>
 	internal sealed class IndexSnapshot
 	{
 		private readonly Lazy<IndexedSymbol[]> _sorted;
+		private readonly Lazy<GlobalVariableIndex> _globals;
 
-		internal IndexSnapshot(Dictionary<String, IndexedFile> files, Boolean truncated)
+		internal IndexSnapshot(Dictionary<String, IndexedFile> files, Boolean truncated, Boolean globalsTruncated = false)
 		{
 			this.Files = files;
 			this.IsTruncated = truncated;
+			this.GlobalsTruncated = globalsTruncated;
 
 			Int32 count = 0;
+			Int32 uses = 0;
 			foreach (IndexedFile file in files.Values)
 			{
 				count += file.Symbols.Length;
+				uses += file.Globals?.Uses.Length ?? 0;
 			}
+
+			this.GlobalUseCount = uses;
 
 			IndexedSymbol[] all = new IndexedSymbol[count];
 			Dictionary<String, List<IndexedSymbol>> byName = new Dictionary<String, List<IndexedSymbol>>(Math.Max(count / 2, 4), StringComparer.OrdinalIgnoreCase);
@@ -46,6 +53,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			}
 
 			this._sorted = new Lazy<IndexedSymbol[]>(this.Sort, true);
+			this._globals = new Lazy<GlobalVariableIndex>(this.BuildGlobals, true);
 		}
 
 		internal static IndexSnapshot Empty { get; } = new IndexSnapshot(new(StringComparer.OrdinalIgnoreCase), false);
@@ -62,8 +70,29 @@ namespace FalloutScriptStudio.Core.Indexing
 		/// <summary>Gets a value indicating whether files were left out because the symbol limit was reached.</summary>
 		internal Boolean IsTruncated { get; }
 
+		/// <summary>Gets a value indicating whether files were left out of the global variable uses because the limit was reached.</summary>
+		internal Boolean GlobalsTruncated { get; }
+
+		/// <summary>Gets the number of uses of global variables kept for all the files.</summary>
+		internal Int32 GlobalUseCount { get; }
+
+		/// <summary>Gets the global variables of the files (computed on first use, dropped with the snapshot).</summary>
+		internal GlobalVariableIndex Globals => this._globals.Value;
+
 		/// <summary>Gets every symbol ordered by name (computed on first use).</summary>
 		internal IndexedSymbol[] Sorted => this._sorted.Value;
+
+		private GlobalVariableIndex BuildGlobals()
+		{
+			if (this.GlobalUseCount == 0 && !this.GlobalsTruncated)
+			{
+				return GlobalVariableIndex.Empty;
+			}
+
+			return GlobalVariableIndex.Build(
+				this.Files.Values.Where(static f => f.Globals is not null).Select(static f => new KeyValuePair<String, FileGlobalScan>(f.Path, f.Globals!)),
+				this.GlobalsTruncated);
+		}
 
 		private IndexedSymbol[] Sort()
 		{

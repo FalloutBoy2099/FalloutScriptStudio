@@ -121,6 +121,23 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <inheritdoc />
+		public async Task ShowCompareMessagesAsync(CompareMessagesRequest request)
+		{
+			ArgumentNullException.ThrowIfNull(request);
+
+			CompareMessagesViewModel viewModel = this._services.GetRequiredService<CompareMessagesViewModel>();
+			CompareMessagesWindow window = ActivatorUtilities.CreateInstance<CompareMessagesWindow>(this._services, viewModel);
+			Window? owner = FindOwner();
+			if (owner != null)
+			{
+				window.Owner = owner;
+			}
+
+			window.Show();
+			await viewModel.InitializeAsync(request).ConfigureAwait(true);
+		}
+
+		/// <inheritdoc />
 		public void ShowAbout()
 		{
 			AboutViewModel viewModel = this._services.GetRequiredService<AboutViewModel>();

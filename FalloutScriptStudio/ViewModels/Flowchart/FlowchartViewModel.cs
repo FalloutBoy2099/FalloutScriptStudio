@@ -14,6 +14,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.ScriptTools;
 	using FalloutScriptStudio.Services.ScriptTools.Flowchart;
+	using FalloutScriptStudio.Workspace;
 
 	/// <summary>
 	/// The view model of the dialogue flowchart window (legacy <c>NodeDiagram</c>): builds the nodes of a script on a
@@ -41,6 +42,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		private readonly IFlowchartDialogService _flowchartDialogs;
 		private readonly INodeCodeEditorService _nodeEditors;
 		private readonly IScriptToolService _tools;
+		private readonly IDialogueQualityAnalyzer? _quality;
 		private DocumentViewModel? _script;
 		private DiagramCanvas? _canvas;
 		private FlowchartModel _model = FlowchartModel.Empty;
@@ -65,6 +67,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		/// <param name="flowchartDialogs">Shows the small dialogs of the flowchart.</param>
 		/// <param name="nodeEditors">Opens the node code editors.</param>
 		/// <param name="tools">Opens the function rules configuration.</param>
+		/// <param name="quality">Checks the dialogue so that the nodes with a problem are marked; the nodes carry no mark when it is <see langword="null"/>.</param>
 		public FlowchartViewModel(
 			IWorkspace workspace,
 			ISettingsService settings,
@@ -75,7 +78,8 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			DialogueScriptEditor scriptEditor,
 			IFlowchartDialogService flowchartDialogs,
 			INodeCodeEditorService nodeEditors,
-			IScriptToolService tools)
+			IScriptToolService tools,
+			IDialogueQualityAnalyzer? quality = null)
 		{
 			ArgumentNullException.ThrowIfNull(workspace);
 			ArgumentNullException.ThrowIfNull(settings);
@@ -97,6 +101,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 			this._flowchartDialogs = flowchartDialogs;
 			this._nodeEditors = nodeEditors;
 			this._tools = tools;
+			this._quality = quality;
 
 			this.LoadOptions();
 			this._workspace.DocumentParsed += this.OnDocumentParsed;
@@ -360,6 +365,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 		private void OnLanguageChanged()
 		{
 			this.RefreshTitle();
+			this.RefreshQualityTexts();
 			if (this._canvas is not null)
 			{
 				foreach (DiagramNode node in this._canvas.Nodes)

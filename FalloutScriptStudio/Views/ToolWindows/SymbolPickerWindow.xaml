@@ -93,8 +93,7 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock
                                     DockPanel.Dock="Right"
-                                    FontSize="11"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Style="{DynamicResource ShellListSecondaryTextStyle}"
                                     Text="{Binding KindText}" />
                                 <TextBlock
                                     FontWeight="SemiBold"
@@ -102,8 +101,7 @@
                                     TextTrimming="CharacterEllipsis" />
                             </DockPanel>
                             <TextBlock
-                                FontSize="11"
-                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Style="{DynamicResource ShellListSecondaryTextStyle}"
                                 Text="{Binding LocationText}"
                                 TextTrimming="CharacterEllipsis" />
                         </StackPanel>

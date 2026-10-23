@@ -9,7 +9,56 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 	/// <summary>Drawing of nodes (header, rows, links grips) and notes.</summary>
 	internal sealed partial class DiagramRenderer
 	{
+		private const Double DimmedOpacity = 0.45;
+		private const Double BadgeRadius = 7.0;
+
 		private void DrawNode(DrawingContext dc, DiagramNode node, Boolean selected, DiagramHitTestResult hover, Boolean cacheContent)
+		{
+			if (node.IsDimmed)
+			{
+				dc.PushOpacity(DimmedOpacity);
+				this.DrawNodeBody(dc, node, selected, hover, cacheContent);
+				dc.Pop();
+			}
+			else
+			{
+				this.DrawNodeBody(dc, node, selected, hover, cacheContent);
+			}
+
+			if (node.IssueSeverity != DiagramIssueSeverity.None)
+			{
+				this.DrawIssueMark(dc, node);
+			}
+		}
+
+		/// <summary>Draws the ring and the badge of a node that has a problem: the shape of the badge (cross, exclamation mark, "i") tells the severity as well as its colour.</summary>
+		private void DrawIssueMark(DrawingContext dc, DiagramNode node)
+		{
+			DiagramPalette palette = this._scene.Context.Palette;
+			NodeLayout layout = this._scene.GetLayout(node);
+			Double r = DiagramMetrics.NodeCornerRadius;
+			dc.DrawRoundedRectangle(null, palette.GetIssueRingPen(node.IssueSeverity), new Rect(-1.5, -1.5, layout.Width + 3.0, layout.Height + 3.0), r + 1.5, r + 1.5);
+
+			Point center = new(3.0, 3.0);
+			dc.DrawEllipse(palette.GetIssueBrush(node.IssueSeverity), null, center, BadgeRadius, BadgeRadius);
+			switch (node.IssueSeverity)
+			{
+				case DiagramIssueSeverity.Error:
+					dc.DrawLine(palette.BadgeGlyphPen, new Point(center.X - 2.8, center.Y - 2.8), new Point(center.X + 2.8, center.Y + 2.8));
+					dc.DrawLine(palette.BadgeGlyphPen, new Point(center.X - 2.8, center.Y + 2.8), new Point(center.X + 2.8, center.Y - 2.8));
+					break;
+				case DiagramIssueSeverity.Warning:
+					dc.DrawLine(palette.BadgeGlyphPen, new Point(center.X, center.Y - 3.6), new Point(center.X, center.Y + 0.8));
+					dc.DrawEllipse(palette.BadgeGlyphBrush, null, new Point(center.X, center.Y + 3.2), 0.9, 0.9);
+					break;
+				default:
+					dc.DrawEllipse(palette.BadgeGlyphBrush, null, new Point(center.X, center.Y - 3.2), 0.9, 0.9);
+					dc.DrawLine(palette.BadgeGlyphPen, new Point(center.X, center.Y - 1.0), new Point(center.X, center.Y + 3.6));
+					break;
+			}
+		}
+
+		private void DrawNodeBody(DrawingContext dc, DiagramNode node, Boolean selected, DiagramHitTestResult hover, Boolean cacheContent)
 		{
 			DiagramRenderContext context = this._scene.Context;
 			DiagramPalette palette = context.Palette;

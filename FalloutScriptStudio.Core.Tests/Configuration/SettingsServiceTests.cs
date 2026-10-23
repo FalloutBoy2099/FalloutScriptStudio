@@ -61,6 +61,8 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.True(settings.Editor.StoreLastPosition);
 			Assert.True(settings.Editor.RestoreProjectDocuments);
 			Assert.False(settings.Editor.ShowUnusedVariables);
+			Assert.False(settings.Editor.GlobalVariableFindings);
+			Assert.Empty(settings.Editor.GlobalVariableIgnore);
 			Assert.Equal(LiveDiagnosticsLevel.ErrorsAndWarnings, settings.Editor.LiveDiagnostics);
 			Assert.False(settings.Editor.Formatting.Reindent);
 			Assert.False(settings.Editor.Formatting.FormatOnSave);
@@ -70,6 +72,7 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.Equal("english", settings.Messages.Language);
 			Assert.True(settings.Messages.HighlightComments);
 			Assert.True(settings.Messages.CheckMessagesOnSave);
+			Assert.True(settings.Messages.CheckDialogueOnSave);
 			Assert.Equal(CommentHighlightColor.LightYellow, settings.Messages.CommentColor);
 			Assert.True(settings.Flowchart.AutoSaveChart);
 			Assert.True(settings.Flowchart.WithoutExitNode);
@@ -93,10 +96,13 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			first.Settings.Editor.FontSizeAdjustment = -2;
 			first.Settings.Editor.RestoreProjectDocuments = false;
 			first.Settings.Editor.ShowUnusedVariables = true;
+			first.Settings.Editor.GlobalVariableFindings = true;
+			first.Settings.Editor.GlobalVariableIgnore = ["GVAR_QUEST_*", "27"];
 			first.Settings.Editor.LiveDiagnostics = LiveDiagnosticsLevel.ErrorsOnly;
 			first.Settings.Messages.CommentColor = CommentHighlightColor.Lavender;
 			first.Settings.Messages.Language = "french";
 			first.Settings.Messages.CheckMessagesOnSave = false;
+			first.Settings.Messages.CheckDialogueOnSave = false;
 			first.Settings.Paths.OutputDirectory = @"C:\Fallout2\data\scripts";
 			first.Settings.Paths.MessageSearchDirectories.Add(@"D:\msg1");
 			first.Settings.Paths.MessageSearchDirectories.Add(@"D:\msg2");
@@ -124,10 +130,13 @@ namespace FalloutScriptStudio.Core.Tests.Configuration
 			Assert.Equal(-2, second.Settings.Editor.FontSizeAdjustment);
 			Assert.False(second.Settings.Editor.RestoreProjectDocuments);
 			Assert.True(second.Settings.Editor.ShowUnusedVariables);
+			Assert.True(second.Settings.Editor.GlobalVariableFindings);
+			Assert.Equal(new[] { "GVAR_QUEST_*", "27" }, second.Settings.Editor.GlobalVariableIgnore.ToArray());
 			Assert.Equal(LiveDiagnosticsLevel.ErrorsOnly, second.Settings.Editor.LiveDiagnostics);
 			Assert.Equal(CommentHighlightColor.Lavender, second.Settings.Messages.CommentColor);
 			Assert.Equal("french", second.Settings.Messages.Language);
 			Assert.False(second.Settings.Messages.CheckMessagesOnSave);
+			Assert.False(second.Settings.Messages.CheckDialogueOnSave);
 			Assert.Equal(@"C:\Fallout2\data\scripts", second.Settings.Paths.OutputDirectory);
 			Assert.Equal(new[] { @"D:\msg1", @"D:\msg2" }, second.Settings.Paths.MessageSearchDirectories);
 			Assert.True(second.Settings.IsFirstRunCompleted);

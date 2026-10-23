@@ -229,6 +229,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ui:Button
+                                x:Name="EditLineButton"
                                 Padding="6,2"
                                 HorizontalAlignment="Center"
                                 Appearance="Transparent"
@@ -238,6 +239,12 @@
                                 Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
                                 IsEnabled="{Binding CanEditMessage}"
                                 ToolTip="{DynamicResource Str.Flowchart.Tip.OpenMessage}" />
+                            <DataTemplate.Triggers>
+                                <!--  A row without a message number (a call, an exit) has no line to open: no empty button  -->
+                                <DataTrigger Binding="{Binding LineText}" Value="">
+                                    <Setter TargetName="EditLineButton" Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

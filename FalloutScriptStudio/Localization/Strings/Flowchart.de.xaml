@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Datei fehlt</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Die Nachrichtendatei für den Dialog wurde nicht gefunden.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Dialog-Flussdiagramm</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Auffälligkeiten ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Listet die bei der Dialogprüfung gefundenen Schwachstellen des Dialogs auf.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">Keine Schwachstelle im Dialog.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">{0} Schwachstelle(n) im Dialog.</sys:String>
 </ResourceDictionary>

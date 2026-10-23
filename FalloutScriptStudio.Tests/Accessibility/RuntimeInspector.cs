@@ -3,6 +3,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Text.RegularExpressions;
 	using System.Windows;
 	using System.Windows.Automation.Peers;
 	using System.Windows.Controls;
@@ -16,6 +17,8 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	/// </summary>
 	internal static class RuntimeInspector
 	{
+		private static readonly Regex ObjectName = new(@"^\s*\w+\s*\{.*=.*\}\s*$|^(?:FalloutScriptStudio|System|ICSharpCode|Wpf)\.[\w.+`]+$", RegexOptions.Compiled);
+
 		/// <summary>Gets every visible element of the visual tree, depth first.</summary>
 		public static IEnumerable<DependencyObject> Descendants(DependencyObject root)
 		{
@@ -54,6 +57,29 @@ namespace FalloutScriptStudio.Tests.Accessibility
 				if (name.Trim().Length == 0)
 				{
 					findings.Add($"{window.GetType().Name}: {Describe(element)} has no accessible name");
+				}
+			}
+
+			return findings;
+		}
+
+		/// <summary>
+		/// Finds the items of lists and trees whose name is the text of an object (<c>Item { Page = Editor, Title = ... }</c> for a record,
+		/// <c>Namespace.TypeName</c> for a class): what a screen reader reads when the data item has no name of its own.
+		/// </summary>
+		public static IReadOnlyList<String> FindObjectNames(Window window)
+		{
+			List<String> findings = [];
+			foreach (ItemsControl list in Descendants(window).OfType<ItemsControl>())
+			{
+				AutomationPeer? peer = UIElementAutomationPeer.CreatePeerForElement(list);
+				foreach (AutomationPeer item in peer?.GetChildren() ?? [])
+				{
+					String name = item.GetName();
+					if (ObjectName.IsMatch(name))
+					{
+						findings.Add($"{window.GetType().Name}: {Describe(list)} has an item named '{name}'");
+					}
 				}
 			}
 

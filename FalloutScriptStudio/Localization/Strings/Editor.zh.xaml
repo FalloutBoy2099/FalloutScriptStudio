@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">仅显示一条消息的对话节点。</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">两个带初始值的变量。</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">宏定义（#define）。</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">函数帮助</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">按 {0} 查看帮助</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">行号</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">代码折叠标记</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">分隔线</sys:String>
 </ResourceDictionary>

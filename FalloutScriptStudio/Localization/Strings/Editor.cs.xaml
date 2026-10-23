@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">Uzel dialogu, který jen zobrazí zprávu.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Dvě proměnné s počátečními hodnotami.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">Definice makra (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Nápověda k funkci</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0} zobrazí nápovědu</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Čísla řádků</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Značky sbalení kódu</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Oddělovač</sys:String>
 </ResourceDictionary>

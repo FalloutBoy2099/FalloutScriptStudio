@@ -1,7 +1,7 @@
 # Glossary of the user interface texts
 
 The application is translated into 11 languages. The same domain term must be translated **the same way in every window** of a language: this document lists the
-canonical translation of the 60 terms that matter. **Every new or changed string must use these terms** (see [CONVENTIONS.md](CONVENTIONS.md) and the guide
+canonical translation of the 61 terms that matter. **Every new or changed string must use these terms** (see [CONVENTIONS.md](CONVENTIONS.md) and the guide
 "A localized string" in [HOW_TO.md](HOW_TO.md)).
 
 This file is **generated** from [`FalloutScriptStudio/Localization/Glossary.json`](../FalloutScriptStudio/Localization/Glossary.json) by `GlossaryTests`; do not edit it by hand.
@@ -38,6 +38,7 @@ the other cases and the plural are accepted by the test and must be used with th
 | **Procedure** | procedura | Prozedur | procedimiento | procédure | procedura | procedura | procedimento | процедура | procedur | 过程 |
 | **Function** | funkce | Funktion | función | fonction | funzione | funkcja | função | функция | funktion | 函数 |
 | **Variable** | proměnná | Variable | variable | variable | variabile | zmienna | variável | переменная | variabel | 变量 |
+| **Global variable** | globální proměnná | globale Variable | variable global | variable globale | variabile globale | zmienna globalna | variável global | глобальная переменная | global variabel | 全局变量 |
 | **Macro** | makro | Makro | macro | macro | macro | makro | macro | макрос | makro | 宏 |
 | **Definition (define)** | definice | Definition | definición | définition | definizione | definicja | definição | определение | definition | 定义 |
 | **Declaration** | deklarace | Deklaration | declaración | déclaration | dichiarazione | deklaracja | declaração | объявление | deklaration | 声明 |
@@ -60,6 +61,7 @@ Usage notes:
 * **Procedure**: An SSL procedure (the unit of code; a dialogue node is a procedure). Never "function" (that is a built-in/engine function) and never "subroutine". English wordings that trigger the check: `procedure`, `procedures`. Do not use: es `subrutina`; zh `程序`, `存储过程`.
 * **Function**: An engine/sfall function or a user code snippet of the function tree. Not the same as a procedure. English wordings that trigger the check: `function`, `functions`. Do not use: zh `功能`.
 * **Variable**: A script, local, argument or global variable. English wordings that trigger the check: `variable`, `variables`.
+* **Global variable**: A variable shared between scripts: an sfall global, a game variable (GVAR_*), a map variable (MVAR_*) or a local variable of a script (LVAR_*), as listed by the Globals tab. Not a variable declared at the top of one script (that is a script variable). English wordings that trigger the check: `global variable`, `global variables`.
 * **Macro**: A #define macro of the preprocessor. English wordings that trigger the check: `macro`, `macros`.
 * **Definition (define)**: A #define (preprocessor definition) or "where something is defined" (Go to definition). Not "declaration". English wordings that trigger the check: `definition`, `definitions`, `define`, `defines`, `defined`.
 * **Declaration**: Where a procedure or variable is declared (Go to declaration). English wordings that trigger the check: `declaration`, `declarations`, `declared`, `declare`.

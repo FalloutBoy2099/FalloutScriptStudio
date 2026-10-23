@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:a11y="clr-namespace:FalloutScriptStudio.Views.Accessibility"
     xmlns:conv="clr-namespace:FalloutScriptStudio.Resources.Converters"
+    xmlns:panels="clr-namespace:FalloutScriptStudio.Views.Panels"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
 
     <!--  Converters  -->
@@ -13,6 +14,7 @@
     <conv:DocumentKindToSymbolConverter x:Key="DocumentKindToSymbol" />
     <conv:ErrorTypeToSymbolConverter x:Key="ErrorTypeToSymbol" />
     <conv:ProjectNodeToSymbolConverter x:Key="ProjectNodeToSymbol" />
+    <conv:PositiveNumberToVisibilityConverter x:Key="PositiveToVisibility" />
 
     <!--  Spacing and shape tokens  -->
     <CornerRadius x:Key="ShellCornerRadius">6</CornerRadius>
@@ -23,6 +25,11 @@
     <!--  Every title bar names its minimize, maximize and close buttons for a screen reader  -->
     <Style BasedOn="{StaticResource {x:Type ui:TitleBar}}" TargetType="{x:Type ui:TitleBar}">
         <Setter Property="a11y:TitleBarNames.Localize" Value="True" />
+    </Style>
+
+    <!--  Every scroll bar names its arrows and the parts of its track for a screen reader  -->
+    <Style BasedOn="{StaticResource {x:Type ScrollBar}}" TargetType="{x:Type ScrollBar}">
+        <Setter Property="a11y:ScrollBarNames.Localize" Value="True" />
     </Style>
 
     <!--  Compact icon button used by the toolbar and the panel headers  -->
@@ -147,6 +154,102 @@
         BasedOn="{StaticResource {x:Type ToggleButton}}"
         TargetType="{x:Type ToggleButton}">
         <Setter Property="AutomationProperties.Name" Value="{Binding ToolTip, RelativeSource={RelativeSource Self}}" />
+    </Style>
+
+    <!--  Arrow of a tab strip that scrolls: a flat icon button that is only there when the headers do not fit  -->
+    <Style x:Key="ShellTabScrollButtonStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Width" Value="22" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Tab control whose headers stay on one row: when they do not fit (a narrow panel, a long translation) two arrows scroll them, and the selected tab is brought into view  -->
+    <Style
+        x:Key="ShellScrollingTabControlStyle"
+        BasedOn="{StaticResource {x:Type TabControl}}"
+        TargetType="{x:Type TabControl}">
+        <Setter Property="panels:ScrollingTabs.BringSelectedIntoView" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <RepeatButton
+                                Grid.Column="0"
+                                AutomationProperties.Name="{DynamicResource Str.Panels.TabScrollLeft}"
+                                Command="{x:Static ScrollBar.LineLeftCommand}"
+                                CommandTarget="{Binding ElementName=HeaderScroller}"
+                                Style="{StaticResource ShellTabScrollButtonStyle}"
+                                ToolTip="{DynamicResource Str.Panels.TabScrollLeft}"
+                                Visibility="{Binding ScrollableWidth, ElementName=HeaderScroller, Converter={StaticResource PositiveToVisibility}}">
+                                <ui:SymbolIcon FontSize="12" Symbol="CaretLeft24" />
+                            </RepeatButton>
+                            <ScrollViewer
+                                x:Name="HeaderScroller"
+                                Grid.Column="1"
+                                CanContentScroll="False"
+                                HorizontalScrollBarVisibility="Hidden"
+                                VerticalScrollBarVisibility="Disabled">
+                                <StackPanel
+                                    x:Name="HeaderPanel"
+                                    IsItemsHost="True"
+                                    KeyboardNavigation.TabIndex="1"
+                                    Orientation="Horizontal" />
+                            </ScrollViewer>
+                            <RepeatButton
+                                Grid.Column="2"
+                                AutomationProperties.Name="{DynamicResource Str.Panels.TabScrollRight}"
+                                Command="{x:Static ScrollBar.LineRightCommand}"
+                                CommandTarget="{Binding ElementName=HeaderScroller}"
+                                Style="{StaticResource ShellTabScrollButtonStyle}"
+                                ToolTip="{DynamicResource Str.Panels.TabScrollRight}"
+                                Visibility="{Binding ScrollableWidth, ElementName=HeaderScroller, Converter={StaticResource PositiveToVisibility}}">
+                                <ui:SymbolIcon FontSize="12" Symbol="CaretRight24" />
+                            </RepeatButton>
+                        </Grid>
+                        <ContentPresenter
+                            x:Name="PART_SelectedContentHost"
+                            Grid.Row="1"
+                            Margin="{TemplateBinding Padding}"
+                            ContentSource="SelectedContent"
+                            KeyboardNavigation.DirectionalNavigation="Contained"
+                            KeyboardNavigation.TabIndex="2"
+                            KeyboardNavigation.TabNavigation="Local" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="ShellToolbarSeparatorStyle" TargetType="{x:Type Rectangle}">

@@ -199,7 +199,7 @@ namespace FalloutScriptStudio.Core.Analysis
 			list.Add(signature);
 		}
 
-		private static Boolean TryParseOpcodeLine(String line, out FunctionSignature? signature)
+		internal static Boolean TryParseOpcodeLine(String line, out FunctionSignature? signature)
 		{
 			signature = null;
 			String trimmed = line.TrimEnd('\r').Trim();
@@ -281,7 +281,7 @@ namespace FalloutScriptStudio.Core.Analysis
 			return new FunctionParameter(type, words[^1], optional, false);
 		}
 
-		private static Boolean TryParseIniLine(String line, out String? label, out FunctionSignature? signature)
+		internal static Boolean TryParseIniLine(String line, out String? label, out FunctionSignature? signature)
 		{
 			label = null;
 			signature = null;

@@ -12,12 +12,14 @@ namespace FalloutScriptStudio.Tests.Flowchart
 	using FalloutScriptStudio.Tests.ScriptTools;
 	using FalloutScriptStudio.ViewModels.DialoguePreview;
 	using FalloutScriptStudio.ViewModels.Flowchart;
+	using FalloutScriptStudio.Workspace;
 
 	/// <summary>Everything a flowchart test needs: the real Core services, fakes for the application services, and a script on disk.</summary>
 	internal sealed class FlowchartHarness : IDisposable
 	{
-		public FlowchartHarness(String? scriptText = null, Boolean withoutExitNode = false)
+		public FlowchartHarness(String? scriptText = null, Boolean withoutExitNode = false, IDialogueQualityAnalyzer? quality = null)
 		{
+			this.Quality = quality;
 			this.Folder = new ScriptToolsTempDirectory();
 			this.Settings = new FakeSettingsService(this.Folder.Path);
 			this.Settings.Settings.Flowchart.WithoutExitNode = withoutExitNode;
@@ -46,6 +48,9 @@ namespace FalloutScriptStudio.Tests.Flowchart
 		}
 
 		public ScriptToolsTempDirectory Folder { get; }
+
+		/// <summary>Gets the analyzer of the dialogue check the view model uses; <see langword="null"/> for a view model without marks.</summary>
+		public IDialogueQualityAnalyzer? Quality { get; }
 
 		public FakeSettingsService Settings { get; }
 
@@ -98,7 +103,8 @@ namespace FalloutScriptStudio.Tests.Flowchart
 				this.ScriptEditor,
 				this.FlowDialogs,
 				this.Editors,
-				this.Tools);
+				this.Tools,
+				this.Quality);
 		}
 
 		/// <summary>Creates a node code editor view model on the same services.</summary>

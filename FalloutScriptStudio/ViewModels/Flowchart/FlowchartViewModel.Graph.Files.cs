@@ -178,6 +178,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				this._loaded = true;
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
+				await this.RefreshQualityAsync();
 				await this.ReportReconciliationAsync(reconciliation);
 				await this.ReportMissingMessageFilesAsync();
 				return true;

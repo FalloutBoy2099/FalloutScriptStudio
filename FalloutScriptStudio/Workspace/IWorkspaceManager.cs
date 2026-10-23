@@ -111,6 +111,17 @@ namespace FalloutScriptStudio.Workspace
 		}
 
 		/// <summary>
+		/// Checks the dialogue of a script (the nodes, their options and exits) and lists the weak points as problems (Dialogue &gt; Check Dialogue). The
+		/// default implementation does nothing.
+		/// </summary>
+		/// <param name="document">The script.</param>
+		/// <returns>Whether the script has a dialogue and how many problems were found.</returns>
+		Task<DialogueCheckResult> CheckDialogueAsync(DocumentViewModel document)
+		{
+			return Task.FromResult(default(DialogueCheckResult));
+		}
+
+		/// <summary>
 		/// Opens the "Go to symbol" list: the procedures, macros and variables of the whole project, filtered while the user types; the
 		/// chosen symbol is opened in its file. The default implementation does nothing.
 		/// </summary>

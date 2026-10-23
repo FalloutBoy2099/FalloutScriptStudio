@@ -15,6 +15,10 @@ repository root) and the tests to update or add. The rules in [CONVENTIONS.md](C
 * [8. A parser or compiler option](#8-a-parser-or-compiler-option)
 * [9. Publishing](#9-publishing)
 * [10. A rule of the semantic diagnostics](#10-a-rule-of-the-semantic-diagnostics)
+* [11. A formatting option](#11-a-formatting-option)
+* [12. A built-in snippet, a snippet variable or a part of the snippet UI](#12-a-built-in-snippet-a-snippet-variable-or-a-part-of-the-snippet-ui)
+* [13. A tab of the right browser, a global variable function or a help topic](#13-a-tab-of-the-right-browser-a-global-variable-function-or-a-help-topic)
+* [14. Run the UI smoke tests](#14-run-the-ui-smoke-tests)
 
 The guides refer to each other by these numbers.
 
@@ -256,7 +260,9 @@ shown in the Errors tab; do not report it only with a message box, the status ba
 2. **Origin.** If the producer must replace or remove its own problems when its situation changes, add a constant to
    `FalloutScriptStudio\Problems\ProblemOrigins.cs` and clear it with `IProblemService.ClearOrigin` (examples: `BuildTool` cleared when a
    build starts, `NativeParser` cleared by `ParseCoordinator` when the native parser works again). Reporting an equal problem again
-   (`Problem.Identity`) replaces the first one.
+   (`Problem.Identity`) replaces the first one. `ParseCoordinator` drops the problems of source `Parse` of a document at every parse, so a producer
+   that follows the text of a script (`LiveDiagnosticsService`, `DialogueQualityService`) publishes its findings again after a parse of the same text
+   (it keeps them with the text version) and lets them go when the text changed.
 3. **Factory.** Add a static method to `FalloutScriptStudio\Problems\ProblemFactory.cs` (message and hint keys are
    `Str.Shell.Problem.<Name>` and `Str.Shell.Problem.<Name>Hint`; the private `KeyPrefix` is the prefix). Set `Owner` for a document
    problem, `Origin` when it has one, and an `Action` when there is an obvious fix.
@@ -488,7 +494,8 @@ To change what is shipped:
 * **Update the documents:** the runtime layout in `docs\ARCHITECTURE.md` and the `Publish.ps1` paragraph of `README.md`.
 
 Verify a publish: run `.\Publish.ps1`, check the three `.exe` files and the two folders in `publish\`, then start each editor
-executable and open a script (the parser status in the status bar says "Built-in parser" only if `resources\parser.dll` was removed).
+executable and open a script (the parser status in the status bar says "Built-in parser" only if `resources\parser.dll` was removed). Guide 14 does this off-screen:
+`PublishedExecutableTests` of the UI smoke tests starts both executables of `publish\`.
 
 ## 10. A rule of the semantic diagnostics
 
@@ -548,3 +555,55 @@ text the original formatter gave**, **only white space changes**, and **formatti
   `env.Recorder.SnippetAnswer`). Keys are sent as routed events (`HwndSource` without a window) or with `MoveToNextStop`; never open a real popup.
 * **The manager and the list.** View-model tests use `FakeSnippetService` (in memory) and `FakeDialogService`; a window is only built by the accessibility tests
   (`RuntimeAccessibilityTests`) and never shown.
+
+## 13. A tab of the right browser, a global variable function or a help topic
+
+* **A tab.** The tabs of `RightBrowserView.xaml` are selected by index (`MainViewModel.RightTabIndex`, saved in the layout): add the new tab at the end
+  (`GlobalsTabIndex = 4`, `HelpTabIndex = 5` in `MainViewModel.Globals.cs`), a view model registered as a singleton in `AppServices`, an optional parameter at the end of
+  the `MainViewModel` constructor (the tests keep compiling), a property on the view model (`Globals`, `Help`) that the tab binds its `DataContext` to, a `Show...`
+  command that sets `ShowRightBrowser` and `RightTabIndex`, the View menu item and its `CommandCatalog` line (guide 1), and the tab texts `Str.Panels.Tab<Name>` /
+  `Str.Panels.TabTip<Name>`. `ShellHarness` builds the panels with fakes; `GlobalsAndHelpAccessibilityTests` checks the markup (named tree, filter box and buttons, no
+  color in the markup, no font below 11). A tree that can hold tens of thousands of rows creates the children of a node when it is expanded
+  (`GlobalVariableNodeViewModel`) and turns on `VirtualizingStackPanel.IsVirtualizing`.
+* **A function that reads or writes a global variable.** Add it to `GlobalFunctionTable` (its name as `opcodes.txt` writes it, the family, the access, the argument that
+  holds the value written); the first argument is the variable. A test checks that the name is in the description files. A function that only passes hook arguments
+  does not belong there.
+* **A finding about global variables.** A value of `GlobalFindingKind`, the rule in `GlobalVariableAnalyzer` (pure; test it in
+  `FalloutScriptStudio.Core.Tests\Globals\GlobalVariableAnalyzerTests`), the `Str.Shell.Problem.Global<Name>` message and hint in the 11 `Shell` files (guide 5; the hint
+  may use the arguments of the message), the line in `ProblemFactory.GlobalVariable` and in the `AllProblems()` of `ProblemFactoryTests`.
+* **A help topic.** The topics come from `opcodes.txt` and the functions tree (`FunctionHelpCatalog`), from the project (`ProjectHelp`). The page of the sfall
+  documentation of a category is a line of `SfallDocumentation._categoryPages`; the test `Every_page_the_catalog_chooses_is_a_page_of_the_site` lists the pages of the
+  site, so a page name is checked there. The popup and the Help tab share `HelpTopicView`; the editor tests use `EditorTestEnvironment(withHelp: true)` (an
+  `opcodes.txt` in the scratch folder, a `FakeShellService` that records the opened addresses) and `HiddenEditorPopups`, so no window is ever opened.
+
+## 14. Run the UI smoke tests
+
+The unit tests (`FalloutScriptStudio.Tests`) never show a real window, so they cannot see what only the real program shows: tab headers that wrap, a text that
+is cut, an illegible color, a window that stays empty, an exception in `sse.log`. The project `FalloutScriptStudio.UiTests` starts the real
+`FalloutScriptStudio.exe` (a private copy of the build output, `_test_files\work\ui-smoke-app-<guid>`), drives it through UI Automation, captures every window
+with `PrintWindow` and checks: the window opens with its title, the picture is not blank, no text sticks out of its control, no UI Automation name is a type name or a
+record text, no exception in the log, the program exits with code 0. It uses the **UI test mode** (`FSS_UI_TEST=1`, `docs\ARCHITECTURE.md`, "UI smoke tests and the UI
+test mode"): every window of the program sits far outside of the monitors, is never activated and has no taskbar button, so **you can keep working while it runs**.
+
+1. **Run it.** `.\scripts\Run-UiSmoke.ps1` (`-Configuration Release`, `-Filter "FullyQualifiedName~DialogueTests"` for one class, `-NoBuild`, `-Keep` to keep the data
+   folders, `-OutputDirectory`). It sets `FSS_RUN_UI_TESTS=1`, builds the program and the tests and runs `dotnet test FalloutScriptStudio.UiTests`; the whole run takes a
+   few minutes. Without `FSS_RUN_UI_TESTS=1` (a plain `dotnet test FalloutScriptStudio.sln`) every smoke test is reported as **skipped** and nothing is started.
+2. **Look at the result.** `_test_files\work\ui-smoke\report.txt` (one line per step, the captured windows, the findings), `<test>\<capture>.png` (open them: the
+   assertions catch a blank or clipped window, only your eyes catch a wrapped header or a pale text) and `<test>\<capture>.txt` (the UI Automation tree of the window).
+   The folder is git-ignored; delete it when you are done (`_test_files\work` should be empty after a run).
+3. **The published executables.** `PublishedExecutableTests` starts both `publish\*.exe` (copied to `_test_files\work`), opens a script and exits. Run
+   `.\Publish.ps1` first: the test is skipped when `publish\` is older than the sources, because an old build does not know the test mode and would show its windows.
+4. **A new scenario.** Copy a class of `FalloutScriptStudio.UiTests\Smoke` (`[Collection(UiSmokeCollection.Name)]`, `[UiSmokeFact]`): `AppSession.Start(...)` with an
+   `AppLaunch` (arguments, language, theme, a `settings.json`, `WithoutParser`), `SmokeSteps.Run("what", () => ...)` for each step (a failing step is retried once, the
+   windows left open are closed), `app.InvokeMenu("Code", "Format Project")`, `app.OpenNewWindow(...)`, `app.Shot(window, "name")`, `app.AssertNothingClipped(window)`,
+   `UiChecks.AssertReadableNames(...)`, `app.Close()` and `app.AssertCleanLog()`. The files of a scenario are created by `Fixtures` under `_test_files\work` (a copy of the
+   sample mod, a small dialogue mod with its `.msg` and `scripts.lst`). Rules: poll with `Uia.WaitUntil` / `Uia.Wait`, never sleep for a state; drive with UI Automation
+   patterns (`Invoke`, `Select`, `ExpandCollapse`, `Value`), never with `SendInput`, `SetForegroundWindow` or the mouse; type into the editor with `app.TypeInEditor` /
+   `app.PressInEditor` (the program has no keyboard focus); name menu items in English (`LocalizedStrings` translates them for another language).
+5. **A defect found on screen.** Fix it, then add a test to the normal invisible suites where it is possible (a markup test on the XAML, `RuntimeAccessibilityTests`,
+   `AccessibilityBehaviorTests`, a view model test; windows are shown only through `Support\OffscreenWindow`, see `NoVisibleUiGuardTests`). The smoke suite is the net, not the
+   regression test.
+6. **What cannot be driven, on purpose.** The native file and folder dialogs (not WPF windows: they cannot be kept off-screen, so the tests never open them), the code
+   completion list (it stalls the UI for about 10 seconds when its window is off-screen: the scenarios that type turn `editor.autocomplete` off), tool tips and hover (layered
+   popups; a captured popup has a black background), key chords with modifiers and the mouse (the keyboard is simulated for text, Return, Tab and the arrows only).
+   The Find window fills its text from the clipboard of the developer.

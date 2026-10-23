@@ -31,6 +31,13 @@
                         Text="{Binding Body}"
                         TextWrapping="Wrap"
                         Visibility="{Binding HasBody, Converter={StaticResource BoolToVisibility}}" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        FontSize="11"
+                        Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                        Text="{Binding Hint}"
+                        TextWrapping="Wrap"
+                        Visibility="{Binding HasHint, Converter={StaticResource BoolToVisibility}}" />
                 </StackPanel>
             </DataTemplate>
         </ItemsControl.ItemTemplate>

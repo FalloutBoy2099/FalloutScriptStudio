@@ -14,7 +14,8 @@
             Background="Transparent"
             BorderThickness="0"
             FontSize="12"
-            SelectedIndex="{Binding RightTabIndex, Mode=TwoWay}">
+            SelectedIndex="{Binding RightTabIndex, Mode=TwoWay}"
+            Style="{StaticResource ShellScrollingTabControlStyle}">
             <TabItem Header="{DynamicResource Str.Panels.TabProcedures}" ToolTip="{DynamicResource Str.Panels.TabTipProcedures}">
                 <panels:ProceduresPanelView DataContext="{Binding Procedures}" />
             </TabItem>
@@ -26,6 +27,12 @@
             </TabItem>
             <TabItem Header="{DynamicResource Str.Panels.TabSolution}" ToolTip="{DynamicResource Str.Panels.TabTipSolution}">
                 <panels:ProjectExplorerView DataContext="{Binding Project}" />
+            </TabItem>
+            <TabItem Header="{DynamicResource Str.Panels.TabGlobals}" ToolTip="{DynamicResource Str.Panels.TabTipGlobals}">
+                <panels:GlobalsPanelView DataContext="{Binding Globals}" />
+            </TabItem>
+            <TabItem Header="{DynamicResource Str.Panels.TabHelp}" ToolTip="{DynamicResource Str.Panels.TabTipHelp}">
+                <panels:HelpPanelView DataContext="{Binding Help}" />
             </TabItem>
         </TabControl>
     </Border>

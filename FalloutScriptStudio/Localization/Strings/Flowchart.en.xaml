@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">File missing</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">The message file for the dialogue was not found.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Dialogue flowchart</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Issues ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">List the weak points of the dialogue found by the dialogue check.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">No weak point in the dialogue.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">{0} weak point(s) in the dialogue.</sys:String>
 </ResourceDictionary>

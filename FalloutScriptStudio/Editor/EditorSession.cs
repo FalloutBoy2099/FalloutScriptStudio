@@ -43,7 +43,8 @@ namespace FalloutScriptStudio.Editor
 				this.Occurrences,
 				this.Completion,
 				toggleSplit,
-				this.Brackets);
+				this.Brackets,
+				this.Tips);
 			this.Primary = new EditorPane(this.Context, this.Folding, this.Navigation, this.Brackets, this.Tips, this.Completion, this.Input, this.Commands, true);
 			this._active = this.Primary;
 		}
@@ -172,7 +173,7 @@ namespace FalloutScriptStudio.Editor
 			TipController tips = new(context, this.Diagnostics);
 			CompletionController completion = new(context);
 			InputController input = new(context, completion, tips, this.Indentation);
-			EditorCommandHandler commands = new(context, folding, navigation, this.Occurrences, completion, this._toggleSplit, brackets);
+			EditorCommandHandler commands = new(context, folding, navigation, this.Occurrences, completion, this._toggleSplit, brackets, tips);
 			EditorPane pane = new(context, folding, navigation, brackets, tips, completion, input, commands, false);
 
 			folding.Attach(this.Folding);

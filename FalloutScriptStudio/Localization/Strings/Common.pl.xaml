@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">Minimalizuj</sys:String>
     <sys:String x:Key="Str.Common.Maximize">Maksymalizuj</sys:String>
     <sys:String x:Key="Str.Common.Restore">Przywróć</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">Przewiń w górę</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">Przewiń w dół</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">Przewiń w lewo</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">Przewiń w prawo</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">Strona w górę</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">Strona w dół</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">Strona w lewo</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">Strona w prawo</sys:String>
 </ResourceDictionary>

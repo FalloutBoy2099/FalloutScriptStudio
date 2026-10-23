@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">最小化</sys:String>
     <sys:String x:Key="Str.Common.Maximize">最大化</sys:String>
     <sys:String x:Key="Str.Common.Restore">还原</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">向上滚动</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">向下滚动</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">向左滚动</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">向右滚动</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">向上翻页</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">向下翻页</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">向左翻页</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">向右翻页</sys:String>
 </ResourceDictionary>

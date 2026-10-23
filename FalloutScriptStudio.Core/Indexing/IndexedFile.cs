@@ -1,11 +1,12 @@
 namespace FalloutScriptStudio.Core.Indexing
 {
 	using System;
+	using Globals;
 
 	/// <summary>What the index remembers about one file: its time stamp and the symbols and includes found in it (never its text).</summary>
 	internal sealed class IndexedFile
 	{
-		internal IndexedFile(String path, Int64 length, Int64 lastWriteTicks, Int64 indexedAtTicks, IndexedSymbol[] symbols, String[] includes)
+		internal IndexedFile(String path, Int64 length, Int64 lastWriteTicks, Int64 indexedAtTicks, IndexedSymbol[] symbols, String[] includes, FileGlobalScan? globals = null)
 		{
 			this.Path = path;
 			this.Length = length;
@@ -13,6 +14,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			this.IndexedAtTicks = indexedAtTicks;
 			this.Symbols = symbols;
 			this.Includes = includes;
+			this.Globals = globals;
 		}
 
 		/// <summary>Gets the full path.</summary>
@@ -32,5 +34,8 @@ namespace FalloutScriptStudio.Core.Indexing
 
 		/// <summary>Gets the paths of the <c>#include</c> directives as written.</summary>
 		internal String[] Includes { get; }
+
+		/// <summary>Gets the reads and writes of global variables and the macros that stand for a number, or <see langword="null"/> when the file has none.</summary>
+		internal FileGlobalScan? Globals { get; }
 	}
 }

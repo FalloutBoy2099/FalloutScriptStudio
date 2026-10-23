@@ -89,5 +89,8 @@ namespace FalloutScriptStudio.Documents
 
 		/// <summary>Choose a snippet that uses the selected text and surround the selection with it (Ctrl+Shift+J).</summary>
 		SurroundWith,
+
+		/// <summary>Show the documentation of the function, macro or procedure under the caret in a popup (Ctrl+F1).</summary>
+		ShowHelp,
 	}
 }

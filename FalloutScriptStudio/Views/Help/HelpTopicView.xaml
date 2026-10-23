@@ -1,0 +1,114 @@
+<UserControl
+    x:Class="FalloutScriptStudio.Views.Help.HelpTopicView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:help="clr-namespace:FalloutScriptStudio.Views.Help"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <Style x:Key="HelpCaptionStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+            <Setter Property="Margin" Value="0,8,0,2" />
+        </Style>
+        <Style x:Key="HelpBodyStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="HelpCodeStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontFamily" Value="Consolas" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <TextBlock
+            Margin="0,0,0,2"
+            FontSize="11"
+            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+            Text="{Binding KindText}" />
+        <help:HelpSignatureText
+            AutomationProperties.Name="{Binding SignatureText}"
+            FontFamily="Consolas"
+            FontSize="13"
+            Segments="{Binding Signature}"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Margin="0,4,0,0"
+            FontWeight="SemiBold"
+            Style="{StaticResource HelpBodyStyle}"
+            Text="{Binding Summary}"
+            Visibility="{Binding ShowSummary, Converter={StaticResource BoolToVisibility}}" />
+        <ItemsControl
+            Margin="0,6,0,0"
+            Focusable="False"
+            IsTabStop="False"
+            ItemsSource="{Binding Paragraphs}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        Margin="0,0,0,6"
+                        Style="{StaticResource HelpBodyStyle}"
+                        Text="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Visibility="{Binding HasArguments, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Style="{StaticResource HelpCaptionStyle}" Text="{DynamicResource Str.Panels.HelpHeaderArguments}" />
+            <ItemsControl
+                Focusable="False"
+                IsTabStop="False"
+                ItemsSource="{Binding Arguments}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Style="{StaticResource HelpCodeStyle}" Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding HasDefinition, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Style="{StaticResource HelpCaptionStyle}" Text="{DynamicResource Str.Panels.HelpHeaderDefinition}" />
+            <TextBlock Style="{StaticResource HelpCodeStyle}" Text="{Binding Definition}" />
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding HasCategories, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Style="{StaticResource HelpCaptionStyle}" Text="{DynamicResource Str.Panels.HelpHeaderCategory}" />
+            <TextBlock Style="{StaticResource HelpBodyStyle}" Text="{Binding Categories}" />
+        </StackPanel>
+
+        <TextBlock
+            Margin="0,8,0,0"
+            FontSize="11"
+            Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+            Text="{Binding SourceText}"
+            TextTrimming="CharacterEllipsis"
+            Visibility="{Binding HasSource, Converter={StaticResource BoolToVisibility}}" />
+
+        <WrapPanel Margin="0,10,0,0">
+            <ui:Button
+                Margin="0,0,6,4"
+                Command="{Binding OpenDocumentationCommand}"
+                Content="{DynamicResource Str.Panels.HelpOpenDocumentation}"
+                FontSize="12"
+                Visibility="{Binding CanOpenDocumentation, Converter={StaticResource BoolToVisibility}}" />
+            <ui:Button
+                Margin="0,0,6,4"
+                Command="{Binding InsertCallCommand}"
+                Content="{DynamicResource Str.Panels.HelpInsertCall}"
+                FontSize="12"
+                Visibility="{Binding CanInsert, Converter={StaticResource BoolToVisibility}}" />
+            <ui:Button
+                Margin="0,0,6,4"
+                Command="{Binding CopySignatureCommand}"
+                Content="{DynamicResource Str.Panels.HelpCopySignature}"
+                FontSize="12" />
+        </WrapPanel>
+    </StackPanel>
+
+</UserControl>

@@ -361,6 +361,14 @@
                         Icon="{ui:SymbolIcon Settings24}"
                         Style="{StaticResource ToolButton}"
                         ToolTip="{DynamicResource Str.Flowchart.Options}" />
+                    <Border Style="{StaticResource ToolDivider}" />
+                    <ui:Button
+                        x:Name="IssuesButton"
+                        Click="OnIssuesClick"
+                        Content="{Binding QualityButtonText}"
+                        Icon="{ui:SymbolIcon Warning24}"
+                        Style="{StaticResource ToolButton}"
+                        ToolTip="{DynamicResource Str.Flowchart.Quality.Tip}" />
                 </WrapPanel>
             </DockPanel>
         </Border>
@@ -428,6 +436,81 @@
                         x:Name="MessagePopupText"
                         FontSize="14"
                         TextWrapping="Wrap" />
+                </Border>
+            </Popup>
+
+            <Popup
+                x:Name="IssuesPopup"
+                AllowsTransparency="True"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=IssuesButton}"
+                StaysOpen="False">
+                <Border
+                    MinWidth="320"
+                    MaxWidth="560"
+                    Margin="8"
+                    Padding="12,8"
+                    Background="{DynamicResource FlyoutBackgroundThemeBrush}"
+                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                    <Border.Effect>
+                        <DropShadowEffect
+                            BlurRadius="12"
+                            Opacity="0.3"
+                            ShadowDepth="2" />
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock
+                            x:Name="IssuesCaption"
+                            Margin="0,0,0,6"
+                            a11y:LiveRegion.Text="{Binding QualitySummary}"
+                            FontWeight="SemiBold"
+                            Text="{Binding QualitySummary}"
+                            TextWrapping="Wrap" />
+                        <ListBox
+                            x:Name="IssuesList"
+                            MaxHeight="320"
+                            AutomationProperties.LabeledBy="{Binding ElementName=IssuesCaption}"
+                            ItemsSource="{Binding QualityIssues}"
+                            KeyDown="OnIssuesKeyDown"
+                            MouseDoubleClick="OnIssuesDoubleClick"
+                            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                            Visibility="{Binding HasQualityIssues, Converter={StaticResource BoolToVisibility}}">
+                            <ListBox.ItemContainerStyle>
+                                <Style BasedOn="{StaticResource {x:Type ListBoxItem}}" TargetType="ListBoxItem">
+                                    <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <DockPanel>
+                                        <ui:SymbolIcon
+                                            x:Name="SeverityIcon"
+                                            Margin="0,1,8,0"
+                                            VerticalAlignment="Top"
+                                            DockPanel.Dock="Left"
+                                            FontSize="14"
+                                            Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                            Symbol="Info24"
+                                            ToolTip="{Binding SeverityText}" />
+                                        <TextBlock Text="{Binding Text}" TextWrapping="Wrap" />
+                                    </DockPanel>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Severity}" Value="Error">
+                                            <Setter TargetName="SeverityIcon" Property="Symbol" Value="ErrorCircle24" />
+                                            <Setter TargetName="SeverityIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Severity}" Value="Warning">
+                                            <Setter TargetName="SeverityIcon" Property="Symbol" Value="Warning24" />
+                                            <Setter TargetName="SeverityIcon" Property="Foreground" Value="{DynamicResource SystemFillColorCautionBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
                 </Border>
             </Popup>
 

@@ -19,6 +19,9 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 		/// <summary>Gets the names that <see cref="IWorkspace.HasProjectSymbol"/> reports as known to the project index.</summary>
 		public HashSet<String> ProjectSymbols { get; } = new(StringComparer.OrdinalIgnoreCase);
 
+		/// <summary>Gets the texts of the open documents by full path, returned by <see cref="IWorkspace.GetOpenDocumentTexts"/>.</summary>
+		public Dictionary<String, String> OpenTexts { get; } = new(StringComparer.OrdinalIgnoreCase);
+
 		/// <summary>Gets the texts returned by <see cref="IWorkspace.GetMessageText"/>.</summary>
 		public Dictionary<Int32, String> Messages { get; } = [];
 
@@ -65,6 +68,11 @@ namespace FalloutScriptStudio.Tests.Editor.Support
 			if (name == nameof(IWorkspace.GetMessageText) && args is [_, Int32 id])
 			{
 				return this.Messages.TryGetValue(id, out String? text) ? text : null;
+			}
+
+			if (name == nameof(IWorkspace.GetOpenDocumentTexts))
+			{
+				return this.OpenTexts;
 			}
 
 			Type returnType = targetMethod.ReturnType;

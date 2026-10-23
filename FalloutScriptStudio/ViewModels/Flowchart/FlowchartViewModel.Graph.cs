@@ -261,6 +261,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				this._loaded = true;
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
+				await this.RefreshQualityAsync();
 			}
 			finally
 			{
@@ -317,6 +318,7 @@ namespace FalloutScriptStudio.ViewModels.Flowchart
 				this.ReplaceNodes(newNodeName);
 				this.RefreshEditingMarks();
 				this.NeedUpdate = false;
+				await this.RefreshQualityAsync();
 			}
 			finally
 			{

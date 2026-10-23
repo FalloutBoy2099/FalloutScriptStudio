@@ -30,7 +30,14 @@ namespace FalloutScriptStudio.ViewModels.Panels
 		public ObservableCollection<TreeNodeViewModel> Children { get; } = [];
 
 		/// <inheritdoc/>
-		String IFilterNode.FilterText => this.Title;
+		String IFilterNode.FilterText => this.GetFilterText();
+
+		/// <summary>Gets the text the filter of the panel is matched against: the title unless a node searches more.</summary>
+		/// <returns>The text.</returns>
+		protected virtual String GetFilterText()
+		{
+			return this.Title;
+		}
 
 		/// <inheritdoc/>
 		Boolean IFilterNode.HidesWhenFiltering => false;

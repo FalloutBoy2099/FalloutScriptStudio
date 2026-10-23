@@ -22,6 +22,9 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// <summary>Gets or sets a value indicating whether a script and its message file are compared when one of them is saved (the unknown, unused and duplicate messages are listed as problems).</summary>
 		public Boolean CheckMessagesOnSave { get; set; } = true;
 
+		/// <summary>Gets or sets a value indicating whether the dialogue of a script (its nodes, options and exits) is checked when the script is saved (the findings are listed as problems).</summary>
+		public Boolean CheckDialogueOnSave { get; set; } = true;
+
 		/// <summary>Gets or sets a value indicating whether comment lines are highlighted in the Message Editor.</summary>
 		public Boolean HighlightComments { get; set; } = true;
 

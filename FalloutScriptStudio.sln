@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FalloutScriptStudio.Tests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FalloutScriptStudio.ParserHost", "FalloutScriptStudio.ParserHost\FalloutScriptStudio.ParserHost.csproj", "{60D3519A-00C6-4229-9F88-9261B3E267CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FalloutScriptStudio.UiTests", "FalloutScriptStudio.UiTests\FalloutScriptStudio.UiTests.csproj", "{817D717E-3561-4CD2-A848-20AC6248244D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{60D3519A-00C6-4229-9F88-9261B3E267CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60D3519A-00C6-4229-9F88-9261B3E267CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60D3519A-00C6-4229-9F88-9261B3E267CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{817D717E-3561-4CD2-A848-20AC6248244D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{817D717E-3561-4CD2-A848-20AC6248244D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{817D717E-3561-4CD2-A848-20AC6248244D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{817D717E-3561-4CD2-A848-20AC6248244D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

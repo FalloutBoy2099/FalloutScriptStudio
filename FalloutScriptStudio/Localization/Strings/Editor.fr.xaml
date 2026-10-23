@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">Un nœud de dialogue qui n'affiche qu'un message.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Deux variables avec des valeurs initiales.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">Une définition de macro (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Aide de la fonction</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0} pour l'aide</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Numéros de ligne</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Repères de repli du code</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Séparateur</sys:String>
 </ResourceDictionary>

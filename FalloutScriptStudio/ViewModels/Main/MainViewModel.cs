@@ -79,7 +79,9 @@ namespace FalloutScriptStudio.ViewModels.Main
 			FunctionsPanelViewModel functions,
 			ProjectExplorerViewModel project,
 			IProjectService projects,
-			ProjectSessionService? sessions = null)
+			ProjectSessionService? sessions = null,
+			GlobalsPanelViewModel? globals = null,
+			HelpPanelViewModel? help = null)
 		{
 			this._workspace = workspace;
 			this._settings = settings;
@@ -103,6 +105,8 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.Variables = variables;
 			this.Functions = functions;
 			this.Project = project;
+			this.Globals = globals;
+			this.Help = help;
 			this._projects = projects;
 			this._sessions = sessions ?? new ProjectSessionService(workspace, settings, projects, output.Problems);
 			this._sessionFolder = projects.Folder;

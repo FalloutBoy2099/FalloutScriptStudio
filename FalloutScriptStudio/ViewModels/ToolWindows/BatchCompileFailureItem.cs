@@ -29,5 +29,12 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 
 		/// <summary>Gets the file name of the script.</summary>
 		public String FileName => Path.GetFileName(this.ScriptPath);
+
+		/// <summary>Gets the text a screen reader announces for the failed script (the automation name of a list or grid item is the text of its object).</summary>
+		/// <returns>The text.</returns>
+		public override String ToString()
+		{
+			return this.FileName;
+		}
 	}
 }

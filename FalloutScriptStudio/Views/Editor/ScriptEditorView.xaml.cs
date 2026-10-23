@@ -287,7 +287,9 @@ namespace FalloutScriptStudio.Views.Editor
 			System.Windows.Controls.MenuItem renameItem = this.CreateItem(EditorCommand.RenameSymbol, SymbolRegular.Rename24);
 			System.Windows.Controls.MenuItem previewItem = this.CreateItem(EditorCommand.PreviewDialogueFromNode, SymbolRegular.Play24);
 			Separator previewSeparator = new();
+			System.Windows.Controls.MenuItem helpItem = this.CreateItem(EditorCommand.ShowHelp, SymbolRegular.QuestionCircle24);
 			menu.Items.Add(this.CreateItem(EditorCommand.QuickFix, SymbolRegular.Lightbulb24));
+			menu.Items.Add(helpItem);
 			menu.Items.Add(highlightItem);
 			menu.Items.Add(renameItem);
 			menu.Items.Add(new Separator());
@@ -321,6 +323,7 @@ namespace FalloutScriptStudio.Views.Editor
 			menu.Items.Add(this.CreateItem(EditorCommand.FormatSelection, SymbolRegular.TextEditStyle24));
 			menu.Opened += (_, _) => this.UpdateContextMenu(owner, highlightItem, renameItem);
 			menu.Opened += (_, _) => this.UpdatePreviewItem(owner, previewItem, previewSeparator);
+			menu.Opened += (_, _) => this.UpdateHelpItem(owner, helpItem);
 			return menu;
 		}
 
@@ -355,6 +358,12 @@ namespace FalloutScriptStudio.Views.Editor
 			Boolean offered = this._session?.FindPane(owner) is { } pane && this._session.Context.IsScript && pane.Navigation.CurrentProcedure is { } procedure && DialogueNodeRule.IsNode(procedure.Name);
 			previewItem.Visibility = offered ? Visibility.Visible : Visibility.Collapsed;
 			separator.Visibility = offered ? Visibility.Visible : Visibility.Collapsed;
+		}
+
+		/// <summary>The "Function Help" item is only offered while the caret is on a word that has help (a function, an opcode, a macro or a procedure).</summary>
+		private void UpdateHelpItem(TextEditor owner, System.Windows.Controls.MenuItem helpItem)
+		{
+			helpItem.Visibility = this._session?.FindPane(owner) is { } pane && pane.Commands.CanExecute(EditorCommand.ShowHelp) ? Visibility.Visible : Visibility.Collapsed;
 		}
 
 		private void UpdateContextMenu(TextEditor owner, System.Windows.Controls.MenuItem highlightItem, System.Windows.Controls.MenuItem renameItem)

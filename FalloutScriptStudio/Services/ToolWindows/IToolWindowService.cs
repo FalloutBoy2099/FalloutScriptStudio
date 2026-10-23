@@ -78,6 +78,18 @@ namespace FalloutScriptStudio.Services.ToolWindows
 		}
 
 		/// <summary>
+		/// Shows "Compare Message Files": the messages of a reference message file side by side with the file of another language, the status of each
+		/// line and the actions that follow (add the missing lines, copy the numbers, export a report, list the lines as problems). The window stays
+		/// open beside the editor; the returned task completes when it is shown.
+		/// </summary>
+		/// <param name="request">The reference file.</param>
+		/// <returns>A task that completes when the window is shown. The default implementation shows nothing.</returns>
+		Task ShowCompareMessagesAsync(CompareMessagesRequest request)
+		{
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
 		/// Shows the About window modally.
 		/// </summary>
 		void ShowAbout();

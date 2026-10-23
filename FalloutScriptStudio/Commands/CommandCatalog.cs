@@ -391,6 +391,8 @@ namespace FalloutScriptStudio.Commands
 			Edit("Str.Shell.Menu.DeleteUnusedProcedure", EditorCommand.DeleteUnusedProcedure, CommandRequirement.Parsable);
 			Edit("Str.Shell.Menu.FindUnusedVariables", EditorCommand.FindUnusedVariables, CommandRequirement.Parsable);
 			Edit("Str.Shell.Menu.RemoveUnusedVariable", EditorCommand.RemoveUnusedVariable, CommandRequirement.Parsable);
+			Command(MenuCode, "Str.Shell.Menu.CheckGlobalVariables", "CheckGlobalVariablesCommand");
+			Edit("Str.Shell.Menu.FunctionHelp", EditorCommand.ShowHelp, CommandRequirement.Parsable);
 			Command(MenuCode, "Str.Shell.Menu.CheckMessageStructure", "CheckMessageStructureCommand", CommandRequirement.Message);
 
 			// Script
@@ -411,6 +413,8 @@ namespace FalloutScriptStudio.Commands
 			Command(MenuDialog, "Str.Shell.Menu.DialoguePreview", "ShowDialoguePreviewCommand", CommandRequirement.Script);
 			Edit("Str.Shell.Menu.PreviewDialogueFromNode", EditorCommand.PreviewDialogueFromNode, CommandRequirement.Parsable, MenuDialog);
 			Command(MenuDialog, "Str.Shell.Menu.CheckMessages", "CheckMessagesCommand", CommandRequirement.Script);
+			Command(MenuDialog, "Str.Shell.Menu.CheckDialogue", "CheckDialogueCommand", CommandRequirement.Script);
+			Command(MenuDialog, "Str.Shell.Menu.CompareMessageFiles", "CompareMessageFilesCommand");
 			Command(MenuDialog, "Str.Shell.Menu.FunctionsConfig", "ShowFunctionRulesCommand");
 			Toggle(MenuDialog, "Str.Shell.Menu.AutoOpenMessageEditor", "AutoOpenMessageEditor");
 
@@ -437,6 +441,8 @@ namespace FalloutScriptStudio.Commands
 			Toggle(MenuView, "Str.Shell.Menu.RightBrowser", "ShowRightBrowser");
 			Toggle(MenuView, "Str.Shell.Menu.FunctionTree", "ShowFunctionTree");
 			Toggle(MenuView, "Str.Shell.Menu.LogWindow", "ShowLog");
+			Command(MenuView, "Str.Shell.Menu.ShowGlobalVariables", "ShowGlobalVariablesCommand");
+			Command(MenuView, "Str.Shell.Menu.ShowHelpPanel", "ShowHelpPanelCommand");
 			foreach (AppTheme theme in new[] { AppTheme.System, AppTheme.Light, AppTheme.Dark })
 			{
 				list.Add(new CommandDefinition(new[] { MenuView, MenuTheme }, "Str.Common.Theme" + theme, "SetThemeCommand", theme, CommandRequirement.None));

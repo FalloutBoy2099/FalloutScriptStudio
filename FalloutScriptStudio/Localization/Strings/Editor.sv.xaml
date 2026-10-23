@@ -129,4 +129,9 @@
     <sys:String x:Key="Str.Editor.Snippet.NodeMessage">En dialognod som bara visar ett meddelande.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Variables">Två variabler med startvärden.</sys:String>
     <sys:String x:Key="Str.Editor.Snippet.Define">En makrodefinition (#define).</sys:String>
+    <sys:String x:Key="Str.Editor.Cmd.ShowHelp">Hjälp för funktion</sys:String>
+    <sys:String x:Key="Str.Editor.Tip.HelpHint">{0} för hjälp</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.LineNumbers">Radnummer</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.FoldingMargin">Markörer för att vika kod</sys:String>
+    <sys:String x:Key="Str.Editor.A11y.MarginSeparator">Avgränsare</sys:String>
 </ResourceDictionary>

@@ -27,6 +27,13 @@ namespace FalloutScriptStudio.ViewModels.DialoguePreview
 		/// <summary>Gets the text of the message column (options start with a bullet).</summary>
 		public String Text => this.Source.DisplayText;
 
+		/// <summary>Gets the text a screen reader announces for the row (the automation name of a list or grid item is the text of its object).</summary>
+		/// <returns>The text.</returns>
+		public override String ToString()
+		{
+			return this.Text;
+		}
+
 		/// <summary>Gets the IQ requirement of an option, or an empty text.</summary>
 		public String Iq => this.Source.Iq ?? String.Empty;
 

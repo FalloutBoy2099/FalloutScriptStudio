@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Filen saknas</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">Meddelandefilen för dialogen hittades inte.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Flödesschema för dialogen</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Anmärkningar ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Listar de svaga punkterna i dialogen som dialogkontrollen hittade.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">Inga svaga punkter i dialogen.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">{0} svag(a) punkt(er) i dialogen.</sys:String>
 </ResourceDictionary>

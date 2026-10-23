@@ -12,6 +12,7 @@ namespace FalloutScriptStudio.Core.Indexing
 	using Microsoft.Extensions.Logging;
 	using Microsoft.Extensions.Logging.Abstractions;
 	using Analysis;
+	using Globals;
 	using Parsing;
 
 	/// <summary>
@@ -28,6 +29,7 @@ namespace FalloutScriptStudio.Core.Indexing
 		private readonly Func<ProjectIndexOptions> _options;
 		private readonly ILogger _logger;
 		private readonly SemaphoreSlim _gate = new SemaphoreSlim(1, 1);
+		private readonly GlobalStringPool _pool = new GlobalStringPool();
 		private IndexSnapshot _snapshot = IndexSnapshot.Empty;
 		private ProjectIndexProgress _progress = ProjectIndexProgress.Idle;
 
@@ -57,6 +59,9 @@ namespace FalloutScriptStudio.Core.Indexing
 
 		/// <inheritdoc />
 		public Boolean IsTruncated => Volatile.Read(ref this._snapshot).IsTruncated;
+
+		/// <inheritdoc />
+		public Boolean AreGlobalsTruncated => Volatile.Read(ref this._snapshot).GlobalsTruncated;
 
 		/// <inheritdoc />
 		public IReadOnlyCollection<String> Files => Volatile.Read(ref this._snapshot).Files.Keys;
@@ -105,7 +110,14 @@ namespace FalloutScriptStudio.Core.Indexing
 		public void Clear()
 		{
 			Volatile.Write(ref this._snapshot, IndexSnapshot.Empty);
+			this._pool.Clear();
 			this.Updated?.Invoke(this, EventArgs.Empty);
+		}
+
+		/// <inheritdoc />
+		public GlobalVariableIndex GetGlobalVariables()
+		{
+			return Volatile.Read(ref this._snapshot).Globals;
 		}
 
 		/// <inheritdoc />
@@ -446,12 +458,14 @@ namespace FalloutScriptStudio.Core.Indexing
 			Dictionary<String, IndexedFile> files = new Dictionary<String, IndexedFile>(found.Count, StringComparer.OrdinalIgnoreCase);
 			List<FileStamp> toRead = [];
 			Int32 keptSymbols = 0;
+			Int32 keptUses = 0;
 			foreach (FileStamp stamp in found)
 			{
 				if (old.Files.TryGetValue(stamp.Path, out IndexedFile? known) && IsUnchanged(known, stamp))
 				{
 					files.Add(stamp.Path, known);
 					keptSymbols += known.Symbols.Length;
+					keptUses += known.Globals?.Uses.Length ?? 0;
 				}
 				else
 				{
@@ -464,7 +478,7 @@ namespace FalloutScriptStudio.Core.Indexing
 				return;
 			}
 
-			RunState state = new RunState(Math.Max(options.MaxSymbols - keptSymbols, 0));
+			RunState state = new RunState(Math.Max(options.MaxSymbols - keptSymbols, 0), Math.Max(options.MaxGlobalUses - keptUses, 0), old.GlobalsTruncated && toRead.Count == 0);
 			IndexedFile?[] read = new IndexedFile?[toRead.Count];
 			Int32 total = toRead.Count;
 			this.SetProgress(new ProjectIndexProgress(ProjectIndexPhase.Indexing, 0, total, old.Symbols.Length));
@@ -490,7 +504,7 @@ namespace FalloutScriptStudio.Core.Indexing
 				this._logger.LimitReached(options.MaxSymbols);
 			}
 
-			IndexSnapshot snapshot = new IndexSnapshot(files, state.Truncated);
+			IndexSnapshot snapshot = new IndexSnapshot(files, state.Truncated, state.GlobalsTruncated);
 			Volatile.Write(ref this._snapshot, snapshot);
 			this._logger.Updated(total, files.Count, snapshot.Symbols.Length, watch.ElapsedMilliseconds);
 			this.Updated?.Invoke(this, EventArgs.Empty);
@@ -501,6 +515,7 @@ namespace FalloutScriptStudio.Core.Indexing
 			IndexSnapshot old = Volatile.Read(ref this._snapshot);
 			Dictionary<String, IndexedFile> files = new Dictionary<String, IndexedFile>(old.Files, StringComparer.OrdinalIgnoreCase);
 
+			Boolean globalsTruncated = old.GlobalsTruncated;
 			FileInfo info = new FileInfo(path);
 			if (text is null && !info.Exists)
 			{
@@ -512,7 +527,11 @@ namespace FalloutScriptStudio.Core.Indexing
 			else
 			{
 				FileStamp stamp = info.Exists ? new FileStamp(path, info.Length, info.LastWriteTimeUtc.Ticks) : new FileStamp(path, text?.Length ?? 0, DateTime.UtcNow.Ticks);
-				RunState state = new RunState(Math.Max(options.MaxSymbols - (old.Symbols.Length - (files.TryGetValue(path, out IndexedFile? previous) ? previous.Symbols.Length : 0)), 0));
+				Boolean known = files.TryGetValue(path, out IndexedFile? previous);
+				RunState state = new RunState(
+					Math.Max(options.MaxSymbols - (old.Symbols.Length - (known ? previous!.Symbols.Length : 0)), 0),
+					Math.Max(options.MaxGlobalUses - (old.GlobalUseCount - (known ? previous!.Globals?.Uses.Length ?? 0 : 0)), 0),
+					old.GlobalsTruncated);
 				IndexedFile? replacement = this.ReadFile(stamp, text, options, state);
 				if (replacement is null)
 				{
@@ -520,9 +539,10 @@ namespace FalloutScriptStudio.Core.Indexing
 				}
 
 				files[path] = replacement;
+				globalsTruncated = state.GlobalsTruncated;
 			}
 
-			Volatile.Write(ref this._snapshot, new IndexSnapshot(files, old.IsTruncated));
+			Volatile.Write(ref this._snapshot, new IndexSnapshot(files, old.IsTruncated, globalsTruncated));
 			this.Updated?.Invoke(this, EventArgs.Empty);
 		}
 
@@ -562,7 +582,7 @@ namespace FalloutScriptStudio.Core.Indexing
 
 			List<IndexedSymbol> symbols = [];
 			List<String> includes = [];
-			SymbolFileScanner.Scan(stamp.Path, text, symbols, includes);
+			SymbolFileScanner.Scan(stamp.Path, text, symbols, includes, out FileGlobalScan? globals, this._pool, options.TrackGlobalVariables);
 
 			Int32 left = Interlocked.Add(ref state.Remaining, -symbols.Count);
 			if (left < 0)
@@ -572,7 +592,26 @@ namespace FalloutScriptStudio.Core.Indexing
 				return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, startedAt, Array.Empty<IndexedSymbol>(), includes.ToArray());
 			}
 
-			return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, startedAt, symbols.ToArray(), includes.ToArray());
+			return new IndexedFile(stamp.Path, stamp.Length, stamp.LastWriteTicks, startedAt, symbols.ToArray(), includes.ToArray(), LimitGlobals(globals, state));
+		}
+
+		/// <summary>Keeps the uses of a file only while the budget of the index lasts; the macro constants are kept anyway (they are cheap and resolve the others).</summary>
+		private static FileGlobalScan? LimitGlobals(FileGlobalScan? globals, RunState state)
+		{
+			if (globals is null || globals.Uses.Length == 0)
+			{
+				return globals;
+			}
+
+			Int32 left = Interlocked.Add(ref state.RemainingUses, -globals.Uses.Length);
+			if (left >= 0)
+			{
+				return globals;
+			}
+
+			Interlocked.Add(ref state.RemainingUses, globals.Uses.Length);
+			state.GlobalsTruncated = true;
+			return globals.Constants.Length == 0 ? null : new FileGlobalScan(Array.Empty<RawGlobalUse>(), Array.Empty<String>(), globals.Constants);
 		}
 
 		private static Boolean IsUnchanged(IndexedFile known, FileStamp stamp)
@@ -607,12 +646,16 @@ namespace FalloutScriptStudio.Core.Indexing
 		{
 			internal Int32 Done;
 			internal Int32 Remaining;
+			internal Int32 RemainingUses;
+			internal volatile Boolean GlobalsTruncated;
 			internal Int64 LastReport;
 			internal volatile Boolean Truncated;
 
-			internal RunState(Int32 remaining)
+			internal RunState(Int32 remaining, Int32 remainingUses, Boolean globalsTruncated)
 			{
 				this.Remaining = remaining;
+				this.RemainingUses = remainingUses;
+				this.GlobalsTruncated = globalsTruncated;
 			}
 		}
 	}

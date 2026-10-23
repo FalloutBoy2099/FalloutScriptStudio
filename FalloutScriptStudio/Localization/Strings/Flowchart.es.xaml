@@ -160,4 +160,8 @@
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Title">Archivo ausente</sys:String>
     <sys:String x:Key="Str.Flowchart.Msg.MissingDialogueFile.Text" xml:space="preserve">No se encontró el archivo de mensajes del diálogo.&#10;{0}</sys:String>
     <sys:String x:Key="Str.Flowchart.A11y.Diagram">Diagrama de flujo del diálogo</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Button">Incidencias ({0})</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Tip">Muestra los puntos débiles del diálogo hallados por la comprobación del diálogo.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.None">Ningún punto débil en el diálogo.</sys:String>
+    <sys:String x:Key="Str.Flowchart.Quality.Summary">{0} punto(s) débil(es) en el diálogo.</sys:String>
 </ResourceDictionary>

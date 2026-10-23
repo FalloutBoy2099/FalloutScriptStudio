@@ -27,12 +27,14 @@ namespace FalloutScriptStudio.Startup
 	using Services.ScriptTools.Dialogs;
 	using Services.ScriptTools.Flowchart;
 	using Services.ToolWindows;
+	using UiTesting;
 	using ViewModels.Main;
 	using ViewModels.Panels;
 	using Views.Shell;
 	using Workspace;
 	using Workspace.Formatting;
 	using Workspace.Functions;
+	using Workspace.Help;
 
 	/// <summary>The registrations of the services, view models and windows of the application (the composition root).</summary>
 	public static class AppServices
@@ -42,10 +44,12 @@ namespace FalloutScriptStudio.Startup
 		/// <param name="paths">The paths of the installation.</param>
 		/// <param name="log">The log provider.</param>
 		/// <param name="singleInstance">The single-instance lock of this process.</param>
-		public static void ConfigureServices(IServiceCollection services, AppPaths paths, ILoggerProvider log, ISingleInstance singleInstance)
+		/// <param name="uiTest">The UI test mode (<see langword="null"/> for a normal run); the parser host then works in the data folder of the test instead of the system temp folder.</param>
+		public static void ConfigureServices(IServiceCollection services, AppPaths paths, ILoggerProvider log, ISingleInstance singleInstance, UiTestMode? uiTest = null)
 		{
 			services.AddSingleton(paths);
 			services.AddSingleton(singleInstance);
+			services.AddSingleton(uiTest ?? UiTestMode.Off);
 			services.AddLogging(builder => builder.AddProvider(log).SetMinimumLevel(LogLevel.Information));
 
 			// Core: settings.
@@ -59,7 +63,9 @@ namespace FalloutScriptStudio.Startup
 			// parser.dll (32-bit) never loads into this process: FalloutScriptStudio.ParserHost.exe, next to the executable, hosts it.
 			services.AddScriptParsing(
 				provider => ParserOptionsFactory.Create(provider.GetRequiredService<ISettingsService>()),
-				NativeParserHostOptions.ForDirectory(paths.ProgramDirectory));
+				uiTest is { IsEnabled: true }
+					? NativeParserHostOptions.ForDirectory(paths.ProgramDirectory) with { WorkingDirectoryRoot = Path.Combine(paths.UserDataDirectory ?? paths.ProgramDirectory, "parser-hosts") }
+					: NativeParserHostOptions.ForDirectory(paths.ProgramDirectory));
 			services.AddSingleton(provider =>
 			{
 				ISettingsService settings = provider.GetRequiredService<ISettingsService>();
@@ -107,10 +113,14 @@ namespace FalloutScriptStudio.Startup
 			services.AddSingleton<ExternalChangeDetector>();
 			services.AddSingleton<MessageAssociationService>();
 			services.AddSingleton<MessageConsistencyService>();
+			services.AddSingleton<DialogueQualityService>();
+			services.AddSingleton<IDialogueQualityAnalyzer>(provider => provider.GetRequiredService<DialogueQualityService>());
 			services.AddSingleton<LiveDiagnosticsService>();
 			services.AddSingleton<ProcedureOperations>();
 			services.AddSingleton<ReferenceResultsPresenter>();
 			services.AddSingleton<ProjectSymbolService>();
+			services.AddSingleton<GlobalVariablesService>();
+			services.AddSingleton<IFunctionHelpService, FunctionHelpService>();
 			services.AddSingleton<CodeIntelligenceOperations>();
 			services.AddSingleton<WorkspaceService>();
 			services.AddSingleton<IWorkspace>(provider => provider.GetRequiredService<WorkspaceService>());
@@ -128,6 +138,8 @@ namespace FalloutScriptStudio.Startup
 			services.AddSingleton<FunctionsPanelViewModel>();
 			services.AddSingleton<IUserMacroSource, UserKeywordMacroSource>();
 			services.AddSingleton<ProjectExplorerViewModel>();
+			services.AddSingleton<GlobalsPanelViewModel>();
+			services.AddSingleton<HelpPanelViewModel>();
 			services.AddSingleton<MainViewModel>();
 			services.AddSingleton<MainWindow>();
 

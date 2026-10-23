@@ -39,6 +39,13 @@ namespace FalloutScriptStudio.ViewModels.ToolWindows
 		/// <summary>Gets the name the profile had when the editor was opened (the settings may refer to it).</summary>
 		public String OriginalName { get; }
 
+		/// <summary>Gets the text a screen reader announces for the profile in the list (the automation name of a list item is the text of its object).</summary>
+		/// <returns>The name.</returns>
+		public override String ToString()
+		{
+			return this._name;
+		}
+
 		/// <summary>
 		/// Gets or sets the name. A name that is blank, too long or used by another profile is refused and the previous name stays (the
 		/// control shows it again).

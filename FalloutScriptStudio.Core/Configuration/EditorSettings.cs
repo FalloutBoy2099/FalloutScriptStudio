@@ -1,6 +1,7 @@
 namespace FalloutScriptStudio.Core.Configuration
 {
 	using System;
+	using System.Collections.Generic;
 
 	/// <summary>
 	/// Options of the script editor.
@@ -85,6 +86,20 @@ namespace FalloutScriptStudio.Core.Configuration
 		/// analysis runs in the background after each parse, underlines the places in the editor and lists them in the problems.
 		/// </summary>
 		public LiveDiagnosticsLevel LiveDiagnostics { get; set; } = LiveDiagnosticsLevel.ErrorsAndWarnings;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the findings about the global variables of the project (written but never read, read but
+		/// never written, mixed integer and float use of an sfall global, probable typos in names, names sfall cannot use) are listed in the
+		/// problems by themselves after each index update. Off by default (they are information about the whole project, not about the
+		/// script being edited); Code &gt; Check Global Variables lists them whatever this option says.
+		/// </summary>
+		public Boolean GlobalVariableFindings { get; set; }
+
+		/// <summary>
+		/// Gets or sets the global variables the findings leave out: a name (an sfall global, a <c>GVAR_*</c> macro), a number, or a prefix
+		/// that ends with <c>*</c>. The case is ignored.
+		/// </summary>
+		public List<String> GlobalVariableIgnore { get; set; } = [];
 
 		/// <summary>Gets or sets a value indicating whether scripts are saved as UTF-8.</summary>
 		public Boolean SaveScriptsAsUtf8 { get; set; }

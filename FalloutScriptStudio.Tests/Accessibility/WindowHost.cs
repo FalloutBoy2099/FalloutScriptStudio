@@ -85,6 +85,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 					window = create();
 					window.Resources.MergedDictionaries.Add(new ThemesDictionary { Theme = theme });
 					window.Resources.MergedDictionaries.Add(new ControlsDictionary());
+					window.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/FalloutScriptStudio;component/Resources/ListStyles.xaml", UriKind.Absolute) });
 					foreach (String area in Loc.Areas)
 					{
 						window.Resources.MergedDictionaries.Add(new ResourceDictionary

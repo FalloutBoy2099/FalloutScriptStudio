@@ -55,6 +55,14 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 			this.GlyphPenStrong = MakePen(textPrimary, 1.5, roundCaps: true);
 			this.GlyphPenOff = MakePen(Lerp(nodeFill, textPrimary, 0.40), 1.5, roundCaps: true);
 			this.GlyphWarningPen = MakePen(critical, 1.5, roundCaps: true);
+			this.IssueErrorBrush = Freeze(new SolidColorBrush(critical));
+			this.IssueWarningBrush = Freeze(new SolidColorBrush(caution));
+			this.IssueInfoBrush = Freeze(new SolidColorBrush(accent));
+			this.IssueErrorRingPen = MakePen(critical, 2.5);
+			this.IssueWarningRingPen = MakePen(caution, 2.5);
+			this.IssueInfoRingPen = MakePen(accent, 2.0);
+			this.BadgeGlyphPen = MakePen(nodeFill, 1.6, roundCaps: true);
+			this.BadgeGlyphBrush = Freeze(new SolidColorBrush(nodeFill));
 			this.TitleSeparatorPen = MakePen(Lerp(nodeFill, textPrimary, dark ? 0.16 : 0.10), 1.0);
 
 			this.LinkNormal = Freeze(new SolidColorBrush(WithAlpha(textPrimary, dark ? 0.55 : 0.48)));
@@ -127,6 +135,22 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 
 		public Pen GlyphWarningPen { get; }
 
+		public Brush IssueErrorBrush { get; }
+
+		public Brush IssueWarningBrush { get; }
+
+		public Brush IssueInfoBrush { get; }
+
+		public Pen IssueErrorRingPen { get; }
+
+		public Pen IssueWarningRingPen { get; }
+
+		public Pen IssueInfoRingPen { get; }
+
+		public Pen BadgeGlyphPen { get; }
+
+		public Brush BadgeGlyphBrush { get; }
+
 		public Pen TitleSeparatorPen { get; }
 
 		public Brush LinkNormal { get; }
@@ -186,6 +210,26 @@ namespace FalloutScriptStudio.Controls.Diagram.Rendering
 		public Pen GetKindPen(DiagramNodeKind kind)
 		{
 			return this._kindPens[(Int32)kind];
+		}
+
+		public Brush GetIssueBrush(DiagramIssueSeverity severity)
+		{
+			return severity switch
+			{
+				DiagramIssueSeverity.Error => this.IssueErrorBrush,
+				DiagramIssueSeverity.Warning => this.IssueWarningBrush,
+				_ => this.IssueInfoBrush,
+			};
+		}
+
+		public Pen GetIssueRingPen(DiagramIssueSeverity severity)
+		{
+			return severity switch
+			{
+				DiagramIssueSeverity.Error => this.IssueErrorRingPen,
+				DiagramIssueSeverity.Warning => this.IssueWarningRingPen,
+				_ => this.IssueInfoRingPen,
+			};
 		}
 
 		public static Pen MakeLinkPen(Brush brush, Double thickness)

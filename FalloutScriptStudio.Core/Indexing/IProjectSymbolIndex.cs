@@ -5,6 +5,7 @@ namespace FalloutScriptStudio.Core.Indexing
 	using System.Threading;
 	using System.Threading.Tasks;
 	using Analysis;
+	using Globals;
 	using Parsing;
 
 	/// <summary>
@@ -32,6 +33,9 @@ namespace FalloutScriptStudio.Core.Indexing
 		/// <summary>Gets a value indicating whether some files were left out because the symbol limit was reached.</summary>
 		Boolean IsTruncated { get; }
 
+		/// <summary>Gets a value indicating whether some files were left out of the global variables because the limit of uses was reached.</summary>
+		Boolean AreGlobalsTruncated => false;
+
 		/// <summary>Gets the full paths of the indexed files.</summary>
 		IReadOnlyCollection<String> Files { get; }
 
@@ -51,6 +55,13 @@ namespace FalloutScriptStudio.Core.Indexing
 		/// <param name="cancellationToken">Cancels the operation.</param>
 		/// <returns>A task that completes when the index holds the new symbols.</returns>
 		Task UpdateFileAsync(String path, String? text = null, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Gets the reads and writes of global variables (sfall globals, game, map and local variables) of the indexed files, with the macros of
+		/// the project resolved. The index of the last complete snapshot is built on first use and kept until the snapshot is replaced.
+		/// </summary>
+		/// <returns>The global variables; empty for an implementation that does not track them.</returns>
+		GlobalVariableIndex GetGlobalVariables() => GlobalVariableIndex.Empty;
 
 		/// <summary>Forgets everything.</summary>
 		void Clear();

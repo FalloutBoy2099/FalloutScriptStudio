@@ -274,6 +274,19 @@
                                 SelectedValue="{Binding Draft.Editor.LiveDiagnostics, Mode=TwoWay}"
                                 SelectedValuePath="Value" />
                         </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.GlobalFindings.Title}" Description="{DynamicResource Str.ToolWindows.Opt.GlobalFindings.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Editor.GlobalVariableFindings}" />
+                        </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.GlobalIgnore.Title}" Description="{DynamicResource Str.ToolWindows.Opt.GlobalIgnore.Desc}">
+                            <TextBox
+                                MinWidth="260"
+                                MinHeight="72"
+                                AcceptsReturn="True"
+                                HorizontalScrollBarVisibility="Auto"
+                                Text="{Binding GlobalVariableIgnoreText, UpdateSourceTrigger=LostFocus}"
+                                TextWrapping="NoWrap"
+                                VerticalScrollBarVisibility="Auto" />
+                        </local:SettingCard>
 
                         <TextBlock Style="{StaticResource SectionTitle}" Text="{DynamicResource Str.ToolWindows.Section.Formatting}" />
                         <local:SettingCard
@@ -653,6 +666,9 @@
                         </local:SettingCard>
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CheckMessagesOnSave.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CheckMessagesOnSave.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding Draft.Messages.CheckMessagesOnSave}" />
+                        </local:SettingCard>
+                        <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.CheckDialogueOnSave.Title}" Description="{DynamicResource Str.ToolWindows.Opt.CheckDialogueOnSave.Desc}">
+                            <ui:ToggleSwitch IsChecked="{Binding Draft.Messages.CheckDialogueOnSave}" />
                         </local:SettingCard>
                         <local:SettingCard Title="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Title}" Description="{DynamicResource Str.ToolWindows.Opt.HighlightComments.Desc}">
                             <ui:ToggleSwitch IsChecked="{Binding HighlightComments}" />

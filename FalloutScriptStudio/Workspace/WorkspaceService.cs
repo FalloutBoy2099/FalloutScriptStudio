@@ -42,6 +42,7 @@ namespace FalloutScriptStudio.Workspace
 		private readonly CodeIntelligenceOperations? _intelligence;
 		private readonly MessageConsistencyService? _consistency;
 		private readonly LiveDiagnosticsService? _diagnostics;
+		private readonly DialogueQualityService? _dialogueQuality;
 
 		private DocumentViewModel? _active;
 		private DocumentViewModel? _previousActive;
@@ -66,7 +67,8 @@ namespace FalloutScriptStudio.Workspace
 			ProjectSymbolService? symbols = null,
 			CodeIntelligenceOperations? intelligence = null,
 			MessageConsistencyService? consistency = null,
-			LiveDiagnosticsService? diagnostics = null)
+			LiveDiagnosticsService? diagnostics = null,
+			DialogueQualityService? dialogueQuality = null)
 		{
 			ArgumentNullException.ThrowIfNull(settings);
 			ArgumentNullException.ThrowIfNull(parser);
@@ -104,6 +106,8 @@ namespace FalloutScriptStudio.Workspace
 			this._consistency?.Attach(this);
 			this._diagnostics = diagnostics;
 			this._diagnostics?.Attach(this);
+			this._dialogueQuality = dialogueQuality;
+			this._dialogueQuality?.Attach(this);
 		}
 
 		public event EventHandler? ActiveDocumentChanged;

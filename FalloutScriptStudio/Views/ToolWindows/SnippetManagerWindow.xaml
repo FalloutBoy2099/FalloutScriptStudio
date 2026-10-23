@@ -118,8 +118,7 @@
                             <DockPanel LastChildFill="False">
                                 <TextBlock
                                     DockPanel.Dock="Right"
-                                    FontSize="11"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Style="{DynamicResource ShellListSecondaryTextStyle}"
                                     Text="{Binding SourceText}" />
                                 <TextBlock
                                     FontFamily="Consolas"
@@ -127,13 +126,11 @@
                                     Text="{Binding Trigger}" />
                                 <TextBlock
                                     Margin="10,0,0,0"
-                                    FontSize="11"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Style="{DynamicResource ShellListSecondaryTextStyle}"
                                     Text="{Binding StateText}" />
                             </DockPanel>
                             <TextBlock
-                                FontSize="11"
-                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Style="{DynamicResource ShellListSecondaryTextStyle}"
                                 Text="{Binding Description}"
                                 TextTrimming="CharacterEllipsis" />
                         </StackPanel>

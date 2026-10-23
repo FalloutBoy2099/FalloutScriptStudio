@@ -182,7 +182,7 @@
                                     Grid.Column="2"
                                     Margin="12,0,0,0"
                                     VerticalAlignment="Center"
-                                    Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                    Style="{DynamicResource ShellListSecondaryTextStyle}"
                                     Text="{Binding ChangedLinesText}" />
                             </Grid>
                         </DataTemplate>

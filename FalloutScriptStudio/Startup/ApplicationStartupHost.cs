@@ -8,6 +8,7 @@ namespace FalloutScriptStudio.Startup
 	using Editor;
 	using Localization;
 	using Services.MessageEditor;
+	using UiTesting;
 	using ViewModels.Main;
 	using Views.Editor;
 	using Views.Shell;
@@ -18,16 +19,22 @@ namespace FalloutScriptStudio.Startup
 	{
 		private readonly Application _application;
 		private readonly String _applicationName;
+		private readonly UiTestMode _uiTest;
+		private readonly Action<String> _log;
 
 		/// <summary>Initializes a new instance of the <see cref="ApplicationStartupHost"/> class.</summary>
 		/// <param name="application">The application.</param>
 		/// <param name="applicationName">The title of the message boxes.</param>
-		public ApplicationStartupHost(Application application, String applicationName)
+		/// <param name="uiTest">The UI test mode: the main window is not activated, and the message boxes (native windows that nothing could keep out of sight) are written to the log; <see langword="null"/> for a normal run.</param>
+		/// <param name="log">Receives the messages that are not shown under test.</param>
+		public ApplicationStartupHost(Application application, String applicationName, UiTestMode? uiTest = null, Action<String>? log = null)
 		{
 			ArgumentNullException.ThrowIfNull(application);
 			ArgumentNullException.ThrowIfNull(applicationName);
 			this._application = application;
 			this._applicationName = applicationName;
+			this._uiTest = uiTest ?? UiTestMode.Off;
+			this._log = log ?? (_ => { });
 		}
 
 		/// <inheritdoc />
@@ -39,12 +46,24 @@ namespace FalloutScriptStudio.Startup
 		/// <inheritdoc />
 		public void ShowInformation(String message)
 		{
+			if (!this._uiTest.ActivatesWindows)
+			{
+				this._log("Message: " + message);
+				return;
+			}
+
 			MessageBox.Show(message, this._applicationName, MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		/// <inheritdoc />
 		public void ShowError(String message)
 		{
+			if (!this._uiTest.ActivatesWindows)
+			{
+				this._log("Error message: " + message);
+				return;
+			}
+
 			MessageBox.Show(message, this._applicationName, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
@@ -63,12 +82,13 @@ namespace FalloutScriptStudio.Startup
 			// INTEGRATION SEAM: gives the editor views (created by the DataTemplate) their shared services.
 			ScriptEditorView.SetServices(window, services.Provider.GetRequiredService<ScriptEditorServices>());
 			window.Closed += (_, _) => this._application.Shutdown();
+			window.ShowActivated = this._uiTest.ActivatesWindows;
 			window.Show();
 
 			CommandLineHandler handler = services.Provider.GetRequiredService<CommandLineHandler>();
 			singleInstance.ArgumentsReceived += (_, forwarded) => this._application.Dispatcher.BeginInvoke(new Action(async () =>
 			{
-				if (await handler.HandleAsync(forwarded))
+				if (await handler.HandleAsync(forwarded) && this._uiTest.ActivatesWindows)
 				{
 					BringToFront(window);
 				}

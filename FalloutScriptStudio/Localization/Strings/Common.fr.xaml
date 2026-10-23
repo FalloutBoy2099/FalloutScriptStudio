@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">Réduire</sys:String>
     <sys:String x:Key="Str.Common.Maximize">Agrandir</sys:String>
     <sys:String x:Key="Str.Common.Restore">Restaurer</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">Défiler vers le haut</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">Défiler vers le bas</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">Défiler vers la gauche</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">Défiler vers la droite</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">Page précédente</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">Page suivante</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">Page à gauche</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">Page à droite</sys:String>
 </ResourceDictionary>

@@ -41,8 +41,17 @@ namespace FalloutScriptStudio.Problems
 		/// <summary>The inconsistencies between a script and its message file (Dialogue &gt; Check Messages, and after a save): replaced by the next check of the same script, dropped when the script is closed.</summary>
 		public const String MessageConsistency = "message-consistency";
 
+		/// <summary>The weak points of the dialogue of a script (Dialogue &gt; Check Dialogue, and after a save): replaced by the next check of the same script, dropped when the script is closed.</summary>
+		public const String DialogueQuality = "dialogue-quality";
+
+		/// <summary>The lines of a comparison of two message files that "Show as problems" listed: replaced by the next listing.</summary>
+		public const String MessageComparison = "message-comparison";
+
 		/// <summary>The files that "Replace in Files" left unchanged: replaced by the next run.</summary>
 		public const String ReplaceInFiles = "replace-in-files";
+
+		/// <summary>The findings about the global variables of the project (Code &gt; Check Global Variables, or after an index update when the setting is on): replaced by the next check.</summary>
+		public const String GlobalVariables = "global-variables";
 
 		/// <summary>The files that "Format Project" left alone: replaced by the next preview or run.</summary>
 		public const String FormatProject = "format-project";

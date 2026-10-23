@@ -21,7 +21,7 @@
     ]
   },
   "groups": [
-    {"name": "Fallout and SSL", "terms": ["script", "procedure", "function", "variable", "macro", "definition", "declaration", "header", "include", "message", "dialogue", "node", "flowchart", "player", "opcode", "register", "template", "archive", "snippet"]},
+    {"name": "Fallout and SSL", "terms": ["script", "procedure", "function", "variable", "globalvariable", "macro", "definition", "declaration", "header", "include", "message", "dialogue", "node", "flowchart", "player", "opcode", "register", "template", "archive", "snippet"]},
     {"name": "Tools", "terms": ["compile", "compiler", "decompile", "preprocess", "roundtrip", "parser", "native", "builtin", "external"]},
     {"name": "Editor and interface", "terms": ["project", "problem", "settings", "theme", "language", "editor", "folder", "encoding", "log", "reference", "rename", "associate", "collapse", "expand", "comment", "indent", "caret", "find", "replace", "matchcase", "wholeword", "regex", "reload", "unsaved", "save", "cancel", "delete", "remove", "undo", "redo", "warning", "error"]}
   ],
@@ -104,6 +104,26 @@
         "ru": {"canonical": "переменная", "accept": ["переменн"], "forbid": []},
         "sv": {"canonical": "variabel", "accept": ["variab"], "forbid": []},
         "zh": {"canonical": "变量", "accept": ["变量"], "forbid": []}
+      }
+    },
+    {
+      "id": "globalvariable",
+      "english": "Global variable",
+      "group": "Fallout and SSL",
+      "en": ["global variable", "global variables"],
+      "enForbid": [],
+      "notes": "A variable shared between scripts: an sfall global, a game variable (GVAR_*), a map variable (MVAR_*) or a local variable of a script (LVAR_*), as listed by the Globals tab. Not a variable declared at the top of one script (that is a script variable).",
+      "languages": {
+        "cs": {"canonical": "globální proměnná", "accept": ["globáln"], "forbid": []},
+        "de": {"canonical": "globale Variable", "accept": ["global"], "forbid": []},
+        "es": {"canonical": "variable global", "accept": ["global"], "forbid": []},
+        "fr": {"canonical": "variable globale", "accept": ["global"], "forbid": []},
+        "it": {"canonical": "variabile globale", "accept": ["global"], "forbid": []},
+        "pl": {"canonical": "zmienna globalna", "accept": ["globaln"], "forbid": []},
+        "pt": {"canonical": "variável global", "accept": ["global", "globai"], "forbid": []},
+        "ru": {"canonical": "глобальная переменная", "accept": ["глобальн"], "forbid": []},
+        "sv": {"canonical": "global variabel", "accept": ["global"], "forbid": []},
+        "zh": {"canonical": "全局变量", "accept": ["全局"], "forbid": []}
       }
     },
     {

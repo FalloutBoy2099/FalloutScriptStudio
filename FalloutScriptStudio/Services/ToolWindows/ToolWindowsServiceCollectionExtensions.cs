@@ -3,6 +3,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 	using System;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.DependencyInjection.Extensions;
+	using Core.Messages;
 	using ViewModels.ToolWindows;
 	using Views.ToolWindows;
 
@@ -25,6 +26,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.TryAddSingleton<IFileAssociationService, FileAssociationService>();
 			services.TryAddSingleton<IEditorFontCatalog, EditorFontCatalog>();
 			services.TryAddSingleton<IToolWindowService, ToolWindowService>();
+			services.TryAddSingleton<IMessageComparisonService, MessageComparisonService>();
 
 			services.AddTransient<SettingsViewModel>();
 			services.AddTransient<ProjectSettingsViewModel>();
@@ -37,6 +39,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<FormatProjectViewModel>();
 			services.AddTransient<SnippetPickerViewModel>();
 			services.AddTransient<SnippetManagerViewModel>();
+			services.AddTransient<CompareMessagesViewModel>();
 
 			services.AddTransient<SettingsWindow>();
 			services.AddTransient<ProjectSettingsWindow>();
@@ -49,6 +52,7 @@ namespace FalloutScriptStudio.Services.ToolWindows
 			services.AddTransient<FormatProjectWindow>();
 			services.AddTransient<SnippetPickerWindow>();
 			services.AddTransient<SnippetManagerWindow>();
+			services.AddTransient<CompareMessagesWindow>();
 
 			return services;
 		}

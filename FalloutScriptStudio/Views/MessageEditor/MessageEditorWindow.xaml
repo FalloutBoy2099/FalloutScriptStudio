@@ -412,6 +412,15 @@
                     <ui:SymbolIcon Symbol="DocumentText24" />
                 </MenuItem.Icon>
             </MenuItem>
+            <Separator />
+            <MenuItem
+                Command="{Binding CompareMessageFilesCommand}"
+                Header="{DynamicResource Str.Shell.Menu.CompareMessageFiles}"
+                ToolTip="{DynamicResource Str.MessageEditor.Menu.CompareFilesTip}">
+                <MenuItem.Icon>
+                    <ui:SymbolIcon Symbol="ArrowSwap24" />
+                </MenuItem.Icon>
+            </MenuItem>
         </ContextMenu>
     </ui:FluentWindow.Resources>
 

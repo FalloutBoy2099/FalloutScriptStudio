@@ -42,4 +42,12 @@
     <sys:String x:Key="Str.Common.Minimize">Свернуть</sys:String>
     <sys:String x:Key="Str.Common.Maximize">Развернуть</sys:String>
     <sys:String x:Key="Str.Common.Restore">Восстановить</sys:String>
+    <sys:String x:Key="Str.Common.ScrollUp">Прокрутить вверх</sys:String>
+    <sys:String x:Key="Str.Common.ScrollDown">Прокрутить вниз</sys:String>
+    <sys:String x:Key="Str.Common.ScrollLeft">Прокрутить влево</sys:String>
+    <sys:String x:Key="Str.Common.ScrollRight">Прокрутить вправо</sys:String>
+    <sys:String x:Key="Str.Common.PageUp">Страница вверх</sys:String>
+    <sys:String x:Key="Str.Common.PageDown">Страница вниз</sys:String>
+    <sys:String x:Key="Str.Common.PageLeft">Страница влево</sys:String>
+    <sys:String x:Key="Str.Common.PageRight">Страница вправо</sys:String>
 </ResourceDictionary>

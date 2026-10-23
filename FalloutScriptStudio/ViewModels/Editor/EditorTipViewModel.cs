@@ -35,7 +35,7 @@ namespace FalloutScriptStudio.ViewModels.Editor
 		public static EditorTipViewModel Create(IEnumerable<TipInfo> tips, EditorPalette palette, FontFamily editorFont, Double editorFontSize)
 		{
 			List<TipSectionViewModel> sections = tips
-				.Select(tip => new TipSectionViewModel(tip.Title, tip.Body, GetTitleBrush(tip.Kind, palette)))
+				.Select(tip => new TipSectionViewModel(tip.Title, tip.Body, GetTitleBrush(tip.Kind, palette), tip.Hint))
 				.ToList();
 			return new EditorTipViewModel(sections, editorFont, Math.Clamp(editorFontSize, 11, 16));
 		}

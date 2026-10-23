@@ -16,6 +16,7 @@ namespace FalloutScriptStudio.Tests.Accessibility
 	using FalloutScriptStudio.Views.ScriptTools;
 	using FalloutScriptStudio.Views.ScriptTools.Dialogs;
 	using FalloutScriptStudio.Views.ToolWindows;
+	using Wpf.Ui.Appearance;
 	using Xunit;
 
 	/// <summary>
@@ -147,6 +148,38 @@ namespace FalloutScriptStudio.Tests.Accessibility
 		public void EveryControlHasTheNameAScreenReaderReads(String name)
 		{
 			WindowHost.Run(() => Create(name), window => AssertNone(RuntimeInspector.FindMissingNames(window)));
+		}
+
+		[Theory]
+		[InlineData("SymbolChoice")]
+		[InlineData("SnippetPicker")]
+		[InlineData("SnippetManager")]
+		public void TheSecondaryTextOfTheSelectedRowIsReadableOnTheAccentColor(String name)
+		{
+			// The muted text of a row (the location, the kind, the description) keeps its gray when the row is selected unless it switches to
+			// the text color of the accent: 1.8 to 1 on the blue of the selection of the light theme.
+			WindowHost.Run(
+				() => Create(name),
+				window =>
+				{
+					System.Windows.Controls.ListBox list = RuntimeInspector.Descendants(window).OfType<System.Windows.Controls.ListBox>().First();
+					list.SelectedIndex = 0;
+					WindowHost.Pump();
+					DependencyObject item = list.ItemContainerGenerator.ContainerFromIndex(0);
+					System.Windows.Media.Color onAccent = ((System.Windows.Media.SolidColorBrush)window.FindResource("TextOnAccentFillColorSecondaryBrush")).Color;
+					System.Windows.Controls.TextBlock[] muted = RuntimeInspector.Descendants(item).OfType<System.Windows.Controls.TextBlock>().Where(text => text.FontSize == 11).ToArray();
+
+					Assert.NotEmpty(muted);
+					Assert.All(muted, text => Assert.Equal(onAccent, ((System.Windows.Media.SolidColorBrush)text.Foreground).Color));
+				},
+				ApplicationTheme.Light);
+		}
+
+		[Theory]
+		[MemberData(nameof(Windows))]
+		public void NoListItemIsNamedAfterAnObject(String name)
+		{
+			WindowHost.Run(() => Create(name), window => AssertNone(RuntimeInspector.FindObjectNames(window)));
 		}
 
 		[Theory]

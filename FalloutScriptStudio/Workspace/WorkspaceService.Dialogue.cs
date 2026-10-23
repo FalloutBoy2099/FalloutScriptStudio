@@ -42,6 +42,12 @@ namespace FalloutScriptStudio.Workspace
 			return this._consistency is null ? Task.FromResult(0) : this._consistency.CheckAsync(document);
 		}
 
+		public Task<DialogueCheckResult> CheckDialogueAsync(DocumentViewModel document)
+		{
+			ArgumentNullException.ThrowIfNull(document);
+			return this._dialogueQuality is null ? Task.FromResult(default(DialogueCheckResult)) : this._dialogueQuality.CheckAsync(document);
+		}
+
 		public Task AddMissingMessagesAsync(String scriptPath, IReadOnlyList<Int32> numbers)
 		{
 			return this._consistency is null ? Task.CompletedTask : this._consistency.AddMissingMessagesAsync(scriptPath, numbers);

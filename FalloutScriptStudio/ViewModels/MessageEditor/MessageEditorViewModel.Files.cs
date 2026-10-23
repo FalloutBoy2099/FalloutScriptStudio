@@ -276,6 +276,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			this.ReloadCommand.NotifyCanExecuteChanged();
 			this.OpenInExternalEditorCommand.NotifyCanExecuteChanged();
 			this.OpenAsTextCommand.NotifyCanExecuteChanged();
+			this.CompareMessageFilesCommand.NotifyCanExecuteChanged();
 		}
 
 		private async Task<Boolean> WriteFileAsync(String path)

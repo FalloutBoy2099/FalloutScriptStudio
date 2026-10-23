@@ -18,6 +18,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 	using FalloutScriptStudio.Localization;
 	using FalloutScriptStudio.Services;
 	using FalloutScriptStudio.Services.MessageEditor;
+	using FalloutScriptStudio.Services.ToolWindows;
 	using Microsoft.Extensions.Logging;
 
 	/// <summary>
@@ -37,6 +38,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		private readonly IDialogService _dialogs;
 		private readonly IMessageEditorPlatform _platform;
 		private readonly ILogger<MessageEditorViewModel> _logger;
+		private readonly IToolWindowService? _toolWindows;
 		private readonly UndoHistory<EditorSnapshot> _history = new();
 		private readonly RangeObservableCollection<MessageRowViewModel> _rows = [];
 
@@ -63,13 +65,15 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 		/// <param name="dialogs">Shows confirmations and file pickers.</param>
 		/// <param name="platform">Operating system facilities.</param>
 		/// <param name="logger">The logger.</param>
+		/// <param name="toolWindows">Opens the comparison with the files of the other languages; the command is disabled when it is <see langword="null"/>.</param>
 		public MessageEditorViewModel(
 			IMessageFileService files,
 			IMessageStructureChecker checker,
 			ISettingsService settings,
 			IDialogService dialogs,
 			IMessageEditorPlatform platform,
-			ILogger<MessageEditorViewModel> logger)
+			ILogger<MessageEditorViewModel> logger,
+			IToolWindowService? toolWindows = null)
 		{
 			ArgumentNullException.ThrowIfNull(files);
 			ArgumentNullException.ThrowIfNull(checker);
@@ -83,6 +87,7 @@ namespace FalloutScriptStudio.ViewModels.MessageEditor
 			this._dialogs = dialogs;
 			this._platform = platform;
 			this._logger = logger;
+			this._toolWindows = toolWindows;
 
 			this.RowsView = CollectionViewSource.GetDefaultView(this._rows);
 			this.RowsView.Filter = this.FilterRow;

@@ -8,6 +8,7 @@ namespace FalloutScriptStudio.Views.Flowchart
 	using Wpf.Ui.Controls;
 	using MenuItem = System.Windows.Controls.MenuItem;
 	using Controls.Diagram;
+	using Controls.Diagram.Model;
 	using Core.Configuration;
 	using Core.Dialogue;
 	using Documents;
@@ -63,6 +64,7 @@ namespace FalloutScriptStudio.Views.Flowchart
 			this.Canvas.DeleteRequested += this.OnDeleteRequested;
 			this.Canvas.LayoutChanged += this.OnCanvasChanged;
 			this.Canvas.ViewportChanged += this.OnCanvasChanged;
+			this.Canvas.ItemHover += this.OnItemHover;
 
 			this.Loaded += this.OnLoaded;
 			this.Activated += this.OnActivated;
@@ -274,6 +276,59 @@ namespace FalloutScriptStudio.Views.Flowchart
 		{
 			this.MessagePopup.IsOpen = false;
 			this.HelpPopup.IsOpen = false;
+			this.IssuesPopup.IsOpen = false;
+		}
+
+		/// <summary>Shows the problems of the node under the pointer as the tool tip of the canvas.</summary>
+		private void OnItemHover(Object? sender, DiagramItemEventArgs e)
+		{
+			this.Canvas.ToolTip = e.Item is DiagramNode { IssueText.Length: > 0 } node ? node.IssueText : null;
+		}
+
+		private void OnIssuesClick(Object sender, RoutedEventArgs e)
+		{
+			this.IssuesPopup.IsOpen = !this.IssuesPopup.IsOpen;
+			if (this.IssuesPopup.IsOpen && this.ViewModel.HasQualityIssues)
+			{
+				this.IssuesList.SelectedIndex = Math.Max(this.IssuesList.SelectedIndex, 0);
+				this.Dispatcher.BeginInvoke(new Action(() => this.FocusSelectedIssue()), System.Windows.Threading.DispatcherPriority.Input);
+			}
+		}
+
+		private void FocusSelectedIssue()
+		{
+			if (this.IssuesList.ItemContainerGenerator.ContainerFromIndex(this.IssuesList.SelectedIndex) is ListBoxItem item)
+			{
+				item.Focus();
+			}
+		}
+
+		private void OnIssuesKeyDown(Object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				this.GoToSelectedIssue();
+				e.Handled = true;
+			}
+			else if (e.Key == Key.Escape)
+			{
+				this.IssuesPopup.IsOpen = false;
+				this.IssuesButton.Focus();
+				e.Handled = true;
+			}
+		}
+
+		private void OnIssuesDoubleClick(Object sender, MouseButtonEventArgs e)
+		{
+			this.GoToSelectedIssue();
+		}
+
+		private void GoToSelectedIssue()
+		{
+			if (this.IssuesList.SelectedItem is FlowchartIssueViewModel issue)
+			{
+				this.ViewModel.GoToIssueCommand.Execute(issue);
+			}
 		}
 
 		private void OnDeleteRequested(Object? sender, EventArgs e)

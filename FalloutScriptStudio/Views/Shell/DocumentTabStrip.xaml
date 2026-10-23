@@ -94,6 +94,21 @@
                                 <ui:SymbolIcon Symbol="Copy24" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem
+                            Command="{Binding PlacementTarget.Tag.CompareMessageFilesCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                            Header="{DynamicResource Str.Shell.Menu.CompareMessageFiles}">
+                            <MenuItem.Style>
+                                <Style BasedOn="{StaticResource {x:Type MenuItem}}" TargetType="MenuItem">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PlacementTarget.DataContext.Kind, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" Value="Message">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </MenuItem.Style>
+                        </MenuItem>
                     </ContextMenu>
                 </Setter.Value>
             </Setter>

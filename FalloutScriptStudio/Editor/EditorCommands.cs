@@ -60,6 +60,7 @@ namespace FalloutScriptStudio.Editor
 			[EditorCommand.PreviewDialogueFromNode] = Create("Str.Editor.Cmd.PreviewDialogueFromNode", nameof(EditorCommand.PreviewDialogueFromNode), new KeyGesture(Key.P, ModifierKeys.Control | ModifierKeys.Shift)),
 			[EditorCommand.InsertSnippet] = Create("Str.Editor.Cmd.InsertSnippet", nameof(EditorCommand.InsertSnippet), new KeyGesture(Key.J, ModifierKeys.Control)),
 			[EditorCommand.SurroundWith] = Create("Str.Editor.Cmd.SurroundWith", nameof(EditorCommand.SurroundWith), new KeyGesture(Key.J, ModifierKeys.Control | ModifierKeys.Shift)),
+			[EditorCommand.ShowHelp] = Create("Str.Editor.Cmd.ShowHelp", nameof(EditorCommand.ShowHelp), new KeyGesture(Key.F1, ModifierKeys.Control)),
 		};
 
 		static EditorCommands()

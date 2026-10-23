@@ -282,6 +282,41 @@ namespace FalloutScriptStudio.ViewModels.Main
 			this.Output.ShowTab(OutputTab.Errors);
 		}
 
+		/// <summary>
+		/// Checks the dialogue of the active script and lists the weak points in the Errors tab: nodes that nothing leads to, replies without a way out,
+		/// options that jump to an unknown procedure, groups of nodes without an exit, nodes without text, doubled options and doubled message numbers.
+		/// </summary>
+		[RelayCommand]
+		public async Task CheckDialogueAsync()
+		{
+			if (this._workspace.ActiveDocument is not { Kind: DocumentKind.Script } document)
+			{
+				return;
+			}
+
+			String title = Loc.Get("Str.Shell.Dlg.CheckDialogueTitle");
+			if (document.FilePath is null)
+			{
+				await this._dialogs.ShowInfoAsync(title, Loc.Get("Str.Shell.Dlg.SaveScriptFirstDialogue"));
+				return;
+			}
+
+			DialogueCheckResult result = await this._workspace.CheckDialogueAsync(document);
+			if (!result.HasDialogue)
+			{
+				await this._dialogs.ShowInfoAsync(title, Loc.Get("Str.Shell.Dlg.NoDialogue"));
+				return;
+			}
+
+			if (result.Count == 0)
+			{
+				await this._dialogs.ShowInfoAsync(title, Loc.Get("Str.Shell.Dlg.NoDialogueIssues"));
+				return;
+			}
+
+			this.Output.ShowTab(OutputTab.Errors);
+		}
+
 		/// <summary>Opens the dialogue function rules configuration.</summary>
 		[RelayCommand]
 		public async Task ShowFunctionRulesAsync()
